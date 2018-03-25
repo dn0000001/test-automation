@@ -1,0 +1,14 @@
+<json-ip-do>
+    <aliases>
+    </aliases>
+
+    <response>
+        <status>
+            <statusCode>200</statusCode>
+            <reasonPhrase>OK</reasonPhrase>
+        </status>
+
+        <about>/about</about>
+        <pro>http://getjsonip.com</pro>
+    </response>
+</json-ip-do>

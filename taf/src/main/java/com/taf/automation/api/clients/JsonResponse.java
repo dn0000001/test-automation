@@ -1,0 +1,98 @@
+package com.taf.automation.api.clients;
+
+import com.taf.automation.api.rest.JsonError;
+import com.taf.automation.api.rest.TextError;
+import org.apache.http.Header;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
+
+import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.api.rest.JsonBaseError;
+import com.taf.automation.api.ApiUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * JSON Response
+ *
+ * @param <T>
+ */
+public class JsonResponse<T> implements GenericHttpResponse<T> {
+    private StatusLine status;
+    private String entityJSON;
+    private T entity;
+    private Header[] headers;
+    private JsonBaseError apiError;
+
+    @SuppressWarnings("unchecked")
+    public JsonResponse(CloseableHttpResponse response, Class<T> responseEntity) {
+        status = response.getStatusLine();
+        headers = response.getAllHeaders();
+
+        if (response.getEntity() == null) {
+            return;
+        }
+
+        try {
+            entityJSON = EntityUtils.toString(response.getEntity());
+            String attachName = "RESPONSE ENTITY";
+            if (responseEntity != null) {
+                if (status.getStatusCode() < 400) {
+                    entity = getEntityFromJson(responseEntity, entityJSON);
+                } else {
+                    attachName = "RESPONSE ERROR";
+                    apiError = getEntityFromJson((Class<T>) JsonError.class, entityJSON);
+                }
+            }
+
+            ApiUtils.attachDataJson(entityJSON, attachName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <P> P getEntityFromJson(Class<T> responseEntity, String entityJSON) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return (P) mapper.readValue(entityJSON, responseEntity);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public StatusLine getStatus() {
+        return status;
+    }
+
+    @Override
+    public T getEntity() {
+        return entity;
+    }
+
+    @Override
+    public String getEntityAsString() {
+        return entityJSON;
+    }
+
+    @Override
+    public Header[] getAllHeaders() {
+        return headers;
+    }
+
+    public JsonBaseError getErrorEntity() {
+        return apiError;
+    }
+
+    public Header getHeader(String name) {
+        for (Header header : headers) {
+            if (header.getName().equals(name)) {
+                return header;
+            }
+        }
+
+        return null;
+    }
+
+}

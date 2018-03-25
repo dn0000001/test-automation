@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<user-login-do>
+    <aliases/>
+    <loginUser>${email_1}</loginUser>
+    <loginPassword>${password_1}</loginPassword>
+    <response>
+        <status>
+            <statusCode>200</statusCode>
+            <reasonPhrase>OK</reasonPhrase>
+        </status>
+    </response>
+</user-login-do>

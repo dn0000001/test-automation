@@ -1,0 +1,112 @@
+package com.taf.automation.api.clients;
+
+import java.io.StringReader;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.apache.http.Header;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
+
+import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.api.rest.XmlBaseError;
+import com.taf.automation.api.ApiUtils;
+
+/**
+ * XML Response
+ *
+ * @param <T>
+ */
+public class XmlResponse<T> implements GenericHttpResponse<T> {
+    private StatusLine status;
+    private String entityXML;
+    private T entity;
+    private Header[] headers;
+    private XmlBaseError apiError;
+
+    /**
+     * Constructor for XML Response
+     *
+     * @param response       - Response
+     * @param responseEntity - Response Entity
+     */
+    public XmlResponse(CloseableHttpResponse response, Class<T> responseEntity) {
+        status = response.getStatusLine();
+        headers = response.getAllHeaders();
+
+        if (response.getEntity() == null) {
+            return;
+        }
+
+        try {
+            entityXML = ApiUtils.prettifyXML(EntityUtils.toString(response.getEntity()));
+            String attachName = "RESPONSE ENTITY";
+            if (responseEntity != null) {
+                if (status.getStatusCode() < 400) {
+                    entity = getEntityFromXml(responseEntity.getPackage().getName(), entityXML);
+                } else {
+                    attachName = "RESPONSE ERROR";
+                    apiError = getEntityFromXml(XmlBaseError.class.getPackage().getName(), entityXML);
+                }
+            }
+
+            ApiUtils.attachDataXml(entityXML, attachName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <P> P getEntityFromXml(String entityName, String entityXML) {
+        JAXBElement<P> element;
+        try {
+            JAXBContext context = JAXBContext.newInstance(entityName);
+            Unmarshaller u = context.createUnmarshaller();
+            StringReader stringReader = new StringReader(entityXML);
+            element = (JAXBElement<P>) u.unmarshal(stringReader);
+        } catch (JAXBException e) {
+            return null;
+        }
+
+        return element.getValue();
+    }
+
+    @Override
+    public StatusLine getStatus() {
+        return status;
+    }
+
+    @Override
+    public T getEntity() {
+        return entity;
+    }
+
+    @Override
+    public String getEntityAsString() {
+        return entityXML;
+    }
+
+    @Override
+    public Header[] getAllHeaders() {
+        return headers;
+    }
+
+    public XmlBaseError getErrorEntity() {
+        return apiError;
+    }
+
+    public Header getHeader(String name) {
+        for (Header header : headers) {
+            if (header.getName().equals(name)) {
+                return header;
+            }
+        }
+
+        return null;
+    }
+
+}

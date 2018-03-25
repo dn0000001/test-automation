@@ -1,0 +1,16 @@
+**/test.properties
+*.iml
+**/*.ipr
+target
+target-eclipse
+test-output
+/suites
+.settings
+.project
+.classpath
+.idea
+*.log
+.agignore
+*.tar
+.DS_Store
+/data

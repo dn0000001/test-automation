@@ -1,0 +1,1 @@
+window.resizeTo(arguments[0], arguments[1]);

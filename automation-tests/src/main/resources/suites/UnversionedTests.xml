@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Unversioned Tests" verbose="1" parallel="tests" thread-count="5">
+
+    <test name="Switch Dynamic Locator Test">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test">
+                <methods>
+                    <include name="dynamicLocatorSwitchingTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="Dynamic Locator Test">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test">
+                <methods>
+                    <include name="dynamicLocatorTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!--
+    <test name="True North Hockey Canada Test 1">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test"/>
+        </classes>
+    </test>
+
+    <test name="True North Hockey Canada Test 2">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test"/>
+        </classes>
+    </test>
+
+    <test name="True North Hockey Canada Test 3">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test">
+                <methods>
+                    <include name="generalUnitTest"/>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="True North Hockey Canada Test 4">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test">
+                <methods>
+                    <include name="generalUnitTest2"/>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="Asserts Test">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.AssertsTest"/>
+        </classes>
+    </test>
+
+
+    <test name="True North Hockey Canada Test 5">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test">
+                <methods>
+                    <include name="generalUnitTest3"/>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    -->
+    <!--
+    <test name="Weather Test" parallel="methods">
+        <parameter name="data-weather" value="data/api/GetCityWeatherByZIP_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.api.tests.WeatherTest"/>
+        </classes>
+    </test>
+    -->
+    <!--
+        <test name="JSON IP Test" parallel="methods">
+            <parameter name="data-json-ip" value="data/api/JsonIp_TestData.xml"/>
+            <classes>
+                <class name="com.taf.automation.api.tests.JsonIpTest"/>
+            </classes>
+        </test>
+    -->
+</suite>

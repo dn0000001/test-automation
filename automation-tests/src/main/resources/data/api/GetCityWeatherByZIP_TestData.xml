@@ -1,0 +1,15 @@
+<weather-do>
+    <aliases>
+    </aliases>
+
+    <request>
+        <zip>90210</zip>
+    </request>
+
+    <response>
+        <status>
+            <statusCode>200</statusCode>
+            <reasonPhrase>OK</reasonPhrase>
+        </status>
+    </response>
+</weather-do>

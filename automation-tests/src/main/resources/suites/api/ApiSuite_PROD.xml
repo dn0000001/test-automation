@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="API Suite" verbose="1" parallel="tests" thread-count="5">
+    <!--
+    <parameter name="data-weather" value="data/api/GetCityWeatherByZIP_TestData.xml"/>
+    <test name="Weather Test">
+        <classes>
+            <class name="com.taf.automation.api.tests.WeatherTest"/>
+        </classes>
+    </test>
+    -->
+    <parameter name="data-json-ip" value="data/api/JsonIp_TestData.xml"/>
+    <test name="JSON IP Test">
+        <classes>
+            <class name="com.taf.automation.api.tests.JsonIpTest"/>
+        </classes>
+    </test>
+
+</suite>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="UI Suite" verbose="1" parallel="tests" thread-count="5">
+
+    <test name="True North Hockey Canada Test">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.TNHC_Test"/>
+        </classes>
+    </test>
+
+</suite>

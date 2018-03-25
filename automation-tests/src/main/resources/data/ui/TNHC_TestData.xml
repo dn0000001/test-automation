@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<true-north-hockey-canada>
+    <aliases>
+        <player>tiger</player>
+        <value>duplicated</value>
+    </aliases>
+    <landing>
+        <player>${player}</player>
+        <team>sharks</team>
+        <division>sunday</division>
+        <search-fields>aaa -> bbb -> ccc -> null</search-fields>
+        <someField>${player}</someField>
+        <someField2>${player}</someField2>
+        <alternate>${value}</alternate>
+    </landing>
+</true-north-hockey-canada>
