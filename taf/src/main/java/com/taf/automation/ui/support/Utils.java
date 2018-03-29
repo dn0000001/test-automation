@@ -303,7 +303,8 @@ public class Utils {
         byte[] attachment = data.toXML().getBytes();
         String name = null;
         if (path != null) {
-            name = "..." + path.substring(path.lastIndexOf(File.separator));
+            // The path comes from the data-set file which should always use slash
+            name = "..." + path.substring(path.lastIndexOf("/"));
         }
 
         MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, name, "text/xml");

@@ -18,7 +18,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.8</version>
+                <version>${aspectj.maven.plugin.version}</version>
                 <configuration>
                     <showWeaveInfo>false</showWeaveInfo>
                     <Xlint>ignore</Xlint>
@@ -70,11 +70,6 @@
             <groupId>ru.yandex.qatools.allure</groupId>
             <artifactId>allure-bundle</artifactId>
             <version>${allure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-server</artifactId>
-            <version>2.53.1</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

@@ -94,21 +94,26 @@ public class TestNGBase {
     private void installDriver(String driverName, String driverPropertyName) {
         String os = System.getProperty("os.name").toUpperCase();
         String subFolder;
+        String extension = "";
         if (os.startsWith("MAC")) {
             subFolder = "/webdrivers/mac/";
         } else if (os.startsWith("LINUX")) {
             subFolder = "/webdrivers/linux/";
+        } else if (os.startsWith("WINDOWS")) {
+            boolean is64bit = System.getenv("ProgramFiles(x86)") != null;
+            subFolder = (is64bit) ? "/webdrivers/win64/" : "/webdrivers/win32/";
+            extension = ".exe";
         } else {
-            // Currently, we are only supporting mac and linux.  So, any other OS will not be able to find the driver
-            subFolder = "OS_NOT_SUPPORTED/";
+            // Unsupported OS, the driver will not be found
+            subFolder = "/OS_NOT_SUPPORTED/";
             LOG.error("There is NO WebDriver (in project) for OS:  " + os);
         }
 
-        String driverPath = System.getProperty("user.home") + subFolder + driverName;
+        String driverPath = System.getProperty("user.home") + subFolder + driverName + extension;
         try {
             File fileTarget = new File(driverPath);
             File fileSource = File.createTempFile("driverName", "");
-            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(subFolder + driverName), fileSource);
+            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(subFolder + driverName + extension), fileSource);
             if (!FileUtils.contentEquals(fileSource, fileTarget)) {
                 FileUtils.copyFile(fileSource, fileTarget);
                 fileTarget.setExecutable(true, true);
