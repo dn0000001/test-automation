@@ -1,5 +1,8 @@
 package com.taf.automation.ui.support.conditional;
 
+import com.taf.automation.ui.support.Utils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 /**
  * This class holds criteria information to find matches in the Condition class
  */
@@ -48,6 +51,12 @@ public class Criteria {
      */
     public void setCriteriaType(CriteriaType type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        ReflectionToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
+        return ReflectionToStringBuilder.toStringExclude(this, "options");
     }
 
 }

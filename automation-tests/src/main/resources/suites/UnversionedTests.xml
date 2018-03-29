@@ -25,6 +25,18 @@
     </test>
 
     <!--
+    <test name="Conditional Test">
+        <classes>
+            <class name="com.taf.automation.ui.app.tests.ConditionalTest">
+                <methods>
+                    <include name="multipleCriteriaTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    -->
+
+    <!--
     <test name="True North Hockey Canada Test 1">
         <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
         <classes>
@@ -70,7 +82,6 @@
         </classes>
     </test>
 
-
     <test name="True North Hockey Canada Test 5">
         <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
         <classes>
@@ -83,6 +94,7 @@
         </classes>
     </test>
     -->
+
     <!--
     <test name="Weather Test" parallel="methods">
         <parameter name="data-weather" value="data/api/GetCityWeatherByZIP_TestData.xml"/>
@@ -91,6 +103,7 @@
         </classes>
     </test>
     -->
+
     <!--
         <test name="JSON IP Test" parallel="methods">
             <parameter name="data-json-ip" value="data/api/JsonIp_TestData.xml"/>
