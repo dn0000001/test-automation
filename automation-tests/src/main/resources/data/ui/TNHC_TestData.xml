@@ -9,7 +9,7 @@
         <player>${player}</player>
         <team>sharks</team>
         <division>sunday</division>
-        <search-fields>aaa -> bbb -> ccc -> null</search-fields>
+        <search-fields>aaa -> bbb -> ccc -> Summer 2017</search-fields>
         <someField>${player}</someField>
         <someField2>${player}</someField2>
         <alternate>${value}</alternate>
