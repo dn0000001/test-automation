@@ -14,7 +14,7 @@ public class Search extends PageComponent {
     private TextBox player;
     private TextBox team;
     private TextBox division;
-    private Select season;
+    private SelectEnhanced season;
     private WebElement search;
 
     public Search() {
@@ -30,7 +30,7 @@ public class Search extends PageComponent {
         player = new TextBox(getCoreElement().findElement(By.id("player")));
         team = new TextBox(getCoreElement().findElement(By.id("team")));
         division = new TextBox(getCoreElement().findElement(By.id("division")));
-        season = new Select(getCoreElement().findElement(By.name("season")));
+        season = new SelectEnhanced(getCoreElement().findElement(By.name("season")));
         search = getCoreElement().findElement(By.xpath(".//input[@type='submit']"));
     }
 
