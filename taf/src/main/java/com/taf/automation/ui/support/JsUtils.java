@@ -16,6 +16,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public class JsUtils {
     private static final String _JS_ScrollIntoViewWithOffset = Utils.readResource("JS/ScrollIntoViewWithOffset.js");
+    private static final String _JS_Focus = Utils.readResource("JS/Focus.js");
+    private static final String _JS_GetTextOnlyTopLevel = Utils.readResource("JS/GetTextOnlyTopLevel.js");
+    private static final String _JS_ExecuteGetRequest = Utils.readResource("JS/ExecuteGetRequest.js");
+    private static final String _JS_Overlapping = Utils.readResource("JS/Overlapping.js");
+    private static final String _JS_ExecuteMouseEvent = Utils.readResource("JS/ExecuteMouseEvent.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -133,10 +138,7 @@ public class JsUtils {
      * @param element - Element to focus
      */
     public static void focus(WebElement element) {
-        final String js = "var evt = document.createEvent('HTMLEvents'); " +
-                "evt.initEvent('focus', true, true); " +
-                "arguments[0].dispatchEvent(evt); ";
-        execute(getWebDriver(), js, element);
+        execute(getWebDriver(), _JS_Focus, element);
     }
 
     /**
@@ -237,22 +239,14 @@ public class JsUtils {
      * Get text of element using JavaScript to only get the top level nodeType = 3 text<BR><BR>
      * <B>Use Case: </B>WebDriver will always get the visible text of the node and all of its children.
      * There are cases in which this is not desirable and you cannot easily remove the nested children text.
-     * This method will onlly get the top level text and exclude the nested children nodes.<BR><BR>
+     * This method will only get the top level text and exclude the nested children nodes.<BR><BR>
      * <B>Additional Note: </B> Using this JavaScript as an example you can modify to extract other hard to get text<BR>
      *
      * @param element - Element to get only top level nodeType = 3 text
      * @return String
      */
     public static String getText(WebElement element) {
-        final String textOnlyNodes = "var inner = ''; "
-                + "var all = arguments[0].childNodes; "
-                + "for (var i = 0; i < all.length; i++) { "
-                + "  if (all[i].nodeType == 3) { "
-                + "    inner += all[i].textContent.trim() + '\\n'; "
-                + "  } "
-                + "} "
-                + "return inner;";
-        return String.valueOf(execute(getWebDriver(), textOnlyNodes, element)).trim();
+        return String.valueOf(execute(getWebDriver(), _JS_GetTextOnlyTopLevel, element)).trim();
     }
 
     /**
@@ -262,12 +256,7 @@ public class JsUtils {
      * @return Response Text from the GET request to the specified URL
      */
     public static String executeGetRequest(String url) {
-        final String getRequest = "var url = arguments[0]; "
-                + "var xmlhttp = new XMLHttpRequest(); "
-                + "xmlhttp.open('GET', url, false); "
-                + "xmlhttp.send(); "
-                + "return xmlhttp.responseText;";
-        return String.valueOf(execute(getWebDriver(), getRequest, url));
+        return String.valueOf(execute(getWebDriver(), _JS_ExecuteGetRequest, url));
     }
 
     /**
@@ -329,15 +318,7 @@ public class JsUtils {
             return false;
         }
 
-        final String js = "rect1 = arguments[0].getBoundingClientRect(); "
-                + "rect2 = arguments[1].getBoundingClientRect(); "
-                + "return !("
-                + "  rect1.right < rect2.left || "
-                + "  rect1.left > rect2.right || "
-                + "  rect1.bottom < rect2.top || "
-                + "  rect1.top > rect2.bottom"
-                + ");";
-        return BooleanUtils.toBooleanObject(String.valueOf(execute(getWebDriver(), js, rect1, rect2)));
+        return BooleanUtils.toBooleanObject(String.valueOf(execute(getWebDriver(), _JS_Overlapping, rect1, rect2)));
     }
 
     /**
@@ -347,47 +328,7 @@ public class JsUtils {
      * @param event   - Mouse Event to execute
      */
     private static void executeMouseEvent(WebElement element, MouseEvent event) {
-        final String js = ""
-                + "_WebElement = arguments[0];"
-                + "_MouseEventType = arguments[1];"
-                + "_Bubbles = arguments[2];"
-                + "_Cancelable = arguments[3];"
-                + "_ViewString = arguments[4];"
-                + "_Detail = arguments[5];"
-                + "_ScreenX = arguments[6];"
-                + "_ScreenY = arguments[7];"
-                + "_ClientX = arguments[8];"
-                + "_ClientY = arguments[9];"
-                + "_CtrlKey = arguments[10];"
-                + "_AltKey = arguments[11];"
-                + "_ShiftKey = arguments[12];"
-                + "_MetaKey = arguments[13];"
-                + "_Button = arguments[14];"
-                + "_RelatedTarget = arguments[15];"
-                + " "
-                + "_View = _ViewString;"
-                + "if (_ViewString == null || _ViewString == undefined || _ViewString == 'window') {"
-                + "  _View = window;"
-                + "}"
-                + " "
-                + "var evt = new MouseEvent(_MouseEventType, {"
-                + "  bubbles: _Bubbles,"
-                + "  cancelable: _Cancelable,"
-                + "  view: _View,"
-                + "  detail: _Detail,"
-                + "  screenX: _ScreenX,"
-                + "  screenY: _ScreenY,"
-                + "  clientX: _ClientX,"
-                + "  clientY: _ClientY,"
-                + "  ctrlKey: _CtrlKey,"
-                + "  altKey: _AltKey,"
-                + "  shiftKey: _ShiftKey,"
-                + "  metaKey: _MetaKey,"
-                + "  button: _Button,"
-                + "  relatedTarget: _RelatedTarget"
-                + "});"
-                + "_WebElement.dispatchEvent(evt);";
-        execute(getWebDriver(), js,
+        execute(getWebDriver(), _JS_ExecuteMouseEvent,
                 element,
                 event.getType().toString(),
                 event.isBubbles(),
