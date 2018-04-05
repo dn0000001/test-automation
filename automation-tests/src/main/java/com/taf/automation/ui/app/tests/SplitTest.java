@@ -1,10 +1,17 @@
 package com.taf.automation.ui.app.tests;
 
+import com.taf.automation.ui.app.components.SelectEnhanced;
 import com.taf.automation.ui.support.Utils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.nullValue;
@@ -194,6 +201,40 @@ public class SplitTest {
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
         assertThat("testTrim", builder.isEquals());
+    }
+
+    @Test
+    public void testSort() {
+        List<String> actual = new ArrayList<>();
+        actual.add("aaa");
+        actual.add("zzz");
+        actual.add("ddd");
+
+        List<String> expected = new ArrayList<>();
+        expected.add("ddd");
+        expected.add("aaa");
+        expected.add("zzz");
+
+        actual.sort(String::compareToIgnoreCase);
+        expected.sort(String::compareToIgnoreCase);
+        assertThat("sort #1", actual, equalTo(expected));
+
+        // Example of how to sort by multiple fields
+        List<SelectEnhanced> someList = new ArrayList<>();
+        someList.sort(Comparator.comparing(SelectEnhanced::getValue).thenComparing(SelectEnhanced::getData));
+
+        // Example of how to split on each character of a string to create a list of strings
+        String value = "test";
+        List<String> actualValues = Arrays.asList(value.split(""));
+        actualValues.sort(String::compareToIgnoreCase);
+
+        List<String> expectedValues = new ArrayList<>();
+        expectedValues.add("e");
+        expectedValues.add("s");
+        expectedValues.add("t");
+        expectedValues.add("t");
+
+        assertThat("sort#2", actualValues, equalTo(expectedValues));
     }
 
 }
