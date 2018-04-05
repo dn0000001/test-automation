@@ -337,7 +337,7 @@ public class ExpectedConditionsUtil {
                         append = "_ViewPortOnly";
                     }
 
-                    screenshots.add(new MakeAttachmentEvent(attachment, title + append, "image/png"));
+                    screenshots.add(new MakeAttachmentEvent(ScreenshotUtil.convertPngToJpg(attachment), title + append, "image/jpeg"));
                     return screenshots;
                 } catch (Exception ex) {
                     return null;

@@ -7,7 +7,11 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -19,6 +23,10 @@ import java.util.List;
 public class ScreenshotUtil {
     private static final int MAX_SCROLLS = 20;
     private static final String DIVIDER_RESOURCE = "divider.png";
+
+    private ScreenshotUtil() {
+        // Prevent initialization of class as all public methods should be static
+    }
 
     /**
      * Manually scroll the entire page taking screenshots of the visible viewport as you go
@@ -231,6 +239,55 @@ public class ScreenshotUtil {
         output.flush();
         output.close();
         return output.toByteArray();
+    }
+
+    /**
+     * Convert a png screenshot to a jpg screenshot with compression quality of factor 0.7
+     *
+     * @param png - the png screenshot to be converted
+     * @return screenshot in jpg format with compression quality of factor 0.7
+     */
+    public static byte[] convertPngToJpg(byte[] png) {
+        return convertPngToJpg(png, 0.7f);
+    }
+
+    /**
+     * Convert a png screenshot to a jpg screenshot with specified compression quality factor
+     *
+     * @param png - the png screenshot to be converted
+     * @return screenshot in jpg format with specified compression quality factor
+     */
+    public static byte[] convertPngToJpg(byte[] png, float compressionQuality) {
+        ByteArrayInputStream bais = new ByteArrayInputStream(png);
+        BufferedImage image;
+        try {
+            image = ImageIO.read(bais);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to read the png:  " + ex.getMessage());
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageOutputStream ios;
+        try {
+            ios = ImageIO.createImageOutputStream(baos);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to create image output stream for the jpg:  " + ex.getMessage());
+        }
+
+        ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+        ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
+        jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        jpgWriteParam.setCompressionQuality(compressionQuality);
+        jpgWriter.setOutput(ios);
+        try {
+            jpgWriter.write(null, new IIOImage(image, null, null), jpgWriteParam);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to convert the png to jpg:  " + ex.getMessage());
+        }
+
+        byte[] data = baos.toByteArray();
+        jpgWriter.dispose();
+        return data;
     }
 
 }
