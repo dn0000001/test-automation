@@ -11,6 +11,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Stack;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Misc tests/experiments
@@ -81,6 +85,37 @@ public class MiscTest {
         df.setDecimalFormatSymbols(dfs);
         Number num = df.parse("7 999,58 $".replaceAll("\\s", ""));
         Helper.log(String.valueOf(num.doubleValue()), true);
+    }
+
+    @Test
+    public void test_StackFunctionality() {
+        Stack<String> stack = new Stack<>();
+        assertThat("Empty Stack", stack.empty());
+
+        stack.push("d");
+        assertThat("Stack should have 1 item", stack.empty(), equalTo(false));
+        assertThat("Stack Peek", stack.peek(), equalTo("d"));
+
+        assertThat("Stack Pop", stack.pop(), equalTo("d"));
+        assertThat("Empty Stack #2", stack.empty());
+
+        stack.push("m");
+        stack.push("z");
+        stack.push("a");
+        stack.push("g");
+
+        assertThat("Stack Search - Not Found", stack.search("y"), equalTo(-1));
+        assertThat("Stack Search - Found", stack.search("z"), equalTo(3));
+        assertThat("Stack should have 4 items", stack.empty(), equalTo(false));
+        assertThat("Stack Peek #1", stack.peek(), equalTo("g"));
+        assertThat("Stack Pop #1", stack.pop(), equalTo("g"));
+        assertThat("Stack Peek #2", stack.peek(), equalTo("a"));
+        assertThat("Stack Pop #2", stack.pop(), equalTo("a"));
+        assertThat("Stack Peek #3", stack.peek(), equalTo("z"));
+        assertThat("Stack Pop #3", stack.pop(), equalTo("z"));
+        assertThat("Stack Peek #4", stack.peek(), equalTo("m"));
+        assertThat("Stack Pop #4", stack.pop(), equalTo("m"));
+        assertThat("Empty Stack #3", stack.empty());
     }
 
 }
