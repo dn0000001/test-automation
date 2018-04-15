@@ -10,6 +10,7 @@ import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.ui.support.CryptoUtils;
 import com.taf.automation.ui.support.TestProperties;
 import com.thoughtworks.xstream.XStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -53,6 +54,8 @@ public class ApiClient implements GenericHttpInterface {
     private HttpClientContext clientContext;
     private ParametersType parametersType;
     private ReturnType returnType;
+    private String customAcceptHeader;
+    private String customContentType;
 
     private class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
         public static final String METHOD_NAME = "DELETE";
@@ -175,11 +178,26 @@ public class ApiClient implements GenericHttpInterface {
             HttpEntityEnclosingRequest req = (HttpEntityEnclosingRequest) request;
             HttpEntity httpEntity = toHttpEntity(entity);
             req.setEntity(httpEntity);
-            if (parametersType == ParametersType.XML) {
+
+
+            if (!StringUtils.defaultString(customAcceptHeader).equals("")) {
+                req.setHeader("Accept", customAcceptHeader);
+            } else if (parametersType == ParametersType.XML) {
                 req.setHeader("Accept", "application/xml");
-                req.setHeader("Content-type", "application/xml");
             } else if (parametersType == ParametersType.JSON) {
                 req.setHeader("Accept", "application/json");
+            }
+
+            if (customContentType != null) {
+                // When customContentType is the empty string, this indicates to not set the Content-Type header.
+                // However, the Content-Type header may have already been set.
+                if (!customContentType.equals("")) {
+                    // Note:  If this is set to an invalid Content-Type, then the request may not be sent/received.
+                    req.setHeader("Content-type", customContentType);
+                }
+            } else if (parametersType == ParametersType.XML) {
+                req.setHeader("Content-type", "application/xml");
+            } else if (parametersType == ParametersType.JSON) {
                 req.setHeader("Content-type", "application/json");
             }
         }
@@ -255,6 +273,36 @@ public class ApiClient implements GenericHttpInterface {
      */
     public void setReturnType(ReturnType returnType) {
         this.returnType = returnType;
+    }
+
+    /**
+     * Set Custom Accept Header<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>Use <B>null</B> to set Accept header as normal</LI>
+     * <LI>The Accept header should only be overridden if the end point requires a custom value</LI>
+     * </OL>
+     *
+     * @param customAcceptHeader - value to be set
+     */
+    public void setCustomAcceptHeader(String customAcceptHeader) {
+        this.customAcceptHeader = customAcceptHeader;
+    }
+
+    /**
+     * Set Custom Content-Type header<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>Use empty string to use the currently set Content-Type header which prevents it from being overridden</LI>
+     * <LI>Use <B>null</B> to set Content-Type header as normal</LI>
+     * <LI>The Content-Type header should only be overridden if the default is not correct (or not being set based on
+     * entity type)</LI>
+     * </OL>
+     *
+     * @param customContentType - value to be set
+     */
+    public void setCustomContentType(String customContentType) {
+        this.customContentType = customContentType;
     }
 
     @Override
