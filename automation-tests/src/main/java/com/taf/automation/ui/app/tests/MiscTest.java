@@ -9,9 +9,11 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -116,6 +118,26 @@ public class MiscTest {
         assertThat("Stack Peek #4", stack.peek(), equalTo("m"));
         assertThat("Stack Pop #4", stack.pop(), equalTo("m"));
         assertThat("Empty Stack #3", stack.empty());
+    }
+
+    @Test
+    public void test_array2ListPrimitive() {
+        int[] arrayOfInt = new int[]{1, 2, 8, 10, 5};
+        List<Integer> listOfInt = Arrays.stream(arrayOfInt).boxed().collect(Collectors.toList());
+        assertThat("Size", listOfInt.size(), equalTo(arrayOfInt.length));
+        for (int i = 0; i < arrayOfInt.length; i++) {
+            assertThat("Element[" + i + "]", listOfInt.get(i), equalTo(arrayOfInt[i]));
+        }
+    }
+
+    @Test
+    public void test_array2ListObject() {
+        Integer[] arrayOfObjects = new Integer[]{1, 2, 8, 10, 5};
+        List<Integer> listOfObjects = Arrays.stream(arrayOfObjects).collect(Collectors.toList());
+        assertThat("Size", listOfObjects.size(), equalTo(arrayOfObjects.length));
+        for (int i = 0; i < arrayOfObjects.length; i++) {
+            assertThat("Element[" + i + "]", listOfObjects.get(i), equalTo(arrayOfObjects[i]));
+        }
     }
 
 }
