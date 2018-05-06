@@ -1,8 +1,13 @@
 package com.taf.automation.ui.app.tests;
 
+import com.taf.automation.ui.app.domainObjects.TNHC_DO;
+import com.taf.automation.ui.app.pageObjects.TNHC_LandingPage;
 import com.taf.automation.ui.support.AssertAggregator;
+import com.taf.automation.ui.support.AssertsUtil;
 import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.testng.TestNGBase;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.openqa.selenium.By;
@@ -11,21 +16,16 @@ import org.openqa.selenium.WebElement;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import com.taf.automation.ui.support.AssertsUtil;
-import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.testng.TestNGBase;
-import com.taf.automation.ui.app.domainObjects.TNHC_DO;
-import com.taf.automation.ui.app.pageObjects.TNHC_LandingPage;
-
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
 /**
@@ -271,6 +271,53 @@ public class AssertsTest extends TestNGBase {
         if (aggregator.getFailureCount() > 0) {
             throw new RuntimeException("There were assertion failures.  See the console log.");
         }
+    }
+
+    @Test
+    public void testRangePrimitive() {
+        assertThat("Start", 0, AssertsUtil.range(0, 2));
+        assertThat("Middle", 1, AssertsUtil.range(0, 2));
+        assertThat("End", 2, AssertsUtil.range(0, 2));
+
+        int failures = 0;
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.assertThat("Greater Than Range", 3, AssertsUtil.range(0, 2));
+        failures++;
+        assertThat("Greater Than Range did not fail", failures, equalTo(aggregator.getFailureCount()));
+
+        aggregator.assertThat("Less Than Range", 0, AssertsUtil.range(1, 3));
+        failures++;
+        assertThat("Less Than Range did not fail", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void testRangeBigDecimal() {
+        final BigDecimal TWO = Utils.parse("2", Locale.CANADA);
+        final BigDecimal THREE = Utils.parse("3", Locale.CANADA);
+        final BigDecimal FIVE = Utils.parse("5", Locale.CANADA);
+        final BigDecimal TEN_THOUSAND = Utils.parse("10000", Locale.CANADA);
+        final BigDecimal INFINITE = null;
+
+        assertThat("Start", BigDecimal.ZERO, AssertsUtil.range(BigDecimal.ZERO, BigDecimal.TEN));
+        assertThat("Middle", FIVE, AssertsUtil.range(BigDecimal.ZERO, BigDecimal.TEN));
+        assertThat("End", BigDecimal.TEN, AssertsUtil.range(BigDecimal.ZERO, BigDecimal.TEN));
+        assertThat("0 to Infinite", TEN_THOUSAND, AssertsUtil.range(BigDecimal.ZERO, INFINITE));
+        assertThat("Infinite range", INFINITE, AssertsUtil.range(INFINITE, INFINITE));
+
+        int failures = 0;
+        AssertAggregator aggregator = new AssertAggregator();
+
+        aggregator.assertThat("Greater Than Range", THREE, AssertsUtil.range(BigDecimal.ZERO, TWO));
+        failures++;
+        assertThat("Greater Than Range did not fail", failures, equalTo(aggregator.getFailureCount()));
+
+        aggregator.assertThat("Less Than Range", BigDecimal.ZERO, AssertsUtil.range(BigDecimal.ONE, THREE));
+        failures++;
+        assertThat("Less Than Range did not fail", failures, equalTo(aggregator.getFailureCount()));
+
+        aggregator.assertThat("Invalid Infinite range", TEN_THOUSAND, AssertsUtil.range(INFINITE, BigDecimal.ZERO));
+        failures++;
+        assertThat("Invalid Infinite range did not fail", failures, equalTo(aggregator.getFailureCount()));
     }
 
 }
