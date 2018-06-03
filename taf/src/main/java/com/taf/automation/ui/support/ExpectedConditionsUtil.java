@@ -502,4 +502,39 @@ public class ExpectedConditionsUtil {
         };
     }
 
+    /**
+     * An expectation for checking child WebElement as a part of parent element to be visible
+     *
+     * @param element      used as parent element. For example table with locator By.xpath("//table")
+     * @param childLocator used to find child element. For example td By.xpath("./tr/td")
+     * @return visible subelement
+     */
+    public static ExpectedCondition<List<WebElement>> visibilityOfAllNestedElementsLocatedBy(final WebElement element, final By childLocator) {
+        return new ExpectedCondition<List<WebElement>>() {
+
+            @Override
+            public List<WebElement> apply(WebDriver webDriver) {
+                List<WebElement> allChildren = element.findElements(childLocator);
+
+                if (!allChildren.isEmpty()) {
+                    // Ensure all child elements are displayed
+                    for (WebElement child : allChildren) {
+                        if (!child.isDisplayed()) {
+                            return null;
+                        }
+                    }
+
+                    return allChildren;
+                }
+
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("visibility of element located by %s -> %s", element, childLocator);
+            }
+        };
+    }
+
 }

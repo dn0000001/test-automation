@@ -5,7 +5,7 @@
     <test name="True North Hockey Canada Test">
         <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
         <classes>
-            <class name="com.taf.automation.ui.app.tests.TNHC_Test"/>
+            <class name="com.automation.common.ui.app.tests.TNHC_Test"/>
         </classes>
     </test>
 
