@@ -133,9 +133,9 @@ public class PageObjectV2 extends PageObject {
      * @param tries            - Number of attempts to set value & validate
      */
     protected void setElementValueV2(PageComponent component, boolean decrypt, DataTypes validationMethod, int tries) {
-        String enterData = component.getData();
-        String initialData = component.getInitialData();
-        String expectedData = component.getExpectedData();
+        String enterData = component.getData(DataTypes.Data, true);
+        String initialData = component.getData(DataTypes.Initial, true);
+        String expectedData = component.getData(DataTypes.Expected, true);
 
         if (decrypt) {
             component.initializeData(new CryptoUtils().decrypt(enterData), initialData, expectedData);
@@ -157,9 +157,9 @@ public class PageObjectV2 extends PageObject {
      * @param component - Component to be used
      */
     protected void setElementValueV2(String value, PageComponent component) {
-        String restoreData = component.getData();
-        String restoreInitialData = component.getInitialData();
-        String restoreExpectedData = component.getExpectedData();
+        String restoreData = component.getData(DataTypes.Data, true);
+        String restoreInitialData = component.getData(DataTypes.Initial, true);
+        String restoreExpectedData = component.getData(DataTypes.Expected, true);
         try {
             component.initializeData(value, null, null);
             setElementValueV2(component);
@@ -176,11 +176,11 @@ public class PageObjectV2 extends PageObject {
      * @param component - Component to set value and validate
      */
     protected void setElementValueV2(PageComponent component) {
-        if (component == null || component.getData() == null || component.getData().isEmpty()) {
+        if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
             return;
         }
 
-        DataTypes validationMethod = (component.getExpectedData() != null) ? DataTypes.Expected : DataTypes.Data;
+        DataTypes validationMethod = (component.getData(DataTypes.Expected, true) != null) ? DataTypes.Expected : DataTypes.Data;
         setElementValueV2(component, validationMethod, 3);
     }
 
@@ -194,7 +194,7 @@ public class PageObjectV2 extends PageObject {
      * @param tries            - Number of attempts to set value & validate
      */
     protected void setElementValueV2(PageComponent component, DataTypes validationMethod, int tries) {
-        if (component == null || component.getData() == null || component.getData().isEmpty()) {
+        if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
             return;
         }
 
@@ -300,6 +300,20 @@ public class PageObjectV2 extends PageObject {
 
         List<WebElement> elements = getDriver().findElements(by);
         return !elements.isEmpty() && elements.get(0).isDisplayed();
+    }
+
+    /**
+     * Check if the page object can handle the current page<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>By default this method will return false.</LI>
+     * <LI>If it is necessary to perform this check, then the extending page object should override this method.</LI>
+     * </OL>
+     *
+     * @return true if the page object can handle the current page else false
+     */
+    public boolean atPage() {
+        return false;
     }
 
 }

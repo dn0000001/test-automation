@@ -19,11 +19,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.qatools.allure.Allure;
 import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
+import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 import ui.auto.core.utils.AjaxTriggeredAction;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -310,6 +310,8 @@ public class Utils {
         MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, name, "text/xml");
         Allure.LIFECYCLE.fire(ev);
     }
+
+
 
     /**
      * Get Page Width
@@ -770,7 +772,7 @@ public class Utils {
      * @return true if component is not null & component's data is not null or not empty
      */
     public static boolean isNotEmpty(PageComponent component) {
-        return component != null && StringUtils.isNotEmpty(component.getData());
+        return component != null && StringUtils.isNotEmpty(component.getData(DataTypes.Data, true));
     }
 
     /**
@@ -780,7 +782,7 @@ public class Utils {
      * @return true if component is not null & component's data is not null or not empty or not whitespace only
      */
     public static boolean isNotBlank(PageComponent component) {
-        return component != null && StringUtils.isNotBlank(component.getData());
+        return component != null && StringUtils.isNotBlank(component.getData(DataTypes.Data, true));
     }
 
     /**

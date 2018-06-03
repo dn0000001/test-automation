@@ -1,6 +1,5 @@
 package com.taf.automation.ui.support;
 
-import com.taf.automation.api.ApiDomainObject;
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.ConsulInstance;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.CheckBox;
 import ui.auto.core.components.WebComponent;
+import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 import ui.auto.core.pagecomponent.PageObject;
 import ui.auto.core.pagecomponent.SkipAutoFill;
@@ -140,7 +140,7 @@ public class Helper {
      * @param retries   - Number of retries
      */
     public static void setValue(String log, PageComponent component, boolean validate, int retries) {
-        if (component == null || component.getData() == null) {
+        if (component == null || component.getData(DataTypes.Data, true) == null) {
             log("Skipped Set Value for", log);
         } else {
             performSetValue(log, component, validate, retries);
@@ -160,9 +160,9 @@ public class Helper {
      */
     @Step("Set Value for {0}")
     private static void performSetValue(String log, PageComponent component, boolean validate, int retries) {
-        String validationData = component.getData();
-        if (component.getExpectedData() != null) {
-            validationData = component.getExpectedData();
+        String validationData = component.getData(DataTypes.Data, true);
+        if (component.getData(DataTypes.Expected, true) != null) {
+            validationData = component.getData(DataTypes.Expected, true);
         }
 
         boolean validationFlag = false;
@@ -285,8 +285,8 @@ public class Helper {
                 EqualsBuilder resultsItems = new EqualsBuilder();
 
                 // Verify each line is equal for the specific item
-                String[] actualLines = new ApiDomainObject().getXstream().toXML(actual.get(item)).split("\n");
-                String[] expectedLines = new ApiDomainObject().getXstream().toXML(expected.get(item)).split("\n");
+                String[] actualLines = new DomainObject().getXstream().toXML(actual.get(item)).split("\n");
+                String[] expectedLines = new DomainObject().getXstream().toXML(expected.get(item)).split("\n");
 
                 // Verify that the number of lines is equal for the specified item
                 resultsItems.append(actualLines.length, expectedLines.length);
@@ -374,13 +374,13 @@ public class Helper {
             boolean found = false;
 
             // First check if item already exists in the cache
-            String key = new ApiDomainObject().getXstream().toXML(item);
+            String key = new DomainObject().getXstream().toXML(item);
             Integer value = cache.get(key);
             if (value == null) {
                 // Not in cache, continue to build cache as we check the actual items
                 for (int i = createCacheIndex; i < actual.size(); i++) {
                     // Put new actual item into the cache
-                    String cacheKey = new ApiDomainObject().getXstream().toXML(actual.get(i));
+                    String cacheKey = new DomainObject().getXstream().toXML(actual.get(i));
                     cache.put(cacheKey, i);
 
                     // Increment index for actual items added to cache such that no additional processing
@@ -443,7 +443,7 @@ public class Helper {
         EqualsBuilder results = new EqualsBuilder();
         Map<String, Integer> cache = getCache(actual);
         for (T item : excluded) {
-            String key = new ApiDomainObject().getXstream().toXML(item);
+            String key = new DomainObject().getXstream().toXML(item);
             boolean notFound = cache.get(key) == null;
             if (!notFound) {
                 log("Found item:  " + key);
@@ -474,7 +474,7 @@ public class Helper {
         if (items != null) {
             // Go in reverse order such that cache contains the 1st index for duplicates when complete
             for (int i = items.size() - 1; i > 0; i--) {
-                String key = new ApiDomainObject().getXstream().toXML(items.get(i));
+                String key = new DomainObject().getXstream().toXML(items.get(i));
                 cache.put(key, i);
             }
         }
@@ -498,7 +498,7 @@ public class Helper {
             if (item == null) {
                 LOG.info("null object");
             } else {
-                String key = new ApiDomainObject().getXstream().toXML(item);
+                String key = new DomainObject().getXstream().toXML(item);
                 LOG.info(key);
             }
         }

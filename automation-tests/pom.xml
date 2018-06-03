@@ -54,7 +54,7 @@
 					<attach>false</attach>
 					<archive>
 						<manifest>
-							<mainClass>com.taf.automation.ui.run.RunTests</mainClass>
+							<mainClass>com.automation.common.ui.run.RunTests</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

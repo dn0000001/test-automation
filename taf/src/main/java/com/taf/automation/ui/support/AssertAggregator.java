@@ -1,6 +1,5 @@
 package com.taf.automation.ui.support;
 
-import com.taf.automation.api.ApiDomainObject;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
@@ -161,8 +160,8 @@ public class AssertAggregator {
             assertThat(reason, actual, nullValue());
             assertThat(reason, expected, nullValue());
         } else {
-            String[] actualLines = new ApiDomainObject().getXstream().toXML(actual).split("\n");
-            String[] expectedLines = new ApiDomainObject().getXstream().toXML(expected).split("\n");
+            String[] actualLines = new DomainObject().getXstream().toXML(actual).split("\n");
+            String[] expectedLines = new DomainObject().getXstream().toXML(expected).split("\n");
             assertThat(reason + " - Number Of Lines", actualLines.length, equalTo(expectedLines.length));
 
             int totalLines = Math.min(actualLines.length, expectedLines.length);
