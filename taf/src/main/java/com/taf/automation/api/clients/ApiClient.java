@@ -5,6 +5,7 @@ import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.JsonUtils;
 import com.taf.automation.api.ParametersType;
 import com.taf.automation.api.ReturnType;
+import com.taf.automation.api.TrustAllStrategy;
 import com.taf.automation.api.rest.GenericHttpInterface;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.ui.support.CryptoUtils;
@@ -33,6 +34,7 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
@@ -117,7 +119,14 @@ public class ApiClient implements GenericHttpInterface {
         SSLContext sslContext;
 
         try {
-            sslContext = SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build();
+            TrustStrategy trustStrategy;
+            if (TestProperties.getInstance().getEnvironment().isProdEnv()) {
+                trustStrategy = new TrustSelfSignedStrategy();
+            } else {
+                trustStrategy = new TrustAllStrategy();
+            }
+
+            sslContext = SSLContexts.custom().loadTrustMaterial(null, trustStrategy).build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -337,7 +346,7 @@ public class ApiClient implements GenericHttpInterface {
 
     public <T> GenericHttpResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType, List<Header> headers) {
         HttpDeleteWithBody deleteWithBody = new HttpDeleteWithBody(resourcePath);
-        return executeRequest(deleteWithBody, (HttpEntity) entity, responseEntityType, headers);
+        return executeRequest(deleteWithBody, entity, responseEntityType, headers);
     }
 
 }

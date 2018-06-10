@@ -11,6 +11,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("true-north-hockey-canada")
 public class TNHC_DO extends DomainObject {
     TNHC_LandingPage landing;
+    String user;
+    String pass;
 
     public TNHC_DO() {
 
@@ -32,6 +34,14 @@ public class TNHC_DO extends DomainObject {
         }
 
         return landing;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getPass() {
+        return pass;
     }
 
 }

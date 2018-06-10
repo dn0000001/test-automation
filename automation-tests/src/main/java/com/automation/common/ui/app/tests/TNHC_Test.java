@@ -1,20 +1,18 @@
 package com.automation.common.ui.app.tests;
 
+import com.automation.common.ui.app.domainObjects.TNHC_DO;
+import com.automation.common.ui.app.pageObjects.TNHC_LandingPage;
 import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
-
-import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.testng.TestNGBase;
-import com.automation.common.ui.app.domainObjects.TNHC_DO;
-import com.automation.common.ui.app.pageObjects.TNHC_LandingPage;
 
 /**
  * Unit testing framework
@@ -95,15 +93,15 @@ public class TNHC_Test extends TestNGBase {
     @Parameters("data-set")
     @Test(enabled = true)
     public void dynamicLocatorSwitchingTest(@Optional("data/ui/TNHC_TestData.xml") String dataSet) {
-        TNHC_DO hnhc = new TNHC_DO(getContext()).fromResource(dataSet);
+        TNHC_DO tnhc = new TNHC_DO(getContext()).fromResource(dataSet);
         getContext().getDriver().get(TestProperties.getInstance().getURL());
-        TNHC_LandingPage landing = hnhc.getLanding();
+        TNHC_LandingPage landing = tnhc.getLanding();
 
-        landing.addSubstitution("ALTERNATE","player");
+        landing.addSubstitution("ALTERNATE", "player");
         landing.initPage(getContext());
         landing.setAlternate();
 
-        landing.addSubstitution("ALTERNATE","team");
+        landing.addSubstitution("ALTERNATE", "team");
         landing.initPage(getContext());
         landing.setAlternate();
         Utils.sleep(PAUSE_TEST);

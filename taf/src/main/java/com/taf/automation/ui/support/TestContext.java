@@ -50,8 +50,12 @@ public class TestContext extends PageComponentContext {
         }
     }
 
+    public void setTestProperties(TestProperties props) {
+        this.props = props;
+    }
+
     public void init() {
-        driver = props.getBrowserType().getNewWebDriver();
+        driver = props.getBrowserType().getNewWebDriver(props);
         if (props.getPageLoadTimeout() > 0) {
             driver.manage().timeouts().pageLoadTimeout(props.getPageLoadTimeout(), TimeUnit.MINUTES);
         }

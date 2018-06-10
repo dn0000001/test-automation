@@ -1,15 +1,15 @@
 package com.taf.automation.api.clients;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.taf.automation.api.ApiUtils;
+import com.taf.automation.api.rest.GenericHttpResponse;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.taf.automation.api.ApiUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class to handle API Login and store the session
@@ -25,7 +25,7 @@ public class ApiLoginSession {
     private String userId;
     private String token;
 
-    public GenericResponse<UserLogin> login(String userEmail, String password) {
+    public GenericHttpResponse<UserLogin> login(String userEmail, String password) {
         //
         // Application specific information to login
         //
@@ -43,7 +43,7 @@ public class ApiLoginSession {
         //
         String resourcePath = "/api/user/login";
 
-        GenericResponse<UserLogin> apiResponse = (GenericResponse<UserLogin>) client.post(resourcePath, entity, UserLogin.class, headers);
+        GenericHttpResponse<UserLogin> apiResponse = client.post(resourcePath, entity, UserLogin.class, headers);
         if (apiResponse.getEntity() != null) {
             UserLogin userLogins = apiResponse.getEntity();
             this.token = userLogins.getToken();
@@ -68,58 +68,58 @@ public class ApiLoginSession {
         }
     }
 
-    public <T> GenericResponse<T> post(String resourcePath, HttpEntity entity, Class<T> responseEntityType) {
+    public <T> GenericHttpResponse<T> post(String resourcePath, HttpEntity entity, Class<T> responseEntityType) {
         return post(resourcePath, entity, responseEntityType, userId, token);
     }
 
-    public <T> GenericResponse<T> post(String resourcePath, HttpEntity entity, Class<T> responseEntityType, String userId, String token) {
+    public <T> GenericHttpResponse<T> post(String resourcePath, HttpEntity entity, Class<T> responseEntityType, String userId, String token) {
         setAuthHeaders(userId, token);
-        return (GenericResponse<T>) client.post(resourcePath, entity, responseEntityType, headers);
+        return client.post(resourcePath, entity, responseEntityType, headers);
     }
 
-    public <T> GenericResponse<T> get(String resourcePath, Class<T> responseEntityType) {
+    public <T> GenericHttpResponse<T> get(String resourcePath, Class<T> responseEntityType) {
         return get(resourcePath, responseEntityType, userId, token);
     }
 
-    public <T> GenericResponse<T> get(String resourcePath, Class<T> responseEntityType, String userId, String token) {
+    public <T> GenericHttpResponse<T> get(String resourcePath, Class<T> responseEntityType, String userId, String token) {
         setAuthHeaders(userId, token);
-        return (GenericResponse<T>) client.get(resourcePath, responseEntityType, headers);
+        return client.get(resourcePath, responseEntityType, headers);
     }
 
-    public <T> GenericResponse<T> put(String resourcePath, HttpEntity entity, Class<T> responseEntityType) {
+    public <T> GenericHttpResponse<T> put(String resourcePath, HttpEntity entity, Class<T> responseEntityType) {
         return put(resourcePath, entity, responseEntityType, userId, token);
     }
 
-    public <T> GenericResponse<T> put(String resourcePath, HttpEntity entity, Class<T> responseEntityType, String userId, String token) {
+    public <T> GenericHttpResponse<T> put(String resourcePath, HttpEntity entity, Class<T> responseEntityType, String userId, String token) {
         setAuthHeaders(userId, token);
-        return (GenericResponse<T>) client.put(resourcePath, entity, responseEntityType, headers);
+        return client.put(resourcePath, entity, responseEntityType, headers);
     }
 
-    public <T> GenericResponse<T> delete(String resourcePath, Class<T> responseEntityType) {
+    public <T> GenericHttpResponse<T> delete(String resourcePath, Class<T> responseEntityType) {
         return delete(resourcePath, responseEntityType, userId, token);
     }
 
-    public <T> GenericResponse<T> delete(String resourcePath, Class<T> responseEntityType, String userId, String token) {
+    public <T> GenericHttpResponse<T> delete(String resourcePath, Class<T> responseEntityType, String userId, String token) {
         setAuthHeaders(userId, token);
-        return (GenericResponse<T>) client.delete(resourcePath, responseEntityType, headers);
+        return client.delete(resourcePath, responseEntityType, headers);
     }
 
-    public <T> GenericResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType) {
+    public <T> GenericHttpResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType) {
         return delete(resourcePath, entity, responseEntityType, userId, token);
     }
 
-    public <T> GenericResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType, String userId, String token) {
+    public <T> GenericHttpResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType, String userId, String token) {
         setAuthHeaders(userId, token);
-        return (GenericResponse<T>) client.delete(resourcePath, entity, responseEntityType, headers);
+        return client.delete(resourcePath, entity, responseEntityType, headers);
     }
 
-    public <T> GenericResponse<T> patch(String resourcePath, HttpEntity entity, Class<T> responseEntityType) {
+    public <T> GenericHttpResponse<T> patch(String resourcePath, HttpEntity entity, Class<T> responseEntityType) {
         return patch(resourcePath, entity, responseEntityType, userId, token);
     }
 
-    public <T> GenericResponse<T> patch(String resourcePath, HttpEntity entity, Class<T> responseEntityType, String userId, String token) {
+    public <T> GenericHttpResponse<T> patch(String resourcePath, HttpEntity entity, Class<T> responseEntityType, String userId, String token) {
         setAuthHeaders(userId, token);
-        return (GenericResponse<T>) client.patch(resourcePath, entity, responseEntityType, headers);
+        return client.patch(resourcePath, entity, responseEntityType, headers);
     }
 
     public void addHeaders(List<BasicHeader> headers) {

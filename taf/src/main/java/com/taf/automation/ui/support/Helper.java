@@ -2,6 +2,7 @@ package com.taf.automation.ui.support;
 
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.ConsulInstance;
+import com.taf.automation.api.network.MultiSshSession;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -672,6 +673,29 @@ public class Helper {
         }
 
         return all;
+    }
+
+    /**
+     * Get domain specific test properties that can be used to create a specific context for a test.
+     *
+     * @param user      - SSH User
+     * @param password  - SSH Password
+     * @param sshHost   - SSH Host
+     * @param sshPort   - SSH Port
+     * @param proxyPort - Proxy Port on the SSH machine
+     * @return TestProperties to create a specific context
+     */
+    public static TestProperties getDomainSpecificTestProperties(String user, String password, String sshHost, int sshPort, int proxyPort) {
+        MultiSshSession session = new MultiSshSession()
+                .withCredentials(user, password)
+                .withFirstHost(sshHost, sshPort)
+                .withSecondHost(new MultiSshSession().getLocalHost(), proxyPort);
+        session.connect();
+        String proxy = session.getLocalHost() + ":" + session.getAssignedPort();
+        TestProperties domainSpecificTestProperties = Utils.deepCopy(TestProperties.getInstance());
+        domainSpecificTestProperties.setHttpProxy(proxy);
+        domainSpecificTestProperties.setHttpsProxy(proxy);
+        return domainSpecificTestProperties;
     }
 
 }

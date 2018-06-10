@@ -45,7 +45,10 @@ public enum WebDriverTypeEnum {
     }
 
     public WebDriver getNewWebDriver() {
-        TestProperties prop = TestProperties.getInstance();
+        return getNewWebDriver(TestProperties.getInstance());
+    }
+
+    public WebDriver getNewWebDriver(TestProperties prop) {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         Proxy proxy = null;
         if (prop.getHttpProxy() != null) {
@@ -72,7 +75,7 @@ public enum WebDriverTypeEnum {
         capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
 
         if (prop.getRemoteURL() != null) {
-            capabilities.merge(getCapabilities());
+            capabilities.merge(getCapabilities(prop));
             try {
                 return new RemoteWebDriver(new URL(prop.getRemoteURL()), capabilities);
             } catch (MalformedURLException e) {
@@ -98,12 +101,12 @@ public enum WebDriverTypeEnum {
         }
     }
 
-    private DesiredCapabilities getCapabilities() {
-        TestProperties prop = TestProperties.getInstance();
+    private DesiredCapabilities getCapabilities(TestProperties prop) {
         Platform platform = prop.getBrowserPlatform();
         if (platform == null) {
             platform = Platform.ANY;
         }
+
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setBrowserName(getDriverName());
         capabilities.setVersion(prop.getBrowserVersion());
