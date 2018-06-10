@@ -85,6 +85,9 @@ public class TNHC_Test extends TestNGBase {
         TNHC_LandingPage landing = hnhc.getLanding();
         landing.setDivision();
         Utils.sleep(PAUSE_TEST);
+
+        landing.performAccessibilityTest();
+        getContext().getAccessibility().verify();
     }
 
     @Features("Framework")

@@ -316,4 +316,35 @@ public class PageObjectV2 extends PageObject {
         return false;
     }
 
+    /**
+     * Perform Accessibility Test on current page.  Only displayed elements are verified.
+     *
+     * @param pageName - Page Name for logging
+     */
+    public void performAccessibilityTest(String pageName) {
+        ((TestContext) getContext()).getAccessibility().analyze(pageName);
+    }
+
+    /**
+     * Perform Accessibility Test on current page for specified component.  Only displayed elements are verified.
+     *
+     * @param pageName      - Page Name for logging
+     * @param componentName - Component Name for logging
+     * @param component     - Component to get element to perform the accessibility test on
+     */
+    public void performAccessibilityTest(String pageName, String componentName, PageComponent component) {
+        ((TestContext) getContext()).getAccessibility().analyze(pageName, componentName, component);
+    }
+
+    /**
+     * Perform Accessibility Test on current page for specified element.  Only displayed elements are verified.
+     *
+     * @param pageName    - Page Name for logging
+     * @param elementName - Element Name for logging
+     * @param element     - Element to perform the accessibility test on
+     */
+    public void performAccessibilityTest(String pageName, String elementName, WebElement element) {
+        ((TestContext) getContext()).getAccessibility().analyze(pageName, elementName, element);
+    }
+
 }

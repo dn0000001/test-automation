@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class TestContext extends PageComponentContext {
     private TestProperties props = TestProperties.getInstance();
     private Documenter documenter;
+    private Accessibility accessibility;
 
     public TestContext(WebDriver driver) {
         super(driver);
@@ -94,6 +95,17 @@ public class TestContext extends PageComponentContext {
         }
 
         return documenter;
+    }
+
+    public Accessibility getAccessibility() {
+        if (accessibility == null) {
+            accessibility = new Accessibility(driver);
+            accessibility.setAxeOn(props.isAxeOn());
+            accessibility.setAxeViolationsOnlyLog(props.isAxeViolationsOnlyLog());
+            accessibility.setAxeLoggingDelayed(props.isAxeLoggingDelayed());
+        }
+
+        return accessibility;
     }
 
 }
