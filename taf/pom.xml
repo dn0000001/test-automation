@@ -178,6 +178,15 @@
             <artifactId>httpmime</artifactId>
             <version>${httpmime.version}</version>
         </dependency>
+        <!--
+        mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
+
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>12.2.0.1</version>
+        </dependency>
+        -->
     </dependencies>
 
 </project>
