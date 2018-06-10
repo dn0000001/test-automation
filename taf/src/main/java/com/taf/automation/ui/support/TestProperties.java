@@ -301,8 +301,16 @@ public class TestProperties {
         return httpProxy;
     }
 
+    public void setHttpProxy(String httpProxy){
+        this.httpProxy = httpProxy;
+    }
+
     public String getHttpsProxy() {
         return httpsProxy;
+    }
+
+    public void setHttpsProxy(String httpsProxy){
+        this.httpsProxy = httpsProxy;
     }
 
     public String getUserAgent() {

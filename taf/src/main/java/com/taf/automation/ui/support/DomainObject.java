@@ -162,6 +162,10 @@ public class DomainObject extends DataPersistence {
         return context;
     }
 
+    public void setContext(TestContext context) {
+        this.context = context;
+    }
+
     @Test
     public void generate() {
         System.out.println(generateXML());

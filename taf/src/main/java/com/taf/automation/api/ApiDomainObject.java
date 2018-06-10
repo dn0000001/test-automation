@@ -2,24 +2,27 @@ package com.taf.automation.api;
 
 import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.api.clients.ApiLoginSession;
-import com.taf.automation.api.clients.GenericResponse;
 import com.taf.automation.api.clients.UserLogin;
 import com.taf.automation.api.converters.BasicHeaderConverter;
 import com.taf.automation.api.converters.EnumConverter;
-import com.taf.automation.ui.support.*;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
-import org.testng.annotations.Test;
-
+import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.ui.support.Credentials;
+import com.taf.automation.ui.support.CreditCard;
+import com.taf.automation.ui.support.Environment;
+import com.taf.automation.ui.support.EnvironmentType;
+import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.Utils;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
 import datainstiller.data.Data;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
 import datainstiller.data.DataValueConverter;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.testng.annotations.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -115,7 +118,7 @@ public class ApiDomainObject extends DataPersistence {
         return (headers == null) ? null : headers.stream().collect(Collectors.toList());
     }
 
-    protected GenericResponse<UserLogin> apiLogin() {
+    protected GenericHttpResponse<UserLogin> apiLogin() {
         getLoginSession();
         return loginSession.login(loginUser, loginPassword);
     }

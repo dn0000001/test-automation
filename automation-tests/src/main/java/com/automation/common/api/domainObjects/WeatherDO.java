@@ -1,11 +1,15 @@
 package com.automation.common.api.domainObjects;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.automation.common.converters.WeatherConverter;
+import com.automation.common.data.Weather;
+import com.taf.automation.api.ApiDomainObject;
+import com.taf.automation.api.ApiUtils;
+import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.VTD_XML;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -13,18 +17,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.message.BasicStatusLine;
 import org.hamcrest.Matchers;
-
 import ru.yandex.qatools.allure.annotations.Step;
 
-import com.taf.automation.api.ApiDomainObject;
-import com.taf.automation.api.clients.GenericResponse;
-import com.taf.automation.api.ApiUtils;
-import com.automation.common.converters.WeatherConverter;
-import com.automation.common.data.Weather;
-import com.taf.automation.ui.support.VTD_XML;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Domain Object to work with http://wsf.cdyne.com/WeatherWS/Weather.asmx?op=GetCityWeatherByZIP
@@ -47,7 +45,7 @@ public class WeatherDO extends ApiDomainObject {
         // Here is the actual response entity
         @SuppressWarnings("rawtypes")
         @XStreamOmitField
-        GenericResponse weather;
+        GenericHttpResponse weather;
 
         @Step("Validate Status")
         private void validateStatus() {
@@ -77,7 +75,7 @@ public class WeatherDO extends ApiDomainObject {
     public void getCityWeatherByZIP() {
         String resourcePath = "/WeatherWS/Weather.asmx/GetCityWeatherByZIP?ZIP=" + request.zip;
         Helper.log(resourcePath);
-        response.weather = (GenericResponse) getClient().get(resourcePath, null, null);
+        response.weather = getClient().get(resourcePath, null, null);
     }
 
     @SuppressWarnings("rawtypes")
@@ -88,7 +86,7 @@ public class WeatherDO extends ApiDomainObject {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("ZIP", request.zip));
         HttpEntity entity = ApiUtils.getFormHttpEntity(params);
-        response.weather = (GenericResponse) getClient().post(resourcePath, entity, null, null);
+        response.weather = getClient().post(resourcePath, entity, null, null);
     }
 
     @SuppressWarnings("rawtypes")
@@ -119,7 +117,7 @@ public class WeatherDO extends ApiDomainObject {
         List<Header> soapHeaders = new ArrayList<>();
         ApiUtils.updateForSoap(soapHeaders, "http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP");
 
-        response.weather = (GenericResponse) getClient().post(resourcePath, entity, null, soapHeaders);
+        response.weather = getClient().post(resourcePath, entity, null, soapHeaders);
     }
 
     public void validateStatus() {

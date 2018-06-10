@@ -5,6 +5,8 @@
         <player>tiger</player>
         <value>duplicated</value>
     </aliases>
+    <user>user2</user>
+    <pass>password</pass>
     <landing>
         <player>${player}</player>
         <team>sharks</team>

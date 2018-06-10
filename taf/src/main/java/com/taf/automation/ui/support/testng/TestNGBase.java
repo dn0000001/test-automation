@@ -206,7 +206,12 @@ public class TestNGBase {
     }
 
     protected TestContext getContext() {
+        return getContext(TestProperties.getInstance());
+    }
+
+    protected TestContext getContext(TestProperties props) {
         if (context() != null && context().getDriver() == null) {
+            context().setTestProperties(props);
             context().init();
             logInfo("+INITIALIZING CONTEXT: " + context().getDriver().toString());
         }
