@@ -41,6 +41,7 @@
         <consul.version>1.3.0</consul.version>
         <browser.mob.proxy.version>2.1.5</browser.mob.proxy.version>
         <httpmime.version>4.5.5</httpmime.version>
+        <axe.selenium.version>2.0</axe.selenium.version>
     </properties>
 
     <build>

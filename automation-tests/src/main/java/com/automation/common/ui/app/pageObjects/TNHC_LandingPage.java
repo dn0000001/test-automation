@@ -137,4 +137,8 @@ public class TNHC_LandingPage extends PageObjectV2 {
         alternate.validateData();
     }
 
+    public void performAccessibilityTest() {
+        performAccessibilityTest("True North Hockey Page");
+    }
+
 }

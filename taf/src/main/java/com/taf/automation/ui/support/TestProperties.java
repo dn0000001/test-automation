@@ -220,6 +220,15 @@ public class TestProperties {
     @Property("mail.timeout")
     private int mailTimeout = 30000; // In milliseconds
 
+    @Property("axe.on")
+    private boolean axeOn = false;
+
+    @Property("axe.violations.only.log")
+    private boolean axeViolationsOnlyLog = true;
+
+    @Property("axe.logging.delayed")
+    private boolean axeLoggingDelayed = true;
+
     @Property("automation.key")
     @HideInReport
     private String automationKey;
@@ -301,7 +310,7 @@ public class TestProperties {
         return httpProxy;
     }
 
-    public void setHttpProxy(String httpProxy){
+    public void setHttpProxy(String httpProxy) {
         this.httpProxy = httpProxy;
     }
 
@@ -309,7 +318,7 @@ public class TestProperties {
         return httpsProxy;
     }
 
-    public void setHttpsProxy(String httpsProxy){
+    public void setHttpsProxy(String httpsProxy) {
         this.httpsProxy = httpsProxy;
     }
 
@@ -595,6 +604,18 @@ public class TestProperties {
 
     public int getMailTimeout() {
         return mailTimeout;
+    }
+
+    public boolean isAxeOn() {
+        return axeOn;
+    }
+
+    public boolean isAxeViolationsOnlyLog() {
+        return axeViolationsOnlyLog;
+    }
+
+    public boolean isAxeLoggingDelayed() {
+        return axeLoggingDelayed;
     }
 
     public String getAutomationKey() {
