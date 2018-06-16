@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -90,6 +91,8 @@ public enum WebDriverTypeEnum {
                 return getChromeDriver(prop, capabilities);
             case SAFARI:
                 return getSafariDriver(prop, capabilities);
+            case EDGE:
+                return getEdgeDriver(prop, capabilities);
             default:
                 try {
                     Constructor<? extends WebDriver> constructor = driverClass.getConstructor(Capabilities.class);
@@ -165,6 +168,12 @@ public enum WebDriverTypeEnum {
         SafariOptions options = new SafariOptions();
         options.merge(capabilities);
         return new SafariDriver(options);
+    }
+
+    private EdgeDriver getEdgeDriver(TestProperties prop, DesiredCapabilities capabilities) {
+        EdgeOptions options = new EdgeOptions();
+        options.merge(capabilities);
+        return new EdgeDriver(options);
     }
 
 }
