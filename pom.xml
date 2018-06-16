@@ -42,6 +42,7 @@
         <browser.mob.proxy.version>2.1.5</browser.mob.proxy.version>
         <httpmime.version>4.5.5</httpmime.version>
         <axe.selenium.version>2.0</axe.selenium.version>
+        <sql.server.version>6.4.0.jre8</sql.server.version>
     </properties>
 
     <build>
