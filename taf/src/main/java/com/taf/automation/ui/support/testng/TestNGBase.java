@@ -132,6 +132,10 @@ public class TestNGBase {
         if (System.getenv("JENKINS_HOME") == null) {
             installDriver("geckodriver", "webdriver.gecko.driver");
             installDriver("chromedriver", "webdriver.chrome.driver");
+            if (System.getProperty("os.name").toUpperCase().startsWith("WINDOWS")) {
+                installDriver("IEDriverServer", "webdriver.ie.driver");
+                installDriver("MicrosoftWebDriver", "webdriver.edge.driver");
+            }
 
             TestProperties props = TestProperties.getInstance();
 
