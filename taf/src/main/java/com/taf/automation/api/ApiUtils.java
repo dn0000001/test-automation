@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * API Utilities
  */
+@SuppressWarnings("squid:S00112")
 public class ApiUtils {
     private static final String HTTPS = "https://";
     private static final String HTTP = "http://";

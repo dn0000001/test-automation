@@ -5,11 +5,16 @@ import ru.yandex.qatools.allure.Allure;
 import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 
 public class JsonUtils {
+    private JsonUtils() {
+        //
+    }
+
     /**
      * Get a Gson with correct configuration for our purposes
      *
      * @return Gson
      */
+    @SuppressWarnings("squid:S1488")
     public static Gson getGson() {
         Gson gson = new Gson();
 

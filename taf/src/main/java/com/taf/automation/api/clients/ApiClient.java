@@ -50,7 +50,10 @@ import java.util.List;
 /**
  * API Client which initializes the target host for sending requests
  */
+@SuppressWarnings("squid:S00112")
 public class ApiClient implements GenericHttpInterface {
+    private static final String ACCEPT = "Accept";
+    private static final String CONTENT_TYPE = "Content-type";
     private CloseableHttpClient client;
     private HttpHost targetHost;
     private HttpClientContext clientContext;
@@ -97,19 +100,49 @@ public class ApiClient implements GenericHttpInterface {
      * @param returnType     - Return Type
      */
     public ApiClient(ParametersType parametersType, ReturnType returnType) {
-        targetHost = getTargetHost();
-        client = buildClient();
-        clientContext = buildClientContext(targetHost);
+        this(
+                parametersType,
+                returnType,
+                TestProperties.getInstance().getApiUrl(),
+                TestProperties.getInstance().getApiCredentials().getEmailOrName(),
+                new CryptoUtils().decrypt(TestProperties.getInstance().getApiCredentials().getPassword()),
+                TestProperties.getInstance().getApiTimeout(),
+                TestProperties.getInstance().getApiTimeout()
+        );
+    }
+
+    /**
+     * Constructor - Configures the variables to send requests
+     *
+     * @param parametersType    - Parameters Type
+     * @param returnType        - Return Type
+     * @param url               - Base URL
+     * @param user              - User for basic authentication, if null skips authentication
+     * @param password          - Password for basic authentication, if null skips authentication
+     * @param socketTimeout     - Socket Timeout in milliseconds
+     * @param connectionTimeout - Connection Timeout in milliseconds
+     */
+    public ApiClient(
+            ParametersType parametersType,
+            ReturnType returnType,
+            String url,
+            String user,
+            String password,
+            int socketTimeout,
+            int connectionTimeout
+    ) {
+        targetHost = getTargetHost(url);
+        client = buildClient(socketTimeout, connectionTimeout);
+        clientContext = buildClientContext(targetHost, user, password);
         this.parametersType = parametersType;
         this.returnType = returnType;
     }
 
-    private HttpHost getTargetHost() {
-        TestProperties props = TestProperties.getInstance();
-        return HttpHost.create(props.getApiUrl());
+    private HttpHost getTargetHost(String url) {
+        return HttpHost.create(url);
     }
 
-    private CloseableHttpClient buildClient() {
+    private CloseableHttpClient buildClient(int socketTimeout, int connectionTimeout) {
         TestProperties props = TestProperties.getInstance();
         HttpHost proxyHost = null;
         if (props.getCiHttpProxy() != null) {
@@ -133,27 +166,26 @@ public class ApiClient implements GenericHttpInterface {
 
         SSLConnectionSocketFactory sslConnectionFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
 
-        RequestConfig config = RequestConfig.custom() //
-                .setSocketTimeout(props.getApiTimeout()) //
-                .setConnectTimeout(props.getApiTimeout()) //
-                .setProxy(proxyHost) //
+        RequestConfig config = RequestConfig.custom()
+                .setSocketTimeout(socketTimeout)
+                .setConnectTimeout(connectionTimeout)
+                .setProxy(proxyHost)
                 .build();
 
-        return HttpClients.custom() //
-                .setDefaultRequestConfig(config) //
-                .setSSLSocketFactory(sslConnectionFactory) //
-                .useSystemProperties() //
+        return HttpClients.custom()
+                .setDefaultRequestConfig(config)
+                .setSSLSocketFactory(sslConnectionFactory)
+                .useSystemProperties()
                 .build();
     }
 
-    private HttpClientContext buildClientContext(HttpHost targetHost) {
-        //
-        // If application does not require API Credentials, then this may need to be removed
-        //
-        TestProperties props = TestProperties.getInstance();
-        String apiUser = props.getApiCredentials().getEmailOrName();
-        String apiPassword = new CryptoUtils().decrypt(props.getApiCredentials().getPassword());
-        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(apiUser, apiPassword);
+    private HttpClientContext buildClientContext(HttpHost targetHost, String user, String password) {
+        HttpClientContext httpClientContext = HttpClientContext.create();
+        if (user == null || password == null) {
+            return httpClientContext;
+        }
+
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(user, password);
 
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -161,10 +193,9 @@ public class ApiClient implements GenericHttpInterface {
         AuthCache authCache = new BasicAuthCache();
         authCache.put(targetHost, new BasicScheme());
 
-        HttpClientContext clientContext = HttpClientContext.create();
-        clientContext.setCredentialsProvider(credentialsProvider);
-        clientContext.setAuthCache(authCache);
-        return clientContext;
+        httpClientContext.setCredentialsProvider(credentialsProvider);
+        httpClientContext.setAuthCache(authCache);
+        return httpClientContext;
     }
 
     /**
@@ -177,38 +208,13 @@ public class ApiClient implements GenericHttpInterface {
      * @return ApiResponse
      */
     private <T> GenericHttpResponse<T> executeRequest(HttpRequest request, Object entity, Class<T> responseEntity, List<Header> headers) {
-        if (headers != null) {
-            for (Header header : headers) {
-                request.setHeader(header);
-            }
-        }
+        setRequestHeaders(request, headers);
 
         if (request instanceof HttpEntityEnclosingRequest && entity != null) {
             HttpEntityEnclosingRequest req = (HttpEntityEnclosingRequest) request;
             HttpEntity httpEntity = toHttpEntity(entity);
             req.setEntity(httpEntity);
-
-
-            if (!StringUtils.defaultString(customAcceptHeader).equals("")) {
-                req.setHeader("Accept", customAcceptHeader);
-            } else if (parametersType == ParametersType.XML) {
-                req.setHeader("Accept", "application/xml");
-            } else if (parametersType == ParametersType.JSON) {
-                req.setHeader("Accept", "application/json");
-            }
-
-            if (customContentType != null) {
-                // When customContentType is the empty string, this indicates to not set the Content-Type header.
-                // However, the Content-Type header may have already been set.
-                if (!customContentType.equals("")) {
-                    // Note:  If this is set to an invalid Content-Type, then the request may not be sent/received.
-                    req.setHeader("Content-type", customContentType);
-                }
-            } else if (parametersType == ParametersType.XML) {
-                req.setHeader("Content-type", "application/xml");
-            } else if (parametersType == ParametersType.JSON) {
-                req.setHeader("Content-type", "application/json");
-            }
+            setHttpEntityEnclosingRequestHeaders(req);
         }
 
         StatusLine status = null;
@@ -216,11 +222,11 @@ public class ApiClient implements GenericHttpInterface {
         try (CloseableHttpResponse response = client.execute(targetHost, request, clientContext)) {
             status = response.getStatusLine();
             if (returnType == ReturnType.XML) {
-                apiResponse = new XmlResponse<T>(response, responseEntity);
+                apiResponse = new XmlResponse<>(response, responseEntity);
             } else if (returnType == ReturnType.JSON) {
-                apiResponse = new JsonResponse<T>(response, responseEntity);
+                apiResponse = new JsonResponse<>(response, responseEntity);
             } else {
-                apiResponse = new GenericResponse<T>(response, responseEntity);
+                apiResponse = new GenericResponse<>(response, responseEntity);
             }
         } catch (Exception e) {
             String statusLine = (status == null) ? "CONNECTION TIME OUT" : status.toString();
@@ -228,6 +234,39 @@ public class ApiClient implements GenericHttpInterface {
         }
 
         return apiResponse;
+    }
+
+    private void setRequestHeaders(HttpRequest request, List<Header> headers) {
+        if (headers == null) {
+            return;
+        }
+
+        for (Header header : headers) {
+            request.setHeader(header);
+        }
+    }
+
+    private void setHttpEntityEnclosingRequestHeaders(HttpEntityEnclosingRequest request) {
+        if (!StringUtils.defaultString(customAcceptHeader).equals("")) {
+            request.setHeader(ACCEPT, customAcceptHeader);
+        } else if (parametersType == ParametersType.XML) {
+            request.setHeader(ACCEPT, "application/xml");
+        } else if (parametersType == ParametersType.JSON) {
+            request.setHeader(ACCEPT, "application/json");
+        }
+
+        if (customContentType != null) {
+            // When customContentType is the empty string, this indicates to not set the Content-Type header.
+            // However, the Content-Type header may have already been set.
+            if (!customContentType.equals("")) {
+                // Note:  If this is set to an invalid Content-Type, then the request may not be sent/received.
+                request.setHeader(CONTENT_TYPE, customContentType);
+            }
+        } else if (parametersType == ParametersType.XML) {
+            request.setHeader(CONTENT_TYPE, "application/xml");
+        } else if (parametersType == ParametersType.JSON) {
+            request.setHeader(CONTENT_TYPE, "application/json");
+        }
     }
 
     private HttpEntity toHttpEntity(Object entity) {

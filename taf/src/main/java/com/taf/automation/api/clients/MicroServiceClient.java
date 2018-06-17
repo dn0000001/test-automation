@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.notNullValue;
  * Client which does not initialize the target host for sending requests instead you must you the setRequester method
  * to set this information.
  */
+@SuppressWarnings("squid:S00112")
 public class MicroServiceClient implements GenericHttpInterface {
     private HttpRequester requester;
     private String customAcceptHeader;
@@ -96,11 +97,7 @@ public class MicroServiceClient implements GenericHttpInterface {
     }
 
     private <T> MicroServiceResponse<T> executeRequest(HttpRequest request, Object entity, Class<T> responseEntity, List<Header> headers) {
-        if (headers != null) {
-            for (Header header : headers) {
-                request.setHeader(header);
-            }
-        }
+        setRequestHeaders(request, headers);
 
         if (request instanceof HttpEntityEnclosingRequest && entity != null) {
             HttpEntityEnclosingRequest req = (HttpEntityEnclosingRequest) request;
@@ -140,6 +137,16 @@ public class MicroServiceClient implements GenericHttpInterface {
         }
 
         return microServiceResponse;
+    }
+
+    private void setRequestHeaders(HttpRequest request, List<Header> headers) {
+        if (headers == null) {
+            return;
+        }
+
+        for (Header header : headers) {
+            request.setHeader(header);
+        }
     }
 
     private HttpEntity toHttpEntity(Object entity) {
