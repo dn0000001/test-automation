@@ -15,6 +15,7 @@ import java.util.Properties;
 /**
  * Class to work with a MYSQL database
  */
+@SuppressWarnings("squid:S00112")
 public class MySqlInstance extends DBInstance {
     private MySqlInstance() {
         resetDBConnectionToDefault();

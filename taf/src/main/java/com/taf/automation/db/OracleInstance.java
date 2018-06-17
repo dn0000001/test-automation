@@ -31,6 +31,7 @@ public class OracleInstance extends DBInstance {
     }
 
     @Override
+    @SuppressWarnings("squid:CommentedOutCodeLine")
     protected void createDBConnection(int connectionTimeout, int socketTimeout, int queryTimeout) {
         TestProperties props = TestProperties.getInstance();
         String connectionString = "jdbc:oracle:thin:@" + props.getDbHost() + ":" + props.getDbPort();
