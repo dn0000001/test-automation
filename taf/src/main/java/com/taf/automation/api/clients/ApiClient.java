@@ -383,6 +383,7 @@ public class ApiClient implements GenericHttpInterface {
         return executeRequest(patch, entity, responseEntityType, headers);
     }
 
+    @Override
     public <T> GenericHttpResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType, List<Header> headers) {
         HttpDeleteWithBody deleteWithBody = new HttpDeleteWithBody(resourcePath);
         return executeRequest(deleteWithBody, entity, responseEntityType, headers);
