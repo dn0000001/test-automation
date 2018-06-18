@@ -1,9 +1,8 @@
 package com.taf.automation.api.rest;
 
-import java.util.List;
-
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
+
+import java.util.List;
 
 /**
  * Generic HTTP Interface
@@ -61,4 +60,15 @@ public interface GenericHttpInterface {
      * @return GenericHttpResponse
      */
     <T> GenericHttpResponse<T> patch(String resourcePath, Object entity, Class<T> responseEntityType, List<Header> headers);
+
+    /**
+     * Performs a DELETE request
+     *
+     * @param resourcePath       - Relative Resource Path
+     * @param entity             - Parameters to be sent
+     * @param responseEntityType - Response Entity type
+     * @param headers            - Headers
+     * @return GenericHttpResponse
+     */
+    <T> GenericHttpResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType, List<Header> headers);
 }

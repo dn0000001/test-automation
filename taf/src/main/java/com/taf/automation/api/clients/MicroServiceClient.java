@@ -191,6 +191,7 @@ public class MicroServiceClient implements GenericHttpInterface {
         return executeRequest(delete, null, responseEntityType, headers);
     }
 
+    @Override
     public <T> MicroServiceResponse<T> delete(String resourcePath, Object entity, Class<T> responseEntityType, List<Header> headers) {
         HttpDeleteWithBody deleteWithBody = new HttpDeleteWithBody(resourcePath);
         return executeRequest(deleteWithBody, entity, responseEntityType, headers);
