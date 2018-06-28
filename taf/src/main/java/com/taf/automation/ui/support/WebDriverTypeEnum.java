@@ -49,6 +49,7 @@ public enum WebDriverTypeEnum {
         return getNewWebDriver(TestProperties.getInstance());
     }
 
+    @SuppressWarnings("squid:S00112")
     public WebDriver getNewWebDriver(TestProperties prop) {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         Proxy proxy = null;
@@ -76,9 +77,8 @@ public enum WebDriverTypeEnum {
         capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
 
         if (prop.getRemoteURL() != null) {
-            capabilities.merge(getCapabilities(prop));
             try {
-                return new RemoteWebDriver(new URL(prop.getRemoteURL()), capabilities);
+                return new RemoteWebDriver(new URL(prop.getRemoteURL()), getRemoteCapabilities(prop, capabilities));
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Malformed URL!", e);
             }
@@ -104,7 +104,7 @@ public enum WebDriverTypeEnum {
         }
     }
 
-    private DesiredCapabilities getCapabilities(TestProperties prop) {
+    private DesiredCapabilities getRemoteCapabilities(TestProperties prop, DesiredCapabilities mergeCapabilities) {
         Platform platform = prop.getBrowserPlatform();
         if (platform == null) {
             platform = Platform.ANY;
@@ -115,10 +115,26 @@ public enum WebDriverTypeEnum {
         capabilities.setVersion(prop.getBrowserVersion());
         capabilities.setPlatform(platform);
         capabilities.merge(prop.getExtraCapabilities());
+
+        if (this == FIREFOX) {
+            capabilities.setCapability(FirefoxOptions.FIREFOX_OPTIONS, getFirefoxOptions(prop, mergeCapabilities, false));
+        } else if (this == CHROME) {
+            capabilities.setCapability(ChromeOptions.CAPABILITY, getChromeOptions(prop, mergeCapabilities));
+        } else if (this == SAFARI) {
+            capabilities.setCapability(SafariOptions.CAPABILITY, getSafariOptions(prop, mergeCapabilities));
+        } else {
+            capabilities.merge(mergeCapabilities);
+        }
+
         return capabilities;
     }
 
-    private FirefoxDriver getFirefoxDriver(TestProperties prop, DesiredCapabilities capabilities) {
+    private FirefoxDriver getFirefoxDriver(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        FirefoxOptions firefoxOptions = getFirefoxOptions(prop, mergeCapabilities, true);
+        return new FirefoxDriver(firefoxOptions);
+    }
+
+    private FirefoxOptions getFirefoxOptions(TestProperties prop, DesiredCapabilities mergeCapabilities, boolean local) {
         FirefoxProfile profile = new FirefoxProfile();
         profile.setPreference("focusmanager.testmode", true);
         profile.setPreference("dom.max_chrome_script_run_time", 0);
@@ -129,6 +145,21 @@ public enum WebDriverTypeEnum {
             profile.setPreference("general.useragent.override", prop.getUserAgent());
         }
 
+        if (local) {
+            setFirefoxLocalProperties(prop);
+        }
+
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        firefoxOptions.merge(mergeCapabilities);
+        firefoxOptions.setProfile(profile);
+        firefoxOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.DISMISS);
+        firefoxOptions.setAcceptInsecureCerts(true);
+        firefoxOptions.setLogLevel(FirefoxDriverLogLevel.WARN);
+        firefoxOptions.addArguments("--log fatal");
+        return firefoxOptions;
+    }
+
+    private void setFirefoxLocalProperties(TestProperties prop) {
         if (prop.getFirefoxBin() != null) {
             System.setProperty("webdriver.firefox.bin", prop.getFirefoxBin());
         }
@@ -138,42 +169,50 @@ public enum WebDriverTypeEnum {
         }
 
         System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
-
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.merge(capabilities);
-        firefoxOptions.setProfile(profile);
-        firefoxOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.DISMISS);
-        firefoxOptions.setAcceptInsecureCerts(true);
-        firefoxOptions.setLogLevel(FirefoxDriverLogLevel.WARN);
-        firefoxOptions.addArguments("--log fatal");
-
-        return new FirefoxDriver(firefoxOptions);
     }
 
-    private ChromeDriver getChromeDriver(TestProperties prop, DesiredCapabilities capabilities) {
-        if (prop.getUserAgent() != null) {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("user-agent=" + prop.getUserAgent());
-            capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-        }
-
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.merge(capabilities);
-        chromeOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.DISMISS);
-
+    private ChromeDriver getChromeDriver(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        ChromeOptions chromeOptions = getChromeOptions(prop, mergeCapabilities);
         return new ChromeDriver(chromeOptions);
     }
 
-    private SafariDriver getSafariDriver(TestProperties prop, DesiredCapabilities capabilities) {
-        SafariOptions options = new SafariOptions();
-        options.merge(capabilities);
+    private ChromeOptions getChromeOptions(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--ignore-certificate-errors");
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--dns-prefetch-disable");
+
+        if (prop.getUserAgent() != null) {
+            chromeOptions.addArguments("user-agent=" + prop.getUserAgent());
+        }
+
+        chromeOptions.merge(mergeCapabilities);
+        chromeOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.DISMISS);
+        return chromeOptions;
+    }
+
+    private SafariDriver getSafariDriver(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        SafariOptions options = getSafariOptions(prop, mergeCapabilities);
         return new SafariDriver(options);
     }
 
-    private EdgeDriver getEdgeDriver(TestProperties prop, DesiredCapabilities capabilities) {
-        EdgeOptions options = new EdgeOptions();
-        options.merge(capabilities);
+    @SuppressWarnings("squid:S1172")
+    private SafariOptions getSafariOptions(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        SafariOptions options = new SafariOptions();
+        options.merge(mergeCapabilities);
+        return options;
+    }
+
+    private EdgeDriver getEdgeDriver(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        EdgeOptions options = getEdgeOptions(prop, mergeCapabilities);
         return new EdgeDriver(options);
+    }
+
+    @SuppressWarnings("squid:S1172")
+    private EdgeOptions getEdgeOptions(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        EdgeOptions options = new EdgeOptions();
+        options.merge(mergeCapabilities);
+        return options;
     }
 
 }
