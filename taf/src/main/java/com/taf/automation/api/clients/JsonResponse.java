@@ -1,16 +1,14 @@
 package com.taf.automation.api.clients;
 
+import com.taf.automation.api.ApiUtils;
+import com.taf.automation.api.JsonUtils;
+import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.api.rest.JsonBaseError;
 import com.taf.automation.api.rest.JsonError;
-import com.taf.automation.api.rest.TextError;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
-
-import com.taf.automation.api.rest.GenericHttpResponse;
-import com.taf.automation.api.rest.JsonBaseError;
-import com.taf.automation.api.ApiUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JSON Response
@@ -24,7 +22,7 @@ public class JsonResponse<T> implements GenericHttpResponse<T> {
     private Header[] headers;
     private JsonBaseError apiError;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "squid:S00112"})
     public JsonResponse(CloseableHttpResponse response, Class<T> responseEntity) {
         status = response.getStatusLine();
         headers = response.getAllHeaders();
@@ -54,8 +52,7 @@ public class JsonResponse<T> implements GenericHttpResponse<T> {
     @SuppressWarnings("unchecked")
     private <P> P getEntityFromJson(Class<T> responseEntity, String entityJSON) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            return (P) mapper.readValue(entityJSON, responseEntity);
+            return (P) JsonUtils.getGson().fromJson(entityJSON, responseEntity);
         } catch (Exception e) {
             return null;
         }
