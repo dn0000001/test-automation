@@ -61,6 +61,7 @@ public class ApiClient implements GenericHttpInterface {
     private ReturnType returnType;
     private String customAcceptHeader;
     private String customContentType;
+    private XStream xstream;
 
     private class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
         public static final String METHOD_NAME = "DELETE";
@@ -225,6 +226,8 @@ public class ApiClient implements GenericHttpInterface {
                 apiResponse = new XmlResponse<>(response, responseEntity);
             } else if (returnType == ReturnType.JSON) {
                 apiResponse = new JsonResponse<>(response, responseEntity);
+            } else if (returnType == ReturnType.SOAP) {
+                apiResponse = new SoapResponse<>(response, responseEntity, getXstream());
             } else {
                 apiResponse = new GenericResponse<>(response, responseEntity);
             }
@@ -277,6 +280,7 @@ public class ApiClient implements GenericHttpInterface {
             switch (parametersType) {
                 case XML:
                     XStream xstream = new XStream();
+                    xstream.autodetectAnnotations(true);
                     String xml = ApiUtils.prettifyXML(xstream.toXML(entity));
                     try {
                         ApiUtils.attachDataXml(xml, "REQUEST ENTITY");
@@ -351,6 +355,14 @@ public class ApiClient implements GenericHttpInterface {
      */
     public void setCustomContentType(String customContentType) {
         this.customContentType = customContentType;
+    }
+
+    public XStream getXstream() {
+        if (xstream == null) {
+            xstream = new XStream();
+        }
+
+        return xstream;
     }
 
     @Override

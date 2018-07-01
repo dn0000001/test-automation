@@ -1,0 +1,22 @@
+<get-holiday-date-do>
+    <aliases>
+    </aliases>
+    <request>
+        <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <GetHolidayDate xmlns="http://www.holidaywebservice.com/HolidayService_v2/">
+                    <countryCode>Canada</countryCode>
+                    <holidayCode>NEW-YEARS-DAY-ACTUAL</holidayCode>
+                    <year>2030</year>
+                </GetHolidayDate>
+            </soap:Body>
+        </soap:Envelope>
+    </request>
+    <response>
+        <status>
+            <statusCode>200</statusCode>
+            <reasonPhrase>OK</reasonPhrase>
+        </status>
+        <expectedDate>2030-01-01T00:00:00</expectedDate>
+    </response>
+</get-holiday-date-do>

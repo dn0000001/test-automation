@@ -25,6 +25,15 @@
     </test>
 
     <!--
+    <test name="Soap Get Holiday Date Test">
+        <parameter name="data-soap-get-holiday-date" value="data/api/SoapGetHolidayDateTestData.xml"/>
+        <classes>
+            <class name="com.automation.common.api.tests.SoapHolidayTest"/>
+        </classes>
+    </test>
+    -->
+
+    <!--
     <test name="Conditional Test">
         <classes>
             <class name="com.automation.common.ui.app.tests.ConditionalTest">
