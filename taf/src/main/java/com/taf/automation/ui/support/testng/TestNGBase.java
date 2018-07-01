@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
 
 @Listeners(AllureTestNGListener.class)
 public class TestNGBase {
-    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
-    private static final ThreadLocal<TestContext> context = ThreadLocal.withInitial(() -> new TestContext());
+    protected static final Logger LOG = LoggerFactory.getLogger(TestNGBase.class);
+    private static final ThreadLocal<TestContext> context = ThreadLocal.withInitial(TestContext::new);
     private static final ThreadLocal<ITestContext> testNgContext = new ThreadLocal<>();
     private long time;
 
@@ -47,7 +47,7 @@ public class TestNGBase {
             try {
                 Utils.getWebDriverWait()
                         .until(ExpectedConditionsUtil.takeScreenshot(title))
-                        .forEach(ev -> Allure.LIFECYCLE.fire(ev));
+                        .forEach(Allure.LIFECYCLE::fire);
             } catch (Exception ex) {
                 String shortMessage = "Could not take screenshot for " + title;
                 StringWriter sw = new StringWriter();
@@ -91,6 +91,7 @@ public class TestNGBase {
      * @param driverName         - Driver Name
      * @param driverPropertyName - Driver Property Name
      */
+    @SuppressWarnings({"squid:S3457", "squid:S2629", "squid:S00112"})
     private void installDriver(String driverName, String driverPropertyName) {
         String os = System.getProperty("os.name").toUpperCase();
         String subFolder;
@@ -242,6 +243,7 @@ public class TestNGBase {
                 return ("\nSELENIUM SERVER NODE: " + matcher.group(1));
             }
         } catch (Exception ignore) {
+            //
         }
 
         return "";
@@ -260,6 +262,7 @@ public class TestNGBase {
         return log;
     }
 
+    @SuppressWarnings("squid:S2629")
     private void logInfo(String msg) {
         StringBuilder log = new StringBuilder();
         String delim = "\n" + StringUtils.repeat("=", msg.length());
