@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +41,9 @@ public class ApiDomainObject extends DataPersistence {
     protected List<BasicHeader> headers;
 
     @XStreamOmitField
+    private ApiClient client;
+
+    @XStreamOmitField
     private ApiLoginSession loginSession;
 
     @XStreamOmitField
@@ -48,11 +52,11 @@ public class ApiDomainObject extends DataPersistence {
     @Override
     public String toXML() {
         createGlobalAliasses();
-        String xml = super.toXML().replace(
-                " xmlns=\"xmlns\" xmlns:xsi=\"xsi\" xsi:schemaLocation=\"schemaLocation\"", "");
-        for (String key : dataAliases.keySet()) {
-            String alias = "${" + key + "}";
-            String value = dataAliases.get(key);
+        String xml = super.toXML().replace(" xmlns=\"xmlns\" xmlns:xsi=\"xsi\" xsi:schemaLocation=\"schemaLocation\"", "");
+
+        for (Map.Entry<String, String> entry : dataAliases.entrySet()) {
+            String alias = "${" + entry.getKey() + "}";
+            String value = entry.getValue();
             xml = xml.replace(alias, value);
         }
 
@@ -99,8 +103,12 @@ public class ApiDomainObject extends DataPersistence {
         return loginUser;
     }
 
-    protected static ApiClient getClient() {
-        return new ApiClient();
+    protected ApiClient getClient() {
+        if (client == null) {
+            client = new ApiClient();
+        }
+
+        return client;
     }
 
     protected ApiLoginSession getLoginSession() {
@@ -115,7 +123,11 @@ public class ApiDomainObject extends DataPersistence {
     }
 
     protected List<Header> getHeaders() {
-        return (headers == null) ? null : headers.stream().collect(Collectors.toList());
+        if (headers == null) {
+            headers = new ArrayList<>();
+        }
+
+        return headers.stream().collect(Collectors.toList());
     }
 
     protected GenericHttpResponse<UserLogin> apiLogin() {
@@ -167,6 +179,7 @@ public class ApiDomainObject extends DataPersistence {
         return dataAliases;
     }
 
+    @SuppressWarnings("squid:S106")
     @Test
     public void gen() {
         System.out.println(generateXML());

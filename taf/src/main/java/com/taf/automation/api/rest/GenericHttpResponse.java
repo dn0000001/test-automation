@@ -1,5 +1,6 @@
 package com.taf.automation.api.rest;
 
+import com.thoughtworks.xstream.XStream;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 
@@ -9,6 +10,10 @@ import org.apache.http.StatusLine;
  * @param <T> - Entity that will be returned
  */
 public interface GenericHttpResponse<T> {
+    default XStream getXstream() {
+        return new XStream();
+    }
+
     /**
      * Get the Status of the response
      *
