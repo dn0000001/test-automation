@@ -68,6 +68,8 @@ public class TestContext extends PageComponentContext {
             int height = Integer.parseInt(resWH[1].trim());
             Dimension dim = new Dimension(width, height);
             driver.manage().window().setSize(dim);
+        } else {
+            driver.manage().window().maximize();
         }
     }
 
