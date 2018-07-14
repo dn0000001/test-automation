@@ -347,4 +347,17 @@ public class PageObjectV2 extends PageObject {
         ((TestContext) getContext()).getAccessibility().analyze(pageName, elementName, element);
     }
 
+    /**
+     * Copy all the data from the source into the destination PageComponent
+     *
+     * @param source      - PageComponent from which the data will be copied from
+     * @param destination - PageComponent that will have it's data overridden
+     */
+    protected void copy(PageComponent source, PageComponent destination) {
+        String data = source.getData(DataTypes.Data, false);
+        String initialData = source.getData(DataTypes.Initial, false);
+        String expectedData = source.getData(DataTypes.Expected, false);
+        destination.initializeData(data, initialData, expectedData);
+    }
+
 }
