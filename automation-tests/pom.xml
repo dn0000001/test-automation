@@ -73,6 +73,21 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ru.yandex.qatools.allure</groupId>
+			<artifactId>allure-java-aspects</artifactId>
+			<version>${allure.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testNg.version}</version>
+        </dependency>
+		<dependency>
 			<groupId>com.automation</groupId>
 			<artifactId>taf</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
