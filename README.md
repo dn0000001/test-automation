@@ -24,3 +24,53 @@ This class mainly handles the marshalling to XML & unmarshalling from XML back t
 This is an enhanced version of the PageObject that handles the JavascriptException thrown by geckodriver sometimes instead of the StaleElementReferenceException.  Also, it has an initialization method to handle dynamic locators.  Methods that end in V2 have been enhanced in some way, the naming convention is used to allow the use of the older version 1 methods if desired.
 
 The method setElementValueV2 is the most used here as it sets the components value and validates using the component specific validation method.
+
+## Basic overview of the utility classes that are mainly used
+
+### Utils
+Various methods for common tasks.  Mainly used to get WebDriverWait for ExpectedConditions
+
+### ExpectedConditionsUtil
+This class has custom ExpectedConditions and any new additions to the ExpectedConditions that are later than our current version.
+
+### Helper
+Class for general helper methods.  Mainly used for logging to the console.  Also, used in conjunction with AssertAggregator.
+
+### AssertAggregator
+Class to accumulate assert failures to throw a single assertion later.  The main use case is performing multiple assertions on an object in which you want all assertions executed always.
+
+### AssertsUtil
+This class holds useful Matcher methods for assertions.
+
+### JsUtils
+This class provides utility methods to work with JavaScript
+
+### Conditional
+This class is used to find the first condition that matches a list of possible conditions. An example of
+ this would be if 2 possible outcomes of an action are a button becomes ready or a button is removed. You
+ want to handle each condition differently as such you need to detect which condition occurred. This class
+ will allow you to determine this.
+
+### Failsafe
+This class is used to retry specific steps instead of the entire test.
+
+### Accessibility
+This class is for testing page accessibility.  The page objects should expose a method to test the accessibility that uses PageObjectV2.performAccessibilityTest
+
+### WebDriverTypeEnum
+This class handles initialization of drivers.  In general, this class is not directly used.  It would only be necessary to use this class when multiple windows need to be opened at the same time.
+
+### URLUtils
+Utilities class to work with URIBuilder.  It is mainly makes constructing the resource path for API requests easier.
+
+### CryptoUtils
+This class is used when encryption and/or decryption is required.
+
+### MySqlInstance
+Class to work with a MYSQL database
+
+### OracleInstance
+Class to work with a Oracle database
+
+### SqlServerInstance
+Class to work with a SQL Server database
