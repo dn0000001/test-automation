@@ -70,7 +70,7 @@ public class WsUtils {
      * 2) Parameter.value contains the replacement text<BR>
      *
      * @param sTemplate - String to be worked on
-     * @param subst     - List of Parameters that contains regular expressions used to find the text & the
+     * @param subst     - List of Parameters that contains regular expressions used to find the text &amp; the
      *                  replacement text
      * @return if sTemplate is null then null else string with all variables replaced as specified
      */
@@ -86,7 +86,7 @@ public class WsUtils {
      * 2) Parameter.value contains the replacement text<BR>
      *
      * @param sTemplate - String to be worked on
-     * @param subst     - List of Parameters that contains text to find & the replacement text
+     * @param subst     - List of Parameters that contains text to find &amp; the replacement text
      * @return if sTemplate is null then null else string with all variables replaced as specified
      */
     public static String replaceAll(String sTemplate, List<Parameter> subst) {
@@ -133,8 +133,8 @@ public class WsUtils {
      * _REPLACE1ST list
      *
      * @param sTemplate    - String to be worked on
-     * @param _REPLACE_ALL - List of Parameters that contains text to find & the replacement text
-     * @param _REPLACE1ST  - List of Parameters that contains regular expressions used to find the text &
+     * @param _REPLACE_ALL - List of Parameters that contains text to find &amp; the replacement text
+     * @param _REPLACE1ST  - List of Parameters that contains regular expressions used to find the text &amp;
      *                     the replacement text
      * @return if sTemplate is null then null else string with all variables replaced as specified
      */

@@ -27,23 +27,23 @@ import static org.hamcrest.Matchers.notNullValue;
  * Enhanced version of SelectComponent for more flexibility with drop downs<BR>
  * <B>Data Formats:</B><BR>
  * <OL>
- * <LI>For non-random options:  {Selection} >>> {Value}</LI>
- * <LI>For random option starting from min value:  RANDOM_INDEX >>> {Minimum Index}</LI>
- * <LI>For random option from specified list:  RANDOM_INDEX_VALUES >>> {Index 1},{Index 2}, ..., {Index N}</LI>
- * <LI>For random option in range:  RANDOM_INDEX_RANGE >>> {Minimum Index Inclusive}:{Maximum Index Exclusive}</LI>
+ * <LI>For non-random options:  {Selection} &gt;&gt;&gt; {Value}</LI>
+ * <LI>For random option starting from min value:  RANDOM_INDEX &gt;&gt;&gt; {Minimum Index}</LI>
+ * <LI>For random option from specified list:  RANDOM_INDEX_VALUES &gt;&gt;&gt; {Index 1},{Index 2}, ..., {Index N}</LI>
+ * <LI>For random option in range:  RANDOM_INDEX_RANGE &gt;&gt;&gt; {Minimum Index Inclusive}:{Maximum Index Exclusive}</LI>
  * </OL>
  * <B>Examples:</B><BR>
  * <OL>
  * <LI>Select drop down option using visible text of "option 1":  <B>option 1</B></LI>
- * <LI>Select drop down option using visible text of "option 2":  <B>VISIBLE_TEXT >>> option 2</B></LI>
- * <LI>Select drop down option using the HTML attribute value of "option 3":  <B>VALUE_HTML >>> option 3</B></LI>
- * <LI>Select drop down option at index 4 (provided there are at least 5 drop down options):  <B>INDEX >>> 4</B></LI>
- * <LI>Select drop down option using regular expression to match visible text of "option 5":   <B>VISIBLE_TEXT_REGEX >>> .*5.*</B></LI>
- * <LI>Select drop down option using regular expression to match the HTML attribute value of "option 6":  <B>VALUE_HTML_REGEX >>> .*6.*</B></LI>
- * <LI>Select a random option:  <B>RANDOM_INDEX >>> 0</B></LI>
- * <LI>Select a random option from index 1:  <B>RANDOM_INDEX >>> 1</B></LI>
- * <LI>Select a random option from the list of indexes {1, 3, 5}:  <B>RANDOM_INDEX_VALUES >>> 1,3,5</B></LI>
- * <LI>Select a random option from the list of consecutive indexes {1,2,3}:  <B>RANDOM_INDEX_RANGE >>> 1:4</B></LI>
+ * <LI>Select drop down option using visible text of "option 2":  <B>VISIBLE_TEXT &gt;&gt;&gt; option 2</B></LI>
+ * <LI>Select drop down option using the HTML attribute value of "option 3":  <B>VALUE_HTML &gt;&gt;&gt; option 3</B></LI>
+ * <LI>Select drop down option at index 4 (provided there are at least 5 drop down options):  <B>INDEX &gt;&gt;&gt; 4</B></LI>
+ * <LI>Select drop down option using regular expression to match visible text of "option 5":   <B>VISIBLE_TEXT_REGEX &gt;&gt;&gt; .*5.*</B></LI>
+ * <LI>Select drop down option using regular expression to match the HTML attribute value of "option 6":  <B>VALUE_HTML_REGEX &gt;&gt;&gt; .*6.*</B></LI>
+ * <LI>Select a random option:  <B>RANDOM_INDEX &gt;&gt;&gt; 0</B></LI>
+ * <LI>Select a random option from index 1:  <B>RANDOM_INDEX &gt;&gt;&gt; 1</B></LI>
+ * <LI>Select a random option from the list of indexes {1, 3, 5}:  <B>RANDOM_INDEX_VALUES &gt;&gt;&gt; 1,3,5</B></LI>
+ * <LI>Select a random option from the list of consecutive indexes {1,2,3}:  <B>RANDOM_INDEX_RANGE &gt;&gt;&gt; 1:4</B></LI>
  * </OL>
  */
 public class SelectEnhanced extends PageComponent {

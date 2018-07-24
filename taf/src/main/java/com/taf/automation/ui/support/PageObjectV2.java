@@ -130,7 +130,7 @@ public class PageObjectV2 extends PageObject {
      * @param component        - Component to set value and validate
      * @param decrypt          - true to decrypt the components data before entering it
      * @param validationMethod - Validation Method (if null then no validation is performed)
-     * @param tries            - Number of attempts to set value & validate
+     * @param tries            - Number of attempts to set value &amp; validate
      */
     protected void setElementValueV2(PageComponent component, boolean decrypt, DataTypes validationMethod, int tries) {
         String enterData = component.getData(DataTypes.Data, true);
@@ -191,7 +191,7 @@ public class PageObjectV2 extends PageObject {
      *
      * @param component        - Component to set value and validate
      * @param validationMethod - Validation Method (if null then no validation is performed)
-     * @param tries            - Number of attempts to set value & validate
+     * @param tries            - Number of attempts to set value &amp; validate
      */
     protected void setElementValueV2(PageComponent component, DataTypes validationMethod, int tries) {
         if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
@@ -236,7 +236,7 @@ public class PageObjectV2 extends PageObject {
     }
 
     /**
-     * Set the value of all the pageComponents(if displayed and enabled) to the specified data type.<br/>
+     * Set the value of all the pageComponents(if displayed and enabled) to the specified data type.
      * This method will not modify the original values in the data types (initial, data, expected)
      *
      * @param components - list of components to be updated

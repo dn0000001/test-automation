@@ -30,7 +30,7 @@ public class ExpectedConditionsUtil {
     }
 
     /**
-     * An expectation for checking WebElement is ready (enabled & displayed)
+     * An expectation for checking WebElement is ready (enabled &amp; displayed)
      *
      * @param element - Element to check if ready
      * @return Boolean true when element is ready else false
@@ -54,7 +54,7 @@ public class ExpectedConditionsUtil {
     }
 
     /**
-     * An expectation for checking WebElement found using the component's locator is ready (enabled & displayed)
+     * An expectation for checking WebElement found using the component's locator is ready (enabled &amp; displayed)
      *
      * @param component - Component used to get locator
      * @return non-null WebElement when element found using locator is ready else null
@@ -64,7 +64,7 @@ public class ExpectedConditionsUtil {
     }
 
     /**
-     * An expectation for checking WebElement found using the locator is ready (enabled & displayed)
+     * An expectation for checking WebElement found using the locator is ready (enabled &amp; displayed)
      *
      * @param locator - Locator used to find the element to check
      * @return non-null WebElement when element found using locator is ready else null
@@ -93,7 +93,7 @@ public class ExpectedConditionsUtil {
     }
 
     /**
-     * An expectation for checking WebElement found is ready (enabled & displayed)
+     * An expectation for checking WebElement found is ready (enabled &amp; displayed)
      *
      * @param anchor   - The anchor element from which the element is located from
      * @param relative - Used to find the relative element
@@ -428,7 +428,7 @@ public class ExpectedConditionsUtil {
      * <B>Notes:</B><BR>
      * The action to trigger the new window is only executed once.<BR><BR>
      * <B>Example actionToTriggerNewWindow value:</B><BR>
-     * () -> element.click()<BR>
+     * () -&gt; element.click()<BR>
      *
      * @param actionToTriggerNewWindow - Lambda expression to trigger new window
      * @return window handle of 1st new window that appears
@@ -472,7 +472,7 @@ public class ExpectedConditionsUtil {
      * <B>Notes:</B><BR>
      * The action to trigger the URL change is only executed once.<BR><BR>
      * <B>Example actionToTriggerUrlChange value:</B><BR>
-     * () -> element.click()<BR>
+     * () -&gt; element.click()<BR>
      *
      * @param actionToTriggerUrlChange - Lambda expression to trigger URL change
      * @return <code>true</code> when the URL has changed from initial value

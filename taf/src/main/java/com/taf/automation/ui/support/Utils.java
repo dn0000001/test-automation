@@ -114,7 +114,7 @@ public class Utils {
     }
 
     /**
-     * This method will set value & wait for AJAX event to complete redrawing the DOM. The idea behind this
+     * This method will set value &amp; wait for AJAX event to complete redrawing the DOM. The idea behind this
      * method is: first to trigger an action which will cause AJAX event and then to wait until affected by
      * AJAX element become stale. this means that affected element loses his handler as AJAX renders portion
      * of the DOM where affected element resides.
@@ -132,12 +132,12 @@ public class Utils {
     }
 
     /**
-     * This method will set value & wait for AJAX event to complete redrawing the DOM. The idea behind this
+     * This method will set value &amp; wait for AJAX event to complete redrawing the DOM. The idea behind this
      * method is: first to trigger an action which will cause AJAX event and then to wait until affected by
      * AJAX element become stale. this means that affected element loses his handler as AJAX renders portion
      * of the DOM where affected element resides.
      *
-     * @param component - Component to set value which triggers AJAX & becomes stale
+     * @param component - Component to set value which triggers AJAX &amp; becomes stale
      */
     public static void setValueAndWaitForComponent(final PageComponent component) {
         setValueAndWaitForComponent(component, component);
@@ -769,7 +769,7 @@ public class Utils {
      * Determines if the component's data is not null or not empty
      *
      * @param component - Page Component to check
-     * @return true if component is not null & component's data is not null or not empty
+     * @return true if component is not null &amp; component's data is not null or not empty
      */
     public static boolean isNotEmpty(PageComponent component) {
         return component != null && StringUtils.isNotEmpty(component.getData(DataTypes.Data, true));
@@ -779,7 +779,7 @@ public class Utils {
      * Determines if the component's data is not null or not empty or not whitespace only
      *
      * @param component - Page Component to check
-     * @return true if component is not null & component's data is not null or not empty or not whitespace only
+     * @return true if component is not null &amp; component's data is not null or not empty or not whitespace only
      */
     public static boolean isNotBlank(PageComponent component) {
         return component != null && StringUtils.isNotBlank(component.getData(DataTypes.Data, true));
@@ -840,7 +840,7 @@ public class Utils {
     /**
      * Get RetryPolicy that will retry on any exception or assertion
      * <B>Notes: </B> <BR>
-     * 1)  The number of retries is the max of 1 & the retries from the TestProperties class<BR>
+     * 1)  The number of retries is the max of 1 &amp; the retries from the TestProperties class<BR>
      *
      * @return RetryPolicy
      */

@@ -102,7 +102,7 @@ public class VTD_XML {
      * (This may be that eclipse was not running the 64-bit version of Java.)<BR>
      * <BR>
      * <B>Examples:</B><BR>
-     * 1) Given following XML and you want to parse values for var1 & var2<BR>
+     * 1) Given following XML and you want to parse values for var1 &amp; var2<BR>
      * &lt;rootNode&gt;<BR>
      * &nbsp;&nbsp;&lt;testcase&gt;<BR>
      * &nbsp;&nbsp;&nbsp;&nbsp;&lt;var1&gt;1&lt;/var1&gt;<BR>
@@ -362,8 +362,8 @@ public class VTD_XML {
     }
 
     /**
-     * Reads XML and puts the data into an array. Example, sRootXpath = "/root/testdata" & sEachNode =
-     * {"var1","var2"} => Get data for "/root/testdata[i]/var1" & "/root/testdata[i]/var2" where i is for each
+     * Reads XML and puts the data into an array. Example, sRootXpath = "/root/testdata" &amp; sEachNode =
+     * {"var1","var2"} =&gt; Get data for "/root/testdata[i]/var1" &amp; "/root/testdata[i]/var2" where i is for each
      * "/root/testdata" node found.
      *
      * @param sRootXpath - The root node that contains multiple sets of data
@@ -437,7 +437,7 @@ public class VTD_XML {
      * This method navigates to the next node and returns the data in an array using the method extractData()<BR>
      * <BR>
      * <B>Note: </B>If method cannot parse your XML file, then create a new class which inherits this class
-     * and override this method & the method extractData as necessary. (This may be the case if you need data
+     * and override this method &amp; the method extractData as necessary. (This may be the case if you need data
      * from attributes.)
      *
      * @return null if no more data else array of strings
@@ -499,7 +499,7 @@ public class VTD_XML {
      * This method reads the current node and returns it as an array<BR>
      * <BR>
      * <B>Note: </B>If method cannot parse your XML file, then create a new class which inherits this class
-     * and override this method & the method getNextNode as necessary. (This may be the case if you need data
+     * and override this method &amp; the method getNextNode as necessary. (This may be the case if you need data
      * from attributes.)
      *
      * @return String[]
@@ -644,7 +644,7 @@ public class VTD_XML {
      *
      * @param sXpath     - xpath to node
      * @param sAttribute - attribute to find
-     * @param sDefault   - value returned if xpath & attribute combination returns null
+     * @param sDefault   - value returned if xpath &amp; attribute combination returns null
      * @return String
      */
     public String getAttribute(String sXpath, String sAttribute, String sDefault) {

@@ -146,7 +146,7 @@ public class AssertAggregator {
     }
 
     /**
-     * Asserts that actual & expected objects are equal (using xstream to create the strings for comparison)<BR>
+     * Asserts that actual &amp; expected objects are equal (using xstream to create the strings for comparison)<BR>
      * <B>Notes:</B><BR>
      * 1) If both objects are null, then they are considered equal<BR>
      *

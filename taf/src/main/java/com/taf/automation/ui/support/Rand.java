@@ -346,7 +346,7 @@ public class Rand {
      * Returns a random string in the specified range size with only alphabetic characters<BR>
      * <BR>
      * <B>Notes:</B><BR>
-     * 1) Minimum & Maximum values need to be greater than zero<BR>
+     * 1) Minimum &amp; Maximum values need to be greater than zero<BR>
      * 2) The range is not affected if Minimum is greater than Maximum<BR>
      * <BR>
      * <B>Examples:</B><BR>
@@ -366,7 +366,7 @@ public class Rand {
      * Returns a random string that only consists of numbers and starts with a non-zero number<BR>
      * <BR>
      * <B>Notes:</B><BR>
-     * 1) Minimum & Maximum values need to be greater than zero<BR>
+     * 1) Minimum &amp; Maximum values need to be greater than zero<BR>
      * 2) The range is not affected if Minimum is greater than Maximum<BR>
      * <BR>
      * <B>Examples:</B><BR>
@@ -388,7 +388,7 @@ public class Rand {
      * Returns an alphanumeric string that starts with a letter in the specified range size<BR>
      * <BR>
      * <B>Notes:</B><BR>
-     * 1) Minimum & Maximum values need to be greater than zero<BR>
+     * 1) Minimum &amp; Maximum values need to be greater than zero<BR>
      * 2) The range is not affected if Minimum is greater than Maximum<BR>
      * <BR>
      * <B>Examples:</B><BR>

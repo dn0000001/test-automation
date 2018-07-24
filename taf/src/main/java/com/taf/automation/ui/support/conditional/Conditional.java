@@ -111,9 +111,11 @@ public class Conditional {
      * Waits for the 1st criteria to match the current condition
      *
      * @param criteria - List of criteria to check against current condition
-     * @return <li>-2 if criteria is null</li><BR>
-     * <li>-1 if none of the criteria match the current condition</li><BR>
-     * <li>Index of the 1st criteria that matches the current condition (>=0)</li><BR>
+     * @return <ul>
+     * <li>-2 if criteria is null</li>
+     * <li>-1 if none of the criteria match the current condition</li>
+     * <li>Index of the 1st criteria that matches the current condition (&gt;=0)</li>
+     * </ul>
      * @throws RuntimeException if none of the criteria match the current condition before timeout occurs
      */
     public int waitForMatch(List<Criteria> criteria) {
@@ -125,9 +127,11 @@ public class Conditional {
      *
      * @param criteria   - List of criteria to check against current condition
      * @param throwError - true to throw exception if timeout occurs
-     * @return <li>-2 if criteria is null</li><BR>
-     * <li>-1 if none of the criteria match the current condition</li><BR>
-     * <li>Index of the 1st criteria that matches the current condition (>=0)</li><BR>
+     * @return <ul>
+     * <li>-2 if criteria is null</li>
+     * <li>-1 if none of the criteria match the current condition</li>
+     * <li>Index of the 1st criteria that matches the current condition (&gt;=0)</li>
+     * </ul>
      * @throws RuntimeException if none of the criteria match the current condition before timeout occurs and
      *                          throw error flag set
      */
@@ -203,9 +207,11 @@ public class Conditional {
      * Checks if any of the criteria match the current condition
      *
      * @param criteria - List of criteria to check against
-     * @return <li>-2 if criteria is null</li><BR>
-     * <li>-1 if none of the criteria match the current condition</li><BR>
-     * <li>Index of the 1st criteria that matches the current condition (>=0)</li><BR>
+     * @return <ul>
+     * <li>-2 if criteria is null</li>
+     * <li>-1 if none of the criteria match the current condition</li>
+     * <li>Index of the 1st criteria that matches the current condition (&gt;=0)</li>
+     * </ul>
      */
     public int match(List<Criteria> criteria) {
         if (criteria == null) {

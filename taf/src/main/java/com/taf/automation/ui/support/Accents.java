@@ -326,7 +326,7 @@ public class Accents {
     }
 
     /**
-     * Get the Czech, Slovak & Slovenian Accents string
+     * Get the Czech, Slovak &amp; Slovenian Accents string
      *
      * @return String
      */
