@@ -2,7 +2,7 @@ package com.automation.common.ui.app.domainObjects;
 
 /**
  * Contains all words that translation was needed and can be added to the vocabulary during
- * instantiation & use later as translations are needed. (This prevents issues if the words are changed.)
+ * instantiation &amp; use later as translations are needed. (This prevents issues if the words are changed.)
  */
 public class EnglishWords {
     private EnglishWords() {

@@ -368,7 +368,7 @@ public class AssertsUtil {
     }
 
     /**
-     * Matcher for element that is expected to be ready (enabled & displayed)
+     * Matcher for element that is expected to be ready (enabled &amp; displayed)
      *
      * @return Matcher&lt;WebElement&gt;
      */
@@ -396,7 +396,7 @@ public class AssertsUtil {
     }
 
     /**
-     * Matcher for component that is expected to be ready (enabled & displayed)
+     * Matcher for component that is expected to be ready (enabled &amp; displayed)
      *
      * @return Matcher&lt;PageComponent&gt;
      */
@@ -581,7 +581,7 @@ public class AssertsUtil {
     }
 
     /**
-     * Matcher for element using locator that is expected to be ready (enabled & displayed)<BR>
+     * Matcher for element using locator that is expected to be ready (enabled &amp; displayed)<BR>
      * <B>Notes:</B><BR>
      * 1) Method does single check without waiting for the element to be ready<BR>
      *
@@ -773,7 +773,7 @@ public class AssertsUtil {
     }
 
     /**
-     * Matcher for element that is expected to be ready (enabled & displayed) before timeout
+     * Matcher for element that is expected to be ready (enabled &amp; displayed) before timeout
      *
      * @param wait - WebDriverWait
      * @return Matcher&lt;WebElement&gt;
@@ -803,7 +803,7 @@ public class AssertsUtil {
     }
 
     /**
-     * Matcher for component that is expected to be ready (enabled & displayed) before timeout
+     * Matcher for component that is expected to be ready (enabled &amp; displayed) before timeout
      *
      * @param wait - WebDriverWait
      * @return Matcher&lt;PageComponent&gt;

@@ -10,7 +10,7 @@ public enum CriteriaType {
     ALERT,
 
     /**
-     * Element is ready (displayed & enabled)
+     * Element is ready (displayed &amp; enabled)
      */
     READY,
 
@@ -215,7 +215,7 @@ public enum CriteriaType {
     DROPDOWN_CONTAINS,
 
     /**
-     * Element relative to the anchor element is ready (displayed & enabled)
+     * Element relative to the anchor element is ready (displayed &amp; enabled)
      */
     RELATIVE_READY,
 

@@ -227,7 +227,7 @@ public class Helper {
     }
 
     /**
-     * Verifies that actual & expected objects are the same<BR>
+     * Verifies that actual &amp; expected objects are the same<BR>
      * <BR>
      * <B>Notes:</B><BR>
      * 1) Puts objects in array and calls method that verified lists<BR>
@@ -241,7 +241,7 @@ public class Helper {
     }
 
     /**
-     * Verifies that actual & expected lists are the same<BR>
+     * Verifies that actual &amp; expected lists are the same<BR>
      * <BR>
      * <B>Notes:</B><BR>
      * 1) The lists order matter as such it is advisable to sort the lists before using the method<BR>
