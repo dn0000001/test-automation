@@ -215,13 +215,41 @@ public class TestNGBase {
     }
 
     protected TestContext getContext(TestProperties props) {
-        if (context() != null && context().getDriver() == null) {
+        if (isDriverInitializationRequired()) {
             context().setTestProperties(props);
             context().init();
             logInfo("+INITIALIZING CONTEXT: " + context().getDriver().toString());
         }
 
         return context();
+    }
+
+    /**
+     * Is Driver Initialization required?
+     *
+     * @return true if initialization of the driver else false
+     */
+    private boolean isDriverInitializationRequired() {
+        if (context() == null) {
+            // If context is null, then we cannot initialize the driver
+            return false;
+        }
+
+        if (context().getDriver() == null) {
+            // If the driver is null, then initialization of the driver is required
+            return true;
+        }
+
+        try {
+            //  Try to get the window handle to see if the driver is still functional
+            context().getDriver().getWindowHandle();
+
+            // Able to get the window handle successfully as such no initialization of the driver is necessary
+            return false;
+        } catch (Exception ex) {
+            // If an exception occurs, then initialization of the driver is required
+            return true;
+        }
     }
 
     protected void attachDataSet(DataPersistence data, String name) {
