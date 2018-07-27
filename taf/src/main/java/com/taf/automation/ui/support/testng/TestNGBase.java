@@ -225,9 +225,9 @@ public class TestNGBase {
     }
 
     /**
-     * Is Driver Initialization required?
+     * Check if driver Initialization required (or possible)
      *
-     * @return true if initialization of the driver else false
+     * @return true if initialization of the driver is required else false
      */
     private boolean isDriverInitializationRequired() {
         if (context() == null) {
@@ -241,10 +241,10 @@ public class TestNGBase {
         }
 
         try {
-            //  Try to get the window handle to see if the driver is still functional
-            context().getDriver().getWindowHandle();
+            //  Try to switch to the current window
+            context().getDriver().switchTo().window(context().getDriver().getWindowHandle());
 
-            // Able to get the window handle successfully as such no initialization of the driver is necessary
+            // Able to switch to the current window as such no initialization of the driver is necessary
             return false;
         } catch (Exception ex) {
             // If an exception occurs, then initialization of the driver is required
