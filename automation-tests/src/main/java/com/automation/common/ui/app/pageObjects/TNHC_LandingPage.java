@@ -116,7 +116,7 @@ public class TNHC_LandingPage extends PageObjectV2 {
 
     public void setDivision() {
         division.setValue();
-        division.validateData();
+        validateData(division);
     }
 
     public void performSearch() {
@@ -133,8 +133,7 @@ public class TNHC_LandingPage extends PageObjectV2 {
     }
 
     public void setAlternate() {
-        alternate.setValue();
-        alternate.validateData();
+        setElementValueV2(alternate);
     }
 
     public void performAccessibilityTest() {

@@ -360,4 +360,22 @@ public class PageObjectV2 extends PageObject {
         destination.initializeData(data, initialData, expectedData);
     }
 
+    /**
+     * Validate using component's validation method<BR>
+     * <B>Notes:</B><BR>
+     * 1) Validation is skipped if the component was not used to set the value<BR>
+     * 2) Validation method is DataTypes.Expected if not null else DataTypes.Data<BR>
+     *
+     * @param component - Component to validate
+     */
+    protected void validateData(PageComponent component) {
+        if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
+            // This indicates that the component was not used to set the value as such skip validation
+            return;
+        }
+
+        DataTypes validationMethod = (component.getData(DataTypes.Expected, true) != null) ? DataTypes.Expected : DataTypes.Data;
+        component.validateData(validationMethod);
+    }
+
 }
