@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 public abstract class DBInstance {
-    protected static final Logger LOG = LoggerFactory.getLogger(MySqlInstance.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(DBInstance.class);
     protected SSHSession sshSession;
     protected JdbcTemplate jdbcTemplate;
     public static DateTimeFormatter DB_DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
