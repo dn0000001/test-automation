@@ -198,6 +198,7 @@ public class PageObjectV2 extends PageObject {
             return;
         }
 
+        String exception = "";
         int attempt = 0;
         boolean validated;
         do {
@@ -216,6 +217,7 @@ public class PageObjectV2 extends PageObject {
                 } catch (Exception | AssertionError ignore) {
                     // Catch any thrown error or assertion error
                     validated = false;
+                    exception = ignore.getMessage();
                 }
             } else {
                 // No validation is necessary just set flag to be true
@@ -231,7 +233,7 @@ public class PageObjectV2 extends PageObject {
 
         String error = "Unable to set (" + component.getClass().getSimpleName() + ")"
                 + " & validate (" + validationMethod + ")"
-                + " after X attempts";
+                + " after " + tries + " attempts:  " + exception;
         throw new RuntimeException(error);
     }
 

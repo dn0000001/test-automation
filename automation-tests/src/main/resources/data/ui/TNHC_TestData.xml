@@ -14,6 +14,6 @@
         <search-fields>aaa -> bbb -> ccc -> Summer 2017</search-fields>
         <someField>${player}</someField>
         <someField2>${player}</someField2>
-        <alternate>${value}</alternate>
+        <alternate initial="example" expected="${value}">${value}</alternate>
     </landing>
 </true-north-hockey-canada>
