@@ -126,6 +126,7 @@ public class SelectEnhanced extends PageComponent {
         return selection;
     }
 
+    @SuppressWarnings({"squid:S3776", "squid:S1871"})
     private void parseDataAndInitializeFields() {
         String[] pieces = StringUtils.split(getData(), SPLIT_ON, 2);
         if (pieces == null) {
@@ -295,22 +296,36 @@ public class SelectEnhanced extends PageComponent {
         assertThat("Could not find visible text of a selected drop down option", actualVisibleText, notNullValue());
         assertThat("Could not find html value of a selected drop down option", actualHtmlValue, notNullValue());
 
+        // Assume that expected information is from DataTypes.Data
+        String expectedData = rawSelectionData;
+        int expectedIndex = selectedIndex;
+
+        if (validationMethod == DataTypes.Expected) {
+            expectedData = StringUtils.defaultString(validationMethod.getData(this), expectedData);
+            if (getSelection() == Selection.INDEX
+                    || getSelection() == Selection.RANDOM_INDEX
+                    || getSelection() == Selection.RANDOM_INDEX_RANGE
+                    || getSelection() == Selection.RANDOM_INDEX_VALUES) {
+                expectedIndex = NumberUtils.toInt(expectedData, expectedIndex);
+            }
+        }
+
         //
         // Verify the actual selected drop down option matches the one previously selected
         //
         if (getSelection() == Selection.VISIBLE_TEXT) {
-            assertThat("Visible Text of currently selected drop down option", actualVisibleText, equalTo(rawSelectionData));
+            assertThat("Visible Text of currently selected drop down option", actualVisibleText, equalTo(expectedData));
         } else if (getSelection() == Selection.VALUE_HTML) {
-            assertThat("HTML Value of currently selected drop down option", actualHtmlValue, equalTo(rawSelectionData));
+            assertThat("HTML Value of currently selected drop down option", actualHtmlValue, equalTo(expectedData));
         } else if (getSelection() == Selection.INDEX
                 || getSelection() == Selection.RANDOM_INDEX
                 || getSelection() == Selection.RANDOM_INDEX_RANGE
                 || getSelection() == Selection.RANDOM_INDEX_VALUES) {
-            assertThat("Index of currently selected drop down option", actualIndex, equalTo(selectedIndex));
+            assertThat("Index of currently selected drop down option", actualIndex, equalTo(expectedIndex));
         } else if (getSelection() == Selection.VISIBLE_TEXT_REGEX) {
-            assertThat("Visible Text of currently selected drop down option", actualVisibleText, matchesRegex(rawSelectionData));
+            assertThat("Visible Text of currently selected drop down option", actualVisibleText, matchesRegex(expectedData));
         } else if (getSelection() == Selection.VALUE_HTML_REGEX) {
-            assertThat("HTML Value of currently selected drop down option", actualHtmlValue, matchesRegex(rawSelectionData));
+            assertThat("HTML Value of currently selected drop down option", actualHtmlValue, matchesRegex(expectedData));
         } else {
             assertThat("Unsupported Selection:  " + getSelection(), false);
         }

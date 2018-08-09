@@ -40,13 +40,7 @@ public class Search extends PageComponent {
     }
 
     public void setValue(String data) {
-        String[] fromToInfo = Utils.splitData(data, "->", 4, "null");
-        Utils.trim(fromToInfo);
-
-        player.initializeData(fromToInfo[0], null, null);
-        team.initializeData(fromToInfo[1], null, null);
-        division.initializeData(fromToInfo[2], null, null);
-        season.initializeData(fromToInfo[3], null, null);
+        initAllData(data);
 
         if (player.getData() != null) {
             setPlayer();
@@ -63,6 +57,34 @@ public class Search extends PageComponent {
         if (season.getData() != null) {
             setSeason();
         }
+    }
+
+    private String[] getDataArray(String data) {
+        String[] fromToInfo = Utils.splitData(data, "->", 4, "null");
+        Utils.trim(fromToInfo);
+        return fromToInfo;
+    }
+
+    private void initAllData(String data) {
+        String[] fromToInfo = getDataArray(data);
+        String[] initial = getDataArray(getData(DataTypes.Initial, true));
+        String[] expected = getDataArray(getData(DataTypes.Expected, true));
+
+        String playerInitialData = (initial.length == 0) ? null : initial[0];
+        String playerExpectedData = (expected.length == 0) ? null : expected[0];
+        player.initializeData(fromToInfo[0], playerInitialData, playerExpectedData);
+
+        String teamInitialData = (initial.length == 0) ? null : initial[1];
+        String teamExpectedData = (expected.length == 0) ? null : expected[1];
+        team.initializeData(fromToInfo[1], teamInitialData, teamExpectedData);
+
+        String divisionInitialData = (initial.length == 0) ? null : initial[2];
+        String divisionExpectedData = (expected.length == 0) ? null : expected[2];
+        division.initializeData(fromToInfo[2], divisionInitialData, divisionExpectedData);
+
+        String seasonInitialData = (initial.length == 0) ? null : initial[3];
+        String seasonExpectedData = (expected.length == 0) ? null : expected[3];
+        season.initializeData(fromToInfo[3], seasonInitialData, seasonExpectedData);
     }
 
     @Override
