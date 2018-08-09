@@ -120,7 +120,7 @@ public class TNHC_LandingPage extends PageObjectV2 {
     }
 
     public void performSearch() {
-        searchFields.setValue();
+        setElementValueV2(searchFields);
         searchFields.clickSearch();
     }
 
