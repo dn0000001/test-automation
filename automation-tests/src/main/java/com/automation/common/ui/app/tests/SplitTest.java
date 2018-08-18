@@ -221,7 +221,7 @@ public class SplitTest {
 
         // Example of how to sort by multiple fields
         List<SelectEnhanced> someList = new ArrayList<>();
-        someList.sort(Comparator.comparing(SelectEnhanced::getValue).thenComparing(SelectEnhanced::getData));
+        someList.sort(Comparator.comparing(SelectEnhanced::getValue).thenComparing(se -> se.getData()));
 
         // Example of how to split on each character of a string to create a list of strings
         String value = "test";
