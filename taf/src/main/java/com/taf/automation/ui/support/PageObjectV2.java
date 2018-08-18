@@ -275,8 +275,8 @@ public class PageObjectV2 extends PageObject {
 
         if (isDisplayed(component) && component.isEnabled()) {
             //storing the current values of the data so that they can be restored later
-            String expected = component.getExpectedData();
-            String initial = component.getInitialData();
+            String expected = component.getData(DataTypes.Expected, true);
+            String initial = component.getData(DataTypes.Initial, true);
             String data = component.getData();
 
             //set component value to the specified data type
