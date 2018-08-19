@@ -8,6 +8,7 @@ import com.taf.automation.api.converters.EnumConverter;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.ui.support.Credentials;
 import com.taf.automation.ui.support.CreditCard;
+import com.taf.automation.ui.support.DataPersistenceV2;
 import com.taf.automation.ui.support.Environment;
 import com.taf.automation.ui.support.EnvironmentType;
 import com.taf.automation.ui.support.TestProperties;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * The API Domain Object from which other API domain objects should be extended from
  */
-public class ApiDomainObject extends DataPersistence {
+public class ApiDomainObject extends DataPersistenceV2 {
     @Data(alias = "user-email")
     protected String loginUser;
     protected String loginPassword;
@@ -122,11 +123,34 @@ public class ApiDomainObject extends DataPersistence {
         return loginSession;
     }
 
+    public void addHeaders(List<BasicHeader> headers) {
+        if (this.headers == null) {
+            this.headers = new ArrayList<>();
+        }
+
+        this.headers.addAll(headers);
+    }
+
+    public void addHeader(BasicHeader header) {
+        if (headers == null) {
+            headers = new ArrayList<>();
+        }
+
+        this.headers.add(header);
+    }
+
+    /**
+     * Get the headers<BR>
+     * <B>Note: </B>Any modifications to this list will <B>NOT</B> affect the headers in this class
+     *
+     * @return new list of headers
+     */
     protected List<Header> getHeaders() {
         if (headers == null) {
             headers = new ArrayList<>();
         }
 
+        // This is returning a deep copy of the headers (based on testing.)
         return headers.stream().collect(Collectors.toList());
     }
 

@@ -10,7 +10,6 @@ import com.taf.automation.ui.support.VTD_XML;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.StringEntity;
@@ -114,10 +113,8 @@ public class WeatherDO extends ApiDomainObject {
             throw new RuntimeException(e);
         }
 
-        List<Header> soapHeaders = new ArrayList<>();
-        ApiUtils.updateForSoap(soapHeaders, "http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP");
-
-        response.weather = getClient().post(resourcePath, entity, null, soapHeaders);
+        ApiUtils.updateForSoap(this, "http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP");
+        response.weather = getClient().post(resourcePath, entity, null, getHeaders());
     }
 
     public void validateStatus() {

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -164,12 +163,12 @@ public class ApiUtils {
     /**
      * Add the headers for a SOAP Request
      *
-     * @param headers    - List of existing headers
-     * @param soapAction - The SOAP action to be added
+     * @param apiDomainObject - API Domain Object to update with the headers for a SOAP Request
+     * @param soapAction      - The SOAP action to be added
      */
-    public static void updateForSoap(List<Header> headers, String soapAction) {
-        headers.add(new BasicHeader("Content-Type", "text/xml; charset=utf-8"));
-        headers.add(new BasicHeader("SOAPAction", soapAction));
+    public static void updateForSoap(ApiDomainObject apiDomainObject, String soapAction) {
+        apiDomainObject.addHeader(new BasicHeader("Content-Type", "text/xml; charset=utf-8"));
+        apiDomainObject.addHeader(new BasicHeader("SOAPAction", soapAction));
     }
 
     /**
