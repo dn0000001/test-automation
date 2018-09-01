@@ -29,6 +29,9 @@ import java.util.Map;
  */
 @Resource.Classpath("test.properties")
 public class TestProperties {
+    @Property("always.install.drivers")
+    private boolean alwaysInstallDrivers = false;
+
     @Property("mail.proxy")
     private String mailProxy;
 
@@ -300,6 +303,10 @@ public class TestProperties {
         }
 
         return null;
+    }
+
+    public boolean isAlwaysInstallDrivers() {
+        return alwaysInstallDrivers;
     }
 
     public String getMailProxy() {
