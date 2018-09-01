@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="BDD Suite" verbose="1" parallel="tests" thread-count="5">
+
+    <test name="Soap Get Holiday Date BDD Test">
+        <classes>
+            <class name="com.automation.common.bdd.tests.SoapHolidayBddTest"/>
+        </classes>
+    </test>
+
+    <test name="True North Hockey Canada BDD Test">
+        <classes>
+            <class name="com.automation.common.bdd.tests.TNHC_BDD_Test"/>
+        </classes>
+    </test>
+
+</suite>
