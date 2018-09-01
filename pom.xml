@@ -43,6 +43,9 @@
         <httpmime.version>4.5.5</httpmime.version>
         <axe.selenium.version>2.0</axe.selenium.version>
         <sql.server.version>6.4.0.jre8</sql.server.version>
+        <cucumber.version>1.2.5</cucumber.version>
+        <allure.cucumber.version>1.6.4</allure.cucumber.version>
+        <allure.properties.loader.version>1.5</allure.properties.loader.version>
     </properties>
 
     <build>

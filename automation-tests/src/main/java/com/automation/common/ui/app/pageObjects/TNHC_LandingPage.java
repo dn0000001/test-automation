@@ -9,6 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
 
 import java.util.HashMap;
@@ -114,11 +115,13 @@ public class TNHC_LandingPage extends PageObjectV2 {
         team.validateData();
     }
 
+    @Step("Set Division")
     public void setDivision() {
         division.setValue();
         validateData(division);
     }
 
+    @Step("Perform Search")
     public void performSearch() {
         setElementValueV2(searchFields);
         searchFields.clickSearch();
