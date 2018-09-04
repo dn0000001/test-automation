@@ -204,6 +204,12 @@
             <groupId>ru.yandex.qatools.allure</groupId>
             <artifactId>allure-cucumber-jvm-adaptor</artifactId>
             <version>${allure.cucumber.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ru.yandex.qatools.allure</groupId>
+                    <artifactId>allure-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ru.yandex.qatools.properties</groupId>

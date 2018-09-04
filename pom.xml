@@ -46,6 +46,8 @@
         <cucumber.version>1.2.5</cucumber.version>
         <allure.cucumber.version>1.6.4</allure.cucumber.version>
         <allure.properties.loader.version>1.5</allure.properties.loader.version>
+        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+        <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
     </properties>
 
     <build>

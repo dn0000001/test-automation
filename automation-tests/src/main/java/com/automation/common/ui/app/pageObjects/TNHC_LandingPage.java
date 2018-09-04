@@ -68,7 +68,7 @@ public class TNHC_LandingPage extends PageObjectV2 {
     /**
      * Initialize page for dynamic locators
      *
-     * @param context
+     * @param context - Context
      */
     public void initPage(TestContext context) {
         initPage(context, getSubstitutions());

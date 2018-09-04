@@ -30,7 +30,7 @@ public class SearchPage extends PageObjectV2 {
     /**
      * Initialize page for dynamic locators
      *
-     * @param context
+     * @param context - Context
      */
     public void initPage(TestContext context) {
         Helper.log("Dynamic Locator Initialization", true);

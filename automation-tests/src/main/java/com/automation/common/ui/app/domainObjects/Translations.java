@@ -18,8 +18,10 @@ public class Translations {
      * Initializes translations<BR>
      * <B>Notes:</B><BR>
      * 1) This method will throw a runtime exception, if there are any duplicate words/phases (based on Keyword)<BR>
+     *
+     * @return Vocabulary
      */
-    public static Vocabulary initialize() {
+    private static Vocabulary initialize() {
         voc = new Vocabulary();
         Word word;
 
