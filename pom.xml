@@ -48,6 +48,7 @@
         <allure.properties.loader.version>1.5</allure.properties.loader.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
+        <jexcelapi.version>2.6.12</jexcelapi.version>
     </properties>
 
     <build>
