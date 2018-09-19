@@ -32,6 +32,9 @@ public class TestProperties {
     @Property("always.install.drivers")
     private boolean alwaysInstallDrivers = false;
 
+    @Property("global.encryption")
+    private boolean globalEncryption = false;
+
     @Property("mail.proxy")
     private String mailProxy;
 
@@ -307,6 +310,10 @@ public class TestProperties {
 
     public boolean isAlwaysInstallDrivers() {
         return alwaysInstallDrivers;
+    }
+
+    public boolean isGlobalEncryption() {
+        return globalEncryption;
     }
 
     public String getMailProxy() {
