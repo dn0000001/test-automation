@@ -1,22 +1,15 @@
 package com.taf.automation.ui.support;
 
-import com.taf.automation.api.converters.BasicHeaderConverter;
-import com.taf.automation.api.converters.EnumConverter;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
-import datainstiller.data.DataValueConverter;
-import org.apache.http.message.BasicHeader;
 import org.testng.annotations.Test;
 import ui.auto.core.context.PageComponentContext;
-import ui.auto.core.data.PageComponentDataConverter;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DomainObject extends DataPersistence {
     @XStreamOmitField
@@ -30,35 +23,15 @@ public class DomainObject extends DataPersistence {
         //
     }
 
-    private List<DataValueConverter> setUpConverters() {
-        List<DataValueConverter> converters = new ArrayList<>();
-
-        converters.add(new BasicHeaderConverter());
-
-        //
-        // Add application specific converters here
-        //
-
-        converters.add(new EnumConverter(EnvironmentType.class, Environment.QA));
-
-        return converters;
-    }
-
     @Override
     public XStream getXstream() {
-        XStream xstream = super.getXstream();
-        for (DataValueConverter converter : setUpConverters()) {
-            xstream.alias("header", BasicHeader.class);
-            xstream.registerConverter(converter);
-        }
-
-        return xstream;
+        XStream xStream = DataInstillerUtils.getXStream();
+        xStream.processAnnotations(this.getClass());
+        return xStream;
     }
 
     private DataGenerator getGenerator() {
-        List<DataValueConverter> converters = new ArrayList<>();
-        converters.add(new PageComponentDataConverter());
-        return new DataGenerator(converters);
+        return DataInstillerUtils.getGenerator();
     }
 
     private void addToGlobalAliases(DataPersistence data) {

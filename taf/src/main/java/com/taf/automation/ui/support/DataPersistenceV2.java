@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import com.thoughtworks.xstream.XStream;
+import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
 
 /**
@@ -18,11 +19,32 @@ public abstract class DataPersistenceV2 extends DataPersistence {
      *
      * @return XML representation of this object
      */
+    @Override
     public String toXML() {
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n";
         XStream xstream = getXstream();
         String xml = xstream.toXML(this);
         return header + xml;
+    }
+
+    @Override
+    public XStream getXstream() {
+        XStream xStream = DataInstillerUtils.getXStream();
+        xStream.processAnnotations(this.getClass());
+        return xStream;
+    }
+
+    @Override
+    public void generateData() {
+        DataPersistence obj = DataInstillerUtils.getGenerator().generate(this.getClass());
+        deepCopy(obj, this);
+    }
+
+    @Override
+    public String generateXML() {
+        DataGenerator generator = DataInstillerUtils.getGenerator();
+        DataPersistence obj = generator.generate(this.getClass());
+        return (obj.toXML());
     }
 
 }
