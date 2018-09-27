@@ -34,7 +34,7 @@ public class DataInstillerUtils {
      * All Custom Generators Information
      */
     private enum CustomGenerators {
-        GENERATOR_NAME("RandomDateGen", "RANDOM_DATE", new RandomDateGenerator());
+        RANDOM_DATE_GENERATOR("RandomDateGen", "RANDOM_DATE", new RandomDateGenerator());
 
         private String jexlKey;
         private String registerKey;
