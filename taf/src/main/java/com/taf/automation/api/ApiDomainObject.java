@@ -3,23 +3,16 @@ package com.taf.automation.api;
 import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.api.clients.ApiLoginSession;
 import com.taf.automation.api.clients.UserLogin;
-import com.taf.automation.api.converters.BasicHeaderConverter;
-import com.taf.automation.api.converters.EnumConverter;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.ui.support.Credentials;
 import com.taf.automation.ui.support.CreditCard;
 import com.taf.automation.ui.support.DataPersistenceV2;
-import com.taf.automation.ui.support.Environment;
-import com.taf.automation.ui.support.EnvironmentType;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.Data;
 import datainstiller.data.DataAliases;
-import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
-import datainstiller.data.DataValueConverter;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -159,38 +152,6 @@ public class ApiDomainObject extends DataPersistenceV2 {
         return loginSession.login(loginUser, loginPassword);
     }
 
-    private List<DataValueConverter> setUpConverters() {
-        List<DataValueConverter> converters = new ArrayList<>();
-
-        converters.add(new BasicHeaderConverter());
-
-        //
-        // Add application specific converters here
-        //
-
-        converters.add(new EnumConverter(EnvironmentType.class, Environment.QA));
-
-        return converters;
-    }
-
-    @Override
-    public XStream getXstream() {
-        XStream xstream = super.getXstream();
-        for (DataValueConverter converter : setUpConverters()) {
-            xstream.alias("header", BasicHeader.class);
-            xstream.registerConverter(converter);
-        }
-
-        return xstream;
-    }
-
-    @Override
-    public String generateXML() {
-        DataGenerator generator = new DataGenerator(setUpConverters());
-        DataPersistence obj = generator.generate(this.getClass());
-        return (obj.toXML());
-    }
-
     /**
      * Get the Global Aliases<BR>
      * <BR>
@@ -204,8 +165,9 @@ public class ApiDomainObject extends DataPersistenceV2 {
     }
 
     @SuppressWarnings("squid:S106")
+    @Override
     @Test
-    public void gen() {
+    public void generate() {
         System.out.println(generateXML());
     }
 
