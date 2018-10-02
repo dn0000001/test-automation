@@ -3,6 +3,7 @@ package com.taf.automation.ui.support;
 import com.taf.automation.api.converters.BasicHeaderConverter;
 import com.taf.automation.api.converters.EnumConverter;
 import com.taf.automation.ui.support.generators.RandomDateGenerator;
+import com.taf.automation.ui.support.generators.RandomRealUSAddressGenerator;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.extended.ISO8601GregorianCalendarConverter;
 import datainstiller.data.DataGenerator;
@@ -34,7 +35,8 @@ public class DataInstillerUtils {
      * All Custom Generators Information
      */
     private enum CustomGenerators {
-        RANDOM_DATE_GENERATOR("RandomDateGen", "RANDOM_DATE", new RandomDateGenerator());
+        RANDOM_DATE_GENERATOR("RandomDateGen", "RANDOM_DATE", new RandomDateGenerator()),
+        RANDOM_US_ADDRESS_GENERATOR("RealUSAddressGen", "RANDOM_US_ADDRESS", new RandomRealUSAddressGenerator());
 
         private String jexlKey;
         private String registerKey;
