@@ -15,12 +15,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * This class provides utility methods to work with JavaScript
  */
 public class JsUtils {
-    private static final String _JS_ScrollIntoViewWithOffset = Utils.readResource("JS/ScrollIntoViewWithOffset.js");
-    private static final String _JS_Focus = Utils.readResource("JS/Focus.js");
-    private static final String _JS_GetTextOnlyTopLevel = Utils.readResource("JS/GetTextOnlyTopLevel.js");
-    private static final String _JS_ExecuteGetRequest = Utils.readResource("JS/ExecuteGetRequest.js");
-    private static final String _JS_Overlapping = Utils.readResource("JS/Overlapping.js");
-    private static final String _JS_ExecuteMouseEvent = Utils.readResource("JS/ExecuteMouseEvent.js");
+    private static final String SCROLL_INTO_VIEW_WITH_OFFSET = Utils.readResource("JS/ScrollIntoViewWithOffset.js");
+    private static final String FOCUS = Utils.readResource("JS/Focus.js");
+    private static final String GET_TEXT_ONLY_TOP_LEVEL = Utils.readResource("JS/GetTextOnlyTopLevel.js");
+    private static final String EXECUTE_GET_REQUEST = Utils.readResource("JS/ExecuteGetRequest.js");
+    private static final String OVERLAPPING = Utils.readResource("JS/Overlapping.js");
+    private static final String EXECUTE_MOUSE_EVENT = Utils.readResource("JS/ExecuteMouseEvent.js");
+    private static final String SCROLL_TO = Utils.readResource("JS/ScrollTo.js");
+    private static final String SCROLL_TO_BOTTOM = Utils.readResource("JS/ScrollToBottom.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -138,7 +140,7 @@ public class JsUtils {
      * @param element - Element to focus
      */
     public static void focus(WebElement element) {
-        execute(getWebDriver(), _JS_Focus, element);
+        execute(getWebDriver(), FOCUS, element);
     }
 
     /**
@@ -246,7 +248,7 @@ public class JsUtils {
      * @return String
      */
     public static String getText(WebElement element) {
-        return String.valueOf(execute(getWebDriver(), _JS_GetTextOnlyTopLevel, element)).trim();
+        return String.valueOf(execute(getWebDriver(), GET_TEXT_ONLY_TOP_LEVEL, element)).trim();
     }
 
     /**
@@ -256,7 +258,7 @@ public class JsUtils {
      * @return Response Text from the GET request to the specified URL
      */
     public static String executeGetRequest(String url) {
-        return String.valueOf(execute(getWebDriver(), _JS_ExecuteGetRequest, url));
+        return String.valueOf(execute(getWebDriver(), EXECUTE_GET_REQUEST, url));
     }
 
     /**
@@ -279,7 +281,7 @@ public class JsUtils {
      * @param offset  - Pixels to scroll vertically (positive values scrolls down, negative values scrolls up)
      */
     public static void scrollIntoView(WebElement element, String offset) {
-        execute(getWebDriver(), _JS_ScrollIntoViewWithOffset, element, true, offset);
+        execute(getWebDriver(), SCROLL_INTO_VIEW_WITH_OFFSET, element, true, offset);
     }
 
     /**
@@ -318,7 +320,7 @@ public class JsUtils {
             return false;
         }
 
-        return BooleanUtils.toBooleanObject(String.valueOf(execute(getWebDriver(), _JS_Overlapping, rect1, rect2)));
+        return BooleanUtils.toBooleanObject(String.valueOf(execute(getWebDriver(), OVERLAPPING, rect1, rect2)));
     }
 
     /**
@@ -328,7 +330,7 @@ public class JsUtils {
      * @param event   - Mouse Event to execute
      */
     private static void executeMouseEvent(WebElement element, MouseEvent event) {
-        execute(getWebDriver(), _JS_ExecuteMouseEvent,
+        execute(getWebDriver(), EXECUTE_MOUSE_EVENT,
                 element,
                 event.getType().toString(),
                 event.isBubbles(),
@@ -366,6 +368,29 @@ public class JsUtils {
     public static void mouseOut(WebElement element) {
         MouseEvent event = new MouseEvent(MouseEventType.MOUSE_OUT);
         executeMouseEvent(element, event);
+    }
+
+    /**
+     * Scroll To using JavaScript
+     *
+     * @param offset - Offset to scroll to
+     */
+    public static void scrollTo(String offset) {
+        execute(getWebDriver(), SCROLL_TO, offset);
+    }
+
+    /**
+     * Scroll To Top of the page using JavaScript
+     */
+    public static void scrollToTop() {
+        scrollTo("0");
+    }
+
+    /**
+     * Scroll To Bottom of the page using JavaScript
+     */
+    public static void scrollToBottom() {
+        execute(getWebDriver(), SCROLL_TO_BOTTOM, null);
     }
 
 }
