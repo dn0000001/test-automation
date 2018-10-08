@@ -23,6 +23,7 @@ public class JsUtils {
     private static final String EXECUTE_MOUSE_EVENT = Utils.readResource("JS/ExecuteMouseEvent.js");
     private static final String SCROLL_TO = Utils.readResource("JS/ScrollTo.js");
     private static final String SCROLL_TO_BOTTOM = Utils.readResource("JS/ScrollToBottom.js");
+    private static final String OPEN_NEW_WINDOW = Utils.readResource("JS/OpenNewWindow.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -391,6 +392,23 @@ public class JsUtils {
      */
     public static void scrollToBottom() {
         execute(getWebDriver(), SCROLL_TO_BOTTOM, null);
+    }
+
+    /**
+     * Open New Window<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>Popup blockers must be disabled or an exception made for the current site</LI>
+     * <LI>To work with the new window use the returned handle to switch to it</LI>
+     * </OL>
+     *
+     * @param url - URL of new window
+     * @return window handle of 1st new window that appears
+     */
+    public static String openNewWindow(String url) {
+        return Utils.getWebDriverWait().until(ExpectedConditionsUtil.handle(
+                () -> execute(getWebDriver(), OPEN_NEW_WINDOW, url)
+        ));
     }
 
 }
