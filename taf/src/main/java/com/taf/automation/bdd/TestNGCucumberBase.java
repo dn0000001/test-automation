@@ -9,7 +9,13 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * The TestNG base class BDD
+ * Runs cucumber every detected feature as separated test<BR>
+ * <B>Notes: </B>
+ * <OL>
+ * <LI>This is based on the class AbstractTestNGCucumberTests</LI>
+ * <LI>We are using the class TestNGBaseWithoutListeners to prevent duplication in the report.
+ * (If the class TestNGBase is extended, then the report will duplicate everything.</LI>
+ * </OL>
  */
 public class TestNGCucumberBase extends TestNGBaseWithoutListeners {
     private TestNGCucumberRunner testNGCucumberRunner;

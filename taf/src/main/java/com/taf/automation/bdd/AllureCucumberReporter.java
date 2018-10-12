@@ -6,6 +6,9 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import ru.yandex.qatools.allure.cucumberjvm.AllureReporter;
 
+/**
+ * Allure reporting plugin for cucumber-jvm
+ */
 public class AllureCucumberReporter extends AllureReporter {
     private static final String FAILED = "failed";
     private StepDefinitionMatch match;

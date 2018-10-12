@@ -311,8 +311,6 @@ public class Utils {
         Allure.LIFECYCLE.fire(ev);
     }
 
-
-
     /**
      * Get Page Width
      *

@@ -139,7 +139,9 @@ public class DomainObject extends DataPersistence {
         this.context = context;
     }
 
+    @SuppressWarnings("squid:S106")
     @Test
+    @Override
     public void generate() {
         System.out.println(generateXML());
     }
