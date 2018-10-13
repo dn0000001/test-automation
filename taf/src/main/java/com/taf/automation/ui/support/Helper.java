@@ -3,6 +3,8 @@ package com.taf.automation.ui.support;
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.ConsulInstance;
 import com.taf.automation.api.network.MultiSshSession;
+import com.taf.automation.ui.support.conditional.Conditional;
+import com.taf.automation.ui.support.conditional.Criteria;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -31,6 +33,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -599,7 +602,7 @@ public class Helper {
             if (field.isAnnotationPresent(XStreamOmitField.class) ||
                     field.isAnnotationPresent(SkipAutoFill.class) ||
                     !PageComponent.class.isAssignableFrom(field.getType())
-                    ) {
+            ) {
                 inputField = false;
             }
 
@@ -696,6 +699,21 @@ public class Helper {
         domainSpecificTestProperties.setHttpProxy(proxy);
         domainSpecificTestProperties.setHttpsProxy(proxy);
         return domainSpecificTestProperties;
+    }
+
+    /**
+     * Assert That one of the criteria matches before timeout occurs
+     *
+     * @param driver   - Driver used to initialize the Conditional Class
+     * @param criteria - List of criteria to check against current condition
+     * @return Index of the 1st criteria that matches the current condition (&gt;=0)
+     */
+    public static int assertThat(WebDriver driver, List<Criteria> criteria) {
+        Conditional conditional = new Conditional(driver);
+        int result = conditional.waitForMatch(criteria, false);
+        String criteriaList = (criteria == null || criteria.isEmpty()) ? "No Criteria Specified." : Arrays.toString(criteria.toArray());
+        MatcherAssert.assertThat("No match found using criteria:  " + criteriaList, result, greaterThanOrEqualTo(0));
+        return result;
     }
 
 }
