@@ -537,4 +537,36 @@ public class ExpectedConditionsUtil {
         };
     }
 
+    /**
+     * An expectation for checking that a visible element is found using the locator to get all elements.
+     * Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+     *
+     * @param locator used to find the element
+     * @return the 1st WebElement that is visible using the locator
+     */
+    public static ExpectedCondition<WebElement> visibilityOfFirstElementLocatedBy(final By locator) {
+        return new ExpectedCondition<WebElement>() {
+            @Override
+            public WebElement apply(WebDriver driver) {
+                try {
+                    List<WebElement> elements = driver.findElements(locator);
+                    for (WebElement element : elements) {
+                        if (element.isDisplayed()) {
+                            return element;
+                        }
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "could not find any element that was visible with locator:  " + locator;
+            }
+        };
+    }
+
 }
