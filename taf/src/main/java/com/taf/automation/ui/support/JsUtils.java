@@ -24,6 +24,7 @@ public class JsUtils {
     private static final String SCROLL_TO = Utils.readResource("JS/ScrollTo.js");
     private static final String SCROLL_TO_BOTTOM = Utils.readResource("JS/ScrollToBottom.js");
     private static final String OPEN_NEW_WINDOW = Utils.readResource("JS/OpenNewWindow.js");
+    private static final String ADD_ATTRIBUTE_TO_ELEMENT = Utils.readResource("JS/AddAttributeToElement.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -409,6 +410,35 @@ public class JsUtils {
         return Utils.getWebDriverWait().until(ExpectedConditionsUtil.handle(
                 () -> execute(getWebDriver(), OPEN_NEW_WINDOW, url)
         ));
+    }
+
+    /**
+     * Add attribute to element<BR><BR>
+     * <B>Use Case Scenario:</B> You have a list of elements but no way to uniquely identify them for use with
+     * dynamic locators in a page object.  You can use this method to set an attribute on the element such that it is
+     * possible to construct dynamic locators in the page object.<BR><BR>
+     * <B>Example: </B>You are using a page object with dynamic locators to represent an editable row in table.  It
+     * tends to be easy to get all the rows.  However, the rows probably have no ids to be referenced.  In this case,
+     * you can add ids to the rows and then it is possible to construct the dynamic locators for the page object.<BR>
+     *
+     * @param element   - Element to add attribute to
+     * @param attribute - Attribute to be added
+     * @param value     - Value for attribute
+     */
+    public static void addAttribute(WebElement element, String attribute, String value) {
+        execute(getWebDriver(), ADD_ATTRIBUTE_TO_ELEMENT, element, attribute, value);
+    }
+
+    /**
+     * Add id attribute to the element<BR>
+     * <B>Note: </B> You should not use this method if the element already has an id because this could break the
+     * website's functionality as the underlining JavaScript may not be able to find this element.
+     *
+     * @param element - Element to add id to
+     * @param value   - Value for id
+     */
+    public static void addAttributeId(WebElement element, String value) {
+        addAttribute(element, "id", value);
     }
 
 }
