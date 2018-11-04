@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 
 /**
- * Class to hold all links to validated
+ * Class to hold all links to validate
  */
 @XStreamAlias("links-do")
 public class LinksDO extends DomainObject {

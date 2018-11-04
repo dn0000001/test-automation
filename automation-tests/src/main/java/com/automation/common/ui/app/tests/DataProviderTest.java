@@ -52,7 +52,7 @@ public class DataProviderTest extends TestNGBase {
     }
 
     /**
-     * Perform validation of links from home page
+     * Perform validation of links
      *
      * @param attempt - Attempt number
      * @param link    - Link to validate
