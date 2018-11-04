@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Unversioned Tests" verbose="1" parallel="tests" thread-count="5">
+<suite name="Unversioned Tests" verbose="1" parallel="tests" thread-count="5" data-provider-thread-count="5">
 
     <test name="Herokuapp Data Table Test">
         <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.HerokuappDataTableTest"/>
+        </classes>
+    </test>
+
+    <test name="Data Provider Test">
+        <parameter name="Data Provider Test" value="data/ui/LinksTestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.DataProviderTest"/>
         </classes>
     </test>
 
