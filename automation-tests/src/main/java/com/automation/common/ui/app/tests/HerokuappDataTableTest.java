@@ -5,7 +5,6 @@ import com.automation.common.ui.app.pageObjects.HerokuappRow;
 import com.taf.automation.api.JsonUtils;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
-import org.hamcrest.Matchers;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Testing Dynamic Locators in a page that represents a row in a table
@@ -74,7 +74,7 @@ public class HerokuappDataTableTest extends TestNGBase {
             expected.dues = row.getDues();
             expected.website = row.getWebsite();
 
-            assertThat("Row[" + i + "]", actualRows.get(i), Matchers.equalTo(expected));
+            assertThat("Row[" + i + "]", actualRows.get(i), equalTo(expected));
         }
     }
 
