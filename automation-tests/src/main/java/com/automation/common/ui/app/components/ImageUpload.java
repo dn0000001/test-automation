@@ -9,7 +9,6 @@ import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import ui.auto.core.pagecomponent.PageComponentNoDefaultAction;
-import ui.auto.core.utils.WebDriverUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
 
     @Override
     protected void init() {
-        driver = (RemoteWebDriver) WebDriverUtils.getDriverFromElement(getCoreElement());
+        driver = (RemoteWebDriver) Utils.getWebDriver(getCoreElement());
         inputUploadFile = (RemoteWebElement) driver.findElement(By.cssSelector("input[type=file]"));
     }
 

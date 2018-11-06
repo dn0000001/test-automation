@@ -15,6 +15,7 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.qatools.allure.Allure;
@@ -35,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Utilities mainly for UI
@@ -98,6 +100,40 @@ public class Utils {
      */
     private static WebDriver getWebDriver() {
         return TestNGBase.context().getDriver();
+    }
+
+    /**
+     * Get a WebDriver from a WebElement. This is useful in cases where you only have a WebElement but need a
+     * WebDriver to do some action.<BR>
+     * <B>Note: </B> The method WebDriverUtils.getDriverFromElement sometimes throws an exception as such it is
+     * recommended to use this method.<BR>
+     *
+     * @param element - WebElement to get the WebDriver from
+     * @return WebDriver
+     */
+    public static WebDriver getWebDriver(WebElement element) {
+        WebDriver useDriver;
+        String error;
+
+        try {
+            /*
+             * Trick to get real element that can return the WebDriver.
+             * Notes:
+             * 1) If you use element directly it is a proxy and this cannot be cast to RemoteWebElement
+             * 2) If WebElement cannot be bound, then this will generate an exception
+             */
+            WebElement realElement = element.findElement(By.xpath("."));
+
+            // Get the WebDriver object from the real (bound) WebElement
+            useDriver = ((RemoteWebElement) realElement).getWrappedDriver();
+            error = "no error";
+        } catch (Exception ex) {
+            useDriver = null;
+            error = ex.getMessage();
+        }
+
+        assertThat("Could not get driver from element due to exception:  " + error, useDriver, notNullValue());
+        return useDriver;
     }
 
     /**
