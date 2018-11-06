@@ -23,7 +23,6 @@ import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 import ui.auto.core.utils.AjaxTriggeredAction;
-import ui.auto.core.utils.WebDriverUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -113,7 +112,6 @@ public class Utils {
      * @return WebDriver
      */
     public static WebDriver getWebDriver(WebElement element) {
-        WebDriverUtils.getDriverFromElement(element);
         WebDriver useDriver;
         String error;
 
