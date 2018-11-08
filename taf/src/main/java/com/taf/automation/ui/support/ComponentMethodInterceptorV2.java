@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import net.jodah.failsafe.Failsafe;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -42,27 +43,34 @@ public class ComponentMethodInterceptorV2 implements MethodInterceptor {
             Field coreElement = FieldUtils.getField(PageComponent.class, "coreElement", true);
             WebElement currentCoreElement = (WebElement) coreElement.get(pageComponent);
             WebElement newCoreElement = locator.findElement();
-            boolean staleElement = false;
-            try {
-                if (currentCoreElement != null) {
-                    currentCoreElement.isDisplayed(); //This should trigger exception if element is detached from Dom
-                }
-            } catch (StaleElementReferenceException | JavascriptException | NoSuchElementException e) {
-                staleElement = true;
-            }
-
+            boolean staleElement = isStale(currentCoreElement);
             if (currentCoreElement == null || staleElement || !currentCoreElement.equals(newCoreElement)) {
-                try {
-                    Method m = PageComponent.class.getDeclaredMethod("initComponent", WebElement.class);
-                    m.setAccessible(true);
-                    m.invoke(pageComponent, newCoreElement);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
+                Failsafe.with(Utils.getRetryAtleastOncePolicy()).run(() -> initComponent(pageComponent));
             }
         }
 
         return proxy.invokeSuper(obj, args);
+    }
+
+    private boolean isStale(WebElement currentCoreElement) {
+        if (currentCoreElement == null) {
+            return false;
+        }
+
+        try {
+            currentCoreElement.isDisplayed(); //This should trigger exception if element is detached from DOM
+            return false;
+        } catch (StaleElementReferenceException | JavascriptException | NoSuchElementException e) {
+            return true;
+        }
+    }
+
+    @SuppressWarnings("squid:S00112")
+    private void initComponent(PageComponent pageComponent) throws Exception {
+        WebElement newCoreElement = locator.findElement();
+        Method m = PageComponent.class.getDeclaredMethod("initComponent", WebElement.class);
+        m.setAccessible(true);
+        m.invoke(pageComponent, newCoreElement);
     }
 
 }

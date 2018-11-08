@@ -709,7 +709,19 @@ public class Helper {
      * @return Index of the 1st criteria that matches the current condition (&gt;=0)
      */
     public static int assertThat(WebDriver driver, List<Criteria> criteria) {
-        Conditional conditional = new Conditional(driver);
+        return assertThat(driver, criteria, TestProperties.getInstance().getElementTimeout());
+    }
+
+    /**
+     * Assert That one of the criteria matches before timeout occurs
+     *
+     * @param driver   - Driver used to initialize the Conditional Class
+     * @param criteria - List of criteria to check against current condition
+     * @param timeout  - timeout (in seconds)
+     * @return Index of the 1st criteria that matches the current condition (&gt;=0)
+     */
+    public static int assertThat(WebDriver driver, List<Criteria> criteria, int timeout) {
+        Conditional conditional = new Conditional(driver, timeout);
         int result = conditional.waitForMatch(criteria, false);
         String criteriaList = (criteria == null || criteria.isEmpty()) ? "No Criteria Specified." : Arrays.toString(criteria.toArray());
         MatcherAssert.assertThat("No match found using criteria:  " + criteriaList, result, greaterThanOrEqualTo(0));
