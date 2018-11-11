@@ -17,6 +17,15 @@
     </test>
 
     <!--
+    <test name="CSV Test">
+        <parameter name="csv" value="data/ui/test-cases.csv"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.CsvTest"/>
+        </classes>
+    </test>
+    -->
+
+    <!--
     <test name="Switch Dynamic Locator Test">
         <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
         <classes>

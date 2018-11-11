@@ -193,6 +193,11 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>${sql.server.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>${commons.csv.version}</version>
+        </dependency>
 
         <!-- START:  BDD specific dependencies -->
         <dependency>
