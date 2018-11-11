@@ -1,0 +1,3 @@
+USER,PASS,PLAYER,TEAM,alias-1,alias-2
+aa,aa-pass,${alias-1},t1,new-p1,
+bb,pass2,${alias-2},t2,,new-p2

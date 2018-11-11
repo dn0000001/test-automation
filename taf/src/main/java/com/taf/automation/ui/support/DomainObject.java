@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.csv.CsvTestData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.DataAliases;
@@ -144,6 +145,15 @@ public class DomainObject extends DataPersistence {
     @Override
     public void generate() {
         System.out.println(generateXML());
+    }
+
+    /**
+     * Use the CSV data to set the variables in the domain object
+     *
+     * @param csvTestData - CSV test data
+     */
+    public void setData(CsvTestData csvTestData) {
+        // Method should be overridden in extending classes
     }
 
 }
