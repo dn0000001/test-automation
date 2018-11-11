@@ -2,7 +2,7 @@
 
 <true-north-hockey-canada>
     <aliases>
-        <player>tiger</player>
+        <player>$[CUSTOM_LIST('null', 'zzz,yyy,www,ttt')]</player>
         <value>duplicated</value>
     </aliases>
     <user>user2</user>

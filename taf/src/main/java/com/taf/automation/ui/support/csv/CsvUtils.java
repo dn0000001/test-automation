@@ -1,9 +1,11 @@
 package com.taf.automation.ui.support.csv;
 
+import com.taf.automation.ui.support.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
+import datainstiller.generators.GeneratorInterface;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -23,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -94,7 +98,7 @@ public class CsvUtils {
 
         for (Map.Entry<String, Integer> item : csvTestData.getAliases().entrySet()) {
             String aliasKey = item.getKey();
-            String aliasValue = csvTestData.getRecord().get(aliasKey);
+            String aliasValue = replaceGenerator(csvTestData.getRecord().get(aliasKey));
             PageComponentContext.getGlobalAliases().put(aliasKey, aliasValue);
 
             // Add to domain object such that data is in the report
@@ -102,6 +106,28 @@ public class CsvUtils {
                 domainObject.getDataAliases().put(aliasKey, aliasValue);
             }
         }
+    }
+
+    /**
+     * Replace generator in the specified value
+     *
+     * @param value - Value to check for generator to be replaced
+     * @return if value contains a generator, then it is replaced with the generated value else the value
+     */
+    private static String replaceGenerator(String value) {
+        // This is similar code as in DataAliasesConverterV2 but it does not support Jexl
+        if (value.matches("\\$\\[.+]")) {
+            Pattern pattern = Pattern.compile("\\$\\[(.+)\\(\\s*'\\s*(.*)\\s*'\\s*,\\s*'\\s*(.*)\\s*'\\s*\\)");
+            Matcher matcher = pattern.matcher(value);
+            assertThat(value + " - invalid data generation expression!", matcher.find());
+
+            GeneratorInterface genType = DataInstillerUtils.getGenerator().getGenerator(matcher.group(1).trim());
+            String init = matcher.group(2);
+            String val = matcher.group(3);
+            return genType.generate(init, val);
+        }
+
+        return value;
     }
 
     /**
