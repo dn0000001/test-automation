@@ -1,3 +1,3 @@
-USER,PASS,PLAYER,TEAM,alias-1,alias-2
+USER,PASS,player,Team,alias-1,alias-2
 aa,aa-pass,${alias-1},t1,"$[CUSTOM_LIST('null', 'zzz,yyy,www,ttt')]",
 bb,pass2,${alias-2},t2,,new-p2
