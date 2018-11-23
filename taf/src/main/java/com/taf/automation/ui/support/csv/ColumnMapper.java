@@ -66,7 +66,7 @@ public interface ColumnMapper {
     default List<ColumnMapper> getDuplicates() {
         Map<String, List<ColumnMapper>> columnMap = new HashMap<>();
         for (ColumnMapper value : getValues()) {
-            String key = value.getColumnName().toUpperCase();
+            String key = value.getColumnName();
             if (columnMap.containsKey(key)) {
                 List<ColumnMapper> duplicateList = columnMap.get(key);
                 duplicateList.add(value);

@@ -25,7 +25,7 @@ public class CsvTest extends TestNGBase {
     @BeforeTest
     public void setup(ITestContext injectedContext) {
         String csvDataSet = CsvUtils.getCsvDataSetFromParameter(injectedContext, "csv");
-        records = CsvUtils.dataProvider(csvDataSet);
+        records = CsvUtils.dataProvider(csvDataSet).iterator();
     }
 
     @DataProvider(name = "CSV_Data", parallel = true)
