@@ -1,3 +1,4 @@
-USER,PASS,player,Team,alias-1,alias-2
-aa,aa-pass,${alias-1},t1,"$[CUSTOM_LIST('null', 'zzz,yyy,www,ttt')]",
-bb,pass2,${alias-2},t2,,new-p2
+RUN,USER,PASS,player,Team,alias-1,alias-2
+y,aa,aa-pass,${alias-1},t1,"$[CUSTOM_LIST('null', 'zzz,yyy,www,ttt')]",
+y,bb,pass2,${alias-2},t2,,new-p2
+n,cc,cc-pass,${alias-1},${alias-2},"$[CUSTOM_LIST('null', 'ab,cd,ef')]","$[CUSTOM_LIST('null', 'rock,paper,scissors')]"

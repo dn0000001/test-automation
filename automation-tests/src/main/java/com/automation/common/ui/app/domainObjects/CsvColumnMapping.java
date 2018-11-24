@@ -3,6 +3,7 @@ package com.automation.common.ui.app.domainObjects;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 
 public enum CsvColumnMapping implements ColumnMapper {
+    RUN("RUN"),
     USER("USER"),
     PASS("PASS"),
     PLAYER("player"),
