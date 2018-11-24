@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Example test using a data provider that reads a csv file
+ * Example test that writes a csv file
  */
 public class CsvWriteTest extends TestNGBase {
     private static final String[] HEADER_ROW = {"ROW", "First", "Last", "Phone"};
