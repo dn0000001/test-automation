@@ -2,13 +2,16 @@ package com.taf.automation.ui.support.csv;
 
 import com.taf.automation.ui.support.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
+import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
 import datainstiller.generators.GeneratorInterface;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.testng.ITestContext;
@@ -18,6 +21,7 @@ import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -158,6 +162,29 @@ public class CsvUtils {
     }
 
     /**
+     * Use the CSV data to set the variables in the domain object with left padding if necessary on non-empty value<BR>
+     * <B>Note: </B> Initial &amp; Expected data is not changed<BR>
+     *
+     * @param csv       - CSV record data
+     * @param column    - Column Enumeration that maps to component
+     * @param component - Component to initialize data
+     * @param size      - The size to pad to
+     * @param padStr    - The String to pad with, null or empty treated as single space
+     */
+    public static void setData(CSVRecord csv, ColumnMapper column, PageComponent component, int size, String padStr) {
+        if (csv.isMapped(column.getColumnName())) {
+            String data = StringUtils.defaultString(csv.get(column.getColumnName()));
+            if (!data.isEmpty()) {
+                data = leftPad(data, size, padStr);
+            }
+
+            String initial = component.getData(DataTypes.Initial, false);
+            String expected = component.getData(DataTypes.Expected, false);
+            component.initializeData(data, initial, expected);
+        }
+    }
+
+    /**
      * Get CSV Data Set (resource) location from parameter (in the suite file)
      *
      * @param testNGContext - TestNG Context
@@ -178,9 +205,25 @@ public class CsvUtils {
      * a successful test run.
      *
      * @param csvDataSet - CSV Data Set (resource) location
-     * @return Iterator&lt;Object[]&gt;
+     * @return List&lt;Object[]&gt;
      */
-    public static Iterator<Object[]> dataProvider(String csvDataSet) {
+    public static List<Object[]> dataProvider(String csvDataSet) {
+        return dataProvider(csvDataSet, null);
+    }
+
+    /**
+     * Generic Data Provider for CSV files<BR>
+     * <B>Note: </B> It is recommended to call this method in the BeforeTest annotation such that any error with fail
+     * the test.  Any failure in the DataProvider annotation will just mark the test as skipped and you could have
+     * a successful test run.
+     *
+     * @param csvDataSet    - CSV Data Set (resource) location
+     * @param runColumnName - If value is not blank,
+     *                      then removes all the records that are not set to run using the specific column name
+     *                      else no records are removed
+     * @return List&lt;Object[]&gt;
+     */
+    public static List<Object[]> dataProvider(String csvDataSet, String runColumnName) {
         List<Object[]> tests = new ArrayList<>();
 
         List<CSVRecord> records = new ArrayList<>();
@@ -192,7 +235,45 @@ public class CsvUtils {
             tests.add(new Object[]{new CsvTestData(record, aliases)});
         }
 
-        return tests.iterator();
+        if (StringUtils.isNotBlank(runColumnName)) {
+            // Remove any record that is not set to run
+            tests.removeIf(data -> !BooleanUtils.toBoolean(((CsvTestData) data[0]).getRecord().get(runColumnName)));
+        }
+
+        return tests;
+    }
+
+    /**
+     * Generic Data Provider for CSV files<BR>
+     * <B>Note: </B> It is recommended to call this method in the BeforeTest annotation such that any error with fail
+     * the test.  Any failure in the DataProvider annotation will just mark the test as skipped and you could have
+     * a successful test run.
+     *
+     * @param injectedContext  - Injected TestNG Content
+     * @param useCsvParameter  - If <B>null</B> skips reading parameter and CSV file
+     *                         else reads the parameter which must exist to determine if you should read the CSV file.
+     * @param dataSetParameter - CSV data set parameter (based on useCsvParameter this may not be used.)
+     * @param runColumnName    - If value is not blank,
+     *                         then removes all the records that are not set to run using the specific column name
+     *                         else no records are removed
+     * @return Iterator&lt;Object[]&gt;
+     */
+    public static Iterator<Object[]> dataProvider(
+            ITestContext injectedContext,
+            String useCsvParameter,
+            String dataSetParameter,
+            String runColumnName
+    ) {
+        List<Object[]> all = new ArrayList<>();
+
+        // Note: This method is run before all tests in this class as such only read csv if specified
+        // which should only be with data provider
+        if (useCsvParameter != null && BooleanUtils.toBoolean(getCsvDataSetFromParameter(injectedContext, useCsvParameter))) {
+            String csvDataSet = getCsvDataSetFromParameter(injectedContext, dataSetParameter);
+            all = dataProvider(csvDataSet, runColumnName);
+        }
+
+        return all.iterator();
     }
 
     /**
@@ -207,6 +288,7 @@ public class CsvUtils {
             ITestContext testNGContext,
             final Runnable testActions
     ) {
+        boolean failure = true;
         try {
             // When using the data provider functionality, this method needs to be called in this new thread
             testClass.initTest(testNGContext);
@@ -214,9 +296,17 @@ public class CsvUtils {
             // Put all normal test actions in another method such that Sonar Cognitive Complexity violation
             // does not occur.
             testActions.run();
+            failure = false;
         } finally {
-            // When using the data provider functionality, this method needs to be called in this new thread
-            // as TestNG does not call this method.
+            //
+            // When using the data provider functionality, all the after test methods need to be called here
+            // in this new thread as TestNG does not call any of the after test methods
+            //
+            if (failure) {
+                TestNGBase.takeScreenshot("Failed Test Screenshot");
+                TestNGBase.takeHTML("Failed Test HTML Source");
+            }
+
             testClass.closeDriver();
         }
     }
@@ -231,6 +321,84 @@ public class CsvUtils {
         domainObject.setData(csvTestData);
         updateAliases(domainObject, csvTestData);
         attachDataSet(domainObject);
+    }
+
+    /**
+     * Check if the column is mapped and there is non-blank data
+     *
+     * @param csv    - CSV record data
+     * @param column - Column Enumeration to check if it is mapped and there is non-blank data
+     * @return true if the column is mapped and there is non-blank data
+     */
+    public static boolean isNotBlank(CSVRecord csv, ColumnMapper column) {
+        return csv.isMapped(column.getColumnName()) && StringUtils.isNotBlank(csv.get(column.getColumnName()));
+    }
+
+    /**
+     * Check if any of the specified columns are mapped and there is corresponding non-blank data
+     *
+     * @param csv     - CSV record data
+     * @param columns - Column Enumerations to check if any are mapped and there is corresponding non-blank data
+     * @return true if any column is mapped and there is corresponding non-blank data
+     */
+    public static boolean isAnyNotBlank(CSVRecord csv, ColumnMapper... columns) {
+        if (columns == null) {
+            return false;
+        }
+
+        for (ColumnMapper column : columns) {
+            if (isNotBlank(csv, column)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Write records to a new CSV file
+     *
+     * @param filename      - Location & File to write to
+     * @param format        - Format of the CSV file
+     * @param outputRecords - Records to be output to the file
+     */
+    public static void writeToCSV(String filename, CSVFormat format, List<CsvOutputRecord> outputRecords) {
+        writeToCSV(filename, false, format, outputRecords);
+    }
+
+    /**
+     * Write records to CSV file
+     *
+     * @param filename      - Location & File to write to
+     * @param append        - if true, then data will be written to the end of the file rather than the beginning.
+     * @param format        - Format of the CSV file
+     * @param outputRecords - Records to be output to the file
+     */
+    public static void writeToCSV(String filename, boolean append, CSVFormat format, List<CsvOutputRecord> outputRecords) {
+        try (
+                FileWriter writer = new FileWriter(filename, append);
+                CSVPrinter printer = new CSVPrinter(writer, format)
+        ) {
+            for (CsvOutputRecord item : outputRecords) {
+                printer.printRecord(item.asList());
+            }
+
+            printer.flush();
+        } catch (Exception ex) {
+            assertThat("Failed to write CSV file due to exception:  " + ex.getMessage(), false);
+        }
+    }
+
+    /**
+     * Left pad a String with a specified String
+     *
+     * @param str    - The String to pad out, null value converted to empty string and then left padded
+     * @param size   - The size to pad to
+     * @param padStr - The String to pad with, null or empty treated as single space
+     * @return left padded String or original String if no padding is necessary
+     */
+    public static String leftPad(String str, int size, String padStr) {
+        return StringUtils.leftPad(StringUtils.defaultString(str), size, padStr);
     }
 
 }

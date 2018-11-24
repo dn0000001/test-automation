@@ -3,10 +3,11 @@ package com.automation.common.ui.app.domainObjects;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 
 public enum CsvColumnMapping implements ColumnMapper {
-    USER("User"),
-    PASS("Pass"),
+    RUN("RUN"),
+    USER("USER"),
+    PASS("PASS"),
     PLAYER("player"),
-    TEAM("team");
+    TEAM("Team");
 
     private String columnName;
 
@@ -16,7 +17,7 @@ public enum CsvColumnMapping implements ColumnMapper {
 
     @Override
     public String getColumnName() {
-        return columnName.toUpperCase();
+        return columnName;
     }
 
     @Override

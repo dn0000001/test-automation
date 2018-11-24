@@ -1,5 +1,6 @@
 package com.automation.common.ui.app.tests;
 
+import com.automation.common.ui.app.domainObjects.CsvColumnMapping;
 import com.automation.common.ui.app.domainObjects.TNHC_DO;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.csv.CsvTestData;
@@ -25,7 +26,7 @@ public class CsvTest extends TestNGBase {
     @BeforeTest
     public void setup(ITestContext injectedContext) {
         String csvDataSet = CsvUtils.getCsvDataSetFromParameter(injectedContext, "csv");
-        records = CsvUtils.dataProvider(csvDataSet);
+        records = CsvUtils.dataProvider(csvDataSet, CsvColumnMapping.RUN.getColumnName()).iterator();
     }
 
     @DataProvider(name = "CSV_Data", parallel = true)
