@@ -4,6 +4,9 @@ package com.taf.automation.ui.support;
  * Regular Expression Utilities
  */
 public class RegExUtils {
+    public static final String NOT_ALPHANUMERIC = "\\W";
+    public static final String NOT_DIGITS = "\\D";
+
     private RegExUtils() {
         // Prevent initialization of class as all public methods should be static
     }
