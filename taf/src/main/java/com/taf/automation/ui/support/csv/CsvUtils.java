@@ -2,8 +2,11 @@ package com.taf.automation.ui.support.csv;
 
 import com.taf.automation.ui.support.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
+import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.RegExUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
 import datainstiller.generators.GeneratorInterface;
@@ -11,9 +14,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.openqa.selenium.By;
 import org.testng.ITestContext;
 import ru.yandex.qatools.allure.Allure;
 import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
@@ -24,6 +29,8 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -228,8 +235,8 @@ public class CsvUtils {
 
         List<CSVRecord> records = new ArrayList<>();
         Map<String, Integer> headers = new HashMap<>();
-        CsvUtils.read(csvDataSet, records, headers);
-        Map<String, Integer> aliases = CsvUtils.getAliasHeaders(headers);
+        read(csvDataSet, records, headers);
+        Map<String, Integer> aliases = getAliasHeaders(headers);
 
         for (CSVRecord record : records) {
             tests.add(new Object[]{new CsvTestData(record, aliases)});
@@ -399,6 +406,140 @@ public class CsvUtils {
      */
     public static String leftPad(String str, int size, String padStr) {
         return StringUtils.leftPad(StringUtils.defaultString(str), size, padStr);
+    }
+
+    /**
+     * Generate the CSV Headers row from the specified class
+     *
+     * @param clazz  - Class to generate the CSV Headers Row for
+     * @param prefix - Prefix to be used before each field if non-blank value
+     * @return CSV Headers row
+     */
+    public static String generateCsvHeaders(Class clazz, String prefix) {
+        StringBuilder sb = new StringBuilder();
+
+        List<Field> all = FieldUtils.getAllFieldsList(clazz);
+        for (Field field : all) {
+            if (field.isAnnotationPresent(XStreamOmitField.class) ||
+                    field.isSynthetic() ||
+                    Modifier.isStatic(field.getModifiers()) ||
+                    field.getType().equals(By.class) ||
+                    field.getType().equals(JexlContext.class) ||
+                    field.getType().equals(DataAliases.class) ||
+                    StringUtils.equals(field.getName(), "xmlns") ||
+                    StringUtils.equals(field.getName(), "xsi") ||
+                    StringUtils.equals(field.getName(), "schemaLocation")
+            ) {
+                continue;
+            }
+
+            if (StringUtils.isNotBlank(prefix)) {
+                sb.append(prefix);
+            }
+
+            sb.append(field.getName());
+            sb.append(",");
+        }
+
+        return StringUtils.removeEnd(sb.toString(), ",");
+    }
+
+    /**
+     * Prints the generated the CSV Headers row from the specified class to the console
+     *
+     * @param clazz  - Class to generate the CSV Headers Row for
+     * @param prefix - Prefix to be used before each field if non-blank value
+     */
+    public static void printGenerateCsvHeaders(Class clazz, String prefix) {
+        Helper.log("\n\n" + generateCsvHeaders(clazz, prefix) + "\n\n", true);
+    }
+
+    /**
+     * Generate code for enum that maps to the CSV headers
+     *
+     * @param csvDataSet  - CSV Data Set (resource) location
+     * @param enumName    - Enumeration Name to be used, if null a placeholder is used
+     * @param packageName - Package Name to be used, if null a placeholder is used
+     * @return code that can be used for the enum to map to the CSV file
+     */
+    public static String generateCodeForEnum(String csvDataSet, String enumName, String packageName) {
+        final String indent = "    ";
+        StringBuilder sb = new StringBuilder();
+        sb.append("package ");
+        sb.append(StringUtils.defaultString(packageName, "<REPLACE_WITH_PACKAGE>"));
+        sb.append(";");
+        sb.append("\n\n");
+        sb.append("import com.taf.automation.ui.support.csv.ColumnMapper;");
+        sb.append("\n\n");
+        sb.append("public enum ");
+        sb.append(StringUtils.defaultString(enumName, "<REPLACE_WITH_ENUM_NAME>"));
+        sb.append(" implements ColumnMapper {");
+        sb.append("\n");
+
+        List<CSVRecord> records = new ArrayList<>();
+        Map<String, Integer> headers = new HashMap<>();
+        read(csvDataSet, records, headers);
+        for (String key : headers.keySet()) {
+            // Skip the aliases
+            if (StringUtils.startsWithIgnoreCase(key, ALIAS_PREFIX)) {
+                continue;
+            }
+
+            // Ensure valid Java field name
+            String fieldName = key.replaceAll(RegExUtils.NOT_ALPHANUMERIC, "_");
+            if (fieldName.matches("^\\d.*")) {
+                fieldName = "_" + fieldName;
+            }
+
+            sb.append(indent + fieldName.toUpperCase());
+            sb.append("(\"");
+            sb.append(key);
+            sb.append("\"),");
+            sb.append("\n");
+        }
+
+        sb.append(indent + ";");
+        sb.append("\n\n");
+        sb.append(indent + "private String columnName;");
+        sb.append("\n\n");
+        sb.append(indent + StringUtils.defaultString(enumName, "<REPLACE_WITH_ENUM_NAME>"));
+        sb.append("(String columnName) {");
+        sb.append("\n");
+        sb.append(indent + indent + "this.columnName = columnName;");
+        sb.append("\n");
+        sb.append(indent + "}");
+        sb.append("\n\n");
+        sb.append(indent + "@Override");
+        sb.append("\n");
+        sb.append(indent + "public String getColumnName() {");
+        sb.append("\n");
+        sb.append(indent + indent + "return columnName;");
+        sb.append("\n");
+        sb.append(indent + "}");
+        sb.append("\n\n");
+        sb.append(indent + "@Override");
+        sb.append("\n");
+        sb.append(indent + "public ColumnMapper[] getValues() {");
+        sb.append("\n");
+        sb.append(indent + indent + "return values();");
+        sb.append("\n");
+        sb.append(indent + "}");
+        sb.append("\n\n");
+        sb.append("}");
+        sb.append("\n\n");
+
+        return sb.toString();
+    }
+
+    /**
+     * Prints the generated code for enum that maps to the CSV headers to the console
+     *
+     * @param csvDataSet  - CSV Data Set (resource) location
+     * @param enumName    - Enumeration Name to be used, if null a placeholder is used
+     * @param packageName - Package Name to be used, if null a placeholder is used
+     */
+    public static void printGeneratedCodeForEnum(String csvDataSet, String enumName, String packageName) {
+        Helper.log("\n\n" + generateCodeForEnum(csvDataSet, enumName, packageName), true);
     }
 
 }
