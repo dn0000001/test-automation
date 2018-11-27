@@ -339,8 +339,13 @@ public class Utils {
         byte[] attachment = data.toXML().getBytes();
         String name = null;
         if (path != null) {
-            // The path comes from the data-set file which should always use slash
-            name = "..." + path.substring(path.lastIndexOf("/"));
+            try {
+                // The path comes from the data-set file which should always use slash
+                name = "..." + path.substring(path.lastIndexOf("/"));
+            } catch (Exception ex) {
+                // Fallback if parsing fails
+                name = path;
+            }
         }
 
         MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, name, "text/xml");

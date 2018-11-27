@@ -26,6 +26,8 @@ import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,15 +56,34 @@ public class CsvUtils {
     }
 
     /**
+     * Open InputStream from resource file and if that fails try from the actual file system
+     *
+     * @param resourceFilePath - Resource File Path (or actual file system path) to the CSV file to read
+     * @return null if cannot open else InputStream
+     */
+    private static InputStream openInputStream(String resourceFilePath) {
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceFilePath);
+        if (in == null) {
+            try {
+                in = new FileInputStream(new File(resourceFilePath));
+            } catch (Exception ignore) {
+                return null;
+            }
+        }
+
+        return in;
+    }
+
+    /**
      * Get CSV records from the specified resource and update the records parameter and headers parameter
      *
-     * @param resourceFilePath - Resource File Path to the CSV file to read
+     * @param resourceFilePath - Resource File Path (or actual file system path) to the CSV file to read
      * @param records          - Updated with the CSV records
      * @param headers          - Updated with the CSV header record
      */
     public static void read(String resourceFilePath, List<CSVRecord> records, Map<String, Integer> headers) {
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceFilePath);
+            InputStream in = openInputStream(resourceFilePath);
             InputStreamReader reader = new InputStreamReader(in);
             CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader();
             CSVParser csvFileParser = new CSVParser(reader, csvFileFormat);
@@ -224,7 +245,7 @@ public class CsvUtils {
      * the test.  Any failure in the DataProvider annotation will just mark the test as skipped and you could have
      * a successful test run.
      *
-     * @param csvDataSet    - CSV Data Set (resource) location
+     * @param csvDataSet    - CSV Data Set location
      * @param runColumnName - If value is not blank,
      *                      then removes all the records that are not set to run using the specific column name
      *                      else no records are removed
@@ -457,7 +478,7 @@ public class CsvUtils {
     /**
      * Generate code for enum that maps to the CSV headers
      *
-     * @param csvDataSet  - CSV Data Set (resource) location
+     * @param csvDataSet  - CSV Data Set location
      * @param enumName    - Enumeration Name to be used, if null a placeholder is used
      * @param packageName - Package Name to be used, if null a placeholder is used
      * @return code that can be used for the enum to map to the CSV file
