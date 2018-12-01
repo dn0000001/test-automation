@@ -6,6 +6,7 @@ import com.taf.automation.api.network.MultiSshSession;
 import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.Header;
@@ -25,7 +26,9 @@ import ui.auto.core.pagecomponent.PageObject;
 import ui.auto.core.pagecomponent.SkipAutoFill;
 import ui.auto.core.pagecomponent.SkipAutoValidate;
 
+import java.io.File;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +45,7 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class Helper {
     private static final Logger LOG = LoggerFactory.getLogger(Helper.class);
+    private static final String DIVIDER_RESOURCE = "divider.png";
 
     private Helper() {
         //
@@ -726,6 +730,103 @@ public class Helper {
         String criteriaList = (criteria == null || criteria.isEmpty()) ? "No Criteria Specified." : Arrays.toString(criteria.toArray());
         MatcherAssert.assertThat("No match found using criteria:  " + criteriaList, result, greaterThanOrEqualTo(0));
         return result;
+    }
+
+    /**
+     * Mask a file by using the divider resource to create a fake image
+     *
+     * @param filename - File to be masked as an image
+     * @return Masked file location
+     */
+    public static String maskFile(String filename) {
+        return maskFile(filename, DIVIDER_RESOURCE);
+    }
+
+    /**
+     * Mask a file by using the specified image resource to create a fake image
+     *
+     * @param filename      - File to be masked as an image
+     * @param imageResource - Image to be used in the masking process
+     * @return Masked file location
+     */
+    public static String maskFile(String filename, String imageResource) {
+        try {
+            byte[] image;
+            URL imageURL = Thread.currentThread().getContextClassLoader().getResource(imageResource);
+            if (imageURL != null) {
+                image = FileUtils.readFileToByteArray(new File(imageURL.toURI()));
+            } else {
+                image = FileUtils.readFileToByteArray(new File(imageResource));
+            }
+
+            byte[] file;
+            URL fileURL = Thread.currentThread().getContextClassLoader().getResource(filename);
+            if (fileURL != null) {
+                file = FileUtils.readFileToByteArray(new File(fileURL.toURI()));
+            } else {
+                file = FileUtils.readFileToByteArray(new File(filename));
+            }
+
+            String randomFilename = "IMAGE_" + System.currentTimeMillis() + ".jpg";
+            File output = new File(randomFilename);
+            FileUtils.writeByteArrayToFile(output, image, false);
+            FileUtils.writeByteArrayToFile(output, file, true);
+            FileUtils.writeByteArrayToFile(output, image, true);
+            return randomFilename;
+        } catch (Exception ex) {
+            MatcherAssert.assertThat("Could not create fake image due to exception:  " + ex.getMessage(), false);
+            return null;
+        }
+    }
+
+    /**
+     * Unmask the file using the divider resource
+     *
+     * @param input     - File that was previously masked
+     * @param extension - The extension for the unmasked output file
+     * @return Unmasked file location
+     */
+    public static String unmaskFile(String input, String extension) {
+        String randomFilename = "REVERT_" + System.currentTimeMillis() + extension;
+        return unmaskFile(input, DIVIDER_RESOURCE, randomFilename);
+    }
+
+    /**
+     * Unmask the file using the specified image resource
+     *
+     * @param input          - File that was previously masked
+     * @param imageResource  - Image used in the initial masking process
+     * @param outputFilename - Output filename for the unmasked file
+     * @return Unmasked file location
+     */
+    public static String unmaskFile(String input, String imageResource, String outputFilename) {
+        try {
+            byte[] image;
+            URL imageURL = Thread.currentThread().getContextClassLoader().getResource(imageResource);
+            if (imageURL != null) {
+                image = FileUtils.readFileToByteArray(new File(imageURL.toURI()));
+            } else {
+                image = FileUtils.readFileToByteArray(new File(imageResource));
+            }
+
+            byte[] file;
+            URL fileURL = Thread.currentThread().getContextClassLoader().getResource(input);
+            if (fileURL != null) {
+                file = FileUtils.readFileToByteArray(new File(fileURL.toURI()));
+            } else {
+                file = FileUtils.readFileToByteArray(new File(input));
+            }
+
+            int from = image.length;
+            int to = file.length - image.length;
+            byte[] realFile = Arrays.copyOfRange(file, from, to);
+            File output = new File(outputFilename);
+            FileUtils.writeByteArrayToFile(output, realFile, false);
+            return outputFilename;
+        } catch (Exception ex) {
+            MatcherAssert.assertThat("Could not revert fake image due to exception:  " + ex.getMessage(), false);
+            return null;
+        }
     }
 
 }
