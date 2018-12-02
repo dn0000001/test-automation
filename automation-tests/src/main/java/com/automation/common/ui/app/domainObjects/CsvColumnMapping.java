@@ -7,7 +7,13 @@ public enum CsvColumnMapping implements ColumnMapper {
     USER("USER"),
     PASS("PASS"),
     PLAYER("player"),
-    TEAM("Team");
+    TEAM("Team"),
+
+    DESCRIPTION("Description"),
+    USER_LOGINS_EMAIL("user-logins-email"),
+    USER_LOGINS_PASSWORD("user-logins-password"),
+    ADMIN_LOGINS_EMAIL("admin-logins-email"),
+    ADMIN_LOGINS_PASSWORD("admin-logins-password");
 
     private String columnName;
 
