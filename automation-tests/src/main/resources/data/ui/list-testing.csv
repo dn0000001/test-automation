@@ -1,0 +1,9 @@
+RUN,Description,user-logins-email-list-0,user-logins-password-list-0,user-logins-email-list-1,user-logins-password-list-1,admin-logins-email-list-0,admin-logins-password-list-0,admin-logins-email-list-1,admin-logins-password-list-1,alias-1,alias-2
+y,Only single user login,aaa,aaa-pass,,,,,,,,
+y,No logins as item 0 is empty,,,bbb,bbb-pass,,,,,,
+y,Only single admin login,,,,,ccc,ccc-pass,,,,
+y,No logins as item 0 is empty,,,,,,,ddd,ddd-pass,,
+y,One of each login,eee,eee-pass,,,fff,fff-pass,,,,
+y,Multiple of each login,ggg,ggg-pass,hhh,hhh-pass,iii,iii-pass,jjj,jjj-pass,,
+y,Uneven logins,kkk,kkk-pass,mmm,mmm-pass,nnn,nnn-pass,,,,
+y,Logins with aliases,${alias-1},${alias-2},,,,,,,ppp,ppp-pass

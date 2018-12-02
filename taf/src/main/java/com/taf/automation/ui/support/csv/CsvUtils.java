@@ -50,6 +50,7 @@ import static org.hamcrest.Matchers.not;
  */
 public class CsvUtils {
     private static final String ALIAS_PREFIX = "alias-";
+    private static final String LIST_SUFFIX = "-list-";
 
     private CsvUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -186,6 +187,24 @@ public class CsvUtils {
             String initial = component.getData(DataTypes.Initial, false);
             String expected = component.getData(DataTypes.Expected, false);
             component.initializeData(csv.get(column.getColumnName()), initial, expected);
+        }
+    }
+
+    /**
+     * Use the CSV data to set the list data for a component<BR>
+     * <B>Note: </B> Initial &amp; Expected data is not changed<BR>
+     *
+     * @param csv       - CSV record data
+     * @param column    - Column Enumeration that maps to component
+     * @param index     - Index used to construct the list column name to get the data
+     * @param component - Component to initialize data
+     */
+    public static void setData(CSVRecord csv, ColumnMapper column, int index, PageComponent component) {
+        String listColumnName = column.getColumnName() + LIST_SUFFIX + index;
+        if (csv.isMapped(listColumnName)) {
+            String initial = component.getData(DataTypes.Initial, false);
+            String expected = component.getData(DataTypes.Expected, false);
+            component.initializeData(csv.get(listColumnName), initial, expected);
         }
     }
 
@@ -381,6 +400,59 @@ public class CsvUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Check if the column of a list item is mapped and there is non-blank data<BR>
+     * <B>Note: </B> The LIST_SUFFIX is appended plus the index value to the column name
+     *
+     * @param csv    - CSV record data
+     * @param index  - Index of the item to check
+     * @param column - Column Enumeration to check if it is mapped and there is non-blank data
+     * @return true if the column of the specified list item is mapped and there is non-blank data
+     */
+    public static boolean isNotBlank(CSVRecord csv, int index, ColumnMapper column) {
+        String listColumnName = column.getColumnName() + LIST_SUFFIX + index;
+        return csv.isMapped(listColumnName) && StringUtils.isNotBlank(csv.get(listColumnName));
+    }
+
+    /**
+     * Check if any of the columns for the list item is mapped and there is non-blank data<BR>
+     * <B>Note: </B> The LIST_SUFFIX is appended plus the index value to the column name
+     *
+     * @param csv     - CSV record data
+     * @param index   - Index of the item to check
+     * @param columns - Column Enumerations to check if any are mapped and there is corresponding non-blank data
+     * @return true if any column of the specified list item is mapped and there is corresponding non-blank data
+     */
+    public static boolean isAnyNotBlank(CSVRecord csv, int index, ColumnMapper... columns) {
+        if (columns == null) {
+            return false;
+        }
+
+        for (ColumnMapper column : columns) {
+            if (isNotBlank(csv, index, column)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the list size
+     *
+     * @param csv     - CSV record data
+     * @param columns - Column Enumerations of the list to check if any are mapped and there is corresponding non-blank data
+     * @return the list size
+     */
+    public static int getListSize(CSVRecord csv, ColumnMapper... columns) {
+        int size = 0;
+        while (isAnyNotBlank(csv, size, columns)) {
+            size++;
+        }
+
+        return size;
     }
 
     /**
