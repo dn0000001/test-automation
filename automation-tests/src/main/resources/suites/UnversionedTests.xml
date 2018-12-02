@@ -17,6 +17,16 @@
     </test>
 
     <!--
+    <test name="Masking Test">
+        <parameter name="file" value="data/ui/testingExcel.xls"/>
+        <parameter name="extension" value=".xls"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MaskFileTest"/>
+        </classes>
+    </test>
+    -->
+
+    <!--
     <test name="CSV Test">
         <parameter name="csv" value="data/ui/test-cases.csv"/>
         <classes>
