@@ -96,19 +96,29 @@ public class TestNGBaseWithoutListeners {
     @SuppressWarnings({"squid:S3457", "squid:S2629", "squid:S00112"})
     private void installDriver(String driverName, String driverPropertyName) {
         String os = System.getProperty("os.name").toUpperCase();
+        String replaceOS = "<REPLACE_OS>";
+        String replaceSeparator = "<REPLACE_SEPARATOR>";
+        String separator = System.getProperty("file.separator");
+        String genericSubFolder = replaceSeparator + "webdrivers" + replaceSeparator + replaceOS + replaceSeparator;
         String subFolder;
+        String resourceSubFolder;
         String extension = "";
         if (os.startsWith("MAC")) {
-            subFolder = "/webdrivers/mac/";
+            subFolder = genericSubFolder.replace(replaceSeparator, separator).replace(replaceOS, "mac");
+            resourceSubFolder = genericSubFolder.replace(replaceSeparator, "/").replace(replaceOS, "mac");
         } else if (os.startsWith("LINUX")) {
-            subFolder = "/webdrivers/linux/";
+            subFolder = genericSubFolder.replace(replaceSeparator, separator).replace(replaceOS, "linux");
+            resourceSubFolder = genericSubFolder.replace(replaceSeparator, "/").replace(replaceOS, "linux");
         } else if (os.startsWith("WINDOWS")) {
             boolean is64bit = System.getenv("ProgramFiles(x86)") != null;
-            subFolder = (is64bit) ? "/webdrivers/win64/" : "/webdrivers/win32/";
+            String winOS = (is64bit) ? "win64" : "win32";
+            subFolder = genericSubFolder.replace(replaceSeparator, separator).replace(replaceOS, winOS);
+            resourceSubFolder = genericSubFolder.replace(replaceSeparator, "/").replace(replaceOS, winOS);
             extension = ".exe";
         } else {
             // Unsupported OS, the driver will not be found
-            subFolder = "/OS_NOT_SUPPORTED/";
+            subFolder = separator + "OS_NOT_SUPPORTED" + separator;
+            resourceSubFolder = "/OS_NOT_SUPPORTED/";
             LOG.error("There is NO WebDriver (in project) for OS:  " + os);
         }
 
@@ -116,7 +126,7 @@ public class TestNGBaseWithoutListeners {
         try {
             File fileTarget = new File(driverPath);
             File fileSource = File.createTempFile("driverName", "");
-            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(subFolder + driverName + extension), fileSource);
+            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(resourceSubFolder + driverName + extension), fileSource);
             if (!FileUtils.contentEquals(fileSource, fileTarget)) {
                 FileUtils.copyFile(fileSource, fileTarget);
                 fileTarget.setExecutable(true, true);
