@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -45,6 +46,7 @@ public class Utils {
     private static final String DOUBLE_QUOTE = "\"";
     private static final String SINGLE_QUOTE = "'";
     private static final String SEPARATOR = ",";
+    private static final ReentrantLock lockContext = new ReentrantLock();
 
     private Utils() {
         // Prevent initialization of class as all public methods should be static
@@ -91,6 +93,45 @@ public class Utils {
      */
     private static long getElementTimeout() {
         return TestProperties.getInstance().getElementTimeout();
+    }
+
+    /**
+     * Get Context with the specified driver set if necessary<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>
+     * This method should only be used if the framework is not being used to launch the GUI tests.
+     * (For example, the test does not extend TestNGBaseWithoutListeners or ancestors that will provide a context
+     * like in the case a different framework is being used to launch the tests.  However, you still want to use
+     * page objects that are part of the framework which require a context.)
+     * </LI>
+     * <LI>
+     * The driver will only be set if the driver in the TestNGBase.context() is null.
+     * </LI>
+     * <LI>
+     * This method ensures that the Utils class will function properly provided the specified driver is not null.
+     * </LI>
+     * <LI>
+     * This method uses a lock to ensure it is thread safe as it sets the driver.
+     * </LI>
+     * </OL>
+     *
+     * @param driver - The driver to be set if context does not have an initialized driver
+     * @return TestContext
+     */
+    public static TestContext getContext(WebDriver driver) {
+        lockContext.lock();
+        try {
+            if (TestNGBase.context().getDriver() == null) {
+                FieldUtils.writeField(TestNGBase.context(), "driver", driver, true);
+            }
+        } catch (Exception ex) {
+            assertThat("Could not set driver for context due to exception:  " + ex.getMessage(), false);
+        } finally {
+            lockContext.unlock();
+        }
+
+        return TestNGBase.context();
     }
 
     /**
