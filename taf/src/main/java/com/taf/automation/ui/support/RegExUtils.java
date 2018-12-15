@@ -7,6 +7,17 @@ public class RegExUtils {
     public static final String NOT_ALPHANUMERIC = "\\W";
     public static final String NOT_DIGITS = "\\D";
 
+    /**
+     * Matches anything including newline.  Use of this should be limited.<BR>
+     * <B>Explanation:</B>
+     * <OL>
+     * <LI>\s matches any whitespace character (equal to [\r\n\t\f\v ])</LI>
+     * <LI>\S matches any non-whitespace character (equal to [^\r\n\t\f\v ])</LI>
+     * <LI>* matches zero and unlimited</LI>
+     * </OL>
+     */
+    public static final String ANYTHING = "[\\s\\S]*";
+
     private RegExUtils() {
         // Prevent initialization of class as all public methods should be static
     }

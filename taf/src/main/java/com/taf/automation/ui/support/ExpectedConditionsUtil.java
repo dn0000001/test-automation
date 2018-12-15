@@ -519,7 +519,11 @@ public class ExpectedConditionsUtil {
                 if (!allChildren.isEmpty()) {
                     // Ensure all child elements are displayed
                     for (WebElement child : allChildren) {
-                        if (!child.isDisplayed()) {
+                        try {
+                            if (!child.isDisplayed()) {
+                                return null;
+                            }
+                        } catch (Exception ex) {
                             return null;
                         }
                     }
@@ -539,7 +543,8 @@ public class ExpectedConditionsUtil {
 
     /**
      * An expectation for checking that a visible element is found using the locator to get all elements.
-     * Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
+     * Visibility means that the element is not only displayed but also has a height and width that is
+     * greater than 0.
      *
      * @param locator used to find the element
      * @return the 1st WebElement that is visible using the locator
@@ -565,6 +570,51 @@ public class ExpectedConditionsUtil {
             @Override
             public String toString() {
                 return "could not find any element that was visible with locator:  " + locator;
+            }
+        };
+    }
+
+    /**
+     * An expectation for checking all elements found by the locator are invisible
+     *
+     * @param locator - Locator to find the elements to check are invisible
+     * @return true when all elements are invisible
+     */
+    public static ExpectedCondition<Boolean> invisibilityOfAllElements(final By locator) {
+        return new ExpectedCondition<Boolean>() {
+
+            @Override
+            public Boolean apply(WebDriver driver) {
+                // Check that all elements are invisible
+                if (!isAllInvisible(driver)) {
+                    return false;
+                }
+
+                // Delay before checking again to limit issues where the element becomes visible again
+                Utils.sleep(1000);
+
+                // All elements have remained invisible for at least 1 second in a row
+                return isAllInvisible(driver);
+            }
+
+            private boolean isAllInvisible(WebDriver driver) {
+                List<WebElement> elements = driver.findElements(locator);
+                for (WebElement element : elements) {
+                    try {
+                        if (element.isDisplayed()) {
+                            return false;
+                        }
+                    } catch (Exception ignore) {
+                        // Consider stale element as invisible
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("invisibility of elements located by %s", locator);
             }
         };
     }
