@@ -1139,4 +1139,18 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Send Keys with delay between each key typed
+     *
+     * @param element                    - Element to send keys
+     * @param eachKeyDelayInMilliseconds - The delay in milliseconds between each key typed
+     * @param value                      - Value to be entered
+     */
+    public static void sendKeysWithDelay(WebElement element, int eachKeyDelayInMilliseconds, String value) {
+        for (int i = 0; i < value.length(); i++) {
+            element.sendKeys("" + value.charAt(i));
+            sleep(eachKeyDelayInMilliseconds);
+        }
+    }
+
 }
