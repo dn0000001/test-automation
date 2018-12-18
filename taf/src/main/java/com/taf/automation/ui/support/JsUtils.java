@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * This class provides utility methods to work with JavaScript
  */
 public class JsUtils {
+    private static final String ID = "id";
     private static final String SCROLL_INTO_VIEW_WITH_OFFSET = Utils.readResource("JS/ScrollIntoViewWithOffset.js");
     private static final String FOCUS = Utils.readResource("JS/Focus.js");
     private static final String GET_TEXT_ONLY_TOP_LEVEL = Utils.readResource("JS/GetTextOnlyTopLevel.js");
@@ -25,6 +26,8 @@ public class JsUtils {
     private static final String SCROLL_TO_BOTTOM = Utils.readResource("JS/ScrollToBottom.js");
     private static final String OPEN_NEW_WINDOW = Utils.readResource("JS/OpenNewWindow.js");
     private static final String ADD_ATTRIBUTE_TO_ELEMENT = Utils.readResource("JS/AddAttributeToElement.js");
+    private static final String ADD_ELEMENT_TO_PARENT = Utils.readResource("JS/AddElementToParent.js");
+    private static final String REMOVE_ELEMENT = Utils.readResource("JS/RemoveElement.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -438,7 +441,40 @@ public class JsUtils {
      * @param value   - Value for id
      */
     public static void addAttributeId(WebElement element, String value) {
-        addAttribute(element, "id", value);
+        addAttribute(element, ID, value);
+    }
+
+    /**
+     * Add child element with specified attribute to the given parent element<BR>
+     * <B>Use Case Scenario: </B> You need to scroll to the end of a section (or specific place) such that some
+     * element that randomly or constantly generates the exception about it taking the click/action.  This method can
+     * be used to scroll to the end of the section (or specific place) preventing the error.
+     *
+     * @param parent    - Parent element to which a child element will be added
+     * @param attribute - Attribute to be added
+     * @param value     - Value for attribute
+     */
+    public static void addElement(WebElement parent, String attribute, String value) {
+        execute(getWebDriver(), ADD_ELEMENT_TO_PARENT, parent, attribute, value);
+    }
+
+    /**
+     * Add child element with specified id attribute to the given parent element
+     *
+     * @param parent - Parent element to which a child element will be added
+     * @param value  - Value for attribute
+     */
+    public static void addElementWithId(WebElement parent, String value) {
+        addElement(parent, ID, value);
+    }
+
+    /**
+     * Remove element from the DOM
+     *
+     * @param element - Element to be deleted
+     */
+    public static void removeElement(WebElement element) {
+        execute(getWebDriver(), REMOVE_ELEMENT, element);
     }
 
 }
