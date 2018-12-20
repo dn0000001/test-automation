@@ -100,6 +100,7 @@ public class ApiDomainObject extends DataPersistenceV2 {
     protected ApiClient getClient() {
         if (client == null) {
             client = new ApiClient();
+            client.setXstream(getXstream());
         }
 
         return client;
