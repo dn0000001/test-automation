@@ -3,46 +3,36 @@ package com.taf.automation.api.clients;
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.api.rest.XmlBaseError;
-import com.taf.automation.api.rest.XmlError;
-import com.thoughtworks.xstream.XStream;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.StringReader;
+
 /**
- * SOAP Response
+ * JAXB Response
  *
  * @param <T>
  */
-@SuppressWarnings("squid:S00112")
-public class SoapResponse<T> implements GenericHttpResponse<T> {
+public class JaxbResponse<T> implements GenericHttpResponse<T> {
     private StatusLine status;
     private String entityXML;
     private T entity;
     private Header[] headers;
     private XmlBaseError apiError;
-    private XStream xstream;
 
     /**
-     * Constructor for XML Response
+     * Constructor for JAXB Response
      *
      * @param response       - Response
      * @param responseEntity - Response Entity
      */
-    public SoapResponse(CloseableHttpResponse response, Class<T> responseEntity) {
-        this(response, responseEntity, null);
-    }
-
-    /**
-     * Constructor for XML Response
-     *
-     * @param response          - Response
-     * @param responseEntity    - Response Entity
-     * @param customizedXstream - XStream
-     */
-    public SoapResponse(CloseableHttpResponse response, Class<T> responseEntity, XStream customizedXstream) {
-        xstream = customizedXstream;
+    public JaxbResponse(CloseableHttpResponse response, Class<T> responseEntity) {
         status = response.getStatusLine();
         headers = response.getAllHeaders();
 
@@ -55,10 +45,10 @@ public class SoapResponse<T> implements GenericHttpResponse<T> {
             String attachName = "RESPONSE ENTITY";
             if (responseEntity != null) {
                 if (status.getStatusCode() < 400) {
-                    entity = getEntityFromXml(responseEntity, entityXML);
+                    entity = getEntityFromXml(responseEntity.getPackage().getName(), entityXML);
                 } else {
                     attachName = "RESPONSE ERROR";
-                    apiError = getEntityFromXml(XmlError.class, entityXML);
+                    apiError = getEntityFromXml(XmlBaseError.class.getPackage().getName(), entityXML);
                 }
             }
 
@@ -68,18 +58,19 @@ public class SoapResponse<T> implements GenericHttpResponse<T> {
         }
     }
 
-    @SuppressWarnings({"unchecked", "squid:S1172"})
-    private <T> T getEntityFromXml(Class<T> responseEntity, String entityXML) {
-        return (T) getXstream().fromXML(entityXML);
-    }
-
-    @Override
-    public XStream getXstream() {
-        if (xstream == null) {
-            xstream = new XStream();
+    @SuppressWarnings("unchecked")
+    private <P> P getEntityFromXml(String entityName, String entityXML) {
+        JAXBElement<P> element;
+        try {
+            JAXBContext context = JAXBContext.newInstance(entityName);
+            Unmarshaller u = context.createUnmarshaller();
+            StringReader stringReader = new StringReader(entityXML);
+            element = (JAXBElement<P>) u.unmarshal(stringReader);
+        } catch (JAXBException e) {
+            return null;
         }
 
-        return xstream;
+        return element.getValue();
     }
 
     @Override

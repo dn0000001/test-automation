@@ -1,32 +1,28 @@
 package com.taf.automation.api.clients;
 
-import java.io.StringReader;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
+import com.taf.automation.api.ApiUtils;
+import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.api.rest.XmlBaseError;
+import com.taf.automation.api.rest.XmlError;
+import com.thoughtworks.xstream.XStream;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
-
-import com.taf.automation.api.rest.GenericHttpResponse;
-import com.taf.automation.api.rest.XmlBaseError;
-import com.taf.automation.api.ApiUtils;
 
 /**
  * XML Response
  *
  * @param <T>
  */
+@SuppressWarnings("squid:S00112")
 public class XmlResponse<T> implements GenericHttpResponse<T> {
     private StatusLine status;
     private String entityXML;
     private T entity;
     private Header[] headers;
     private XmlBaseError apiError;
+    private XStream xstream;
 
     /**
      * Constructor for XML Response
@@ -35,6 +31,18 @@ public class XmlResponse<T> implements GenericHttpResponse<T> {
      * @param responseEntity - Response Entity
      */
     public XmlResponse(CloseableHttpResponse response, Class<T> responseEntity) {
+        this(response, responseEntity, null);
+    }
+
+    /**
+     * Constructor for XML Response
+     *
+     * @param response          - Response
+     * @param responseEntity    - Response Entity
+     * @param customizedXstream - XStream
+     */
+    public XmlResponse(CloseableHttpResponse response, Class<T> responseEntity, XStream customizedXstream) {
+        xstream = customizedXstream;
         status = response.getStatusLine();
         headers = response.getAllHeaders();
 
@@ -47,10 +55,10 @@ public class XmlResponse<T> implements GenericHttpResponse<T> {
             String attachName = "RESPONSE ENTITY";
             if (responseEntity != null) {
                 if (status.getStatusCode() < 400) {
-                    entity = getEntityFromXml(responseEntity.getPackage().getName(), entityXML);
+                    entity = getEntityFromXml(responseEntity, entityXML);
                 } else {
                     attachName = "RESPONSE ERROR";
-                    apiError = getEntityFromXml(XmlBaseError.class.getPackage().getName(), entityXML);
+                    apiError = getEntityFromXml(XmlError.class, entityXML);
                 }
             }
 
@@ -60,19 +68,18 @@ public class XmlResponse<T> implements GenericHttpResponse<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <P> P getEntityFromXml(String entityName, String entityXML) {
-        JAXBElement<P> element;
-        try {
-            JAXBContext context = JAXBContext.newInstance(entityName);
-            Unmarshaller u = context.createUnmarshaller();
-            StringReader stringReader = new StringReader(entityXML);
-            element = (JAXBElement<P>) u.unmarshal(stringReader);
-        } catch (JAXBException e) {
-            return null;
+    @SuppressWarnings({"unchecked", "squid:S1172"})
+    private <T> T getEntityFromXml(Class<T> responseEntity, String entityXML) {
+        return (T) getXstream().fromXML(entityXML);
+    }
+
+    @Override
+    public XStream getXstream() {
+        if (xstream == null) {
+            xstream = new XStream();
         }
 
-        return element.getValue();
+        return xstream;
     }
 
     @Override

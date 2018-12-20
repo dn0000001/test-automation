@@ -6,6 +6,6 @@ package com.taf.automation.api;
 public enum ReturnType {
     XML, //
     JSON, //
-    SOAP, //
+    JAXB, //
     GENERAL //
 }
