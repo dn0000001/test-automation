@@ -310,7 +310,17 @@ public class Utils {
      * @return WebDriverWait
      */
     public static WebDriverWait getWebDriverWait() {
-        return new WebDriverWait(getWebDriver(), getElementTimeout(), 100L);
+        return getWebDriverWait(getWebDriver());
+    }
+
+    /**
+     * Get WebDriverWait configured with element timeout and poll interval of 100ms using specified driver
+     *
+     * @param driver - Driver to use
+     * @return WebDriverWait
+     */
+    public static WebDriverWait getWebDriverWait(WebDriver driver) {
+        return new WebDriverWait(driver, getElementTimeout(), 100L);
     }
 
     /**

@@ -175,9 +175,7 @@ public class SoapGetHolidayDateDO extends ApiDomainObject {
         String resourcePath = "/HolidayService_v2/HolidayService2.asmx";
         Helper.log(resourcePath);
 
-        getClient().getXstream().autodetectAnnotations(true);
         getClient().getXstream().alias("soap:Envelope", SOAPEnvelopeResponse.class);
-
         getClient().setParametersType(ParametersType.XML);
         getClient().setReturnType(ReturnType.SOAP);
         getClient().setCustomContentType("text/xml; charset=utf-8");

@@ -279,9 +279,7 @@ public class ApiClient implements GenericHttpInterface {
         } else {
             switch (parametersType) {
                 case XML:
-                    XStream xstream = new XStream();
-                    xstream.autodetectAnnotations(true);
-                    String xml = ApiUtils.prettifyXML(xstream.toXML(entity));
+                    String xml = ApiUtils.prettifyXML(getXstream().toXML(entity));
                     try {
                         ApiUtils.attachDataXml(xml, "REQUEST ENTITY");
                         httpEntity = new StringEntity(xml);
@@ -363,6 +361,10 @@ public class ApiClient implements GenericHttpInterface {
         }
 
         return xstream;
+    }
+
+    public void setXstream(XStream xstream) {
+        this.xstream = xstream;
     }
 
     @Override

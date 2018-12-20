@@ -301,6 +301,17 @@ public class JsUtils {
     }
 
     /**
+     * Execute JavaScript on the element to make it visible by making the style display value block.<BR>
+     * <B>Notes:</B><BR>
+     * This method should only be used as a workaround for application/WebDriver issues<BR>
+     *
+     * @param element - Element to hide using style
+     */
+    public static void makeVisible(WebElement element) {
+        execute(getWebDriver(), "arguments[0].style.display = 'block';", element);
+    }
+
+    /**
      * Check if the elements overlap<BR>
      * <B>Note: </B> Both elements must be displayed or they will not be considered overlapped
      *

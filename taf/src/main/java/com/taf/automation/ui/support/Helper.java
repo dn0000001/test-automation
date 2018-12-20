@@ -514,7 +514,17 @@ public class Helper {
 
     @Step("Switch to window:  {1}")
     public static void switchToWindow(WebDriver driver, String windowName, String handle) {
-        driver.switchTo().window(handle);
+        boolean error = true;
+        try {
+            driver.switchTo().window(handle);
+            error = false;
+        } finally {
+            if (error) {
+                String handles = driver.getWindowHandles().toString();
+                Helper.log("Existing handles:  " + handles, true);
+                Helper.log("Could not find handle:  " + handle, true);
+            }
+        }
     }
 
     @Step("Close window:  {1}")
