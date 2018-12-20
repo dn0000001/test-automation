@@ -177,7 +177,7 @@ public class SoapGetHolidayDateDO extends ApiDomainObject {
 
         getClient().getXstream().alias("soap:Envelope", SOAPEnvelopeResponse.class);
         getClient().setParametersType(ParametersType.XML);
-        getClient().setReturnType(ReturnType.SOAP);
+        getClient().setReturnType(ReturnType.XML);
         getClient().setCustomContentType("text/xml; charset=utf-8");
         ApiUtils.updateForSoap(this, "http://www.holidaywebservice.com/HolidayService_v2/GetHolidayDate");
         getResponse().theResponse = getClient().post(resourcePath, getRequest().envelope, SOAPEnvelopeResponse.class, getHeaders());

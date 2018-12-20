@@ -222,12 +222,12 @@ public class ApiClient implements GenericHttpInterface {
         GenericHttpResponse<T> apiResponse;
         try (CloseableHttpResponse response = client.execute(targetHost, request, clientContext)) {
             status = response.getStatusLine();
-            if (returnType == ReturnType.XML) {
-                apiResponse = new XmlResponse<>(response, responseEntity);
+            if (returnType == ReturnType.JAXB) {
+                apiResponse = new JaxbResponse<>(response, responseEntity);
             } else if (returnType == ReturnType.JSON) {
                 apiResponse = new JsonResponse<>(response, responseEntity);
-            } else if (returnType == ReturnType.SOAP) {
-                apiResponse = new SoapResponse<>(response, responseEntity, getXstream());
+            } else if (returnType == ReturnType.XML) {
+                apiResponse = new XmlResponse<>(response, responseEntity, getXstream());
             } else {
                 apiResponse = new GenericResponse<>(response, responseEntity);
             }

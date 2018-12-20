@@ -6,6 +6,5 @@ package com.taf.automation.api;
 public enum ParametersType {
     XML, //
     JSON, //
-    SOAP, //
     GENERAL //
 }
