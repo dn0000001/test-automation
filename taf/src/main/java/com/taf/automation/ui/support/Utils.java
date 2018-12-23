@@ -13,6 +13,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
@@ -1160,6 +1161,45 @@ public class Utils {
         for (int i = 0; i < value.length(); i++) {
             element.sendKeys("" + value.charAt(i));
             sleep(eachKeyDelayInMilliseconds);
+        }
+    }
+
+    /**
+     * Clear field by going to the end of the field using the END key and then using the backspace key<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>The field value is either from the attribute value or the displayed text of the element</LI>
+     * <LI>If value of element < 1, then method just returns as field is already empty.</LI>
+     * </OL>
+     *
+     * @param element - Element to clear using backspace
+     */
+    public static void clearUsingBackspace(WebElement element) {
+        String value = element.getAttribute("value");
+        if (value == null) {
+            value = element.getText();
+        }
+
+        int times = StringUtils.defaultString(value).length();
+        clearUsingBackspace(element, times);
+    }
+
+    /**
+     * Clear field by going to the end of the field using the END key and then using the backspace key
+     * the specified number of times.<BR>
+     * <B>Note: </B> If times < 1, then method just returns as field is already empty
+     *
+     * @param element - Element to clear using backspace
+     * @param times   - Number of times to send the backspace key
+     */
+    public static void clearUsingBackspace(WebElement element, int times) {
+        if (times < 1) {
+            return;
+        }
+
+        element.sendKeys(Keys.END);
+        for (int i = 0; i < times; i++) {
+            element.sendKeys(Keys.BACK_SPACE);
         }
     }
 
