@@ -461,9 +461,10 @@ public class CsvUtils {
      * @param filename      - Location & File to write to
      * @param format        - Format of the CSV file
      * @param outputRecords - Records to be output to the file
+     * @param totals        - For each list in the object, the total number of items there needs to be
      */
-    public static void writeToCSV(String filename, CSVFormat format, List<CsvOutputRecord> outputRecords) {
-        writeToCSV(filename, false, format, outputRecords);
+    public static void writeToCSV(String filename, CSVFormat format, List<CsvOutputRecord> outputRecords, int... totals) {
+        writeToCSV(filename, false, format, outputRecords, totals);
     }
 
     /**
@@ -473,13 +474,15 @@ public class CsvUtils {
      * @param append        - if true, then data will be written to the end of the file rather than the beginning.
      * @param format        - Format of the CSV file
      * @param outputRecords - Records to be output to the file
+     * @param totals        - For each list in the object, the total number of items there needs to be
      */
-    public static void writeToCSV(String filename, boolean append, CSVFormat format, List<CsvOutputRecord> outputRecords) {
+    public static void writeToCSV(String filename, boolean append, CSVFormat format, List<CsvOutputRecord> outputRecords, int... totals) {
         try (
                 FileWriter writer = new FileWriter(filename, append);
                 CSVPrinter printer = new CSVPrinter(writer, format)
         ) {
             for (CsvOutputRecord item : outputRecords) {
+                item.padListsWithEmptyItems(totals);
                 printer.printRecord(item.asList());
             }
 
@@ -499,6 +502,26 @@ public class CsvUtils {
      */
     public static String leftPad(String str, int size, String padStr) {
         return StringUtils.leftPad(StringUtils.defaultString(str), size, padStr);
+    }
+
+    /**
+     * Generate CSV Headers for a list
+     *
+     * @param genericListHeaders - The Generic List Headers for each list item
+     * @param size               - Size of the list.  (This should be max size of all the lists in the test data.)
+     * @param prefix             - Prefix to be used before each field.  (This should be the field name of the list.)
+     * @return Header row for this specific list for use with the CSVFormat class
+     */
+    public static List<String> generateCsvHeadersForList(List<String> genericListHeaders, int size, String prefix) {
+        List<String> headers = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            for (String genericFieldHeader : genericListHeaders) {
+                headers.add(StringUtils.removeEnd(prefix, "-") + "-" + i + "-" + genericFieldHeader);
+            }
+        }
+
+        return headers;
     }
 
     /**
