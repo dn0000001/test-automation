@@ -1,6 +1,6 @@
 package com.taf.automation.ui.support.generators;
 
-import com.taf.automation.expressions.BasicAndOnlyParser;
+import com.taf.automation.expressions.BasicParser;
 import com.taf.automation.expressions.ExpressionParser;
 import com.taf.automation.expressions.StateEquals;
 import com.taf.automation.expressions.StateEqualsFromList;
@@ -146,7 +146,7 @@ public class RandomRealUSAddressGenerator extends File2ListReader implements Gen
         Collections.shuffle(addresses);
 
         if (!StringUtils.defaultString(conditions).equals("")) {
-            ExpressionParser parser = new BasicAndOnlyParser()
+            ExpressionParser parser = new BasicParser()
                     .withExpression(new StateEquals())
                     .withExpression(new StateNotEquals())
                     .withExpression(new StateEqualsFromList())
