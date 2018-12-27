@@ -192,6 +192,12 @@ public class SelectEnhanced extends PageComponent {
     }
 
     @Override
+    public void initializeData(String data, String initialData, String expectedData) {
+        selection = null;  // Trigger parsing and initialization
+        super.initializeData(data, initialData, expectedData);
+    }
+
+    @Override
     public void setValue() {
         Failsafe.with(Utils.getPollingRetryPolicy()).run(this::setValueAttempt);
     }
