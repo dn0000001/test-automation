@@ -117,4 +117,21 @@ public class ParsingAndConditionTest extends TestNGBase {
         assertThat("Zip mismatch", parser.eval(address), equalTo(false));
     }
 
+    @Test
+    public void performSingleOperatorWithOneUnknownConditionTest() {
+        String conditions = "STATE==CA&&Unknown";
+        USAddress address = new USAddress();
+        ExpressionParser parser = getExpressionParser().withConditions(conditions);
+
+        address.setState("CA");
+        address.setZipCode("90210");
+        address.setStreet("123 test street");
+        assertThat("No matches", parser.eval(address), equalTo(false));
+
+        address.setState("NY");
+        address.setZipCode("90210");
+        address.setStreet("123 test street");
+        assertThat("No matches #2", parser.eval(address), equalTo(false));
+    }
+
 }

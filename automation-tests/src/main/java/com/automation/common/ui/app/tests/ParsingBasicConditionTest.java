@@ -451,4 +451,116 @@ public class ParsingBasicConditionTest extends TestNGBase {
         assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
     }
 
+    @Test
+    public void performSingleOperatorOrWithOneUnknownConditionTest() {
+        String conditions = CALIFORNIA + "||Unknown";
+        USAddress address = new USAddress();
+        ExpressionParser parser = getExpressionParser().withConditions(conditions);
+
+        address.setState("CA");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+
+        address.setState("NY");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+    }
+
+    @Test
+    public void performSingleOperatorAndWithOneUnknownConditionTest() {
+        String conditions = CALIFORNIA + "&&Unknown";
+        USAddress address = new USAddress();
+        ExpressionParser parser = getExpressionParser().withConditions(conditions);
+
+        address.setState("CA");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+
+        address.setState("NY");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
+    }
+
+    @Test
+    public void performMultipleOperatorsWithOneUnknownConditionInAndTest() {
+        String conditions = CALIFORNIA + "&&Unknown||ZIP5";
+        USAddress address = new USAddress();
+        ExpressionParser parser = getExpressionParser().withConditions(conditions);
+
+        address.setState("CA");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+
+        address.setState("NY");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(REASON_ADDRESS_MATCHES + " #2", parser.eval(address), equalTo(true));
+
+        address.setState("CA");
+        address.setZipCode(ZIP3);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+    }
+
+    @Test
+    public void performMultipleOperatorsWithOneUnknownConditionInOrTest() {
+        String conditions = CALIFORNIA + "&&ZIP5||Unknown";
+        USAddress address = new USAddress();
+        ExpressionParser parser = getExpressionParser().withConditions(conditions);
+
+        address.setState("CA");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+
+        address.setState("NY");
+        address.setZipCode(ZIP2);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+    }
+
+    @Test
+    public void performMultipleOperatorsWithMultipleUnknownConditionsTest() {
+        String conditions = "ZIP==" + ZIP1 + "||Unknown1||" + CALIFORNIA + "&&Unknown2&&ZIP5";
+        USAddress address = new USAddress();
+        ExpressionParser parser = getExpressionParser().withConditions(conditions);
+
+        address.setState("NY");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+
+        address.setState("CA");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(REASON_ADDRESS_MATCHES + " #2", parser.eval(address), equalTo(true));
+
+        address.setState("CA");
+        address.setZipCode(ZIP2);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+    }
+
+    @Test
+    public void performUnknownConditionsAlwaysCauseFailureTest() {
+        String conditions = "Unknown1&&ZIP==" + ZIP1 + "||Unknown2||" + CALIFORNIA + "&&Unknown3&&ZIP5";
+        USAddress address = new USAddress();
+        ExpressionParser parser = getExpressionParser().withConditions(conditions);
+
+        address.setState("CA");
+        address.setZipCode(ZIP2);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+
+        address.setState("CA");
+        address.setZipCode(ZIP1);
+        address.setStreet(STREET);
+        assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
+    }
+
 }

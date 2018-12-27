@@ -59,7 +59,9 @@ public class BasicAndOnlyParser implements ExpressionParser {
         String[] args = Utils.splitData(conditions, separator);
         for (String condition : args) {
             Expression expression = executor.parse(condition);
-            if (expression != null) {
+            if (expression == null) {
+                andConditions.add(new AlwaysFalse());
+            } else {
                 andConditions.add(expression);
             }
         }

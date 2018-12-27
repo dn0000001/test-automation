@@ -100,7 +100,9 @@ public class BasicParser implements ExpressionParser {
         String[] andArgs = Utils.splitData(conditions, andSeparator);
         for (String condition : andArgs) {
             Expression expression = executor.parse(condition);
-            if (expression != null) {
+            if (expression == null) {
+                entireAndCondition.add(new AlwaysFalse());
+            } else {
                 entireAndCondition.add(expression);
             }
         }
