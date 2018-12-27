@@ -42,7 +42,7 @@ public class ExpressionsUtil {
             }
         }
 
-        return true;
+        return !expressions.isEmpty();
     }
 
     /**

@@ -38,7 +38,7 @@ public class ParsingAndConditionTest extends TestNGBase {
         String conditions = "FALSE"; // This is not a valid condition
         String value = "Does not matcher";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("No Conditions", parser.eval(value), equalTo(true));
+        assertThat("No Conditions", parser.eval(value), equalTo(false));
     }
 
     @Test
