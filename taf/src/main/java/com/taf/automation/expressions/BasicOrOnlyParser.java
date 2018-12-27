@@ -7,20 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Basic Parser that can deal with AND conditions only
+ * Basic Parser that can deal with OR conditions only
  */
-public class BasicAndOnlyParser implements ExpressionParser {
-    private static final String DEFAULT_AND_SEPARATOR = "&&";
+public class BasicOrOnlyParser implements ExpressionParser {
+    private static final String DEFAULT_OR_SEPARATOR = "||";
     private String separator;
-    private List<Expression> andConditions;
+    private List<Expression> orConditions;
     private Expressions executor;
 
     /**
-     * Default constructor that sets the default separator as "&amp;&amp;"
+     * Default constructor that sets the default separator as "||"
      */
-    public BasicAndOnlyParser() {
-        separator = DEFAULT_AND_SEPARATOR;
-        andConditions = new ArrayList<>();
+    public BasicOrOnlyParser() {
+        separator = DEFAULT_OR_SEPARATOR;
+        orConditions = new ArrayList<>();
         executor = new Expressions();
     }
 
@@ -59,10 +59,8 @@ public class BasicAndOnlyParser implements ExpressionParser {
         String[] args = Utils.splitData(conditions, separator);
         for (String condition : args) {
             Expression expression = executor.parse(condition);
-            if (expression == null) {
-                andConditions.add(new AlwaysFalse());
-            } else {
-                andConditions.add(expression);
+            if (expression != null) {
+                orConditions.add(expression);
             }
         }
 
@@ -71,7 +69,7 @@ public class BasicAndOnlyParser implements ExpressionParser {
 
     @Override
     public <T> boolean eval(T value) {
-        return ExpressionsUtil.and(value, andConditions);
+        return ExpressionsUtil.or(value, orConditions);
     }
 
 }
