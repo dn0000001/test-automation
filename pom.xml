@@ -50,6 +50,7 @@
         <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
         <jexcelapi.version>2.6.12</jexcelapi.version>
         <commons.csv.version>1.6</commons.csv.version>
+        <fillo.version>1.18</fillo.version>
     </properties>
 
     <build>
