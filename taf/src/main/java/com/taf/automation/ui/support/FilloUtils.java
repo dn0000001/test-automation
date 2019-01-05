@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import com.codoid.products.fillo.Connection;
+import com.codoid.products.fillo.Recordset;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -94,6 +96,41 @@ public class FilloUtils {
         }
 
         return workbook;
+    }
+
+    /**
+     * Gets all the data from a specific Excel Worksheet
+     *
+     * @param resourceFilePath - Resource File Path (or actual file system path) to the Excel file to read
+     * @param workSheet        - Excel Worksheet to read from
+     * @return String[][]
+     */
+    @SuppressWarnings("squid:S2259")
+    public static String[][] getAllData(String resourceFilePath, String workSheet) {
+        String[][] data;
+        String error = "";
+
+        try {
+            Connection connection = getConnection(resourceFilePath);
+            Recordset records = connection.executeQuery("select * from \"" + workSheet + "\"");
+            int size = records.getCount();
+            List<String> headers = records.getFieldNames();
+            data = new String[size][headers.size()];
+            int i = 0;
+            while (records.next()) {
+                for (int j = 0; j < headers.size(); j++) {
+                    data[i][j] = records.getField(headers.get(j));
+                }
+
+                i++;
+            }
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            data = null;
+        }
+
+        assertThat("Could not load excel file due to error:  " + error, data, notNullValue());
+        return data;
     }
 
 }
