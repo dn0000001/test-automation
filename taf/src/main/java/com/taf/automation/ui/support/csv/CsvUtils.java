@@ -166,11 +166,12 @@ public class CsvUtils {
     /**
      * Attach Data Set to the allure report
      *
-     * @param data - Data to be attached to the report
+     * @param data  - Data to be attached to the report
+     * @param title - Title of attachment. Shown at report as name of attachment
      */
-    public static void attachDataSet(DataPersistence data) {
+    public static void attachDataSet(DataPersistence data, String title) {
         byte[] attachment = data.toXML().getBytes();
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, "Test Data", "text/xml");
+        MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, title, "text/xml");
         Allure.LIFECYCLE.fire(ev);
     }
 
@@ -365,9 +366,20 @@ public class CsvUtils {
      * @param csvTestData  - CSV Test Data to be used
      */
     public static void initializeDataAndAttach(DomainObject domainObject, CsvTestData csvTestData) {
+        initializeDataAndAttach(domainObject, csvTestData, "Test Data");
+    }
+
+    /**
+     * Generic method to initialize the data (including aliases) and attach the data to the report
+     *
+     * @param domainObject - Domain Object to initialize with specified data
+     * @param csvTestData  - CSV Test Data to be used
+     * @param title        - Title of attachment. Shown at report as name of attachment
+     */
+    public static void initializeDataAndAttach(DomainObject domainObject, CsvTestData csvTestData, String title) {
         domainObject.setData(csvTestData);
         updateAliases(domainObject, csvTestData);
-        attachDataSet(domainObject);
+        attachDataSet(domainObject, title);
     }
 
     /**
