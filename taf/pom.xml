@@ -198,6 +198,11 @@
             <artifactId>commons-csv</artifactId>
             <version>${commons.csv.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.codoid.products</groupId>
+            <artifactId>fillo</artifactId>
+            <version>${fillo.version}</version>
+        </dependency>
 
         <!-- START:  BDD specific dependencies -->
         <dependency>

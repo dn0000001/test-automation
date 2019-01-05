@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * This class provides utility methods to work with JavaScript
  */
 public class JsUtils {
-    private static final String ID = "id";
+    public static final String ID = "id";
     private static final String SCROLL_INTO_VIEW_WITH_OFFSET = Utils.readResource("JS/ScrollIntoViewWithOffset.js");
     private static final String FOCUS = Utils.readResource("JS/Focus.js");
     private static final String GET_TEXT_ONLY_TOP_LEVEL = Utils.readResource("JS/GetTextOnlyTopLevel.js");
