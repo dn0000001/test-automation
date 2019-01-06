@@ -2,6 +2,7 @@ package com.taf.automation.ui.support;
 
 import com.codoid.products.fillo.Connection;
 import com.codoid.products.fillo.Recordset;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -11,8 +12,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -131,6 +134,53 @@ public class FilloUtils {
 
         assertThat("Could not load excel file due to error:  " + error, data, notNullValue());
         return data;
+    }
+
+    /**
+     * Get Excel records from the specified resource and update the records parameter and headers parameter<BR>
+     * <B>Note: </B> The CsvTestData class is being re-used to store the data
+     *
+     * @param resourceFilePath - Resource File Path (or actual file system path) to the Excel file to read
+     * @param workSheet        - Excel Worksheet to read from
+     * @param records          - Updated with the Excel records
+     * @param headers          - Updated with the Excel header record
+     */
+    @SuppressWarnings("squid:S2259")
+    public static void read(
+            String resourceFilePath,
+            String workSheet,
+            List<CSVRecord> records,
+            Map<String, Integer> headers
+    ) {
+        try {
+            Connection connection = getConnection(resourceFilePath);
+            Recordset excelRecords = connection.executeQuery("select * from \"" + workSheet + "\"");
+
+            List<String> excelHeaders = excelRecords.getFieldNames();
+            for (int i = 0; i < excelHeaders.size(); i++) {
+                headers.put(excelHeaders.get(i), i);
+            }
+
+            Constructor<CSVRecord> constructor = CSVRecord.class
+                    .getDeclaredConstructor(String[].class, Map.class, String.class, long.class, long.class);
+            constructor.setAccessible(true);
+            int index = 0;
+            while (excelRecords.next()) {
+                String comment = "";
+                long recordNumber = index;
+                long characterPosition = index;
+                String[] values = new String[excelHeaders.size()];
+                for (int i = 0; i < excelHeaders.size(); i++) {
+                    values[i] = excelRecords.getField(excelHeaders.get(i));
+                }
+
+                CSVRecord record = constructor.newInstance(values, headers, comment, recordNumber, characterPosition);
+                records.add(record);
+                index++;
+            }
+        } catch (Exception ex) {
+            assertThat("Could not read records from Excel file due to error:  " + ex.getMessage(), false);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.taf.automation.ui.support.csv;
 
 import com.taf.automation.ui.support.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
+import com.taf.automation.ui.support.FilloUtils;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.RegExUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
@@ -277,6 +278,39 @@ public class CsvUtils {
         List<CSVRecord> records = new ArrayList<>();
         Map<String, Integer> headers = new HashMap<>();
         read(csvDataSet, records, headers);
+        Map<String, Integer> aliases = getAliasHeaders(headers);
+
+        for (CSVRecord record : records) {
+            tests.add(new Object[]{new CsvTestData(record, aliases)});
+        }
+
+        if (StringUtils.isNotBlank(runColumnName)) {
+            // Remove any record that is not set to run
+            tests.removeIf(data -> !BooleanUtils.toBoolean(((CsvTestData) data[0]).getRecord().get(runColumnName)));
+        }
+
+        return tests;
+    }
+
+    /**
+     * Generic Data Provider for Excel files<BR>
+     * <B>Note: </B> It is recommended to call this method in the BeforeTest annotation such that any error with fail
+     * the test.  Any failure in the DataProvider annotation will just mark the test as skipped and you could have
+     * a successful test run.
+     *
+     * @param excelDataSet  - Excel Data Set location
+     * @param workSheet     - Excel Worksheet to read from
+     * @param runColumnName - If value is not blank,
+     *                      then removes all the records that are not set to run using the specific column name
+     *                      else no records are removed
+     * @return List&lt;Object[]&gt;
+     */
+    public static List<Object[]> dataProvider(String excelDataSet, String workSheet, String runColumnName) {
+        List<Object[]> tests = new ArrayList<>();
+
+        List<CSVRecord> records = new ArrayList<>();
+        Map<String, Integer> headers = new HashMap<>();
+        FilloUtils.read(excelDataSet, workSheet, records, headers);
         Map<String, Integer> aliases = getAliasHeaders(headers);
 
         for (CSVRecord record : records) {
