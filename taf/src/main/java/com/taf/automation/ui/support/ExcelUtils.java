@@ -53,40 +53,23 @@ public class ExcelUtils {
     /**
      * Gets all the data from a specific Excel Worksheet
      *
-     * @param excelFile - Excel file to read from
-     * @param workSheet - Excel Worksheet to read from
-     * @return String[][]
-     */
-    public static String[][] getFromExcelFile(String excelFile, String workSheet) {
-        String[][] data;
-        String error = "";
-
-        try {
-            File inputWorkbook = new File(excelFile);
-            data = getAllData(inputWorkbook, workSheet);
-        } catch (Exception ex) {
-            error = ex.getMessage();
-            data = null;
-        }
-
-        assertThat("Could not load excel file due to error:  " + error, data, notNullValue());
-        return data;
-    }
-
-    /**
-     * Gets all the data from a specific Excel Worksheet
-     *
-     * @param resourceFilePath - Resource File Path for the Excel file to read from
+     * @param resourceFilePath - Resource File Path (or actual file system path) to the Excel file to read
      * @param workSheet        - Excel Worksheet to read from
      * @return String[][]
      */
-    public static String[][] getFromResource(String resourceFilePath, String workSheet) {
+    public static String[][] getAllData(String resourceFilePath, String workSheet) {
         String[][] data;
         String error = "";
 
         try {
+            File inputWorkbook;
             URL url = Thread.currentThread().getContextClassLoader().getResource(resourceFilePath);
-            File inputWorkbook = new File(url.getFile());
+            if (url == null) {
+                inputWorkbook = new File(resourceFilePath);
+            } else {
+                inputWorkbook = new File(url.getFile());
+            }
+
             data = getAllData(inputWorkbook, workSheet);
         } catch (Exception ex) {
             error = ex.getMessage();
