@@ -68,7 +68,12 @@ public class SearchTextBox extends PageComponent {
 
     @Override
     public String getValue() {
-        return null;
+        String value = getCoreElement().getAttribute("value");
+        if (value == null) {
+            value = getCoreElement().getText();
+        }
+
+        return value;
     }
 
     @Override
