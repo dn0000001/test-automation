@@ -34,6 +34,19 @@ import static org.hamcrest.Matchers.greaterThan;
 public class AssertsTest extends TestNGBase {
     private static final boolean run = false;
 
+    private static class TestObj {
+        private String fieldString1;
+        private String fieldString2;
+        private Integer fieldInteger1;
+        private Integer fieldInteger2;
+        private int fieldInt1;
+        private int fieldInt2;
+        private Boolean fieldBoolean1;
+        private Boolean fieldBoolean2;
+        private boolean fieldBool1;
+        private boolean fieldBool2;
+    }
+
     @Features("AssertsUtil")
     @Stories("WebElement is displayed assert with null element")
     @Severity(SeverityLevel.CRITICAL)
@@ -318,6 +331,332 @@ public class AssertsTest extends TestNGBase {
         aggregator.assertThat("Invalid Infinite range", TEN_THOUSAND, AssertsUtil.range(INFINITE, BigDecimal.ZERO));
         failures++;
         assertThat("Invalid Infinite range did not fail", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyPrimitivesTest() {
+        final boolean actualBool = true;
+        final int actualInt = 10;
+        final Boolean actualBoolean = true;
+        final Integer actualInteger = 10;
+        final String actualString = "abc";
+
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        boolean expectedBool = true;
+        Helper.assertThat(null, "boolean match", actualBool, expectedBool);
+        Helper.assertThat(aggregator, "boolean match", actualBool, expectedBool);
+        try {
+            expectedBool = false;
+            Helper.assertThat(aggregator, "boolean mismatch", actualBool, expectedBool);
+            failures++;
+            Helper.assertThat(null, "boolean mismatch", actualBool, expectedBool);
+            throw new RuntimeException("Assertion did not fail:  boolean mismatch");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (boolean mismatch)", true);
+        }
+
+        int expectedInt = 10;
+        Helper.assertThat(null, "int match", actualInt, expectedInt);
+        Helper.assertThat(aggregator, "int match", actualInt, expectedInt);
+        try {
+            expectedInt = 20;
+            Helper.assertThat(aggregator, "int mismatch", actualInt, expectedInt);
+            failures++;
+            Helper.assertThat(null, "int mismatch", actualInt, expectedInt);
+            throw new RuntimeException("Assertion did not fail:  int mismatch");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (int mismatch)", true);
+        }
+
+        Boolean expectedBoolean = true;
+        Helper.assertThat(null, "Boolean match", actualBoolean, expectedBoolean);
+        Helper.assertThat(aggregator, "Boolean match", actualBoolean, expectedBoolean);
+
+        expectedBoolean = null;
+        Helper.assertThat(aggregator, "Boolean skip", actualBoolean, expectedBoolean);
+        Helper.assertThat(null, "Boolean skip", actualBoolean, expectedBoolean);
+
+        try {
+            expectedBoolean = false;
+            Helper.assertThat(aggregator, "Boolean mismatch", actualBoolean, expectedBoolean);
+            failures++;
+            Helper.assertThat(null, "Boolean mismatch", actualBoolean, expectedBoolean);
+            throw new RuntimeException("Assertion did not fail:  Boolean mismatch");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (Boolean mismatch)", true);
+        }
+
+        try {
+            expectedBoolean = null;  // Re-using and passing as the actual parameter
+            Helper.assertThat(aggregator, "Boolean mismatch actual null", expectedBoolean, actualBoolean);
+            failures++;
+            Helper.assertThat(null, "Boolean mismatch actual null", expectedBoolean, actualBoolean);
+            throw new RuntimeException("Assertion did not fail:  Boolean mismatch actual null");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (Boolean mismatch actual null)", true);
+        }
+
+        Integer expectedInteger = 10;
+        Helper.assertThat(null, "Integer match", actualInteger, expectedInteger);
+        Helper.assertThat(aggregator, "Integer match", actualInteger, expectedInteger);
+
+        expectedInteger = null;
+        Helper.assertThat(aggregator, "Integer skip", actualInteger, expectedInteger);
+        Helper.assertThat(null, "Integer skip", actualInteger, expectedInteger);
+        try {
+            expectedInteger = 20;
+            Helper.assertThat(aggregator, "Integer mismatch", actualInteger, expectedInteger);
+            failures++;
+            Helper.assertThat(null, "Integer mismatch", actualInteger, expectedInteger);
+            throw new RuntimeException("Assertion did not fail:  Integer mismatch");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (Integer mismatch)", true);
+        }
+
+        try {
+            expectedInteger = null;  // Re-using and passing as the actual parameter
+            Helper.assertThat(aggregator, "Integer mismatch actual null", expectedInteger, actualInteger);
+            failures++;
+            Helper.assertThat(null, "Integer mismatch actual null", expectedInteger, actualInteger);
+            throw new RuntimeException("Assertion did not fail:  Integer mismatch actual null");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (Integer mismatch actual null)", true);
+        }
+
+        String expectedString = "abc";
+        Helper.assertThat(null, "String match", actualString, expectedString);
+        Helper.assertThat(aggregator, "String match", actualString, expectedString);
+
+        expectedString = null;
+        Helper.assertThat(aggregator, "String skip", actualString, expectedString);
+        Helper.assertThat(null, "String skip", actualString, expectedString);
+        try {
+            expectedString = "bcd";
+            Helper.assertThat(aggregator, "String mismatch", actualString, expectedString);
+            failures++;
+            Helper.assertThat(null, "String mismatch", actualString, expectedString);
+            throw new RuntimeException("Assertion did not fail:  String mismatch");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (String mismatch)", true);
+        }
+
+        try {
+            expectedString = null;  // Re-using and passing as the actual parameter
+            Helper.assertThat(aggregator, "String mismatch actual null", expectedString, actualString);
+            failures++;
+            Helper.assertThat(null, "String mismatch actual null", expectedString, actualString);
+            throw new RuntimeException("Assertion did not fail:  String mismatch actual null");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (String mismatch actual null)", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyObjectsTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        TestObj actual = new TestObj();
+        actual.fieldString1 = "abc";
+        actual.fieldString2 = "xyz";
+        actual.fieldInteger1 = 1;
+        actual.fieldInteger2 = 2;
+        actual.fieldInt1 = 3;
+        actual.fieldInt2 = 4;
+        actual.fieldBoolean1 = true;
+        actual.fieldBoolean2 = false;
+        actual.fieldBool1 = true;
+        actual.fieldBool2 = false;
+
+        // All fields verified
+        TestObj expected = new TestObj();
+        expected.fieldString1 = "abc";
+        expected.fieldString2 = "xyz";
+        expected.fieldInteger1 = 1;
+        expected.fieldInteger2 = 2;
+        expected.fieldInt1 = 3;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean1 = true;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        expected.fieldBool2 = false;
+
+        Helper.assertThat(null, actual, expected);
+        Helper.assertThat(aggregator, actual, expected);
+
+        // Some fields skipped
+        expected.fieldString1 = null;
+        expected.fieldString2 = "xyz";
+        expected.fieldInteger1 = 1;
+        expected.fieldInteger2 = null;
+        expected.fieldInt1 = 3;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean1 = null;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        expected.fieldBool2 = false;
+
+        Helper.assertThat(null, actual, expected);
+        Helper.assertThat(aggregator, actual, expected);
+
+        // All fields verified, 1 failure
+        expected.fieldString1 = "abc";
+        expected.fieldString2 = "def";
+        expected.fieldInteger1 = 1;
+        expected.fieldInteger2 = 2;
+        expected.fieldInt1 = 3;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean1 = true;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        expected.fieldBool2 = false;
+
+        try {
+            Helper.assertThat(aggregator, actual, expected);
+            failures++;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  fieldString2");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (fieldString2)", true);
+        }
+
+        try {
+            expected.fieldString2 = "xyz";
+            expected.fieldInteger1 = 10;
+
+            Helper.assertThat(aggregator, actual, expected);
+            failures++;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  fieldInteger1");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (fieldInteger1)", true);
+        }
+
+        try {
+            expected.fieldInteger1 = 1;
+            expected.fieldInt2 = 40;
+
+            Helper.assertThat(aggregator, actual, expected);
+            failures++;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  fieldInt2");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (fieldInt2)", true);
+        }
+
+        try {
+            expected.fieldInt2 = 4;
+            expected.fieldBoolean1 = false;
+
+            Helper.assertThat(aggregator, actual, expected);
+            failures++;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  fieldBoolean1");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (fieldBoolean1)", true);
+        }
+
+        try {
+            expected.fieldBoolean1 = true;
+            expected.fieldBool2 = true;
+
+            Helper.assertThat(aggregator, actual, expected);
+            failures++;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  fieldBool2");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (fieldBool2)", true);
+        }
+
+        expected.fieldBool2 = false;
+        Helper.assertThat(null, actual, expected);
+
+        // All fields verified, multiple failures
+        try {
+            expected.fieldString2 = "def";
+            expected.fieldInteger2 = 20;
+            expected.fieldInt2 = 40;
+            expected.fieldBoolean2 = true;
+            expected.fieldBool1 = false;
+
+            Helper.assertThat(aggregator, actual, expected);
+            failures += 5;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  multiple failures");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (multiple failures)", true);
+        }
+
+        expected.fieldString2 = "xyz";
+        expected.fieldInteger2 = 2;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        Helper.assertThat(null, actual, expected);
+
+        // Some fields skipped, 1 failure
+        try {
+            expected.fieldString1 = null;
+            expected.fieldString2 = "def";
+            expected.fieldInteger1 = null;
+            expected.fieldBoolean1 = null;
+
+            Helper.assertThat(aggregator, actual, expected);
+            failures++;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  single failure with skip");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (single failure with skip)", true);
+        }
+
+        expected.fieldString1 = "abc";
+        expected.fieldString2 = "xyz";
+        expected.fieldInteger1 = 1;
+        expected.fieldInteger2 = 2;
+        expected.fieldInt1 = 3;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean1 = true;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        expected.fieldBool2 = false;
+        Helper.assertThat(null, actual, expected);
+
+        // Some fields skipped, multiple failures
+        try {
+            expected.fieldString1 = null;
+            expected.fieldString2 = "def";
+            expected.fieldInteger1 = null;
+            expected.fieldInteger2 = 20;
+            expected.fieldInt2 = 40;
+            expected.fieldBoolean1 = null;
+            expected.fieldBoolean2 = true;
+            expected.fieldBool1 = false;
+
+            Helper.assertThat(aggregator, actual, expected);
+            failures += 5;
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail:  multiple failures with skip");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (multiple failures with skip)", true);
+        }
+
+        expected.fieldString1 = "abc";
+        expected.fieldString2 = "xyz";
+        expected.fieldInteger1 = 1;
+        expected.fieldInteger2 = 2;
+        expected.fieldInt1 = 3;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean1 = true;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        expected.fieldBool2 = false;
+        Helper.assertThat(null, actual, expected);
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
 }

@@ -221,6 +221,46 @@ public class Helper {
     }
 
     /**
+     * Verifies that the expected object equals the corresponding actual object or skips if the expected object is null
+     *
+     * @param aggregator - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param reason     - Failure reason
+     * @param actual     - Actual Object
+     * @param expected   - Expected Object
+     */
+    public static void assertThat(AssertAggregator aggregator, String reason, Object actual, Object expected) {
+        if (expected == null) {
+            return;
+        }
+
+        if (aggregator == null) {
+            MatcherAssert.assertThat(reason, actual, equalTo(expected));
+        } else {
+            aggregator.assertThat(reason, actual, equalTo(expected));
+        }
+    }
+
+    /**
+     * Verifies that all non-null fields of the expected object equals the corresponding actual object.
+     *
+     * @param aggregator - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual     - Actual Object
+     * @param expected   - Expected Object
+     */
+    public static void assertThat(AssertAggregator aggregator, Object actual, Object expected) {
+        List<Field> fields = ApiUtils.getFieldsToValidate(expected);
+        for (Field field : fields) {
+            Object actualValue = ApiUtils.readField(field, actual);
+            Object expectedValue = ApiUtils.readField(field, expected);
+            if (aggregator == null) {
+                MatcherAssert.assertThat(field.getName(), actualValue, equalTo(expectedValue));
+            } else {
+                aggregator.assertThat(field.getName(), actualValue, equalTo(expectedValue));
+            }
+        }
+    }
+
+    /**
      * Verifies that all assertions were successful and writes to report/log any assertion failures
      *
      * @param aggregator - Assert Aggregator that contains all the assertion results
