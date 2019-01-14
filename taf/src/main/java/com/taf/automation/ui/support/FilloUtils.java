@@ -2,16 +2,23 @@ package com.taf.automation.ui.support;
 
 import com.codoid.products.fillo.Connection;
 import com.codoid.products.fillo.Recordset;
+import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.List;
@@ -180,6 +187,131 @@ public class FilloUtils {
             }
         } catch (Exception ex) {
             assertThat("Could not read records from Excel file due to error:  " + ex.getMessage(), false);
+        }
+    }
+
+    /**
+     * Write to an Excel (xlsx) file<BR>
+     * <B>Note: </B> When appending, if there are files with lists, then it is necessary to ensure the totals are
+     * the max between the existing file and records to be appended.
+     *
+     * @param filename      - Location &amp; File to create or append
+     * @param workSheet     - Excel Worksheet to create or append the data
+     * @param append        - true to append to an existing file, false to create a new file
+     * @param headers       - Headers to be written if creating a new file
+     * @param outputRecords - Records to be appended or created
+     * @param totals        - For each list in the object, the total number of items there needs to be
+     */
+    public static void writeToExcel(
+            String filename,
+            String workSheet,
+            boolean append,
+            String[] headers,
+            List<CsvOutputRecord> outputRecords,
+            int... totals
+    ) {
+        if (append) {
+            appendToExcel(filename, workSheet, outputRecords, totals);
+        } else {
+            createNewExcel(filename, workSheet, headers, outputRecords, totals);
+        }
+    }
+
+    /**
+     * Append to existing Excel (xlsx) file<BR>
+     * <B>Note: </B> For files with lists, it is necessary to ensure the totals are
+     * the max between the existing file and records to be appended.
+     *
+     * @param filename      - Location &amp; File to append to
+     * @param workSheet     - Excel Worksheet to append the data
+     * @param outputRecords - Records to be appended
+     * @param totals        - For each list in the object, the total number of items there needs to be
+     */
+    private static void appendToExcel(
+            String filename,
+            String workSheet,
+            List<CsvOutputRecord> outputRecords,
+            int... totals
+    ) {
+        try (
+                FileInputStream in = new FileInputStream(new File(filename));
+                Workbook wb = new XSSFWorkbook(in)
+        ) {
+            Sheet sheet = wb.getSheet(workSheet);
+            int rows = sheet.getLastRowNum() + 1;
+            for (CsvOutputRecord item : outputRecords) {
+                item.padListsWithEmptyItems(totals);
+
+                Row dataRow = sheet.createRow(rows);
+                rows++;
+
+                int cells = 0;
+                for (String cellData : item.asList()) {
+                    Cell cell = dataRow.createCell(cells);
+                    cell.setCellValue(cellData);
+                    cells++;
+                }
+            }
+
+            in.close();
+            OutputStream fileOut = new FileOutputStream(filename);
+            wb.write(fileOut);
+        } catch (Exception ex) {
+            assertThat("Could not append to Excel file due to error:  " + ex.getMessage(), false);
+        }
+    }
+
+    /**
+     * Create new Excel (xlsx) file
+     *
+     * @param filename      - Location &amp; File to write to
+     * @param workSheet     - Excel Worksheet to create
+     * @param headers       - Headers to be written
+     * @param outputRecords - Records to be output to the file
+     * @param totals        - For each list in the object, the total number of items there needs to be
+     */
+    private static void createNewExcel(
+            String filename,
+            String workSheet,
+            String[] headers,
+            List<CsvOutputRecord> outputRecords,
+            int... totals
+    ) {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(workSheet));
+
+            // Create header row & populate
+            int rows = 0;
+            Row row = sheet.createRow(rows);
+            rows++;
+
+            int cells = 0;
+            for (String header : headers) {
+                Cell cell = row.createCell(cells);
+                cell.setCellValue(header);
+                cells++;
+            }
+
+            // Create data rows & populate
+            for (CsvOutputRecord item : outputRecords) {
+                item.padListsWithEmptyItems(totals);
+
+                Row dataRow = sheet.createRow(rows);
+                rows++;
+
+                cells = 0;
+                for (String cellData : item.asList()) {
+                    Cell cell = dataRow.createCell(cells);
+                    cell.setCellValue(cellData);
+                    cells++;
+                }
+            }
+
+            // Write file
+            OutputStream fileOut = new FileOutputStream(filename);
+            wb.write(fileOut);
+        } catch (Exception ex) {
+            assertThat("Could not create Excel file due to error:  " + ex.getMessage(), false);
         }
     }
 
