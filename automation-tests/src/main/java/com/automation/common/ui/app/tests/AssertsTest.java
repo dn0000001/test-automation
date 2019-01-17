@@ -22,6 +22,8 @@ import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -655,6 +657,89 @@ public class AssertsTest extends TestNGBase {
         expected.fieldBool1 = true;
         expected.fieldBool2 = false;
         Helper.assertThat(null, actual, expected);
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyObjectsWithExcludedFieldsTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        TestObj actual = new TestObj();
+        actual.fieldString1 = "abc";
+        actual.fieldString2 = "xyz";
+        actual.fieldInteger1 = 1;
+        actual.fieldInteger2 = 2;
+        actual.fieldInt1 = 3;
+        actual.fieldInt2 = 4;
+        actual.fieldBoolean1 = true;
+        actual.fieldBoolean2 = false;
+        actual.fieldBool1 = true;
+        actual.fieldBool2 = false;
+
+        // All fields verified
+        TestObj expected = new TestObj();
+        expected.fieldString1 = "abc";
+        expected.fieldString2 = "xyz";
+        expected.fieldInteger1 = 1;
+        expected.fieldInteger2 = 2;
+        expected.fieldInt1 = 3;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean1 = true;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        expected.fieldBool2 = false;
+
+        List<String> excludeSingleField = new ArrayList<>();
+        excludeSingleField.add("fieldString1");
+
+        List<String> excludeFields = new ArrayList<>();
+        excludeFields.add("fieldString2");
+        excludeFields.add("fieldBoolean2");
+
+        // Success when there would be a failure on a single field in the excluded list
+        actual.fieldString1 = "excluded to prevent failure";
+        Helper.assertThat(null, actual, expected, excludeSingleField);
+        Helper.assertThat(aggregator, actual, expected, excludeSingleField);
+        actual.fieldString1 = "abc";
+
+        // Success when there would be a failure on a multiple fields in the excluded list
+        actual.fieldString2 = "blah";
+        actual.fieldBoolean2 = true;
+        Helper.assertThat(null, actual, expected, excludeFields);
+        Helper.assertThat(aggregator, actual, expected, excludeFields);
+        actual.fieldString2 = "xyz";
+        actual.fieldBoolean2 = false;
+
+        // Failure when excluded fields has 1 item
+        try {
+            actual.fieldString1 = "does not cause failure";
+            actual.fieldString2 = "causes failure";
+
+            Helper.assertThat(aggregator, actual, expected, excludeSingleField);
+            failures++;
+            Helper.assertThat(null, actual, expected, excludeSingleField);
+            throw new RuntimeException("Assertion did not fail:  failure when excluded fields has 1 item");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (failure when excluded fields has 1 item)", true);
+        }
+
+        // Failure when excluded fields has multiple items
+        try {
+            actual.fieldString1 = "something";
+            actual.fieldInteger2 = 20;
+            actual.fieldInt2 = 40;
+            actual.fieldString2 = "blah";
+            actual.fieldBoolean2 = true;
+
+            Helper.assertThat(aggregator, actual, expected, excludeFields);
+            failures += 3;
+            Helper.assertThat(null, actual, expected, excludeFields);
+            throw new RuntimeException("Assertion did not fail:  failure when excluded fields has multiple items");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (failure when excluded fields has multiple items)", true);
+        }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
