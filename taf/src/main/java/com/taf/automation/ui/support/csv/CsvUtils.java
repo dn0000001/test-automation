@@ -1,10 +1,12 @@
 package com.taf.automation.ui.support.csv;
 
+import com.taf.automation.api.ApiDomainObject;
 import com.taf.automation.ui.support.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.FilloUtils;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.RegExUtils;
+import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -18,6 +20,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.By;
 import org.testng.ITestContext;
@@ -143,6 +146,34 @@ public class CsvUtils {
     }
 
     /**
+     * Update aliases<BR>
+     * <B>Note: </B> Domain Object can be set to null to skip updating it
+     *
+     * @param apiDomainObject - Domain Object to update aliases just for reporting
+     * @param csvTestData     - CSV test data
+     */
+    public static void updateAliases(ApiDomainObject apiDomainObject, CsvTestData csvTestData) {
+        if (apiDomainObject != null && apiDomainObject.getDataAliases() == null) {
+            try {
+                FieldUtils.writeField(apiDomainObject, "aliases", new DataAliases(), true);
+            } catch (Exception ex) {
+                assertThat("Unable to initialize the variable aliases", false);
+            }
+        }
+
+        for (Map.Entry<String, Integer> item : csvTestData.getAliases().entrySet()) {
+            String aliasKey = item.getKey();
+            String aliasValue = replaceGenerator(csvTestData.getRecord().get(aliasKey));
+            PageComponentContext.getGlobalAliases().put(aliasKey, aliasValue);
+
+            // Add to domain object such that data is in the report
+            if (apiDomainObject != null) {
+                apiDomainObject.getDataAliases().put(aliasKey, aliasValue);
+            }
+        }
+    }
+
+    /**
      * Replace generator in the specified value
      *
      * @param value - Value to check for generator to be replaced
@@ -174,6 +205,49 @@ public class CsvUtils {
         byte[] attachment = data.toXML().getBytes();
         MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, title, "text/xml");
         Allure.LIFECYCLE.fire(ev);
+    }
+
+    /**
+     * Use the CSV data to set a <B>String</B> variable in an object provided it is not blank
+     *
+     * @param target    - Target object that contains the field to be set
+     * @param fieldname - Field Name to be set
+     * @param csv       - CSV record data
+     * @param column    - Column Enumeration that maps to field name
+     */
+    public static void setStringData(Object target, String fieldname, CSVRecord csv, ColumnMapper column) {
+        if (isNotBlank(csv, column)) {
+            Utils.writeField(target, fieldname, csv.get(column.getColumnName()));
+        }
+    }
+
+    /**
+     * Use the CSV data to set a <B>Boolean</B> variable in an object provided it is not blank
+     *
+     * @param target    - Target object that contains the field to be set
+     * @param fieldname - Field Name to be set
+     * @param csv       - CSV record data
+     * @param column    - Column Enumeration that maps to field name
+     */
+    public static void setBooleanData(Object target, String fieldname, CSVRecord csv, ColumnMapper column) {
+        if (isNotBlank(csv, column)) {
+            Utils.writeField(target, fieldname, BooleanUtils.toBoolean(csv.get(column.getColumnName())));
+        }
+    }
+
+    /**
+     * Use the CSV data to set a <B>Integer</B> variable in an object provided it is not blank
+     *
+     * @param target       - Target object that contains the field to be set
+     * @param fieldname    - Field Name to be set
+     * @param csv          - CSV record data
+     * @param column       - Column Enumeration that maps to field name
+     * @param defaultValue - The default value if conversion to Integer fails
+     */
+    public static void setIntegerData(Object target, String fieldname, CSVRecord csv, ColumnMapper column, int defaultValue) {
+        if (isNotBlank(csv, column)) {
+            Utils.writeField(target, fieldname, NumberUtils.toInt(csv.get(column.getColumnName()), defaultValue));
+        }
     }
 
     /**
@@ -417,6 +491,29 @@ public class CsvUtils {
     }
 
     /**
+     * Generic method to initialize the data (including aliases) and attach the data to the report
+     *
+     * @param apiDomainObject - Domain Object to initialize with specified data
+     * @param csvTestData     - CSV Test Data to be used
+     */
+    public static void initializeDataAndAttach(ApiDomainObject apiDomainObject, CsvTestData csvTestData) {
+        initializeDataAndAttach(apiDomainObject, csvTestData, "Test Data");
+    }
+
+    /**
+     * Generic method to initialize the data (including aliases) and attach the data to the report
+     *
+     * @param apiDomainObject - Domain Object to initialize with specified data
+     * @param csvTestData     - CSV Test Data to be used
+     * @param title           - Title of attachment. Shown at report as name of attachment
+     */
+    public static void initializeDataAndAttach(ApiDomainObject apiDomainObject, CsvTestData csvTestData, String title) {
+        apiDomainObject.setData(csvTestData);
+        updateAliases(apiDomainObject, csvTestData);
+        attachDataSet(apiDomainObject, title);
+    }
+
+    /**
      * Check if the column is mapped and there is non-blank data
      *
      * @param csv    - CSV record data
@@ -580,6 +677,25 @@ public class CsvUtils {
     public static String generateCsvHeaders(Class clazz, String prefix) {
         StringBuilder sb = new StringBuilder();
 
+        List<String> headers = generateCsvHeadersForFurtherProcessing(clazz, prefix);
+        for (String header : headers) {
+            sb.append(header);
+            sb.append(",");
+        }
+
+        return StringUtils.removeEnd(sb.toString(), ",");
+    }
+
+    /**
+     * Generate the CSV Headers row from the specified class
+     *
+     * @param clazz  - Class to generate the CSV Headers Row for
+     * @param prefix - Prefix to be used before each field if non-blank value
+     * @return CSV Headers row as a list
+     */
+    public static List<String> generateCsvHeadersForFurtherProcessing(Class clazz, String prefix) {
+        List<String> headers = new ArrayList<>();
+
         List<Field> all = FieldUtils.getAllFieldsList(clazz);
         for (Field field : all) {
             if (field.isAnnotationPresent(XStreamOmitField.class) ||
@@ -595,15 +711,11 @@ public class CsvUtils {
                 continue;
             }
 
-            if (StringUtils.isNotBlank(prefix)) {
-                sb.append(prefix);
-            }
-
-            sb.append(field.getName());
-            sb.append(",");
+            String usePrefix = (StringUtils.isNotBlank(prefix)) ? prefix : "";
+            headers.add(usePrefix + field.getName());
         }
 
-        return StringUtils.removeEnd(sb.toString(), ",");
+        return headers;
     }
 
     /**
@@ -653,7 +765,15 @@ public class CsvUtils {
                 fieldName = "_" + fieldName;
             }
 
-            sb.append(indent + fieldName.toUpperCase());
+            // Make field "fooBar" to be "FOO_BAR"
+            StringBuilder rejoin = new StringBuilder();
+            for (String piece : StringUtils.splitByCharacterTypeCamelCase(fieldName)) {
+                rejoin.append(piece.toUpperCase());
+                rejoin.append("_");
+            }
+
+            sb.append(indent);
+            sb.append(StringUtils.removeEnd(rejoin.toString(), "_"));
             sb.append("(\"");
             sb.append(key);
             sb.append("\"),");
