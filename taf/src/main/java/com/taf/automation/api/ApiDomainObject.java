@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.CreditCard;
 import com.taf.automation.ui.support.DataPersistenceV2;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.csv.CsvTestData;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.Data;
 import datainstiller.data.DataAliases;
@@ -170,6 +171,15 @@ public class ApiDomainObject extends DataPersistenceV2 {
     @Test
     public void generate() {
         System.out.println(generateXML());
+    }
+
+    /**
+     * Use the CSV data to set the variables in the domain object
+     *
+     * @param csvTestData - CSV test data
+     */
+    public void setData(CsvTestData csvTestData) {
+        // Method should be overridden in extending classes
     }
 
 }

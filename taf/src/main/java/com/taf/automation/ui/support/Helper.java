@@ -818,22 +818,8 @@ public class Helper {
      */
     public static String maskFile(String filename, String imageResource) {
         try {
-            byte[] image;
-            URL imageURL = Thread.currentThread().getContextClassLoader().getResource(imageResource);
-            if (imageURL != null) {
-                image = FileUtils.readFileToByteArray(new File(imageURL.toURI()));
-            } else {
-                image = FileUtils.readFileToByteArray(new File(imageResource));
-            }
-
-            byte[] file;
-            URL fileURL = Thread.currentThread().getContextClassLoader().getResource(filename);
-            if (fileURL != null) {
-                file = FileUtils.readFileToByteArray(new File(fileURL.toURI()));
-            } else {
-                file = FileUtils.readFileToByteArray(new File(filename));
-            }
-
+            byte[] image = FileUtils.readFileToByteArray(getFile(imageResource));
+            byte[] file = FileUtils.readFileToByteArray(getFile(filename));
             String randomFilename = "IMAGE_" + System.currentTimeMillis() + ".jpg";
             File output = new File(randomFilename);
             FileUtils.writeByteArrayToFile(output, image, false);
@@ -868,22 +854,8 @@ public class Helper {
      */
     public static String unmaskFile(String input, String imageResource, String outputFilename) {
         try {
-            byte[] image;
-            URL imageURL = Thread.currentThread().getContextClassLoader().getResource(imageResource);
-            if (imageURL != null) {
-                image = FileUtils.readFileToByteArray(new File(imageURL.toURI()));
-            } else {
-                image = FileUtils.readFileToByteArray(new File(imageResource));
-            }
-
-            byte[] file;
-            URL fileURL = Thread.currentThread().getContextClassLoader().getResource(input);
-            if (fileURL != null) {
-                file = FileUtils.readFileToByteArray(new File(fileURL.toURI()));
-            } else {
-                file = FileUtils.readFileToByteArray(new File(input));
-            }
-
+            byte[] image = FileUtils.readFileToByteArray(getFile(imageResource));
+            byte[] file = FileUtils.readFileToByteArray(getFile(input));
             int from = image.length;
             int to = file.length - image.length;
             byte[] realFile = Arrays.copyOfRange(file, from, to);
@@ -893,6 +865,21 @@ public class Helper {
         } catch (Exception ex) {
             MatcherAssert.assertThat("Could not revert fake image due to exception:  " + ex.getMessage(), false);
             return null;
+        }
+    }
+
+    /**
+     * Get File object
+     *
+     * @param readFolder - Read folder from resources or absolute location
+     * @return File
+     */
+    public static File getFile(String readFolder) {
+        try {
+            URL url = Thread.currentThread().getContextClassLoader().getResource(readFolder);
+            return new File(url.toURI());
+        } catch (Exception ex) {
+            return new File(readFolder);
         }
     }
 
