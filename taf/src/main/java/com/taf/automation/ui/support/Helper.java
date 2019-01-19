@@ -29,6 +29,7 @@ import ui.auto.core.pagecomponent.SkipAutoValidate;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -248,8 +249,24 @@ public class Helper {
      * @param expected   - Expected Object
      */
     public static void assertThat(AssertAggregator aggregator, Object actual, Object expected) {
+        assertThat(aggregator, actual, expected, new ArrayList<>());
+    }
+
+    /**
+     * Verifies that all non-null fields of the expected object equals the corresponding actual object.
+     *
+     * @param aggregator    - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual        - Actual Object
+     * @param expected      - Expected Object
+     * @param excludeFields - Fields that are excluded from the comparison
+     */
+    public static void assertThat(AssertAggregator aggregator, Object actual, Object expected, List<String> excludeFields) {
         List<Field> fields = ApiUtils.getFieldsToValidate(expected);
         for (Field field : fields) {
+            if (excludeFields.contains(field.getName())) {
+                continue;
+            }
+
             Object actualValue = ApiUtils.readField(field, actual);
             Object expectedValue = ApiUtils.readField(field, expected);
             if (aggregator == null) {
