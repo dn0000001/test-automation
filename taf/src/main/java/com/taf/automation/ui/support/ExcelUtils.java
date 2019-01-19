@@ -62,14 +62,7 @@ public class ExcelUtils {
         String error = "";
 
         try {
-            File inputWorkbook;
-            URL url = Thread.currentThread().getContextClassLoader().getResource(resourceFilePath);
-            if (url == null) {
-                inputWorkbook = new File(resourceFilePath);
-            } else {
-                inputWorkbook = new File(url.getFile());
-            }
-
+            File inputWorkbook = Helper.getFile(resourceFilePath);
             data = getAllData(inputWorkbook, workSheet);
         } catch (Exception ex) {
             error = ex.getMessage();
