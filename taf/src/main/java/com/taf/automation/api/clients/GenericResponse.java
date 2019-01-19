@@ -1,14 +1,13 @@
 package com.taf.automation.api.clients;
 
+import com.taf.automation.api.ApiUtils;
+import com.taf.automation.api.rest.GenericBaseError;
+import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.api.rest.TextError;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
-
-import com.taf.automation.api.rest.GenericBaseError;
-import com.taf.automation.api.rest.GenericHttpResponse;
-import com.taf.automation.api.rest.TextError;
-import com.taf.automation.api.ApiUtils;
 
 /**
  * Generic Response
@@ -39,17 +38,14 @@ public class GenericResponse<T> implements GenericHttpResponse<T> {
 
         try {
             entityAsString = EntityUtils.toString(response.getEntity());
-            String attachName = "RESPONSE ENTITY";
+            ApiUtils.attachDataText(entityAsString, "RESPONSE");
             if (responseEntity != null) {
                 if (status.getStatusCode() < 400) {
                     entity = (T) entityAsString;
                 } else {
-                    attachName = "RESPONSE ERROR";
                     apiError = new TextError(entityAsString);
                 }
             }
-
-            ApiUtils.attachDataText(entityAsString, attachName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

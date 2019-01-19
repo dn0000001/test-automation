@@ -52,17 +52,14 @@ public class XmlResponse<T> implements GenericHttpResponse<T> {
 
         try {
             entityXML = ApiUtils.prettifyXML(EntityUtils.toString(response.getEntity()));
-            String attachName = "RESPONSE ENTITY";
+            ApiUtils.attachDataXml(entityXML, "RESPONSE");
             if (responseEntity != null) {
                 if (status.getStatusCode() < 400) {
                     entity = getEntityFromXml(responseEntity, entityXML);
                 } else {
-                    attachName = "RESPONSE ERROR";
                     apiError = getEntityFromXml(XmlError.class, entityXML);
                 }
             }
-
-            ApiUtils.attachDataXml(entityXML, attachName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
