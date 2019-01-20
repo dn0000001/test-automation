@@ -33,17 +33,14 @@ public class JsonResponse<T> implements GenericHttpResponse<T> {
 
         try {
             entityJSON = EntityUtils.toString(response.getEntity());
-            String attachName = "RESPONSE ENTITY";
+            ApiUtils.attachDataJson(entityJSON, "RESPONSE");
             if (responseEntity != null) {
                 if (status.getStatusCode() < 400) {
                     entity = getEntityFromJson(responseEntity, entityJSON);
                 } else {
-                    attachName = "RESPONSE ERROR";
                     apiError = getEntityFromJson((Class<T>) JsonError.class, entityJSON);
                 }
             }
-
-            ApiUtils.attachDataJson(entityJSON, attachName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
