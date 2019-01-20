@@ -30,7 +30,6 @@ import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -67,13 +66,12 @@ public class CsvUtils {
      * @return null if cannot open else InputStream
      */
     private static InputStream openInputStream(String resourceFilePath) {
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceFilePath);
-        if (in == null) {
-            try {
-                in = new FileInputStream(new File(resourceFilePath));
-            } catch (Exception ignore) {
-                return null;
-            }
+        InputStream in = null;
+
+        try {
+            in = new FileInputStream(Helper.getFile(resourceFilePath));
+        } catch (Exception ignore) {
+            //
         }
 
         return in;
