@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -69,20 +68,11 @@ public class FilloUtils {
     private static FileInputStream openFileInputStream(String resourceFilePath) {
         FileInputStream fileInputStream = null;
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(resourceFilePath);
-        if (url == null) {
-            try {
-                fileInputStream = new FileInputStream(resourceFilePath);
-            } catch (Exception ex) {
-                //
-            }
-        } else {
-            try {
-                File file = new File(url.toURI());
-                fileInputStream = new FileInputStream(file);
-            } catch (Exception ex) {
-                //
-            }
+        try {
+            File file = Helper.getFile(resourceFilePath);
+            fileInputStream = new FileInputStream(file);
+        } catch (Exception ex) {
+            //
         }
 
         return fileInputStream;
