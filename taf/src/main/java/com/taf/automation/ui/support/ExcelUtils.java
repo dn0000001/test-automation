@@ -7,7 +7,6 @@ import jxl.read.biff.BiffException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;

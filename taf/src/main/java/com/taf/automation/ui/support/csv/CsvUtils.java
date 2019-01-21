@@ -249,6 +249,66 @@ public class CsvUtils {
     }
 
     /**
+     * Use the CSV data to set a <B>String</B> variable in an list item object provided it is not blank
+     *
+     * @param target    - Target object that contains the field to be set
+     * @param fieldname - Field Name to be set
+     * @param csv       - CSV record data
+     * @param column    - Column Enumeration that maps to field name
+     * @param index     - Index of list item
+     */
+    public static void setStringData(Object target, String fieldname, CSVRecord csv, ColumnMapper column, int index) {
+        String listColumnName = getListColumnName(column, index);
+        if (csv.isMapped(listColumnName) && StringUtils.isNotBlank(csv.get(listColumnName))) {
+            Utils.writeField(target, fieldname, csv.get(listColumnName));
+        }
+    }
+
+    /**
+     * Use the CSV data to set a <B>Boolean</B> variable in an list item object provided it is not blank
+     *
+     * @param target    - Target object that contains the field to be set
+     * @param fieldname - Field Name to be set
+     * @param csv       - CSV record data
+     * @param column    - Column Enumeration that maps to field name
+     * @param index     - Index of list item
+     */
+    public static void setBooleanData(Object target, String fieldname, CSVRecord csv, ColumnMapper column, int index) {
+        String listColumnName = getListColumnName(column, index);
+        if (csv.isMapped(listColumnName) && StringUtils.isNotBlank(csv.get(listColumnName))) {
+            Utils.writeField(target, fieldname, BooleanUtils.toBoolean(csv.get(listColumnName)));
+        }
+    }
+
+    /**
+     * Use the CSV data to set a <B>Integer</B> variable in an object provided it is not blank
+     *
+     * @param target       - Target object that contains the field to be set
+     * @param fieldname    - Field Name to be set
+     * @param csv          - CSV record data
+     * @param column       - Column Enumeration that maps to field name
+     * @param index        - Index of list item
+     * @param defaultValue - The default value if conversion to Integer fails
+     */
+    public static void setIntegerData(Object target, String fieldname, CSVRecord csv, ColumnMapper column, int index, int defaultValue) {
+        String listColumnName = getListColumnName(column, index);
+        if (csv.isMapped(listColumnName) && StringUtils.isNotBlank(csv.get(listColumnName))) {
+            Utils.writeField(target, fieldname, NumberUtils.toInt(csv.get(listColumnName), defaultValue));
+        }
+    }
+
+    /**
+     * Get List Column Name
+     *
+     * @param column - Column Enumeration to create key to retrieve data
+     * @param index  - Index of the item to retrieve data from
+     * @return The key to retrieve data from a CSVRecord object
+     */
+    public static String getListColumnName(ColumnMapper column, int index) {
+        return column.getColumnName() + LIST_SUFFIX + index;
+    }
+
+    /**
      * Use the CSV data to set the variables in the domain object<BR>
      * <B>Note: </B> Initial &amp; Expected data is not changed<BR>
      *
@@ -274,7 +334,7 @@ public class CsvUtils {
      * @param component - Component to initialize data
      */
     public static void setData(CSVRecord csv, ColumnMapper column, int index, PageComponent component) {
-        String listColumnName = column.getColumnName() + LIST_SUFFIX + index;
+        String listColumnName = getListColumnName(column, index);
         if (csv.isMapped(listColumnName)) {
             String initial = component.getData(DataTypes.Initial, false);
             String expected = component.getData(DataTypes.Expected, false);
