@@ -104,6 +104,7 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
             T component = getInstanceOfT(option);
             if (isMatchedOption(component.getText(), theData)) {
                 component.setValue();
+                return;
             }
         }
     }
