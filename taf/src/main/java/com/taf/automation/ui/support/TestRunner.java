@@ -8,6 +8,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.openqa.selenium.net.PortProber;
 import org.testng.ITestNGListener;
 import org.testng.TestNG;
 import org.testng.reporters.Files;
@@ -23,9 +24,10 @@ import java.net.URI;
 import java.util.List;
 
 public class TestRunner {
+    private static final int DEFAULT_PORT = 8090;
     private String resultsFolder;
     private String reportFolder;
-    private int port = 8090;
+    private int port = -1;
 
     public TestRunner() {
         TestProperties props = TestProperties.getInstance();
@@ -70,13 +72,25 @@ public class TestRunner {
     }
 
     private int getServerPort() {
-        int serverPort = port;
-        String p = System.getProperty("local.server.port");
-        if (p != null) {
-            serverPort = Integer.parseInt(p);
+        if (port > 0) {
+            return port;
         }
 
-        return serverPort;
+        try {
+            // Try to find random free port
+            port = PortProber.findFreePort();
+        } catch (Exception ex) {
+            // Fallback to default port
+            port = DEFAULT_PORT;
+        }
+
+        // Check if a specific port is specified
+        String p = System.getProperty("local.server.port");
+        if (p != null) {
+            port = Integer.parseInt(p);
+        }
+
+        return port;
     }
 
     private Server setUpServer() {
