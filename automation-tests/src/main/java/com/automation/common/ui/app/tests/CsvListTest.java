@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -25,10 +26,10 @@ import java.util.List;
 public class CsvListTest extends TestNGBase {
     private Iterator<Object[]> records;
 
+    @Parameters("csv")
     @BeforeTest
-    public void setup(ITestContext injectedContext) {
-        String csvDataSet = CsvUtils.getCsvDataSetFromParameter(injectedContext, "csv");
-        records = CsvUtils.dataProvider(csvDataSet, CsvColumnMapping.RUN.getColumnName()).iterator();
+    public void setup(String csvDataSet) {
+        records = CsvUtils.dataProvider(csvDataSet, null, CsvColumnMapping.RUN.getColumnName(), false).iterator();
     }
 
     @DataProvider(name = "CSV_Data", parallel = true)
