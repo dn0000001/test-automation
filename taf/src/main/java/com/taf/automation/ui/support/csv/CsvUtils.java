@@ -718,7 +718,7 @@ public class CsvUtils {
 
         for (int i = 0; i < size; i++) {
             for (String genericFieldHeader : genericListHeaders) {
-                headers.add(StringUtils.removeEnd(prefix, "-") + "-" + i + "-" + genericFieldHeader);
+                headers.add(StringUtils.removeEnd(prefix, "-") + "-" + genericFieldHeader + LIST_SUFFIX + i);
             }
         }
 
