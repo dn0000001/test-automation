@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -23,11 +24,10 @@ import java.util.Iterator;
 public class Excel2013Test extends TestNGBase {
     private Iterator<Object[]> records;
 
+    @Parameters({"excel", "worksheet"})
     @BeforeTest
-    public void setup(ITestContext injectedContext) {
-        String excelDataSet = CsvUtils.getCsvDataSetFromParameter(injectedContext, "excel");
-        String worksheet = CsvUtils.getCsvDataSetFromParameter(injectedContext, "worksheet");
-        records = CsvUtils.dataProvider(excelDataSet, worksheet, CsvColumnMapping.RUN.getColumnName()).iterator();
+    public void setup(String excelDataSet, String worksheet) {
+        records = CsvUtils.dataProvider(excelDataSet, worksheet, CsvColumnMapping.RUN.getColumnName(), false).iterator();
     }
 
     @DataProvider(name = "ExcelData", parallel = true)

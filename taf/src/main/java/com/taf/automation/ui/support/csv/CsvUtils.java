@@ -17,6 +17,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -456,6 +457,46 @@ public class CsvUtils {
 
         return tests;
     }
+
+
+    /**
+     * Generic Data Provider for all (supported) file types<BR>
+     * <B>Note: </B> It is recommended to call this method in the BeforeTest annotation such that any error with fail
+     * the test.  Any failure in the DataProvider annotation will just mark the test as skipped and you could have
+     * a successful test run.
+     *
+     * @param dataSet               - Data Set location
+     * @param workSheet             - Excel Worksheet to read from if file type is Excel
+     * @param runColumnName         - If value is not blank and flat file type (like Excel/CSV),
+     *                              then removes all the records that are not set to run using the specific column name
+     *                              else no records are removed
+     * @param readStructuredFormats - true to read structured formats (like XML),
+     *                              false to return empty records for structured formats
+     * @return List&lt;Object[]&gt;
+     */
+    public static List<Object[]> dataProvider(
+            String dataSet,
+            String workSheet,
+            String runColumnName,
+            boolean readStructuredFormats
+    ) {
+        String extension = FilenameUtils.getExtension(dataSet);
+        if (StringUtils.startsWithIgnoreCase(extension, "XLS")) {
+            return dataProvider(dataSet, workSheet, runColumnName);
+        } else if (StringUtils.equalsIgnoreCase(extension, "CSV")) {
+            return dataProvider(dataSet, runColumnName);
+        } else {
+            // Assumed to be XML
+            List<Object[]> tests = new ArrayList<>();
+
+            if (readStructuredFormats) {
+                tests.add(new String[]{dataSet});
+            }
+
+            return tests;
+        }
+    }
+
 
     /**
      * Generic Data Provider for CSV files<BR>
