@@ -64,7 +64,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebElement is displayed assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = true)
+    @Test(enabled = run)
     public void assertIsDisplayedWithElementExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -76,7 +76,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("By is displayed assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = true)
+    @Test(enabled = run)
     public void assertIsDisplayedWithByExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -99,7 +99,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebElement is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = true)
+    @Test(enabled = run)
     public void assertIsEnabledWithElementExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -111,7 +111,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("By is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = true)
+    @Test(enabled = run)
     public void assertIsEnabledWithByExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -122,7 +122,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebComponent is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = true)
+    @Test(enabled = run)
     public void assertIsEnabledWithComponentExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -147,7 +147,7 @@ public class AssertsTest extends TestNGBase {
     @Stories("General Framework unit testing")
     @Severity(SeverityLevel.CRITICAL)
     @Parameters("data-set")
-    @Test(enabled = true)
+    @Test(enabled = run)
     public void generalUnitTest(@Optional("data/ui/TNHC_TestData.xml") String dataSet) {
         TNHC_DO hnhc = new TNHC_DO(getContext()).fromResource(dataSet);
         getContext().getDriver().get(TestProperties.getInstance().getURL());
@@ -234,7 +234,15 @@ public class AssertsTest extends TestNGBase {
         aa.assertThat("Some test #1", false);
         aa.assertThat("Some test #2", 5, greaterThan(10));
         aa.assertThat(100, greaterThan(500));
-        Helper.assertThat(aa);
+        int failures = 3;
+        try {
+            Helper.assertThat(aa);
+            throw new RuntimeException("Assertion did not fail");
+        }catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aa.getFailureCount()));
     }
 
     @Test
@@ -247,7 +255,15 @@ public class AssertsTest extends TestNGBase {
         aa.assertThat("Some test #4", 5, greaterThan(10));
         aa.assertThat(20, greaterThan(15));
         aa.assertThat(100, greaterThan(500));
-        Helper.assertThat(aa);
+        int failures = 3;
+        try {
+            Helper.assertThat(aa);
+            throw new RuntimeException("Assertion did not fail");
+        }catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aa.getFailureCount()));
     }
 
     @Test
@@ -739,6 +755,37 @@ public class AssertsTest extends TestNGBase {
             throw new RuntimeException("Assertion did not fail:  failure when excluded fields has multiple items");
         } catch (AssertionError ae) {
             Helper.log("Assertion failed as expected (failure when excluded fields has multiple items)", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyObjectsWithNullTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        TestObj actual = null;
+
+        TestObj expected = new TestObj();
+        expected.fieldString1 = null; // Skip this field
+        expected.fieldString2 = "xyz";
+        expected.fieldInteger1 = 1;
+        expected.fieldInteger2 = 2;
+        expected.fieldInt1 = 3;
+        expected.fieldInt2 = 4;
+        expected.fieldBoolean1 = true;
+        expected.fieldBoolean2 = false;
+        expected.fieldBool1 = true;
+        expected.fieldBool2 = false;
+
+        try {
+            failures += 9; // 9 expected fields are tested
+            Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThat(null, actual, expected);
+            throw new RuntimeException("Assertion did not fail with actual object is null");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected with actual object is null", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
