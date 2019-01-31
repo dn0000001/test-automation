@@ -267,7 +267,7 @@ public class Helper {
                 continue;
             }
 
-            Object actualValue = ApiUtils.readField(field, actual);
+            Object actualValue = (actual == null) ? null : ApiUtils.readField(field, actual);
             Object expectedValue = ApiUtils.readField(field, expected);
             if (aggregator == null) {
                 MatcherAssert.assertThat(field.getName(), actualValue, equalTo(expectedValue));
