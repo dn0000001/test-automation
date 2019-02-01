@@ -173,6 +173,29 @@ public class PageObjectV2 extends PageObject {
      * <B>Notes:</B><BR>
      * 1) Similar to the PageObject.setElementValue except validation occurs using component's validation method<BR>
      *
+     * @param useComponent  - Component to be used to find the element and enter the data
+     * @param dataComponent - Data is extracted from this component and injected into the use component
+     */
+    protected void setElementValueV2(PageComponent useComponent, PageComponent dataComponent) {
+        String restoreData = useComponent.getData(DataTypes.Data, true);
+        String restoreInitialData = useComponent.getData(DataTypes.Initial, true);
+        String restoreExpectedData = useComponent.getData(DataTypes.Expected, true);
+        try {
+            String data = dataComponent.getData(DataTypes.Data, true);
+            String initialData = dataComponent.getData(DataTypes.Initial, true);
+            String expectedData = dataComponent.getData(DataTypes.Expected, true);
+            useComponent.initializeData(data, initialData, expectedData);
+            setElementValueV2(useComponent);
+        } finally {
+            useComponent.initializeData(restoreData, restoreInitialData, restoreExpectedData);
+        }
+    }
+
+    /**
+     * Set value and validate using component's validation method<BR>
+     * <B>Notes:</B><BR>
+     * 1) Similar to the PageObject.setElementValue except validation occurs using component's validation method<BR>
+     *
      * @param component - Component to set value and validate
      */
     protected void setElementValueV2(PageComponent component) {
