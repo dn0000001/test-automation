@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<extractedWorkflowData>
+  <flowName>Single Empty Table Test</flowName>
+  <pages class="linked-hash-map">
+    <entry>
+      <string></string>
+      <page>
+        <pageNameKey></pageNameKey>
+        <pageData class="linked-hash-map">
+          <entry>
+            <string></string>
+            <table>
+              <tableNameKey></tableNameKey>
+              <rows/>
+              <padding>null</padding>
+              <sortIfErrors>true</sortIfErrors>
+            </table>
+          </entry>
+        </pageData>
+        <padding>null</padding>
+        <sortIfErrors>true</sortIfErrors>
+      </page>
+    </entry>
+  </pages>
+  <padding>null</padding>
+  <sortIfErrors>true</sortIfErrors>
+</extractedWorkflowData>

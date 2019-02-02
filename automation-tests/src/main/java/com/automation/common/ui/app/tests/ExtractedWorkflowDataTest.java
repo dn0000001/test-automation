@@ -1,11 +1,16 @@
 package com.automation.common.ui.app.tests;
 
+import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.pageScraping.ExtractedPageData;
 import com.taf.automation.ui.support.pageScraping.ExtractedRowData;
 import com.taf.automation.ui.support.pageScraping.ExtractedTableData;
 import com.taf.automation.ui.support.pageScraping.ExtractedWorkflowData;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -73,6 +78,90 @@ public class ExtractedWorkflowDataTest {
         ExtractedWorkflowData expected = getWorkflowData();
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(OUTPUT_FILE);
         assertThat("Data from read XML did not match expected data", actual, equalTo(expected));
+    }
+
+    @Test
+    public void emptyTest() {
+        ExtractedWorkflowData expected = new ExtractedWorkflowData();
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource("data/ui/scraping/empty-workflow.xml");
+
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+
+        List<CsvOutputRecord> outputRecords = new ArrayList<>();
+        expected.compare(actual, aggregator, outputRecords);
+
+        assertThat("Output Records", outputRecords.isEmpty());
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void singleEmptyPageTest() {
+        ExtractedPageData pageData = new ExtractedPageData();
+
+        ExtractedWorkflowData expected = new ExtractedWorkflowData();
+        expected.setFlowName("Single Empty Page Test");
+        expected.addPage(pageData);
+
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource("data/ui/scraping/single-empty-page.xml");
+
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+
+        List<CsvOutputRecord> outputRecords = new ArrayList<>();
+        expected.compare(actual, aggregator, outputRecords);
+
+        assertThat("Output Records", outputRecords.isEmpty());
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void singleEmptyTableTest() {
+        ExtractedTableData tableData = new ExtractedTableData();
+
+        ExtractedPageData pageData = new ExtractedPageData();
+        pageData.addTable(tableData);
+
+        ExtractedWorkflowData expected = new ExtractedWorkflowData();
+        expected.setFlowName("Single Empty Table Test");
+        expected.addPage(pageData);
+
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource("data/ui/scraping/single-empty-table.xml");
+
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+
+        List<CsvOutputRecord> outputRecords = new ArrayList<>();
+        expected.compare(actual, aggregator, outputRecords);
+
+        assertThat("Output Records", outputRecords.isEmpty());
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void singleEmptyRowTest() {
+        ExtractedRowData rowData = new ExtractedRowData();
+
+        ExtractedTableData tableData = new ExtractedTableData();
+        tableData.addRow(rowData);
+
+        ExtractedPageData pageData = new ExtractedPageData();
+        pageData.addTable(tableData);
+
+        ExtractedWorkflowData expected = new ExtractedWorkflowData();
+        expected.setFlowName("Single Empty Row Test");
+        expected.addPage(pageData);
+
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource("data/ui/scraping/single-empty-row.xml");
+
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+
+        List<CsvOutputRecord> outputRecords = new ArrayList<>();
+        expected.compare(actual, aggregator, outputRecords);
+
+        assertThat("Output Records", outputRecords.isEmpty());
+        Helper.assertThat(aggregator);
     }
 
 }

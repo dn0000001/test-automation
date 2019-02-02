@@ -133,7 +133,7 @@ public class ExtractedPageData {
 
         boolean page1Bigger = page1.pageData.size() > page2.pageData.size();
         ExtractedPageData biggerPage = (page1Bigger) ? page1 : page2;
-        ExtractedPageData smallerPage = (!page1Bigger) ? page2 : page1;
+        ExtractedPageData smallerPage = (page1Bigger) ? page2 : page1;
 
         String errReason = "Difference in Field + Table Count between pages[Page1=" + page1.getPageNameKey() + ", Page2=" + page2.getPageNameKey() + "]";
         aggregator.assertThat(errReason, page1.pageData.size(), equalTo(page2.pageData.size()));

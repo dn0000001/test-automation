@@ -105,14 +105,14 @@ public class ExtractedTableData {
 
         boolean table1Bigger = table1.rows.size() > table2.rows.size();
         ExtractedTableData biggerTable = (table1Bigger) ? table1 : table2;
-        ExtractedTableData smallerTable = (!table1Bigger) ? table2 : table1;
+        ExtractedTableData smallerTable = (table1Bigger) ? table2 : table1;
 
         String reason = "Difference in Row Count between tables[Table1=" + table1.getTableNameKey() + ", Table2=" + table2.getTableNameKey() + "]";
         aggregator.assertThat(reason, table1.rows.size(), equalTo(table2.rows.size()));
 
         if (isSortIfErrors()) {
-            table1.rows.sort(Comparator.comparing(ExtractedRowData::toString));
-            table2.rows.sort(Comparator.comparing(ExtractedRowData::toString));
+            biggerTable.rows.sort(Comparator.comparing(ExtractedRowData::toString));
+            smallerTable.rows.sort(Comparator.comparing(ExtractedRowData::toString));
         }
 
         int sizeDiff = biggerTable.rows.size() - smallerTable.rows.size();

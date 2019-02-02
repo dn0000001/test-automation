@@ -124,7 +124,7 @@ public class ExtractedRowData {
 
         boolean map1Bigger = row1.size() > row2.size();
         Map<String, Object> biggerMap = (map1Bigger) ? row1 : row2;
-        Map<String, Object> smallerMap = (!map1Bigger) ? row2 : row1;
+        Map<String, Object> smallerMap = (map1Bigger) ? row2 : row1;
 
         String errReason = "Difference in Field Count between rows[Row1=" + row1.toString() + ", Row2=" + row2.toString() + "]";
         aggregator.assertThat(errReason, row1.size(), equalTo(row2.size()));

@@ -106,9 +106,9 @@ public class ExtractedWorkflowData extends DataPersistenceV2 {
             return;
         }
 
-        boolean workflowBigger = workflow1.pages.size() > workflow2.pages.size();
-        ExtractedWorkflowData biggerWorkFlow = (workflowBigger) ? workflow1 : workflow2;
-        ExtractedWorkflowData smallerWorkFlow = (!workflowBigger) ? workflow2 : workflow1;
+        boolean workflow1Bigger = workflow1.pages.size() > workflow2.pages.size();
+        ExtractedWorkflowData biggerWorkFlow = (workflow1Bigger) ? workflow1 : workflow2;
+        ExtractedWorkflowData smallerWorkFlow = (workflow1Bigger) ? workflow2 : workflow1;
 
         String errReason = "Difference in Row Count between PageSize[Workflow1=" + workflow1.getFlowName() + ", Workflow2=" + workflow2.getFlowName() + "]";
         aggregator.assertThat(errReason, workflow1.pages.size(), equalTo(workflow2.pages.size()));
