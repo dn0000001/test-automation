@@ -13,9 +13,12 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 public class ExtractedWorkflowDataTest {
     private static final String OUTPUT_FILE = "test.xml";
@@ -25,6 +28,7 @@ public class ExtractedWorkflowDataTest {
     private static final String EMPTY_ROW = "data/ui/scraping/single-empty-row.xml";
     private static final String COMPLEX_SINGLE_PAGE_WORKFLOW = "data/ui/scraping/complex-single-page-workflow.xml";
     private static final String COMPLEX_MULTI_PAGE_WORKFLOW = "data/ui/scraping/complex-multi-page-workflow.xml";
+    private static final String COMPLEX_SINGLE_PAGE_WORKFLOW_2 = "data/ui/scraping/complex-single-page-workflow-2.xml";
 
     public enum WorkflowKeys implements ColumnMapper {
         P1("p1"),
@@ -192,6 +196,136 @@ public class ExtractedWorkflowDataTest {
                 aggregator.assertThat(error, false);
             }
         }
+    }
+
+    private String makeKey(CsvOutputRecord record) {
+        ExtractedDataOutputRecord item = (ExtractedDataOutputRecord) record;
+        return item.getPageName() + item.getFieldName() + item.getFieldType();
+    }
+
+    private void validateOutputRecords(AssertAggregator aggregator, List<CsvOutputRecord> outputRecords1, List<CsvOutputRecord> outputRecords2) {
+        aggregator.assertThat("Records Size", outputRecords1.size(), equalTo(outputRecords2.size()));
+        aggregator.assertThat("Number of records", outputRecords1.size(), greaterThan(0));
+
+        Map<String, CsvOutputRecord> cache1 = outputRecords1
+                .stream()
+                .collect(Collectors.toMap(this::makeKey, item -> item, (lhs, rhs) -> rhs));
+        for (CsvOutputRecord item : outputRecords2) {
+            ExtractedDataOutputRecord record2 = (ExtractedDataOutputRecord) item;
+            String key = makeKey(record2);
+            CsvOutputRecord cachedRecord = cache1.get(key);
+            if (cachedRecord == null) {
+                aggregator.assertThat("Could not find key in cache:  " + key, false);
+            } else {
+                ExtractedDataOutputRecord record1 = (ExtractedDataOutputRecord) cachedRecord;
+                aggregator.assertThat(key + "- Test Status", record1.getTestStatus(), equalTo(record2.getTestStatus()));
+                aggregator.assertThat(key + "- Test Status Value", record1.getTestStatus(), equalTo("FAIL"));
+                aggregator.assertThat(key + "- Value", record1.getExpectedValue(), equalTo(record2.getActualValue()));
+            }
+        }
+    }
+
+    private void validateWorkflow(ExtractedWorkflowData expected, ExtractedWorkflowData actual) {
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+
+        List<CsvOutputRecord> outputRecords1 = new ArrayList<>();
+        expected.compare(actual, aggregator, outputRecords1);
+
+        List<CsvOutputRecord> outputRecords2 = new ArrayList<>();
+        actual.compare(expected, aggregator, outputRecords2);
+
+        aggregator.reset();
+        validateOutputRecords(aggregator, outputRecords1, outputRecords2);
+        Helper.assertThat(aggregator);
+    }
+
+    private ExtractedWorkflowData getWorkflow(String flowname, String f1Value) {
+        ExtractedPageData p1 = new ExtractedPageData();
+        p1.setPageNameKey(WorkflowKeys.P1);
+        p1.addField(WorkflowKeys.P1_F1, f1Value);
+
+        ExtractedWorkflowData w1 = new ExtractedWorkflowData();
+        w1.setFlowName(flowname);
+        w1.addPage(p1);
+
+        return w1;
+    }
+
+    private ExtractedWorkflowData getWorkflow(
+            String flowname,
+            ColumnMapper t1Key,
+            ColumnMapper r1f1Key,
+            String r1f1Value,
+            ColumnMapper r1f2Key,
+            String r1f2Value,
+            ColumnMapper r2f1Key,
+            String r2f1Value,
+            ColumnMapper r2f2Key,
+            String r2f2Value
+    ) {
+        ExtractedRowData r1 = new ExtractedRowData();
+        r1.addField(r1f1Key, r1f1Value);
+        r1.addField(r1f2Key, r1f2Value);
+
+        ExtractedRowData r2 = new ExtractedRowData();
+        r2.addField(r2f1Key, r2f1Value);
+        r2.addField(r2f2Key, r2f2Value);
+
+        ExtractedTableData t1 = new ExtractedTableData();
+        t1.setTableNameKey(t1Key);
+        t1.addRow(r1);
+        t1.addRow(r2);
+
+        ExtractedPageData p1 = new ExtractedPageData();
+        p1.setPageNameKey(WorkflowKeys.P1);
+        p1.addTable(t1);
+
+        ExtractedWorkflowData w1 = new ExtractedWorkflowData();
+        w1.setFlowName(flowname);
+        w1.addPage(p1);
+
+        return w1;
+    }
+
+    private ExtractedWorkflowData getWorkflow(
+            String flowname,
+            ColumnMapper t1Key,
+            ColumnMapper r1f1Key,
+            String r1f1Value,
+            ColumnMapper r2f1Key,
+            String r2f1Value,
+            boolean extraR1,
+            ColumnMapper extraRowKey,
+            String extraRow
+    ) {
+        ExtractedRowData r1 = new ExtractedRowData();
+        r1.addField(r1f1Key, r1f1Value);
+
+
+        ExtractedRowData r2 = new ExtractedRowData();
+        r2.addField(r2f1Key, r2f1Value);
+
+        if (extraR1) {
+            r1.addField(extraRowKey, extraRow);
+        } else {
+            r2.addField(extraRowKey, extraRow);
+        }
+
+        ExtractedTableData t1 = new ExtractedTableData();
+        t1.setTableNameKey(t1Key);
+        t1.addRow(r1);
+        t1.addRow(r2);
+
+        ExtractedPageData p1 = new ExtractedPageData();
+        p1.setPageNameKey(WorkflowKeys.P1);
+        p1.addTable(t1);
+
+        ExtractedWorkflowData w1 = new ExtractedWorkflowData();
+        w1.setFlowName(flowname);
+        w1.addPage(p1);
+
+        return w1;
     }
 
     @Test
@@ -687,6 +821,93 @@ public class ExtractedWorkflowDataTest {
         } catch (AssertionError ae) {
             Helper.log("Assertion failed as expected for duplicate page key", true);
         }
+    }
+
+    @Test
+    public void failureWithDifferentSizesTest() {
+        ExtractedWorkflowData expected = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
+        validateWorkflow(expected, actual);
+    }
+
+    @Test
+    public void failureWithEqualSizesTest() {
+        ExtractedWorkflowData expected = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW_2);
+        validateWorkflow(expected, actual);
+    }
+
+    @Test
+    public void failureWithEqualPagesTest() {
+        ExtractedWorkflowData expected = getWorkflow("Expected", "aa");
+        ExtractedWorkflowData actual = getWorkflow("Actual", "bb");
+        validateWorkflow(expected, actual);
+    }
+
+    @Test
+    public void failureWithEqualTablesRowsCellsTest() {
+        ExtractedWorkflowData expected = getWorkflow("Expected",
+                WorkflowKeys.P10_T1,
+                WorkflowKeys.P10_T1_R1_C1, "aa",
+                WorkflowKeys.P10_T1_R1_C2, "bb",
+                WorkflowKeys.P10_T1_R2_C1, "cc",
+                WorkflowKeys.P10_T1_R2_C2, "dd");
+        ExtractedWorkflowData actual = getWorkflow("Actual",
+                WorkflowKeys.P10_T1,
+                WorkflowKeys.P10_T1_R1_C1, "dd",
+                WorkflowKeys.P10_T1_R1_C2, "cc",
+                WorkflowKeys.P10_T1_R2_C1, "bb",
+                WorkflowKeys.P10_T1_R2_C2, "aa");
+        validateWorkflow(expected, actual);
+    }
+
+    @Test
+    public void failureWithDifferentSizeCellsTest() {
+        ExtractedWorkflowData expected = getWorkflow("Expected",
+                WorkflowKeys.P10_T1,
+                WorkflowKeys.P10_T1_R1_C1, "aa",
+                WorkflowKeys.P10_T1_R2_C2, "bb",
+                true,
+                WorkflowKeys.P10_T2_R1_C1, "cc"
+        );
+        ExtractedWorkflowData actual = getWorkflow("Actual",
+                WorkflowKeys.P10_T1,
+                WorkflowKeys.P10_T1_R1_C1, "aa",
+                WorkflowKeys.P10_T1_R2_C2, "bb",
+                false,
+                WorkflowKeys.P10_T2_R1_C1, "cc"
+        );
+
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+
+        List<CsvOutputRecord> outputRecords1 = new ArrayList<>();
+        expected.compare(actual, aggregator, outputRecords1);
+
+        List<CsvOutputRecord> outputRecords2 = new ArrayList<>();
+        actual.compare(expected, aggregator, outputRecords2);
+
+        aggregator.reset();
+        aggregator.assertThat("Records Size", outputRecords1.size(), equalTo(outputRecords2.size()));
+        aggregator.assertThat("Number of records", outputRecords1.size(), greaterThan(0));
+
+        Map<String, CsvOutputRecord> cache1 = outputRecords1
+                .stream()
+                .collect(Collectors.toMap(this::makeKey, item -> item, (lhs, rhs) -> rhs));
+        for (CsvOutputRecord item : outputRecords2) {
+            ExtractedDataOutputRecord record2 = (ExtractedDataOutputRecord) item;
+            String key = makeKey(record2);
+            CsvOutputRecord cachedRecord = cache1.get(key);
+            if (cachedRecord == null) {
+                aggregator.assertThat("Could not find key in cache:  " + key, false);
+            } else {
+                ExtractedDataOutputRecord record1 = (ExtractedDataOutputRecord) cachedRecord;
+                aggregator.assertThat(key + "- Test Status", record1.getTestStatus(), equalTo(record2.getTestStatus()));
+                aggregator.assertThat(key + "- Value", record1.getExpectedValue(), equalTo(record2.getActualValue()));
+            }
+        }
+
+        Helper.assertThat(aggregator);
     }
 
 }
