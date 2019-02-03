@@ -637,4 +637,56 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Test
+    public void duplicatesTest() {
+        ExtractedPageData p1 = new ExtractedPageData();
+        p1.setPageNameKey(WorkflowKeys.P1);
+        p1.addField(WorkflowKeys.P1_F1, "aa");
+        try {
+            p1.addField(WorkflowKeys.P1_F1, "bb");
+            throw new RuntimeException("Assertion did not fail for duplicate field key");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected for duplicate field key", true);
+        }
+
+        ExtractedRowData p7t1r1 = new ExtractedRowData();
+        p7t1r1.addField(WorkflowKeys.P7_T1_R1_C1, "mm");
+        try {
+            p7t1r1.addField(WorkflowKeys.P7_T1_R1_C1, "nn");
+            throw new RuntimeException("Assertion did not fail for duplicate field key on row");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected for duplicate field key on row", true);
+        }
+
+        ExtractedTableData p7t1 = new ExtractedTableData();
+        p7t1.setTableNameKey(WorkflowKeys.P7_T1);
+        p7t1.addRow(p7t1r1);
+        p7t1.addRow(p7t1r1); // Duplicate rows are allows as stored in list
+        p1.addTable(p7t1);
+
+        ExtractedTableData p7t2 = new ExtractedTableData();
+        p7t2.setTableNameKey(WorkflowKeys.P7_T1);
+        p7t2.addRow(p7t1r1);
+        try {
+            p1.addTable(p7t2);
+            throw new RuntimeException("Assertion did not fail for duplicate table key");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected for duplicate table key", true);
+        }
+
+        ExtractedPageData p2 = new ExtractedPageData();
+        p2.setPageNameKey(WorkflowKeys.P1);
+        p2.addField(WorkflowKeys.P1_F1, "bb");
+
+        ExtractedWorkflowData w1 = new ExtractedWorkflowData();
+        w1.setFlowName("w1");
+        w1.addPage(p1);
+        try {
+            w1.addPage(p2);
+            throw new RuntimeException("Assertion did not fail for duplicate page key");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected for duplicate page key", true);
+        }
+    }
+
 }
