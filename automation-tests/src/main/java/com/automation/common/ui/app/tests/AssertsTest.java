@@ -23,6 +23,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,6 +48,15 @@ public class AssertsTest extends TestNGBase {
         private Boolean fieldBoolean2;
         private boolean fieldBool1;
         private boolean fieldBool2;
+
+        public String getFieldString1() {
+            return fieldString1;
+        }
+
+        public String getFieldString2() {
+            return fieldString2;
+        }
+
     }
 
     @Features("AssertsUtil")
@@ -238,7 +248,7 @@ public class AssertsTest extends TestNGBase {
         try {
             Helper.assertThat(aa);
             throw new RuntimeException("Assertion did not fail");
-        }catch (AssertionError ae) {
+        } catch (AssertionError ae) {
             Helper.log("Assertion failed as expected", true);
         }
 
@@ -259,7 +269,7 @@ public class AssertsTest extends TestNGBase {
         try {
             Helper.assertThat(aa);
             throw new RuntimeException("Assertion did not fail");
-        }catch (AssertionError ae) {
+        } catch (AssertionError ae) {
             Helper.log("Assertion failed as expected", true);
         }
 
@@ -786,6 +796,757 @@ public class AssertsTest extends TestNGBase {
             throw new RuntimeException("Assertion did not fail with actual object is null");
         } catch (AssertionError ae) {
             Helper.log("Assertion failed as expected with actual object is null", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyEmptyListTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+
+        List<TestObj> actual = new ArrayList<>();
+        List<TestObj> expected = new ArrayList<>();
+
+        Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void verifyOneListPassTest() {
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "abc";
+        a1.fieldString2 = "xyz";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "abc";
+        e1.fieldString2 = "xyz";
+        e1.fieldInteger1 = 1;
+        e1.fieldInteger2 = 2;
+        e1.fieldInt1 = 3;
+        e1.fieldInt2 = 4;
+        e1.fieldBoolean1 = true;
+        e1.fieldBoolean2 = false;
+        e1.fieldBool1 = true;
+        e1.fieldBool2 = false;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void verifyOneListFailTest() {
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "abc";
+        a1.fieldString2 = "xyz";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "abc";
+        e1.fieldString2 = "ddd";
+        e1.fieldInteger1 = 1;
+        e1.fieldInteger2 = 2;
+        e1.fieldInt1 = 3;
+        e1.fieldInt2 = 4;
+        e1.fieldBoolean1 = true;
+        e1.fieldBoolean2 = false;
+        e1.fieldBool1 = true;
+        e1.fieldBool2 = false;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            throw new RuntimeException("Assertion did not fail with actual object is null");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected with actual object is null)", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyMultiListPassTest() {
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "abc";
+        a1.fieldString2 = "xyz";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj a2 = new TestObj();
+        a2.fieldString1 = "def";
+        a2.fieldString2 = "ghi";
+        a2.fieldInteger1 = 5;
+        a2.fieldInteger2 = 6;
+        a2.fieldInt1 = 7;
+        a2.fieldInt2 = 8;
+        a2.fieldBoolean1 = false;
+        a2.fieldBoolean2 = true;
+        a2.fieldBool1 = false;
+        a2.fieldBool2 = true;
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "abc";
+        e1.fieldString2 = "xyz";
+        e1.fieldInteger1 = 1;
+        e1.fieldInteger2 = 2;
+        e1.fieldInt1 = 3;
+        e1.fieldInt2 = 4;
+        e1.fieldBoolean1 = true;
+        e1.fieldBoolean2 = false;
+        e1.fieldBool1 = true;
+        e1.fieldBool2 = false;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "def";
+        e2.fieldString2 = "ghi";
+        e2.fieldInteger1 = 5;
+        e2.fieldInteger2 = 6;
+        e2.fieldInt1 = 7;
+        e2.fieldInt2 = 8;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = true;
+        e2.fieldBool1 = false;
+        e2.fieldBool2 = true;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+        actual.add(a2);
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void verifyMultiListPassWithSortTest() {
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "z";
+        a1.fieldString2 = "zzz";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj a2 = new TestObj();
+        a2.fieldString1 = "a";
+        a2.fieldString2 = "aaa";
+        a2.fieldInteger1 = 5;
+        a2.fieldInteger2 = 6;
+        a2.fieldInt1 = 7;
+        a2.fieldInt2 = 8;
+        a2.fieldBoolean1 = false;
+        a2.fieldBoolean2 = true;
+        a2.fieldBool1 = false;
+        a2.fieldBool2 = true;
+
+        TestObj a3 = new TestObj();
+        a3.fieldString1 = "b";
+        a3.fieldString2 = "bbb";
+        a3.fieldInteger1 = 9;
+        a3.fieldInteger2 = 10;
+        a3.fieldInt1 = 11;
+        a3.fieldInt2 = 12;
+        a3.fieldBoolean1 = true;
+        a3.fieldBoolean2 = true;
+        a3.fieldBool1 = false;
+        a3.fieldBool2 = false;
+
+        TestObj a4 = new TestObj();
+        a4.fieldString1 = "y";
+        a4.fieldString2 = "yyy";
+        a4.fieldInteger1 = 13;
+        a4.fieldInteger2 = 14;
+        a4.fieldInt1 = 15;
+        a4.fieldInt2 = 16;
+        a4.fieldBoolean1 = false;
+        a4.fieldBoolean2 = false;
+        a4.fieldBool1 = true;
+        a4.fieldBool2 = true;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+        actual.add(a2);
+        actual.add(a3);
+        actual.add(a4);
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "b";
+        e3.fieldString2 = "bbb";
+        e3.fieldInteger1 = 9;
+        e3.fieldInteger2 = 10;
+        e3.fieldInt1 = 11;
+        e3.fieldInt2 = 12;
+        e3.fieldBoolean1 = true;
+        e3.fieldBoolean2 = true;
+        e3.fieldBool1 = false;
+        e3.fieldBool2 = false;
+
+        TestObj e4 = new TestObj();
+        e4.fieldString1 = "z";
+        e4.fieldString2 = "zzz";
+        e4.fieldInteger1 = 1;
+        e4.fieldInteger2 = 2;
+        e4.fieldInt1 = 3;
+        e4.fieldInt2 = 4;
+        e4.fieldBoolean1 = true;
+        e4.fieldBoolean2 = false;
+        e4.fieldBool1 = true;
+        e4.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+        expected.add(e4);
+
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void verifyMultiListFailTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "z";
+        a1.fieldString2 = "sss";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj a2 = new TestObj();
+        a2.fieldString1 = "a";
+        a2.fieldString2 = "aaa";
+        a2.fieldInteger1 = 5;
+        a2.fieldInteger2 = 6;
+        a2.fieldInt1 = 7;
+        a2.fieldInt2 = 8;
+        a2.fieldBoolean1 = false;
+        a2.fieldBoolean2 = true;
+        a2.fieldBool1 = false;
+        a2.fieldBool2 = true;
+
+        TestObj a3 = new TestObj();
+        a3.fieldString1 = "b";
+        a3.fieldString2 = "bbb";
+        a3.fieldInteger1 = 9;
+        a3.fieldInteger2 = 10;
+        a3.fieldInt1 = 11;
+        a3.fieldInt2 = 12;
+        a3.fieldBoolean1 = true;
+        a3.fieldBoolean2 = true;
+        a3.fieldBool1 = false;
+        a3.fieldBool2 = false;
+
+        TestObj a4 = new TestObj();
+        a4.fieldString1 = "y";
+        a4.fieldString2 = "yyy";
+        a4.fieldInteger1 = 13;
+        a4.fieldInteger2 = 14;
+        a4.fieldInt1 = 15;
+        a4.fieldInt2 = 16;
+        a4.fieldBoolean1 = false;
+        a4.fieldBoolean2 = false;
+        a4.fieldBool1 = true;
+        a4.fieldBool2 = true;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+        actual.add(a2);
+        actual.add(a3);
+        actual.add(a4);
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "b";
+        e3.fieldString2 = "bbb";
+        e3.fieldInteger1 = 9;
+        e3.fieldInteger2 = 10;
+        e3.fieldInt1 = 11;
+        e3.fieldInt2 = 12;
+        e3.fieldBoolean1 = true;
+        e3.fieldBoolean2 = true;
+        e3.fieldBool1 = false;
+        e3.fieldBool2 = false;
+
+        TestObj e4 = new TestObj();
+        e4.fieldString1 = "z";
+        e4.fieldString2 = "zzz";
+        e4.fieldInteger1 = 1;
+        e4.fieldInteger2 = 2;
+        e4.fieldInt1 = 3;
+        e4.fieldInt2 = 4;
+        e4.fieldBoolean1 = true;
+        e4.fieldBoolean2 = false;
+        e4.fieldBool1 = true;
+        e4.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+        expected.add(e4);
+
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+            throw new RuntimeException("Assertion did not fail with multiple list items");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion did not fail with multiple list items", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyMultiListFailWithSortTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "x";
+        a1.fieldString2 = "yyy";
+        a1.fieldInteger1 = 13;
+        a1.fieldInteger2 = 14;
+        a1.fieldInt1 = 15;
+        a1.fieldInt2 = 16;
+        a1.fieldBoolean1 = false;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = true;
+
+        TestObj a2 = new TestObj();
+        a2.fieldString1 = "a";
+        a2.fieldString2 = "aaa";
+        a2.fieldInteger1 = 5;
+        a2.fieldInteger2 = 6;
+        a2.fieldInt1 = 7;
+        a2.fieldInt2 = 8;
+        a2.fieldBoolean1 = false;
+        a2.fieldBoolean2 = true;
+        a2.fieldBool1 = false;
+        a2.fieldBool2 = true;
+
+        TestObj a3 = new TestObj();
+        a3.fieldString1 = "b";
+        a3.fieldString2 = "bbb";
+        a3.fieldInteger1 = 9;
+        a3.fieldInteger2 = 10;
+        a3.fieldInt1 = 11;
+        a3.fieldInt2 = 12;
+        a3.fieldBoolean1 = true;
+        a3.fieldBoolean2 = true;
+        a3.fieldBool1 = false;
+        a3.fieldBool2 = false;
+
+        TestObj a4 = new TestObj();
+        a4.fieldString1 = "y";
+        a4.fieldString2 = "zzz";
+        a4.fieldInteger1 = 1;
+        a4.fieldInteger2 = 2;
+        a4.fieldInt1 = 3;
+        a4.fieldInt2 = 4;
+        a4.fieldBoolean1 = true;
+        a4.fieldBoolean2 = false;
+        a4.fieldBool1 = true;
+        a4.fieldBool2 = false;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+        actual.add(a2);
+        actual.add(a3);
+        actual.add(a4);
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "b";
+        e3.fieldString2 = "bbb";
+        e3.fieldInteger1 = 9;
+        e3.fieldInteger2 = 10;
+        e3.fieldInt1 = 11;
+        e3.fieldInt2 = 12;
+        e3.fieldBoolean1 = true;
+        e3.fieldBoolean2 = true;
+        e3.fieldBool1 = false;
+        e3.fieldBool2 = false;
+
+        TestObj e4 = new TestObj();
+        e4.fieldString1 = "z";
+        e4.fieldString2 = "zzz";
+        e4.fieldInteger1 = 1;
+        e4.fieldInteger2 = 2;
+        e4.fieldInt1 = 3;
+        e4.fieldInt2 = 4;
+        e4.fieldBoolean1 = true;
+        e4.fieldBoolean2 = false;
+        e4.fieldBool1 = true;
+        e4.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+        expected.add(e4);
+
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            failures += 2;
+            Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            throw new RuntimeException("Assertion did not fail with multiple list items when sorting");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion did not fail with multiple list items when sorting", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyDifferentListFailMoreActualTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "z";
+        a1.fieldString2 = "zzz";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj a2 = new TestObj();
+        a2.fieldString1 = "a";
+        a2.fieldString2 = "aaa";
+        a2.fieldInteger1 = 5;
+        a2.fieldInteger2 = 6;
+        a2.fieldInt1 = 7;
+        a2.fieldInt2 = 8;
+        a2.fieldBoolean1 = false;
+        a2.fieldBoolean2 = true;
+        a2.fieldBool1 = false;
+        a2.fieldBool2 = true;
+
+        TestObj a3 = new TestObj();
+        a3.fieldString1 = "b";
+        a3.fieldString2 = "bbb";
+        a3.fieldInteger1 = 9;
+        a3.fieldInteger2 = 10;
+        a3.fieldInt1 = 11;
+        a3.fieldInt2 = 12;
+        a3.fieldBoolean1 = true;
+        a3.fieldBoolean2 = true;
+        a3.fieldBool1 = false;
+        a3.fieldBool2 = false;
+
+        TestObj a4 = new TestObj();
+        a4.fieldString1 = "y";
+        a4.fieldString2 = "yyy";
+        a4.fieldInteger1 = 13;
+        a4.fieldInteger2 = 14;
+        a4.fieldInt1 = 15;
+        a4.fieldInt2 = 16;
+        a4.fieldBoolean1 = false;
+        a4.fieldBoolean2 = false;
+        a4.fieldBool1 = true;
+        a4.fieldBool2 = true;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+        actual.add(a2);
+        actual.add(a3);
+        actual.add(a4);
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "b";
+        e3.fieldString2 = "bbb";
+        e3.fieldInteger1 = 9;
+        e3.fieldInteger2 = 10;
+        e3.fieldInt1 = 11;
+        e3.fieldInt2 = 12;
+        e3.fieldBoolean1 = true;
+        e3.fieldBoolean2 = true;
+        e3.fieldBool1 = false;
+        e3.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            throw new RuntimeException("Assertion did not fail when there were more actual list items");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion did not fail when there were more actual list items", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyDifferentListFailMoreExpectedTest() {
+        AssertAggregator aggregator = new AssertAggregator();
+        int failures = 0;
+
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "z";
+        a1.fieldString2 = "zzz";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj a2 = new TestObj();
+        a2.fieldString1 = "a";
+        a2.fieldString2 = "aaa";
+        a2.fieldInteger1 = 5;
+        a2.fieldInteger2 = 6;
+        a2.fieldInt1 = 7;
+        a2.fieldInt2 = 8;
+        a2.fieldBoolean1 = false;
+        a2.fieldBoolean2 = true;
+        a2.fieldBool1 = false;
+        a2.fieldBool2 = true;
+
+        TestObj a3 = new TestObj();
+        a3.fieldString1 = "b";
+        a3.fieldString2 = "bbb";
+        a3.fieldInteger1 = 9;
+        a3.fieldInteger2 = 10;
+        a3.fieldInt1 = 11;
+        a3.fieldInt2 = 12;
+        a3.fieldBoolean1 = true;
+        a3.fieldBoolean2 = true;
+        a3.fieldBool1 = false;
+        a3.fieldBool2 = false;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+        actual.add(a2);
+        actual.add(a3);
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "b";
+        e3.fieldString2 = "bbb";
+        e3.fieldInteger1 = 9;
+        e3.fieldInteger2 = 10;
+        e3.fieldInt1 = 11;
+        e3.fieldInt2 = 12;
+        e3.fieldBoolean1 = true;
+        e3.fieldBoolean2 = true;
+        e3.fieldBool1 = false;
+        e3.fieldBool2 = false;
+
+        TestObj e4 = new TestObj();
+        e4.fieldString1 = "z";
+        e4.fieldString2 = "zzz";
+        e4.fieldInteger1 = 1;
+        e4.fieldInteger2 = 2;
+        e4.fieldInt1 = 3;
+        e4.fieldInt2 = 4;
+        e4.fieldBoolean1 = true;
+        e4.fieldBoolean2 = false;
+        e4.fieldBool1 = true;
+        e4.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+        expected.add(e4);
+
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            throw new RuntimeException("Assertion did not fail when there were more expected list items");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion did not fail when there were more expected list items", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
