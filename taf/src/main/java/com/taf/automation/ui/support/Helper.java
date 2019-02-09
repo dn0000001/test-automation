@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -396,6 +397,99 @@ public class Helper {
     @Step("Validate {0}")
     public static <T> void assertThatListItem(String type, AssertAggregator aggregator, T actual, T expected, List<String> excludeFields) {
         assertThat(aggregator, actual, expected, excludeFields);
+    }
+
+    /**
+     * Verifies that the actual list contains all the expected subset list items (excluding the specified fields.)
+     * Logging occurs as necessary.
+     *
+     * @param type           - Type for logging (if expected is not null)
+     * @param aggregator     - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual         - List of actual items
+     * @param expectedSubset - List of expected subset items
+     * @param excludeFields  - The fields in each item that will be excluded from the comparison
+     * @param matchCriteria  - Lambda expression to match an expected item to an actual item.
+     *                       (If a match is found, then all fields will be verified.)
+     * @param <T>            - Type
+     */
+    public static <T> void assertThat(
+            String type,
+            AssertAggregator aggregator,
+            List<T> actual,
+            List<T> expectedSubset,
+            List<String> excludeFields,
+            BiFunction<T, T, Boolean> matchCriteria
+    ) {
+        if (expectedSubset == null) {
+            // A null expected subset list means that user does not want to verify anything
+            return;
+        }
+
+        assertThatSubset(type, aggregator, actual, expectedSubset, matchCriteria, excludeFields);
+    }
+
+    /**
+     * Verifies that the actual list contains all the expected subset list items (excluding the specified fields)
+     *
+     * @param type           - Type for logging
+     * @param aggregator     - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual         - List of actual items
+     * @param expectedSubset - List of expected subset items
+     * @param matchCriteria  - Lambda expression to match an expected item to an actual item.
+     *                       (If a match is found, then all fields will be verified.)
+     * @param excludeFields  - The fields in each item that will be excluded from the comparison
+     * @param <T>            - Type
+     */
+    @Step("Validate the Actual List of {0} contains the Expected items")
+    private static <T> void assertThatSubset(
+            String type,
+            AssertAggregator aggregator,
+            List<T> actual,
+            List<T> expectedSubset,
+            BiFunction<T, T, Boolean> matchCriteria,
+            List<String> excludeFields
+    ) {
+        // Ensure that null list will cause failure
+        String reason = "Actual List of " + type + " was null";
+        if (aggregator == null) {
+            MatcherAssert.assertThat(reason, actual, notNullValue());
+        } else {
+            aggregator.assertThat(reason, actual, notNullValue());
+        }
+
+        // Prevent null pointer exceptions
+        List<T> actualItems = ObjectUtils.defaultIfNull(actual, new ArrayList<>());
+        List<T> expectedSubsetItems = ObjectUtils.defaultIfNull(expectedSubset, new ArrayList<>());
+        for (int i = 0; i < expectedSubsetItems.size(); i++) {
+            T expectedItem = expectedSubsetItems.get(i);
+
+            // Try to find a matching actual item using the lambda expression
+            int index = -1;
+            for (int j = 0; j < actualItems.size(); j++) {
+                if (matchCriteria.apply(expectedItem, actualItems.get(j))) {
+                    index = j;
+                    break;
+                }
+            }
+
+            // Cause failure if cannot find a matching actual item
+            reason = "Could not find Expected " + type + "[" + i + "] in the actual list of items";
+            if (aggregator == null) {
+                MatcherAssert.assertThat(reason, index, greaterThanOrEqualTo(0));
+            } else {
+                aggregator.assertThat(reason, index, greaterThanOrEqualTo(0));
+            }
+
+            // No comparison is applicable as no matching actual item was found
+            if (index < 0) {
+                continue;
+            }
+
+            // Compare the matching actual item to the expected item
+            // Note:  The match can be based on a single field.  The verification will be on all the fields.
+            T actualItem = actualItems.get(index);
+            assertThatListItem(type + "[" + i + "]", aggregator, actualItem, expectedItem, excludeFields);
+        }
     }
 
     /**
