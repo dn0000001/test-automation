@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.thoughtworks.xstream.XStream;
 import datainstiller.data.DataPersistence;
+import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -1200,6 +1202,36 @@ public class Utils {
         element.sendKeys(Keys.END);
         for (int i = 0; i < times; i++) {
             element.sendKeys(Keys.BACK_SPACE);
+        }
+    }
+
+    /**
+     * Scrape data based on if component exists using the component's getValue method
+     *
+     * @param component - Component to check if it exists
+     * @return null if component does not exist else a non-null string value returned by the component's getValue method
+     */
+    public static String scrapeData(PageComponent component) {
+        return scrapeData(component, null);
+    }
+
+    /**
+     * Scrape data based on if component exists
+     *
+     * @param component          - Component to check if it exists
+     * @param actionToScrapeData - Lambda expression to scrape the data.  If null, the component's getValue method is used
+     * @return null if component does not exist else a non-null string value returned by the specified Lambda expression
+     */
+    public static String scrapeData(PageComponent component, final Callable<String> actionToScrapeData) {
+        List<WebElement> elements = getWebDriver().findElements(component.getLocator());
+        if (elements.isEmpty()) {
+            return null;
+        }
+
+        if (actionToScrapeData == null) {
+            return StringUtils.defaultString(component.getValue());
+        } else {
+            return StringUtils.defaultString(Failsafe.with(getRetryPolicy(0)).get(actionToScrapeData));
         }
     }
 
