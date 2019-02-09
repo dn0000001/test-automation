@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
@@ -102,13 +103,16 @@ public class AssertAggregator {
      *
      * @param reason    - Reason
      * @param assertion - Assertion
+     * @return true if assertion was successful else false
      */
-    public void assertThat(String reason, boolean assertion) {
+    public boolean assertThat(String reason, boolean assertion) {
         try {
             MatcherAssert.assertThat(reason, assertion);
             assertionSuccesses++;
+            return true;
         } catch (AssertionError ae) {
             assertionFailures.add(ae);
+            return false;
         }
     }
 
@@ -119,13 +123,16 @@ public class AssertAggregator {
      * @param actual  - Actual Object
      * @param matcher - Matcher for assertion
      * @param <T>     - Object
+     * @return true if assertion was successful else false
      */
-    public <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
+    public <T> boolean assertThat(String reason, T actual, Matcher<? super T> matcher) {
         try {
             MatcherAssert.assertThat(reason, actual, matcher);
             assertionSuccesses++;
+            return true;
         } catch (AssertionError ae) {
             assertionFailures.add(ae);
+            return false;
         }
     }
 
@@ -135,13 +142,16 @@ public class AssertAggregator {
      * @param actual  - Actual Object
      * @param matcher - Matcher for assertion
      * @param <T>     - Object
+     * @return true if assertion was successful else false
      */
-    public <T> void assertThat(T actual, Matcher<? super T> matcher) {
+    public <T> boolean assertThat(T actual, Matcher<? super T> matcher) {
         try {
             MatcherAssert.assertThat(actual, matcher);
             assertionSuccesses++;
+            return true;
         } catch (AssertionError ae) {
             assertionFailures.add(ae);
+            return false;
         }
     }
 
@@ -154,21 +164,26 @@ public class AssertAggregator {
      * @param actual   - Actual Object
      * @param expected - Expected Line
      * @param <T>      - Object
+     * @return true if all assertions were successful else false
      */
-    public <T> void assertEqual(String reason, T actual, T expected) {
+    public <T> boolean assertEqual(String reason, T actual, T expected) {
+        List<Boolean> results = new ArrayList<>();
+
         if (actual == null || expected == null) {
-            assertThat(reason, actual, nullValue());
-            assertThat(reason, expected, nullValue());
+            results.add(assertThat(reason, actual, nullValue()));
+            results.add(assertThat(reason, expected, nullValue()));
         } else {
             String[] actualLines = new DomainObject().getXstream().toXML(actual).split("\n");
             String[] expectedLines = new DomainObject().getXstream().toXML(expected).split("\n");
-            assertThat(reason + " - Number Of Lines", actualLines.length, equalTo(expectedLines.length));
+            results.add(assertThat(reason + " - Number Of Lines", actualLines.length, equalTo(expectedLines.length)));
 
             int totalLines = Math.min(actualLines.length, expectedLines.length);
             for (int i = 0; i < totalLines; i++) {
-                assertThat(reason + " - Line[" + (i + 1) + "]", actualLines[i], equalTo(expectedLines[i]));
+                results.add(assertThat(reason + " - Line[" + (i + 1) + "]", actualLines[i], equalTo(expectedLines[i])));
             }
         }
+
+        return BooleanUtils.and(results.toArray(new Boolean[0]));
     }
 
     /**
