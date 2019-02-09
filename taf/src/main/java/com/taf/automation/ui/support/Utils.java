@@ -1216,15 +1216,31 @@ public class Utils {
     }
 
     /**
-     * Scrape data based on if component exists
+     * Scrape data based on if component exists and it is displayed
      *
      * @param component          - Component to check if it exists
      * @param actionToScrapeData - Lambda expression to scrape the data.  If null, the component's getValue method is used
-     * @return null if component does not exist else a non-null string value returned by the specified Lambda expression
+     * @return null if component does not exist or it is not displayed else a non-null string value returned by the specified Lambda expression
      */
     public static String scrapeData(PageComponent component, final Callable<String> actionToScrapeData) {
+        return scrapeData(component, true, actionToScrapeData);
+    }
+
+    /**
+     * Scrape data based on if component exists
+     *
+     * @param component          - Component to check if it exists
+     * @param displayed          - true to check that element is displayed before scraping
+     * @param actionToScrapeData - Lambda expression to scrape the data.  If null, the component's getValue method is used
+     * @return null if component does not exist else a non-null string value returned by the specified Lambda expression
+     */
+    public static String scrapeData(PageComponent component, boolean displayed, final Callable<String> actionToScrapeData) {
         List<WebElement> elements = getWebDriver().findElements(component.getLocator());
         if (elements.isEmpty()) {
+            return null;
+        }
+
+        if (displayed && !elements.get(0).isDisplayed()) {
             return null;
         }
 
