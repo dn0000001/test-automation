@@ -394,7 +394,7 @@ public class Helper {
      * @param <T>           - Type
      */
     @Step("Validate {0}")
-    private static <T> void assertThatListItem(String type, AssertAggregator aggregator, T actual, T expected, List<String> excludeFields) {
+    public static <T> void assertThatListItem(String type, AssertAggregator aggregator, T actual, T expected, List<String> excludeFields) {
         assertThat(aggregator, actual, expected, excludeFields);
     }
 
