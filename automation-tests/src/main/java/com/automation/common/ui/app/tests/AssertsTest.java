@@ -231,9 +231,9 @@ public class AssertsTest extends TestNGBase {
     public void testAggregator_AllSuccess() {
         AssertAggregator aa = new AssertAggregator();
         aa.setConsole(true);
-        aa.assertThat("Some test #1", true);
-        aa.assertThat("Some test #2", 10, greaterThan(5));
-        aa.assertThat(10, greaterThan(5));
+        assertThat("Aggregator Return Value #1", aa.assertThat("Some test #1", true));
+        assertThat("Aggregator Return Value #2", aa.assertThat("Some test #2", 10, greaterThan(5)));
+        assertThat("Aggregator Return Value #3", aa.assertThat(10, greaterThan(5)));
         Helper.assertThat(aa);
     }
 
@@ -241,9 +241,9 @@ public class AssertsTest extends TestNGBase {
     public void testAggregator_AllFailures() {
         AssertAggregator aa = new AssertAggregator();
         aa.setConsole(true);
-        aa.assertThat("Some test #1", false);
-        aa.assertThat("Some test #2", 5, greaterThan(10));
-        aa.assertThat(100, greaterThan(500));
+        assertThat("Aggregator Return Value #1", !aa.assertThat("Some test #1", false));
+        assertThat("Aggregator Return Value #2", !aa.assertThat("Some test #2", 5, greaterThan(10)));
+        assertThat("Aggregator Return Value #3", !aa.assertThat(100, greaterThan(500)));
         int failures = 3;
         try {
             Helper.assertThat(aa);
