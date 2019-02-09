@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import net.jodah.failsafe.Failsafe;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -57,6 +58,371 @@ public class AssertsTest extends TestNGBase {
             return fieldString2;
         }
 
+    }
+
+    private List<TestObj> getActualForSubsetTests() {
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "z";
+        a1.fieldString2 = "zzz";
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj a2 = new TestObj();
+        a2.fieldString1 = "a";
+        a2.fieldString2 = "aaa";
+        a2.fieldInteger1 = 5;
+        a2.fieldInteger2 = 6;
+        a2.fieldInt1 = 7;
+        a2.fieldInt2 = 8;
+        a2.fieldBoolean1 = false;
+        a2.fieldBoolean2 = true;
+        a2.fieldBool1 = false;
+        a2.fieldBool2 = true;
+
+        TestObj a3 = new TestObj();
+        a3.fieldString1 = "b";
+        a3.fieldString2 = "bbb";
+        a3.fieldInteger1 = 9;
+        a3.fieldInteger2 = 10;
+        a3.fieldInt1 = 11;
+        a3.fieldInt2 = 12;
+        a3.fieldBoolean1 = true;
+        a3.fieldBoolean2 = true;
+        a3.fieldBool1 = false;
+        a3.fieldBool2 = false;
+
+        TestObj a4 = new TestObj();
+        a4.fieldString1 = "y";
+        a4.fieldString2 = "yyy";
+        a4.fieldInteger1 = 13;
+        a4.fieldInteger2 = 14;
+        a4.fieldInt1 = 15;
+        a4.fieldInt2 = 16;
+        a4.fieldBoolean1 = false;
+        a4.fieldBoolean2 = false;
+        a4.fieldBool1 = true;
+        a4.fieldBool2 = true;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+        actual.add(a2);
+        actual.add(a3);
+        actual.add(a4);
+
+        return actual;
+    }
+
+    private List<TestObj> getOnePassExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "b";
+        e1.fieldString2 = "bbb";
+        e1.fieldInteger1 = 9;
+        e1.fieldInteger2 = 10;
+        e1.fieldInt1 = 11;
+        e1.fieldInt2 = 12;
+        e1.fieldBoolean1 = true;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+
+        return expected;
+    }
+
+    private List<TestObj> getOnePassExpectedSubset2() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "y";
+        e1.fieldString2 = "yyy";
+        e1.fieldInteger1 = 13;
+        e1.fieldInteger2 = 14;
+        e1.fieldInt1 = 15;
+        e1.fieldInt2 = 16;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = false;
+        e1.fieldBool1 = true;
+        e1.fieldBool2 = true;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+
+        return expected;
+    }
+
+    private List<TestObj> getTwoPassExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+
+        return expected;
+    }
+
+    private List<TestObj> getThreePassExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "z";
+        e3.fieldString2 = "zzz";
+        e3.fieldInteger1 = 1;
+        e3.fieldInteger2 = 2;
+        e3.fieldInt1 = 3;
+        e3.fieldInt2 = 4;
+        e3.fieldBoolean1 = true;
+        e3.fieldBoolean2 = false;
+        e3.fieldBool1 = true;
+        e3.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+
+        return expected;
+    }
+
+    private List<TestObj> getOneFailExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "b";
+        e1.fieldString2 = "ccc";
+        e1.fieldInteger1 = 9;
+        e1.fieldInteger2 = 10;
+        e1.fieldInt1 = 11;
+        e1.fieldInt2 = 12;
+        e1.fieldBoolean1 = true;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+
+        return expected;
+    }
+
+    private List<TestObj> getTwoFailExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "bb";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "zz";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+
+        return expected;
+    }
+
+    private List<TestObj> getThreeFailExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "a";
+        e1.fieldString2 = "bb";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "y";
+        e2.fieldString2 = "zz";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "z";
+        e3.fieldString2 = "aa";
+        e3.fieldInteger1 = 1;
+        e3.fieldInteger2 = 2;
+        e3.fieldInt1 = 3;
+        e3.fieldInt2 = 4;
+        e3.fieldBoolean1 = true;
+        e3.fieldBoolean2 = false;
+        e3.fieldBool1 = true;
+        e3.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+
+        return expected;
+    }
+
+    private List<TestObj> getOneNoMatchExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "s";
+        e1.fieldString2 = "bbb";
+        e1.fieldInteger1 = 9;
+        e1.fieldInteger2 = 10;
+        e1.fieldInt1 = 11;
+        e1.fieldInt2 = 12;
+        e1.fieldBoolean1 = true;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = false;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+
+        return expected;
+    }
+
+    private List<TestObj> getTwoNoMatchExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "s";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "p";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+
+        return expected;
+    }
+
+    private List<TestObj> getThreeNoMatchExpectedSubset() {
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "s";
+        e1.fieldString2 = "aaa";
+        e1.fieldInteger1 = 5;
+        e1.fieldInteger2 = 6;
+        e1.fieldInt1 = 7;
+        e1.fieldInt2 = 8;
+        e1.fieldBoolean1 = false;
+        e1.fieldBoolean2 = true;
+        e1.fieldBool1 = false;
+        e1.fieldBool2 = true;
+
+        TestObj e2 = new TestObj();
+        e2.fieldString1 = "p";
+        e2.fieldString2 = "yyy";
+        e2.fieldInteger1 = 13;
+        e2.fieldInteger2 = 14;
+        e2.fieldInt1 = 15;
+        e2.fieldInt2 = 16;
+        e2.fieldBoolean1 = false;
+        e2.fieldBoolean2 = false;
+        e2.fieldBool1 = true;
+        e2.fieldBool2 = true;
+
+        TestObj e3 = new TestObj();
+        e3.fieldString1 = "t";
+        e3.fieldString2 = "yyy";
+        e3.fieldInteger1 = 13;
+        e3.fieldInteger2 = 14;
+        e3.fieldInt1 = 15;
+        e3.fieldInt2 = 16;
+        e3.fieldBoolean1 = false;
+        e3.fieldBoolean2 = false;
+        e3.fieldBool1 = true;
+        e3.fieldBool2 = true;
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+
+        return expected;
     }
 
     @Features("AssertsUtil")
@@ -1547,6 +1913,460 @@ public class AssertsTest extends TestNGBase {
             throw new RuntimeException("Assertion did not fail when there were more expected list items");
         } catch (AssertionError ae) {
             Helper.log("Assertion did not fail when there were more expected list items", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyNullExpectedSubsetTest() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = null;
+        List<String> excludeFields = new ArrayList<>();
+
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void verifyEmptyExpectedSubsetTest() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        List<String> excludeFields = new ArrayList<>();
+
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void verifySinglePassTest() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getOnePassExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void verifySingleFailTest() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getOneFailExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 0;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifySingleFailTest");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifySingleFailTest", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifySingleNoMatchTest() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getOneNoMatchExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 0;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifySingleNoMatchTest");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifySingleNoMatchTest", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P1F1N0() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOnePassExpectedSubset2());
+        expected.addAll(getOneFailExpectedSubset());
+        expected.addAll(getOneNoMatchExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 2;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F1N0");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F1N0", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P2F0N0() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getTwoPassExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P1F0N1() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOnePassExpectedSubset());
+        expected.addAll(getOneNoMatchExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 1;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F0N1");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F0N1", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P0F0N2() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getTwoNoMatchExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 2;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F0N2");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F0N2", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P0F1N1() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOneNoMatchExpectedSubset());
+        expected.addAll(getOneFailExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 2;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F1N1");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F1N1", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P0F2N0() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getTwoFailExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 2;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F2N0");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F2N0", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P1F1N1() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOnePassExpectedSubset2());
+        expected.addAll(getOneNoMatchExpectedSubset());
+        expected.addAll(getOneFailExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 2;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F1N1");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F1N1", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P2F1N0() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getTwoPassExpectedSubset());
+        expected.addAll(getOneFailExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 1;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P2F1N0");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P2F1N0", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P1F2N0() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOnePassExpectedSubset2());
+        expected.addAll(getTwoFailExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 2;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F2N0");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F2N0", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P2F0N1() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getTwoPassExpectedSubset());
+        expected.addAll(getOneNoMatchExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 1;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P2F0N1");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P2F0N1", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P1F0N2() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOnePassExpectedSubset2());
+        expected.addAll(getTwoNoMatchExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 2;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F0N2");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F0N2", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P0F2N1() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOneNoMatchExpectedSubset());
+        expected.addAll(getTwoFailExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 3;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F2N1");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F2N1", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P0F1N2() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = new ArrayList<>();
+        expected.addAll(getOneFailExpectedSubset());
+        expected.addAll(getTwoNoMatchExpectedSubset());
+
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 3;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F1N2");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F1N2", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P3F0N0() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getThreePassExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        Helper.assertThat(aggregator);
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P0F3N0() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getThreeFailExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 3;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F3N0");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F3N0", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @SuppressWarnings("squid:S00100")
+    @Test
+    public void verifyMultiExpectedSubsetTest_P0F0N3() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getThreeNoMatchExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 3;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F0N3");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F0N3", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyFailWhenExpectedSubsetGreaterThanActualItemsTest() {
+        List<TestObj> actual = getActualForSubsetTests();
+        List<TestObj> expected = getActualForSubsetTests();
+        expected.addAll(getOneNoMatchExpectedSubset());
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 0;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyFailWhenEmptyActualItemsTest");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyFailWhenEmptyActualItemsTest", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyFailWhenNullActualItemsTest() {
+        List<TestObj> actual = null;
+        List<TestObj> expected = getOnePassExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 0;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            failures += 2;
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyFailWhenNullActualItemsTest");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyFailWhenNullActualItemsTest", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void verifyFailWhenEmptyActualItemsTest() {
+        List<TestObj> actual = new ArrayList<>();
+        List<TestObj> expected = getOnePassExpectedSubset();
+        List<String> excludeFields = new ArrayList<>();
+        int failures = 0;
+        AssertAggregator aggregator = new AssertAggregator();
+        try {
+            Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            failures++;
+            Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            throw new RuntimeException("Assertion did not fail for verifyFailWhenEmptyActualItemsTest");
+        } catch (AssertionError ae) {
+            Helper.log("Expected Assertion fail for verifyFailWhenEmptyActualItemsTest", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
