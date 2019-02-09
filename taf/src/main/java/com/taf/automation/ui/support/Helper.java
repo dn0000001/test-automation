@@ -7,6 +7,7 @@ import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.Header;
@@ -31,6 +32,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -275,6 +277,125 @@ public class Helper {
                 aggregator.assertThat(field.getName(), actualValue, equalTo(expectedValue));
             }
         }
+    }
+
+    /**
+     * Verifies that the lists are equal.  Logging occurs as necessary.
+     *
+     * @param type       - Type for logging (if expected is not null)
+     * @param aggregator - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual     - List of actual items
+     * @param expected   - List of expected items
+     * @param sortBy     - Comparator to sort by, null skips sorting the lists
+     * @param <T>        - Type
+     */
+    public static <T> void assertThat(
+            String type,
+            AssertAggregator aggregator,
+            List<T> actual,
+            List<T> expected,
+            Comparator<? super T> sortBy
+    ) {
+        List<String> excludeFields = new ArrayList<>();
+        assertThat(type, aggregator, actual, expected, sortBy, excludeFields);
+    }
+
+    /**
+     * Verifies that the lists are equal (excluding the specified fields.)  Logging occurs as necessary.
+     *
+     * @param type          - Type for logging (if expected is not null)
+     * @param aggregator    - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual        - List of actual items
+     * @param expected      - List of expected items
+     * @param sortBy        - Comparator to sort by, null skips sorting the lists
+     * @param excludeFields - The fields in each item that will be excluded from the comparison
+     * @param <T>           - Type
+     */
+    public static <T> void assertThat(
+            String type,
+            AssertAggregator aggregator,
+            List<T> actual,
+            List<T> expected,
+            Comparator<? super T> sortBy,
+            List<String> excludeFields
+    ) {
+        if (expected == null) {
+            // A null expected list means that user does not want to verify the list
+            return;
+        }
+
+        assertThatList(type, aggregator, actual, expected, sortBy, excludeFields);
+    }
+
+    /**
+     * Verifies that the lists are equal (excluding the specified fields)
+     *
+     * @param type          - Type for logging
+     * @param aggregator    - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual        - List of actual items
+     * @param expected      - List of expected items
+     * @param sortBy        - Comparator to sort by, null skips sorting the lists
+     * @param excludeFields - The fields in each item that will be excluded from the comparison
+     * @param <T>           - Type
+     */
+    @Step("Validate List of {0}")
+    private static <T> void assertThatList(
+            String type,
+            AssertAggregator aggregator,
+            List<T> actual,
+            List<T> expected,
+            Comparator<? super T> sortBy,
+            List<String> excludeFields
+    ) {
+        // Ensure that null list will cause failure
+        String reason = "Actual List of " + type + " was null";
+        if (aggregator == null) {
+            MatcherAssert.assertThat(reason, actual, notNullValue());
+        } else {
+            aggregator.assertThat(reason, actual, notNullValue());
+        }
+
+        // Prevent null pointer exceptions
+        List<T> actualItems = ObjectUtils.defaultIfNull(actual, new ArrayList<>());
+        List<T> expectedItems = ObjectUtils.defaultIfNull(expected, new ArrayList<>());
+        if (sortBy != null) {
+            actualItems.sort(sortBy);
+            expectedItems.sort(sortBy);
+        }
+
+        int initialFailureCount = 0;
+        int currentFailureCount = 0;
+        if (aggregator == null) {
+            MatcherAssert.assertThat(reason, actualItems.size(), equalTo(expectedItems.size()));
+        } else {
+            initialFailureCount = aggregator.getFailureCount();
+            aggregator.assertThat(reason, actualItems.size(), equalTo(expectedItems.size()));
+            currentFailureCount = aggregator.getFailureCount();
+        }
+
+        if (initialFailureCount != currentFailureCount) {
+            // The number of items in the lists are different and there is no reason to continue
+            return;
+        }
+
+        for (int i = 0; i < expectedItems.size(); i++) {
+            assertThatListItem(type + "[" + i + "]", aggregator, actualItems.get(i), expectedItems.get(i), excludeFields);
+        }
+    }
+
+    /**
+     * Verifies that an item of a list is equal based all non-null fields of the expected object equals the corresponding actual object.
+     *
+     * @param type          - Type for logging
+     * @param aggregator    - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual        - Actual Item
+     * @param expected      - Expected Item
+     * @param excludeFields - The fields in each item that will be excluded from the comparison
+     * @param <T>           - Type
+     */
+    @Step("Validate {0}")
+    private static <T> void assertThatListItem(String type, AssertAggregator aggregator, T actual, T expected, List<String> excludeFields) {
+        assertThat(aggregator, actual, expected, excludeFields);
     }
 
     /**
