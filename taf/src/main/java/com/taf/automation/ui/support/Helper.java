@@ -50,6 +50,8 @@ import static org.hamcrest.Matchers.notNullValue;
 public class Helper {
     private static final Logger LOG = LoggerFactory.getLogger(Helper.class);
     private static final String DIVIDER_RESOURCE = "divider.png";
+    private static final String ASSERT_ERROR = "Assert_Error";
+    private static final String ASSERT_FAILED = "Assert_Failed";
 
     private Helper() {
         //
@@ -263,7 +265,33 @@ public class Helper {
      * @param expected      - Expected Object
      * @param excludeFields - Fields that are excluded from the comparison
      */
-    public static void assertThat(AssertAggregator aggregator, Object actual, Object expected, List<String> excludeFields) {
+    public static void assertThat(
+            AssertAggregator aggregator,
+            Object actual,
+            Object expected,
+            List<String> excludeFields
+    ) {
+        assertThat(aggregator, actual, expected, excludeFields, false);
+    }
+
+    /**
+     * Verifies that all non-null fields of the expected object equals the corresponding actual object<BR>
+     * <B>Notes: </B> Including failure steps make debugging failures easier with lists or complex objects
+     * as the report will indicate exactly where a validation failed instead of only at the end.
+     *
+     * @param aggregator    - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual        - Actual Object
+     * @param expected      - Expected Object
+     * @param excludeFields - Fields that are excluded from the comparison
+     * @param failureSteps  - true to include failure steps as they occur
+     */
+    public static void assertThat(
+            AssertAggregator aggregator,
+            Object actual,
+            Object expected,
+            List<String> excludeFields,
+            boolean failureSteps
+    ) {
         List<Field> fields = ApiUtils.getFieldsToValidate(expected);
         for (Field field : fields) {
             if (excludeFields.contains(field.getName())) {
@@ -275,7 +303,10 @@ public class Helper {
             if (aggregator == null) {
                 MatcherAssert.assertThat(field.getName(), actualValue, equalTo(expectedValue));
             } else {
-                aggregator.assertThat(field.getName(), actualValue, equalTo(expectedValue));
+                boolean result = aggregator.assertThat(field.getName(), actualValue, equalTo(expectedValue));
+                if (failureSteps && !result) {
+                    log(ASSERT_FAILED, field.getName(), aggregator.getConsole());
+                }
             }
         }
     }
@@ -353,7 +384,10 @@ public class Helper {
         if (aggregator == null) {
             MatcherAssert.assertThat(reason, actual, notNullValue());
         } else {
-            aggregator.assertThat(reason, actual, notNullValue());
+            boolean result = aggregator.assertThat(reason, actual, notNullValue());
+            if (!result) {
+                log(ASSERT_FAILED, reason, aggregator.getConsole());
+            }
         }
 
         // Prevent null pointer exceptions
@@ -366,6 +400,7 @@ public class Helper {
 
         int initialFailureCount = 0;
         int currentFailureCount = 0;
+        reason = "Actual Item Size did not match Expected Item Size";
         if (aggregator == null) {
             MatcherAssert.assertThat(reason, actualItems.size(), equalTo(expectedItems.size()));
         } else {
@@ -376,11 +411,19 @@ public class Helper {
 
         if (initialFailureCount != currentFailureCount) {
             // The number of items in the lists are different and there is no reason to continue
+            log(ASSERT_FAILED, reason, aggregator.getConsole());
             return;
         }
 
         for (int i = 0; i < expectedItems.size(); i++) {
-            assertThatListItem(type + "[" + i + "]", aggregator, actualItems.get(i), expectedItems.get(i), excludeFields);
+            assertThatListItem(
+                    type + "[" + i + "]",
+                    aggregator,
+                    actualItems.get(i),
+                    expectedItems.get(i),
+                    excludeFields,
+                    true
+            );
         }
     }
 
@@ -394,9 +437,37 @@ public class Helper {
      * @param excludeFields - The fields in each item that will be excluded from the comparison
      * @param <T>           - Type
      */
+    public static <T> void assertThatListItem(
+            String type,
+            AssertAggregator aggregator,
+            T actual,
+            T expected,
+            List<String> excludeFields
+    ) {
+        assertThatListItem(type, aggregator, actual, expected, excludeFields, false);
+    }
+
+    /**
+     * Verifies that an item of a list is equal based all non-null fields of the expected object equals the corresponding actual object.
+     *
+     * @param type          - Type for logging
+     * @param aggregator    - Use null for immediate failure else the Assert Aggregator that contains all the assertion results
+     * @param actual        - Actual Item
+     * @param expected      - Expected Item
+     * @param excludeFields - The fields in each item that will be excluded from the comparison
+     * @param failureSteps  - true to include failure steps as they occur
+     * @param <T>           - Type
+     */
     @Step("Validate {0}")
-    public static <T> void assertThatListItem(String type, AssertAggregator aggregator, T actual, T expected, List<String> excludeFields) {
-        assertThat(aggregator, actual, expected, excludeFields);
+    public static <T> void assertThatListItem(
+            String type,
+            AssertAggregator aggregator,
+            T actual,
+            T expected,
+            List<String> excludeFields,
+            boolean failureSteps
+    ) {
+        assertThat(aggregator, actual, expected, excludeFields, failureSteps);
     }
 
     /**
@@ -454,7 +525,10 @@ public class Helper {
         if (aggregator == null) {
             MatcherAssert.assertThat(reason, actual, notNullValue());
         } else {
-            aggregator.assertThat(reason, actual, notNullValue());
+            boolean result = aggregator.assertThat(reason, actual, notNullValue());
+            if (!result) {
+                log(ASSERT_FAILED, reason, aggregator.getConsole());
+            }
         }
 
         // Prevent null pointer exceptions
@@ -482,13 +556,14 @@ public class Helper {
 
             // No comparison is applicable as no matching actual item was found
             if (index < 0) {
+                log(ASSERT_FAILED, reason, aggregator.getConsole());
                 continue;
             }
 
             // Compare the matching actual item to the expected item
             // Note:  The match can be based on a single field.  The verification will be on all the fields.
             T actualItem = actualItems.get(index);
-            assertThatListItem(type + "[" + i + "]", aggregator, actualItem, expectedItem, excludeFields);
+            assertThatListItem(type + "[" + i + "]", aggregator, actualItem, expectedItem, excludeFields, true);
         }
     }
 
@@ -499,7 +574,7 @@ public class Helper {
      */
     public static void assertThat(AssertAggregator aggregator) {
         for (AssertionError ae : aggregator.getAssertionFailures()) {
-            log("Assert_Error", ae.getMessage(), aggregator.getConsole());
+            log(ASSERT_ERROR, ae.getMessage(), aggregator.getConsole());
         }
 
         aggregator.verify();
