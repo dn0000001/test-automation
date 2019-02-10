@@ -27,7 +27,7 @@ public class PageLevelSummariesTest {
         assertThat("Records", records.size(), equalTo(recordsCount + status.length));
         assertThat("Group Rows", groupRows.size(), equalTo(status.length));
         for (int i = 0; i < groupRows.size(); i++) {
-            int index = groupRows.get(i).getFromRow();
+            int index = groupRows.get(i).getSummaryRow();
             ExtractedDataOutputRecord summary = (ExtractedDataOutputRecord) records.get(index);
             assertThat("Summary Status[" + i + "]", summary.getTestStatus(), equalTo(status[i]));
             // Field Name is not set on the summary record

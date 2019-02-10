@@ -5,9 +5,11 @@ import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.GroupRow;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,7 +24,9 @@ public class GroupRowsTest {
     private static final String PAGE3 = "p3";
     private static final String NOT_SUMMARY = "Not Summary";
     private static final String[] HEADERS = {"ROW", "PAGE NAME", "FIELD TYPE", "FIELD NAME", "EXPECTED", "ACTUAL", "STATUS"};
-    private static final String FILENAME = "temp-group-rows.xlsx";
+    private static final String EXPANDED = "temp-group-rows-expanded.xlsx";
+    private static final String COLLAPSED = "temp-group-rows-collasped.xlsx";
+    private static final String MIXED = "temp-group-rows-mixed.xlsx";
     private static final String WORKSHEET = "Sheet 1";
 
     private void runAndValidate(List<CsvOutputRecord> records, List<GroupRow> groupRows, String... status) {
@@ -31,7 +35,7 @@ public class GroupRowsTest {
         assertThat("Records", records.size(), equalTo(recordsCount + status.length));
         assertThat("Group Rows", groupRows.size(), equalTo(status.length));
         for (int i = 0; i < groupRows.size(); i++) {
-            int index = groupRows.get(i).getFromRow();
+            int index = groupRows.get(i).getSummaryRow();
             ExtractedDataOutputRecord summary = (ExtractedDataOutputRecord) records.get(index);
             assertThat("Summary Status[" + i + "]", summary.getTestStatus(), equalTo(status[i]));
             // Field Name is not set on the summary record
@@ -39,7 +43,7 @@ public class GroupRowsTest {
         }
     }
 
-    private void createExcel(List<CsvOutputRecord> records, List<GroupRow> groupRows) {
+    private void createExcel(String filename, String worksheet, List<CsvOutputRecord> records, List<GroupRow> groupRows) {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
         result1.setPageName(PAGE1);
         result1.setTestStatus(PASS);
@@ -75,11 +79,6 @@ public class GroupRowsTest {
         result7.setTestStatus(PASS);
         result7.setFieldName(NOT_SUMMARY);
 
-        ExtractedDataOutputRecord result8 = new ExtractedDataOutputRecord();
-        result8.setPageName(PAGE3);
-        result8.setTestStatus(PASS);
-        result8.setFieldName(NOT_SUMMARY);
-
         records.add(result1);
         records.add(result2);
         records.add(result3);
@@ -87,23 +86,69 @@ public class GroupRowsTest {
         records.add(result5);
         records.add(result6);
         records.add(result7);
-        records.add(result8);
 
         runAndValidate(records, groupRows, PASS, FAIL, PASS);
-        FilloUtils.writeToExcel(FILENAME, WORKSHEET, false, HEADERS, records);
+        FilloUtils.writeToExcel(filename, worksheet, false, HEADERS, records);
+    }
+
+    private void logGroupRowInfo(String test, List<GroupRow> groupRows) {
+        StringBuilder sb = new StringBuilder();
+
+        for (GroupRow item : groupRows) {
+            int summaryRow = item.getSummaryRow() + 2;
+            int fromRow = item.getFromRow() + 2;
+            int toRow = item.getToRow() + 2;
+            sb.append("[");
+            sb.append(summaryRow);
+            sb.append(", ");
+            sb.append(fromRow);
+            sb.append("-");
+            sb.append(toRow);
+            sb.append(", ");
+            sb.append(item.isCollapsed());
+            sb.append("], ");
+        }
+
+        Helper.log(test + ":  " + StringUtils.removeEnd(sb.toString(), ", "), true);
     }
 
     @Test
-    public void performGroupRowsTest() {
+    public void performGroupRowsExpandedTest() {
         List<CsvOutputRecord> records = new ArrayList<>();
         List<GroupRow> groupRows = new ArrayList<>();
-        createExcel(records, groupRows);
-        FilloUtils.groupRows(FILENAME, WORKSHEET, groupRows, true, true, false);
+        createExcel(EXPANDED, WORKSHEET, records, groupRows);
+        FilloUtils.groupRows(EXPANDED, WORKSHEET, groupRows, true);
+        logGroupRowInfo("Expanded Test", groupRows);
+
+    }
+
+    @Test
+    public void performGroupRowsCollapsedTest() {
+        List<CsvOutputRecord> records = new ArrayList<>();
+        List<GroupRow> groupRows = new ArrayList<>();
+        createExcel(COLLAPSED, WORKSHEET, records, groupRows);
+
+        // Set all the rows to be collapsed
         for (GroupRow item : groupRows) {
-            int fromRow = item.getFromRow() + 2;
-            int toRow = item.getToRow() + 2;
-            Helper.log("[" + fromRow + ", " + toRow + "]", true);
+            item.withCollapsed(true);
         }
+
+        FilloUtils.groupRows(COLLAPSED, WORKSHEET, groupRows, true);
+        logGroupRowInfo("Collapsed Test", groupRows);
+    }
+
+    @Test
+    public void performGroupRowsMixedTest() {
+        List<CsvOutputRecord> records = new ArrayList<>();
+        List<GroupRow> groupRows = new ArrayList<>();
+        createExcel(MIXED, WORKSHEET, records, groupRows);
+
+        // Set a random row to be collapsed
+        Collections.shuffle(groupRows);
+        groupRows.get(0).withCollapsed(true);
+
+        FilloUtils.groupRows(MIXED, WORKSHEET, groupRows, true);
+        logGroupRowInfo("Mixed Test", groupRows);
     }
 
 }

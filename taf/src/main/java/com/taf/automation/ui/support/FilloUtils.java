@@ -311,36 +311,27 @@ public class FilloUtils {
     /**
      * Method to group the rows of a sheet together
      *
-     * @param filename          - Location of excel file
-     * @param workSheet         - SheetName of excel file to work on
-     * @param groupRows         - List of rows to group
-     * @param rowSummaryBelow   - Boolean indicating if the summary row will be above or below the grouped rows
-     * @param rowGroupCollapsed - Boolean indicating if the group should be collapsed or expanded by default
+     * @param filename  - Location of excel file
+     * @param workSheet - SheetName of excel file to work on
+     * @param groupRows - List of rows to group
      */
     public static void groupRows(
             String filename,
             String workSheet,
             List<GroupRow> groupRows,
-            boolean headerRow,
-            boolean rowSummaryBelow,
-            boolean rowGroupCollapsed
+            boolean headerRow
     ) {
         try (FileInputStream in = new FileInputStream(new File(filename));
              Workbook wb = new XSSFWorkbook(in)
         ) {
             Sheet sheet = wb.getSheet(workSheet);
             for (GroupRow item : groupRows) {
-                // Account for the header row if it exists
                 int headerOffset = (headerRow) ? 1 : 0;
-
-                // We do not want to include the summary row in the group as such add 1
-                // Note:  The group row information will always represent at least 2 rows (the summary row and 1+ rows)
-                int fromRow = item.getFromRow() + headerOffset + 1;
+                int fromRow = item.getFromRow() + headerOffset;
                 int toRow = item.getToRow() + headerOffset;
 
-                sheet.setRowSumsBelow(rowSummaryBelow);
                 sheet.groupRow(fromRow, toRow);
-                sheet.setRowGroupCollapsed(item.getFromRow(), rowGroupCollapsed);
+                sheet.setRowGroupCollapsed(fromRow, item.isCollapsed());
             }
 
             in.close();
@@ -376,7 +367,7 @@ public class FilloUtils {
         records.add(0, summaryRecord);
 
         int failureInGroupCount = 0;
-        int fromRow = 0;
+        int summaryRow = 0;
         int toRow = 0;
 
         // Notes:
@@ -391,11 +382,11 @@ public class FilloUtils {
                 }
             } else {
                 // We now know the status for the previous group
-                ExtractedDataOutputRecord previousSummaryRecord = (ExtractedDataOutputRecord) records.get(fromRow);
+                ExtractedDataOutputRecord previousSummaryRecord = (ExtractedDataOutputRecord) records.get(summaryRow);
                 previousSummaryRecord.setTestStatus((failureInGroupCount > 0) ? "FAIL" : "PASS");
 
                 // Save the group row info before incrementing the toRow count
-                GroupRow groupRowInfo = new GroupRow().withFromRow(fromRow).withToRow(toRow);
+                GroupRow groupRowInfo = new GroupRow().withSummaryRow(summaryRow).withToRow(toRow);
                 groupRows.add(groupRowInfo);
                 toRow++;
 
@@ -405,18 +396,18 @@ public class FilloUtils {
                 insertSummaryRecord.setPageName(currentPageName);
                 records.add(toRow, insertSummaryRecord);
 
-                // Update the fromRow for the next group
-                fromRow = toRow;
+                // Update the Summary Row for the next group
+                summaryRow = toRow;
 
                 // Reset the group count fail for the next group
                 failureInGroupCount = 0;
             }
         }
 
-        GroupRow groupRowInfo = new GroupRow().withFromRow(fromRow).withToRow(toRow);
+        GroupRow groupRowInfo = new GroupRow().withSummaryRow(summaryRow).withToRow(toRow);
         groupRows.add(groupRowInfo);
 
-        int index = groupRows.get(groupRows.size() - 1).getFromRow();
+        int index = groupRows.get(groupRows.size() - 1).getSummaryRow();
         ExtractedDataOutputRecord lastSummaryRecord = (ExtractedDataOutputRecord) records.get(index);
         lastSummaryRecord.setTestStatus((failureInGroupCount > 0) ? "FAIL" : "PASS");
     }
