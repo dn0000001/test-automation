@@ -1563,7 +1563,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
             throw new RuntimeException("Assertion did not fail with multiple list items");
         } catch (AssertionError ae) {
-            Helper.log("Assertion did not fail with multiple list items", true);
+            Helper.log("Assertion failed as expected (verifyMultiListFailTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -1688,7 +1688,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             throw new RuntimeException("Assertion did not fail with multiple list items when sorting");
         } catch (AssertionError ae) {
-            Helper.log("Assertion did not fail with multiple list items when sorting", true);
+            Helper.log("Assertion failed as expected (verifyMultiListFailWithSortTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -1800,7 +1800,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             throw new RuntimeException("Assertion did not fail when there were more actual list items");
         } catch (AssertionError ae) {
-            Helper.log("Assertion did not fail when there were more actual list items", true);
+            Helper.log("Assertion failed as expected (verifyDifferentListFailMoreActualTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -1912,7 +1912,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             throw new RuntimeException("Assertion did not fail when there were more expected list items");
         } catch (AssertionError ae) {
-            Helper.log("Assertion did not fail when there were more expected list items", true);
+            Helper.log("Assertion failed as expected (verifyDifferentListFailMoreExpectedTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -1967,7 +1967,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifySingleFailTest");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifySingleFailTest", true);
+            Helper.log("Assertion failed as expected (verifySingleFailTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -1986,7 +1986,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifySingleNoMatchTest");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifySingleNoMatchTest", true);
+            Helper.log("Assertion failed as expected (verifySingleNoMatchTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -1999,17 +1999,16 @@ public class AssertsTest extends TestNGBase {
         List<TestObj> expected = new ArrayList<>();
         expected.addAll(getOnePassExpectedSubset2());
         expected.addAll(getOneFailExpectedSubset());
-        expected.addAll(getOneNoMatchExpectedSubset());
 
         List<String> excludeFields = new ArrayList<>();
-        int failures = 2;
+        int failures = 1;
         AssertAggregator aggregator = new AssertAggregator();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F1N0");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F1N0", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P1F1N0)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2043,7 +2042,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F0N1");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F0N1", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P1F0N1)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2062,7 +2061,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F0N2");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F0N2", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P0F0N2)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2084,7 +2083,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F1N1");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F1N1", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P0F1N1)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2103,7 +2102,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F2N0");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F2N0", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P0F2N0)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2126,7 +2125,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F1N1");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F1N1", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P1F1N1)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2148,7 +2147,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P2F1N0");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P2F1N0", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P2F1N0)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2170,7 +2169,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F2N0");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F2N0", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P1F2N0)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2192,7 +2191,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P2F0N1");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P2F0N1", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P2F0N1)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2214,7 +2213,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F0N2");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P1F0N2", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P1F0N2)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2236,7 +2235,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F2N1");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F2N1", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P0F2N1)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2258,7 +2257,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F1N2");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F1N2", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P0F1N2)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2289,7 +2288,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F3N0");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F3N0", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P0F3N0)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2308,7 +2307,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F0N3");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyMultiExpectedSubsetTest_P0F0N3", true);
+            Helper.log("Assertion failed as expected (verifyMultiExpectedSubsetTest_P0F0N3)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2328,7 +2327,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyFailWhenEmptyActualItemsTest");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyFailWhenEmptyActualItemsTest", true);
+            Helper.log("Assertion failed as expected (verifyFailWhenEmptyActualItemsTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2347,7 +2346,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyFailWhenNullActualItemsTest");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyFailWhenNullActualItemsTest", true);
+            Helper.log("Assertion failed as expected (verifyFailWhenNullActualItemsTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
@@ -2366,7 +2365,7 @@ public class AssertsTest extends TestNGBase {
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyFailWhenEmptyActualItemsTest");
         } catch (AssertionError ae) {
-            Helper.log("Expected Assertion fail for verifyFailWhenEmptyActualItemsTest", true);
+            Helper.log("Assertion failed as expected (verifyFailWhenEmptyActualItemsTest)", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
