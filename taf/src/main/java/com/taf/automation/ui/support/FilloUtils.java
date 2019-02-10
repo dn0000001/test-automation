@@ -3,8 +3,11 @@ package com.taf.automation.ui.support;
 import com.codoid.products.fillo.Connection;
 import com.codoid.products.fillo.Recordset;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
+import com.taf.automation.ui.support.csv.GroupRow;
+import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -303,6 +306,110 @@ public class FilloUtils {
         } catch (Exception ex) {
             assertThat("Could not create Excel file due to error:  " + ex.getMessage(), false);
         }
+    }
+
+    /**
+     * Method to group the rows of a sheet together
+     *
+     * @param filename  - Location of excel file
+     * @param workSheet - SheetName of excel file to work on
+     * @param groupRows - List of rows to group
+     */
+    public static void groupRows(
+            String filename,
+            String workSheet,
+            List<GroupRow> groupRows,
+            boolean headerRow
+    ) {
+        try (FileInputStream in = new FileInputStream(new File(filename));
+             Workbook wb = new XSSFWorkbook(in)
+        ) {
+            Sheet sheet = wb.getSheet(workSheet);
+            for (GroupRow item : groupRows) {
+                int headerOffset = (headerRow) ? 1 : 0;
+                int fromRow = item.getFromRow() + headerOffset;
+                int toRow = item.getToRow() + headerOffset;
+
+                sheet.groupRow(fromRow, toRow);
+                sheet.setRowGroupCollapsed(fromRow, item.isCollapsed());
+            }
+
+            in.close();
+            OutputStream fileOut = new FileOutputStream(filename);
+            wb.write(fileOut);
+        } catch (Exception ex) {
+            assertThat("Could not group rows of Excel file due to error:  " + ex.getMessage(), false);
+        }
+    }
+
+    /**
+     * Add page level summaries to the records list and the row grouping information to the groupRows list<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>GroupRows contains index (0) based information</LI>
+     * <LI>The From Row is the index of the 1st item in the group</LI>
+     * <LI>The To Row is the index of the last item in the group</LI>
+     * </OL>
+     * <B>Example of returned Group Rows: </B> Suppose there are 9 rows which are divided in to 3 groups of 3.
+     * The list of Group Rows would be the following [{0,2}, {3,5}, {6,8}]
+     *
+     * @param records   - Records list to add page level summaries
+     * @param groupRows - The row grouping information is added to this list for each page level summary added
+     */
+    public static void addPageLevelSummaries(List<CsvOutputRecord> records, List<GroupRow> groupRows) {
+        if (records.isEmpty()) {
+            return;
+        }
+
+        String currentPageName = ((ExtractedDataOutputRecord) records.get(0)).getPageName();
+        ExtractedDataOutputRecord summaryRecord = new ExtractedDataOutputRecord();
+        summaryRecord.setPageName(currentPageName);
+        records.add(0, summaryRecord);
+
+        int failureInGroupCount = 0;
+        int summaryRow = 0;
+        int toRow = 0;
+
+        // Notes:
+        // 1)  Adding the summary record, shifts the 1st record to process to index 1
+        // 2)  At this point there is always at least 2 items in the list
+        for (int i = 1; i < records.size(); i++) {
+            ExtractedDataOutputRecord currentRecord = (ExtractedDataOutputRecord) records.get(i);
+            if (StringUtils.equals(currentPageName, currentRecord.getPageName())) {
+                toRow++;
+                if (!StringUtils.equalsIgnoreCase(currentRecord.getTestStatus(), "PASS")) {
+                    failureInGroupCount++;
+                }
+            } else {
+                // We now know the status for the previous group
+                ExtractedDataOutputRecord previousSummaryRecord = (ExtractedDataOutputRecord) records.get(summaryRow);
+                previousSummaryRecord.setTestStatus((failureInGroupCount > 0) ? "FAIL" : "PASS");
+
+                // Save the group row info before incrementing the toRow count
+                GroupRow groupRowInfo = new GroupRow().withSummaryRow(summaryRow).withToRow(toRow);
+                groupRows.add(groupRowInfo);
+                toRow++;
+
+                // Add the summary
+                currentPageName = currentRecord.getPageName();
+                ExtractedDataOutputRecord insertSummaryRecord = new ExtractedDataOutputRecord();
+                insertSummaryRecord.setPageName(currentPageName);
+                records.add(toRow, insertSummaryRecord);
+
+                // Update the Summary Row for the next group
+                summaryRow = toRow;
+
+                // Reset the group count fail for the next group
+                failureInGroupCount = 0;
+            }
+        }
+
+        GroupRow groupRowInfo = new GroupRow().withSummaryRow(summaryRow).withToRow(toRow);
+        groupRows.add(groupRowInfo);
+
+        int index = groupRows.get(groupRows.size() - 1).getSummaryRow();
+        ExtractedDataOutputRecord lastSummaryRecord = (ExtractedDataOutputRecord) records.get(index);
+        lastSummaryRecord.setTestStatus((failureInGroupCount > 0) ? "FAIL" : "PASS");
     }
 
 }
