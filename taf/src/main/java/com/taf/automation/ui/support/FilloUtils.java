@@ -314,6 +314,7 @@ public class FilloUtils {
      * @param filename  - Location of excel file
      * @param workSheet - SheetName of excel file to work on
      * @param groupRows - List of rows to group
+     * @param headerRow - true if there is a header row in the Excel file
      */
     public static void groupRows(
             String filename,
@@ -325,6 +326,7 @@ public class FilloUtils {
              Workbook wb = new XSSFWorkbook(in)
         ) {
             Sheet sheet = wb.getSheet(workSheet);
+            sheet.setRowSumsBelow(false);
             for (GroupRow item : groupRows) {
                 int headerOffset = (headerRow) ? 1 : 0;
                 int fromRow = item.getFromRow() + headerOffset;
