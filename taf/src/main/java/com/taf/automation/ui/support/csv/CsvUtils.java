@@ -923,4 +923,30 @@ public class CsvUtils {
         Helper.log("\n\n" + generateCodeForEnum(csvDataSet, enumName, packageName), true);
     }
 
+    /**
+     * Generate the CSV Headers row from the specified enumeration
+     *
+     * @param columnMapper - Enumeration to generate CSV headers row from
+     * @return CSV Headers row
+     */
+    public static String generateCsvHeaders(ColumnMapper columnMapper) {
+        StringBuilder sb = new StringBuilder();
+
+        for (ColumnMapper header : columnMapper.getValues()) {
+            sb.append(header.getColumnName());
+            sb.append(",");
+        }
+
+        return StringUtils.removeEnd(sb.toString(), ",");
+    }
+
+    /**
+     * Prints the generated the CSV Headers row from the specified enumeration to the console
+     *
+     * @param columnMapper - Enumeration to generate CSV headers row from
+     */
+    public static void printGenerateCsvHeaders(ColumnMapper columnMapper) {
+        Helper.log("\n\n" + generateCsvHeaders(columnMapper) + "\n\n", true);
+    }
+
 }
