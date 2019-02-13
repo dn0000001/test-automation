@@ -6,11 +6,13 @@ import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import datainstiller.data.DataPersistence;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -164,6 +166,20 @@ public class ExtractedWorkflowData extends DataPersistenceV2 {
     public String toString() {
         ReflectionToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
         return ReflectionToStringBuilder.toStringExclude(this);
+    }
+
+    @Override
+    public <T extends DataPersistence> T fromURL(URL url, boolean resolveAliases) {
+        T data = super.fromURL(url, resolveAliases);
+        Utils.attachDataSet(data, url.getPath());
+        return data;
+    }
+
+    @Override
+    public <T extends DataPersistence> T fromFile(String filePath, boolean resolveAliases) {
+        T data = super.fromFile(filePath, resolveAliases);
+        Utils.attachDataSet(data, filePath);
+        return data;
     }
 
 }
