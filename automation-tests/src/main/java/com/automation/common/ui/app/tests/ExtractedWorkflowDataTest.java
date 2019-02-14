@@ -9,6 +9,8 @@ import com.taf.automation.ui.support.pageScraping.ExtractedPageData;
 import com.taf.automation.ui.support.pageScraping.ExtractedRowData;
 import com.taf.automation.ui.support.pageScraping.ExtractedTableData;
 import com.taf.automation.ui.support.pageScraping.ExtractedWorkflowData;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
+@Listeners(AllureTestNGListener.class)
 public class ExtractedWorkflowDataTest {
     private static final String OUTPUT_FILE = "test.xml";
     private static final String EMPTY_WORKFLOW = "data/ui/scraping/empty-workflow.xml";
