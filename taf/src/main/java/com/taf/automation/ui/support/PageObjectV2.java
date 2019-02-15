@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -165,6 +166,27 @@ public class PageObjectV2 extends PageObject {
             setElementValueV2(component);
         } finally {
             component.initializeData(restoreData, restoreInitialData, restoreExpectedData);
+        }
+    }
+
+    /**
+     * Set value (with truncation as necessary) and validate using component's validation method<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>Similar to the PageObject.setElementValue except validation occurs using component's validation method</LI>
+     * <LI>If max length is less than or equal to zero, then no truncation will occur. This may lead to a validation failure</LI>
+     * <LI>Truncation occurs if specified value length is greater than the max length</LI>
+     * </OL>
+     *
+     * @param value     - Value to be set using the specified component
+     * @param component - Component to be used
+     * @param maxLength - Max Length for field
+     */
+    protected void setElementValueV2(String value, PageComponent component, int maxLength) {
+        if (maxLength > 0 && StringUtils.length(value) > maxLength) {
+            setElementValueV2(StringUtils.substring(value, 0, maxLength), component);
+        } else {
+            setElementValueV2(value, component);
         }
     }
 
