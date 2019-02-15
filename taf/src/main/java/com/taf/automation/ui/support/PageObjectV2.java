@@ -157,9 +157,9 @@ public class PageObjectV2 extends PageObject {
      * @param component - Component to be used
      */
     protected void setElementValueV2(String value, PageComponent component) {
-        String restoreData = component.getData(DataTypes.Data, true);
-        String restoreInitialData = component.getData(DataTypes.Initial, true);
-        String restoreExpectedData = component.getData(DataTypes.Expected, true);
+        String restoreData = component.getData(DataTypes.Data, false);
+        String restoreInitialData = component.getData(DataTypes.Initial, false);
+        String restoreExpectedData = component.getData(DataTypes.Expected, false);
         try {
             component.initializeData(value, null, null);
             setElementValueV2(component);
@@ -177,9 +177,9 @@ public class PageObjectV2 extends PageObject {
      * @param dataComponent - Data is extracted from this component and injected into the use component
      */
     protected void setElementValueV2(PageComponent useComponent, PageComponent dataComponent) {
-        String restoreData = useComponent.getData(DataTypes.Data, true);
-        String restoreInitialData = useComponent.getData(DataTypes.Initial, true);
-        String restoreExpectedData = useComponent.getData(DataTypes.Expected, true);
+        String restoreData = useComponent.getData(DataTypes.Data, false);
+        String restoreInitialData = useComponent.getData(DataTypes.Initial, false);
+        String restoreExpectedData = useComponent.getData(DataTypes.Expected, false);
         try {
             String data = dataComponent.getData(DataTypes.Data, true);
             String initialData = dataComponent.getData(DataTypes.Initial, true);
