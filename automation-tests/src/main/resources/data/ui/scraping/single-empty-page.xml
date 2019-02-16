@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <extractedWorkflowData>
-  <flowName>Single Empty Page Test</flowName>
-  <pages class="linked-hash-map">
-    <entry>
-      <string></string>
-      <page>
-        <pageNameKey></pageNameKey>
-        <pageData class="linked-hash-map"/>
-        <padding>null</padding>
-        <sortIfErrors>true</sortIfErrors>
-      </page>
-    </entry>
-  </pages>
-  <padding>null</padding>
-  <sortIfErrors>true</sortIfErrors>
+    <flowName>Single Empty Page Test</flowName>
+    <pages class="linked-hash-map">
+        <entry>
+            <string></string>
+            <page>
+                <pageNameKey></pageNameKey>
+                <pageData class="linked-hash-map"/>
+                <padding>null</padding>
+                <sortIfErrors>true</sortIfErrors>
+            </page>
+        </entry>
+    </pages>
+    <padding>null</padding>
+    <sortIfErrors>true</sortIfErrors>
 </extractedWorkflowData>
