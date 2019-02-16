@@ -14,6 +14,7 @@ import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.utils.URIBuilder;
 import org.hamcrest.MatcherAssert;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -877,6 +878,20 @@ public class Helper {
     @Step("Close window:  {1}")
     public static void closeWindow(WebDriver driver, String windowName) {
         driver.close();
+    }
+
+    @Step("Resize Window:  {1}")
+    public static void resizeWindow(WebDriver driver, String windowName) {
+        String res = TestProperties.getInstance().getScreenSize();
+        if (res != null) {
+            String[] resWH = res.toLowerCase().split("x");
+            int width = Integer.parseInt(resWH[0].trim());
+            int height = Integer.parseInt(resWH[1].trim());
+            Dimension dim = new Dimension(width, height);
+            driver.manage().window().setSize(dim);
+        } else {
+            driver.manage().window().maximize();
+        }
     }
 
     /**
