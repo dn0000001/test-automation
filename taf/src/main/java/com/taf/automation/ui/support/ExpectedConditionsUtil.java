@@ -468,6 +468,65 @@ public class ExpectedConditionsUtil {
     }
 
     /**
+     * An expectation for getting window handle of 1st new window that appears after triggering the action<BR><BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>The action to trigger the new window is only executed once.</LI>
+     * <LI>This method attempts to handle case in which there is only 1 window opened but the handle changes for
+     * some unknown reason.  (It could be that the site is checking for a pop-up blocker and new window is opened
+     * and closed so fast that it is not visible to the user before opening the desired window.</LI>
+     * <LI>Because this method is checking for another handle, if there are multiple windows opened, then the handle to
+     * the second window opened will always be return.</LI>
+     * </OL>
+     * <B>Example actionToTriggerNewWindow value:</B><BR>
+     * () -&gt; element.click()<BR>
+     *
+     * @param actionToTriggerNewWindow - Lambda expression to trigger new window
+     * @return window handle of 1st new window that appears
+     */
+    public static ExpectedCondition<String> handles(final Runnable actionToTriggerNewWindow) {
+        return new ExpectedCondition<String>() {
+            private Set<String> existing;
+            private boolean firstTime = true;
+
+            @Override
+            public String apply(WebDriver driver) {
+                try {
+                    if (firstTime) {
+                        firstTime = false;
+                        existing = driver.getWindowHandles();
+                        actionToTriggerNewWindow.run();
+                    }
+
+                    if (driver.getWindowHandles().size() > existing.size()) {
+                        String firstFoundHandle = Utils.findNewWindowHandle(existing);
+                        if (StringUtils.isNotEmpty(firstFoundHandle)) {
+                            // Give time for handle to change
+                            Utils.delayForJavaScriptProcessing();
+
+                            // Add the first found handle to the list of exclusions
+                            existing.add(firstFoundHandle);
+
+                            // Check if there is another handle now
+                            String anotherHandle = Utils.findNewWindowHandle(existing);
+                            return (anotherHandle == null) ? firstFoundHandle : anotherHandle;
+                        }
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "new window to appear and have non-empty handle";
+            }
+        };
+    }
+
+    /**
      * An expectation for the URL to change after triggering action<BR><BR>
      * <B>Notes:</B><BR>
      * The action to trigger the URL change is only executed once.<BR><BR>
