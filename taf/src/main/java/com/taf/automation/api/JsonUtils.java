@@ -1,8 +1,7 @@
 package com.taf.automation.api;
 
 import com.google.gson.Gson;
-import ru.yandex.qatools.allure.Allure;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
+import com.taf.automation.ui.support.testng.Attachment;
 
 public class JsonUtils {
     private JsonUtils() {
@@ -32,8 +31,7 @@ public class JsonUtils {
      * @param attachName - Attachment name
      */
     public static void attachJsonToReport(String json, String attachName) {
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(json.getBytes(), attachName, "text/html");
-        Allure.LIFECYCLE.fire(ev);
+        new Attachment().withTitle(attachName).withType("text/html").withFile(json.getBytes()).build();
     }
 
 }

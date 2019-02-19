@@ -17,8 +17,6 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
-import ru.yandex.qatools.allure.Allure;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 import ui.auto.core.pagecomponent.PageObject;
 
 import java.io.File;
@@ -49,14 +47,13 @@ public class TestNGBaseWithoutListeners {
             try {
                 Utils.getWebDriverWait()
                         .until(ExpectedConditionsUtil.takeScreenshot(title))
-                        .forEach(Allure.LIFECYCLE::fire);
+                        .forEach(Attachment::build);
             } catch (Exception ex) {
                 String shortMessage = "Could not take screenshot for " + title;
                 StringWriter sw = new StringWriter();
                 ex.printStackTrace(new PrintWriter(sw));
                 String fullMessage = shortMessage + " due to exception:  \n\n" + sw.toString();
-                MakeAttachmentEvent ev = new MakeAttachmentEvent(fullMessage.getBytes(), shortMessage, "text/plain");
-                Allure.LIFECYCLE.fire(ev);
+                new Attachment().withTitle(shortMessage).withType("text/plain").withFile(fullMessage.getBytes()).build();
             }
         }
     }
@@ -82,8 +79,7 @@ public class TestNGBaseWithoutListeners {
                 type = "text/plain";
             }
 
-            MakeAttachmentEvent ev = new MakeAttachmentEvent(attachmentFile, attachmentTitle, type);
-            Allure.LIFECYCLE.fire(ev);
+            new Attachment().withTitle(attachmentTitle).withType(type).withFile(attachmentFile).build();
         }
     }
 
@@ -266,8 +262,7 @@ public class TestNGBaseWithoutListeners {
     protected void attachDataSet(DataPersistence data, String name) {
         if (context() != null && context().getDriver() != null) {
             byte[] attachment = data.toXML().getBytes();
-            MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, name, "text/xml");
-            Allure.LIFECYCLE.fire(ev);
+            new Attachment().withTitle(name).withType("text/xml").withFile(attachment).build();
         }
     }
 

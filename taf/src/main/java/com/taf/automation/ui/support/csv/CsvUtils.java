@@ -7,6 +7,7 @@ import com.taf.automation.ui.support.FilloUtils;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.RegExUtils;
 import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -25,8 +26,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.By;
 import org.testng.ITestContext;
-import ru.yandex.qatools.allure.Allure;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
@@ -202,8 +201,7 @@ public class CsvUtils {
      */
     public static void attachDataSet(DataPersistence data, String title) {
         byte[] attachment = data.toXML().getBytes();
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, title, "text/xml");
-        Allure.LIFECYCLE.fire(ev);
+        new Attachment().withTitle(title).withType("text/xml").withFile(attachment).build();
     }
 
     /**

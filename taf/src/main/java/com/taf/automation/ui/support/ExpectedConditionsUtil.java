@@ -4,6 +4,7 @@ import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
 import com.taf.automation.ui.support.conditional.ResultType;
+import com.taf.automation.ui.support.testng.Attachment;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -14,7 +15,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.util.ArrayList;
@@ -290,7 +290,7 @@ public class ExpectedConditionsUtil {
      * @param title - Title for the screenshot
      * @return List of attachments
      */
-    public static ExpectedCondition<List<MakeAttachmentEvent>> takeScreenshot(final String title) {
+    public static ExpectedCondition<List<Attachment>> takeScreenshot(final String title) {
         return takeScreenshot(title, TestProperties.getInstance().isViewPortOnly());
     }
 
@@ -302,10 +302,10 @@ public class ExpectedConditionsUtil {
      * @param viewPortOnly - true to only take screenshot of the view port, false to attempt full screenshot
      * @return List of attachments
      */
-    public static ExpectedCondition<List<MakeAttachmentEvent>> takeScreenshot(final String title, final boolean viewPortOnly) {
-        return new ExpectedCondition<List<MakeAttachmentEvent>>() {
+    public static ExpectedCondition<List<Attachment>> takeScreenshot(final String title, final boolean viewPortOnly) {
+        return new ExpectedCondition<List<Attachment>>() {
             @Override
-            public List<MakeAttachmentEvent> apply(WebDriver driver) {
+            public List<Attachment> apply(WebDriver driver) {
                 try {
                     List<Criteria> criteria = new ArrayList<>();
                     criteria.add(CriteriaMaker.forAlertDismiss());
@@ -316,10 +316,14 @@ public class ExpectedConditionsUtil {
                         return null;
                     }
 
-                    List<MakeAttachmentEvent> screenshots = new ArrayList<>();
+                    List<Attachment> screenshots = new ArrayList<>();
                     if (index == 0) {
                         String alertText = (String) conditional.getResultInfo().getAdditionalInfo().get(ResultType.VALUE);
-                        screenshots.add(new MakeAttachmentEvent(alertText.getBytes(), "Alert on " + title, "text/plain"));
+                        Attachment alertAttachment = new Attachment()
+                                .withTitle("Alert on " + title)
+                                .withType("text/plain")
+                                .withFile(alertText.getBytes());
+                        screenshots.add(alertAttachment);
                     }
 
                     byte[] attachment;
@@ -337,7 +341,11 @@ public class ExpectedConditionsUtil {
                         append = "_ViewPortOnly";
                     }
 
-                    screenshots.add(new MakeAttachmentEvent(ScreenshotUtil.convertPngToJpg(attachment), title + append, "image/jpeg"));
+                    Attachment jpeg = new Attachment()
+                            .withTitle(title + append)
+                            .withType("image/jpeg")
+                            .withFile(ScreenshotUtil.convertPngToJpg(attachment));
+                    screenshots.add(jpeg);
                     return screenshots;
                 } catch (Exception ex) {
                     return null;
