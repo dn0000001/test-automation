@@ -1,10 +1,9 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import ru.yandex.qatools.allure.Allure;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +23,7 @@ public class Documenter {
     /**
      * All the stored attachment events
      */
-    private List<MakeAttachmentEvent> attachmentEvents;
+    private List<Attachment> attachmentEvents;
 
     /**
      * Constructor that sets documentation mode to false
@@ -95,11 +94,15 @@ public class Documenter {
         if (documentationMode && TestNGBase.context() != null && TestNGBase.context().getDriver() != null) {
             String alertText = Utils.dismissAlertIfPresent(TestNGBase.context().getDriver());
             if (alertText != null) {
-                attachmentEvents.add(new MakeAttachmentEvent(alertText.getBytes(), "Alert on " + title, "text/plain"));
+                Attachment alertAttachment = new Attachment()
+                        .withTitle("Alert on " + title)
+                        .withType("text/plain")
+                        .withFile(alertText.getBytes());
+                attachmentEvents.add(alertAttachment);
             }
 
             byte[] attachment = ((TakesScreenshot) TestNGBase.context().getDriver()).getScreenshotAs(OutputType.BYTES);
-            attachmentEvents.add(new MakeAttachmentEvent(attachment, title, "image/png"));
+            attachmentEvents.add(new Attachment().withTitle(title).withType("image/png").withFile(attachment));
         }
     }
 
@@ -110,8 +113,8 @@ public class Documenter {
      * 2) If no associated step, then all attachment events will be at the root level<BR>
      */
     public void flush() {
-        for (Iterator<MakeAttachmentEvent> iterator = attachmentEvents.iterator(); iterator.hasNext(); ) {
-            Allure.LIFECYCLE.fire(iterator.next());
+        for (Iterator<Attachment> iterator = attachmentEvents.iterator(); iterator.hasNext(); ) {
+            iterator.next().build();
             iterator.remove();
         }
     }

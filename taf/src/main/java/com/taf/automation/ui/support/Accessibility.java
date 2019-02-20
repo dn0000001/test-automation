@@ -1,13 +1,12 @@
 package com.taf.automation.ui.support;
 
 import com.deque.axe.AXE;
+import com.taf.automation.ui.support.testng.Attachment;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import ru.yandex.qatools.allure.Allure;
 import ru.yandex.qatools.allure.annotations.Step;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.net.URL;
@@ -200,8 +199,7 @@ public class Accessibility {
         }
 
         String violationDetails = AXE.report(violations);
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(violationDetails.getBytes(), "Violations", "text/plain");
-        Allure.LIFECYCLE.fire(ev);
+        new Attachment().withTitle("Violations").withType("text/plain").withFile(violationDetails.getBytes()).build();
     }
 
     /**

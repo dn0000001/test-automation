@@ -1,6 +1,7 @@
 package com.taf.automation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taf.automation.ui.support.testng.Attachment;
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -13,8 +14,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
 import org.xml.sax.InputSource;
-import ru.yandex.qatools.allure.Allure;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -76,8 +75,7 @@ public class ApiUtils {
      * @param name - Shown in report as name of attachment
      */
     public static void attachDataXml(String xml, String name) {
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(xml.getBytes(), name, "text/xml");
-        Allure.LIFECYCLE.fire(ev);
+        new Attachment().withTitle(name).withType("text/xml").withFile(xml.getBytes()).build();
     }
 
     /**
@@ -87,8 +85,7 @@ public class ApiUtils {
      * @param name - Shown in report as name of attachment
      */
     public static void attachDataJson(String json, String name) {
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(json.getBytes(), name, "application/json");
-        Allure.LIFECYCLE.fire(ev);
+        new Attachment().withTitle(name).withType("application/json").withFile(json.getBytes()).build();
     }
 
     /**
@@ -98,8 +95,7 @@ public class ApiUtils {
      * @param name - Shown in report as name of attachment
      */
     public static void attachDataText(String text, String name) {
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(text.getBytes(), name, "text/plain");
-        Allure.LIFECYCLE.fire(ev);
+        new Attachment().withTitle(name).withType("text/plain").withFile(text.getBytes()).build();
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import com.google.common.base.Function;
+import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.thoughtworks.xstream.XStream;
 import datainstiller.data.DataPersistence;
@@ -20,8 +21,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import ru.yandex.qatools.allure.Allure;
-import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 import ui.auto.core.utils.AjaxTriggeredAction;
@@ -395,15 +394,14 @@ public class Utils {
         if (path != null) {
             try {
                 // The path comes from the data-set file which should always use slash
-                name = "..." + path.substring(path.lastIndexOf("/"));
+                name = "..." + path.substring(path.lastIndexOf('/'));
             } catch (Exception ex) {
                 // Fallback if parsing fails
                 name = path;
             }
         }
 
-        MakeAttachmentEvent ev = new MakeAttachmentEvent(attachment, name, "text/xml");
-        Allure.LIFECYCLE.fire(ev);
+        new Attachment().withTitle(name).withType("text/xml").withFile(attachment).build();
     }
 
     /**
