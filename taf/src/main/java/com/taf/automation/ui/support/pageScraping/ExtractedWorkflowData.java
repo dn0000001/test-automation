@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -134,7 +135,7 @@ public class ExtractedWorkflowData extends DataPersistenceV2 {
     public void writeToFile(String filename) {
         try {
             File fileTarget = new File(filename);
-            FileUtils.write(fileTarget, toXML(), false);
+            FileUtils.write(fileTarget, toXML(), Charset.defaultCharset(), false);
         } catch (Exception ex) {
             assertThat("Could not write to file due to error:  " + ex.getMessage(), false);
         }
