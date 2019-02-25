@@ -29,6 +29,16 @@ public class AllureTestNGListener extends AllureTestListener {
     }
 
     @Override
+    public void onTestSuccess(ITestResult iTestResult) {
+        super.onTestSuccess(iTestResult);
+        if (iTestResult.getMethod().getRetryAnalyzer() != null) {
+            // Workaround issue with retries in the TestNG logic added in 6.12
+            iTestResult.getTestContext().getSkippedTests().removeResult(iTestResult.getMethod());
+            iTestResult.getTestContext().getFailedTests().removeResult(iTestResult.getMethod());
+        }
+    }
+
+    @Override
     public void onTestFailure(ITestResult iTestResult) {
         Allure.LIFECYCLE.fire(new TestCaseFailureEvent().withThrowable(iTestResult.getThrowable()));
         TestNGBase.takeScreenshot("Failed Test Screenshot");

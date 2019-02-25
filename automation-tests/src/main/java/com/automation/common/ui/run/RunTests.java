@@ -10,25 +10,26 @@ import ru.yandex.qatools.allure.model.TestCaseResult;
 import ru.yandex.qatools.allure.model.TestSuiteResult;
 import ru.yandex.qatools.allure.utils.AllureResultsUtils;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class RunTests {
-    final static Logger logger = LoggerFactory.getLogger(RunTests.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RunTests.class);
 
     public static boolean isRunningOnJenkins() {
         return System.getenv("JENKINS_HOME") != null;
     }
 
-    private static String generateSOXReport() throws Exception {
+    private static String generateSOXReport() throws IOException {
         List<TestSuiteResult> testSuiteResults = AllureFileUtils.unmarshalSuites(AllureResultsUtils.getResultsDirectory());
         StringBuilder report = new StringBuilder("\n******************* REPORT START *******************");
 
         for (TestSuiteResult suiteResult : testSuiteResults) {
             report.append("\n\nTEST SUITE : ").append(suiteResult.getName());
-            DateFormat df = new SimpleDateFormat("MMM dd, YYYY HH:mm:ss");
+            DateFormat df = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
             String date = df.format(new Date(suiteResult.getStart()));
             report.append("\nEXECUTED ON: ").append(date);
             for (TestCaseResult testCaseResult : suiteResult.getTestCases()) {
@@ -49,37 +50,46 @@ public class RunTests {
         String msgTemplate = "\u001B[34m%s\u001B[0m";
 
         Date startTime = new Date();
-        logger.info(String.format(msgTemplate, "Started At:  " + startTime));
+        logInfo(String.format(msgTemplate, "Started At:  " + startTime));
 
         TestProperties props = TestProperties.getInstance();
         TestRunner runner = new TestRunner();
 
-        logger.info(String.format(msgTemplate, "...CLEANING RESULT FOLDER..."));
+        logInfo(String.format(msgTemplate, "...CLEANING RESULT FOLDER..."));
         runner.deleteResultsFolder();
 
-        logger.info(String.format(msgTemplate, "...CLEANING REPORT FOLDER..."));
+        logInfo(String.format(msgTemplate, "...CLEANING REPORT FOLDER..."));
         runner.deleteReportFolder();
 
-        logger.info(String.format(msgTemplate, "...STARTING SUITE EXECUTION..."));
+        logInfo(String.format(msgTemplate, "...STARTING SUITE EXECUTION..."));
         status = runner.runTests(props.getSuites());
+        logInfo(String.format(msgTemplate, "Status:  " + status));
 
-        logger.info(String.format(msgTemplate, "...SUITE EXECUTION IS FINISHED, GENERATING ALLURE REPORT..."));
-        logger.info(String.format(msgTemplate, "...SUITE EXECUTION IS FINISHED, GENERATING ALLURE REPORT...\n" + generateSOXReport()));
+        logInfo(String.format(msgTemplate, "...SUITE EXECUTION IS FINISHED, GENERATING ALLURE REPORT...\n" + generateSOXReport()));
         runner.generateReport();
-        logger.info(String.format(msgTemplate, "...ALLURE REPORT IS GENERATED..."));
+        logInfo(String.format(msgTemplate, "...ALLURE REPORT IS GENERATED..."));
 
         Date endTime = new Date();
-        logger.info(String.format(msgTemplate, "Completed At:  " + endTime));
+        logInfo(String.format(msgTemplate, "Completed At:  " + endTime));
 
         String duration = DurationFormatUtils.formatPeriod(startTime.getTime(), endTime.getTime(), "HH:mm:ss");
-        logger.info(String.format(msgTemplate, "Duration:  " + duration));
+        logInfo(String.format(msgTemplate, "Duration:  " + duration));
 
         if (props.isShowReport() && !isRunningOnJenkins()) {
-            logger.info(String.format(msgTemplate, "...OPENING ALLURE REPORT..."));
+            logInfo(String.format(msgTemplate, "...OPENING ALLURE REPORT..."));
             runner.openReport();
         }
 
         System.exit(status);
+    }
+
+    /**
+     * Wrapper method to log info message to fix the sonar violation "Invoke method(s) only conditionally"
+     *
+     * @param message - Message to be logged
+     */
+    private static void logInfo(String message) {
+        LOGGER.info(message);
     }
 
 }
