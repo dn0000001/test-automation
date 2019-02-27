@@ -135,4 +135,8 @@ public class TestRunner {
         }
     }
 
+    public void setReportFolder(String reportFolder) {
+        this.reportFolder = reportFolder;
+    }
+
 }
