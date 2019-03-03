@@ -2,6 +2,10 @@ package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.testng.TestParameterValidator;
 import com.thoughtworks.xstream.XStream;
+import io.qameta.allure.Commands;
+import io.qameta.allure.option.ConfigOptions;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -12,8 +16,6 @@ import org.openqa.selenium.net.PortProber;
 import org.testng.ITestNGListener;
 import org.testng.TestNG;
 import org.testng.reporters.Files;
-import ru.yandex.qatools.allure.AllureMain;
-import ru.yandex.qatools.allure.config.AllureConfig;
 import ru.yandex.qatools.commons.model.Environment;
 
 import java.awt.Desktop;
@@ -21,9 +23,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestRunner {
+    private static final String HOME = System.getProperty("user.home");
+    private static final String SEPARTOR = System.getProperty("file.separator");
+    private static final File REPORT_CLI = new File(HOME + SEPARTOR + "webdrivers" + SEPARTOR + "report-cli");
+    private static final String ALLURE2_CLI = "reports/allure2-cli.zip";
+
+    private static final File DEFAULT_RESULTS_DIRECTORY = new File("target/allure-results");
     private static final int DEFAULT_PORT = 8090;
     private String resultsFolder;
     private String reportFolder;
@@ -31,8 +41,7 @@ public class TestRunner {
 
     public TestRunner() {
         TestProperties props = TestProperties.getInstance();
-        AllureConfig config = new AllureConfig();
-        resultsFolder = config.getResultsDirectory().getAbsolutePath();
+        resultsFolder = DEFAULT_RESULTS_DIRECTORY.getAbsolutePath();
         reportFolder = props.getReportFolder().getAbsolutePath();
     }
 
@@ -56,9 +65,43 @@ public class TestRunner {
         return testNg.getStatus();
     }
 
-    public void generateReport() throws IOException {
-        String[] arguments = {resultsFolder, reportFolder};
-        AllureMain.main(arguments);
+    public void generateReport() throws IOException, ZipException {
+        Path reportDirectory = new File(reportFolder).toPath();
+
+        List<Path> resultsDirectories = new ArrayList<>();
+        resultsDirectories.add(new File(resultsFolder).toPath());
+
+        extractFilesForAllure2ReportGeneration();
+        new Commands(REPORT_CLI.toPath()).generate(reportDirectory, resultsDirectories, false, new ConfigOptions());
+    }
+
+    /**
+     * Extract files for allure 2 report generation<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>
+     * For each plugin that are additional files that are required to generate the report properly.
+     * For Behaviours, to appear in the allure 2 report there is a Javascript file that is needed.
+     * Currently, I am unable to programmatically configure allure 2 such that these Javascript files are added.
+     * </LI>
+     * <LI>
+     * The REPORT_CLI zip file contains the additional files needed to generate the allure 2 report properly.
+     * The files come from the zip file that you can download from maven central for the
+     * artifact <A HREF="https://search.maven.org/artifact/io.qameta.allure/allure-commandline/2.10.0/jar">
+     * io.qameta.allure:allure-commandline:2.10.0</A>.  I have only put the behaviors plugin in the zip file.
+     * </LI>
+     * <LI>
+     * Delete on exit does not seem to working probably due to the fact we terminate the process.
+     * So, I am manually deleting the folder before re-creating it.
+     * </LI>
+     * </OL>
+     */
+    private void extractFilesForAllure2ReportGeneration() throws IOException, ZipException {
+        FileUtils.deleteQuietly(REPORT_CLI);
+        java.nio.file.Files.createDirectory(REPORT_CLI.toPath());
+        REPORT_CLI.deleteOnExit();
+        ZipFile zipFile = new ZipFile(Helper.getFile(ALLURE2_CLI));
+        zipFile.extractAll(REPORT_CLI.getAbsolutePath());
     }
 
     public void openReport() throws Exception {
