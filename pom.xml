@@ -35,7 +35,7 @@
         <httpclient.version>4.5.3</httpclient.version>
         <pdfbox.version>1.8.2</pdfbox.version>
         <vtd.version>2.11</vtd.version>
-        <jackson.version>2.3.0</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <apache.commons.version>3.4</apache.commons.version>
         <findbugs.version>3.0.1</findbugs.version>
         <consul.version>1.3.0</consul.version>
@@ -51,6 +51,8 @@
         <jexcelapi.version>2.6.12</jexcelapi.version>
         <commons.csv.version>1.6</commons.csv.version>
         <fillo.version>1.18</fillo.version>
+        <io.qameta.allure.version>2.10.0</io.qameta.allure.version>
+        <zip4j.version>1.3.2</zip4j.version>
     </properties>
 
     <build>

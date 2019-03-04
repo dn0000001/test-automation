@@ -203,7 +203,32 @@
             <artifactId>fillo</artifactId>
             <version>${fillo.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-commandline</artifactId>
+            <version>${io.qameta.allure.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-generator</artifactId>
+            <version>${io.qameta.allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-plugin-api</artifactId>
+            <version>${io.qameta.allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>${zip4j.version}</version>
+        </dependency>
         <!-- START:  BDD specific dependencies -->
         <dependency>
             <groupId>info.cukes</groupId>
