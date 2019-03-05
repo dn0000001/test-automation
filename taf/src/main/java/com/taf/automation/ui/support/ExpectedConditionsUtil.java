@@ -18,6 +18,7 @@ import org.openqa.selenium.support.ui.Select;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -682,6 +683,60 @@ public class ExpectedConditionsUtil {
             @Override
             public String toString() {
                 return String.format("invisibility of elements located by %s", locator);
+            }
+        };
+    }
+
+    /**
+     * Expectation for the URL to match any of the regular expressions
+     *
+     * @param regex the regular expressions to match the URL against
+     * @return <code>true</code> if the URL matches any regular expression
+     */
+    public static ExpectedCondition<Boolean> urlMatchesAny(final String... regex) {
+        return new ExpectedCondition<Boolean>() {
+            private String currentUrl;
+            private int debuggingCode;
+
+            @Override
+            public Boolean apply(WebDriver driver) {
+                try {
+                    boolean match = false;
+                    debuggingCode = 0;
+                    currentUrl = driver.getCurrentUrl();
+                    debuggingCode = 1;
+                    for (String value : regex) {
+                        debuggingCode = 2;
+                        boolean eval = currentUrl.matches(value);
+                        debuggingCode = 3;
+                        if (eval) {
+                            match = true;
+                            break;
+                        }
+                    }
+
+                    return match;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+
+            @Override
+            public String toString() {
+                String debugInfo;
+                if (debuggingCode == 0) {
+                    debugInfo = ".  (Getting Current URL threw exception)";
+                } else if (debuggingCode == 1) {
+                    debugInfo = ".  (There were no regular expressions)";
+                } else if (debuggingCode == 2) {
+                    debugInfo = ".  (There was an invalid regular expression)";
+                } else {
+                    debugInfo = ":  " + Arrays.asList(regex).toString();
+                }
+
+                return "url to match any of the regular expressions"
+                        + debugInfo
+                        + "  Current URL:  " + currentUrl;
             }
         };
     }
