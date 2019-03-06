@@ -6,6 +6,7 @@ package com.taf.automation.ui.support;
 public class RegExUtils {
     public static final String NOT_ALPHANUMERIC = "\\W";
     public static final String NOT_DIGITS = "\\D";
+    public static final String HTTP = "http.*";
 
     /**
      * Matches anything including newline.  Use of this should be limited.<BR>
