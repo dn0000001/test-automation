@@ -32,7 +32,6 @@ public class TestRunner {
     private static final String SEPARTOR = System.getProperty("file.separator");
     private static final File REPORT_CLI = new File(HOME + SEPARTOR + "webdrivers" + SEPARTOR + "report-cli");
     private static final String ALLURE2_CLI = "reports/allure2-cli.zip";
-
     private static final File DEFAULT_RESULTS_DIRECTORY = new File("target/allure-results");
     private static final int DEFAULT_PORT = 8090;
     private String resultsFolder;
@@ -52,7 +51,7 @@ public class TestRunner {
             if (is != null) {
                 FileUtils.copyInputStreamToFile(is, file);
             } else if (!file.exists()) {
-                throw new RuntimeException("Suite file '" + suite + "' does not exists on the file system!");
+                throw new IOException("Suite file '" + suite + "' does not exists on the file system!");
             }
         }
 
@@ -65,7 +64,7 @@ public class TestRunner {
         return testNg.getStatus();
     }
 
-    public void generateReport() throws IOException, ZipException {
+    public void generateReport() throws ZipException {
         Path reportDirectory = new File(reportFolder).toPath();
 
         List<Path> resultsDirectories = new ArrayList<>();
@@ -90,16 +89,9 @@ public class TestRunner {
      * artifact <A HREF="https://search.maven.org/artifact/io.qameta.allure/allure-commandline/2.10.0/jar">
      * io.qameta.allure:allure-commandline:2.10.0</A>.  I have only put the behaviors plugin in the zip file.
      * </LI>
-     * <LI>
-     * Delete on exit does not seem to working probably due to the fact we terminate the process.
-     * So, I am manually deleting the folder before re-creating it.
-     * </LI>
      * </OL>
      */
-    private void extractFilesForAllure2ReportGeneration() throws IOException, ZipException {
-        FileUtils.deleteQuietly(REPORT_CLI);
-        java.nio.file.Files.createDirectory(REPORT_CLI.toPath());
-        REPORT_CLI.deleteOnExit();
+    private void extractFilesForAllure2ReportGeneration() throws ZipException {
         ZipFile zipFile = new ZipFile(Helper.getFile(ALLURE2_CLI));
         zipFile.extractAll(REPORT_CLI.getAbsolutePath());
     }
