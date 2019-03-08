@@ -229,6 +229,11 @@
             <artifactId>zip4j</artifactId>
             <version>${zip4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
         <!-- START:  BDD specific dependencies -->
         <dependency>
             <groupId>info.cukes</groupId>

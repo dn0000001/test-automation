@@ -23,14 +23,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TestRunner {
     private static final String HOME = System.getProperty("user.home");
-    private static final String SEPARTOR = System.getProperty("file.separator");
-    private static final File REPORT_CLI = new File(HOME + SEPARTOR + "webdrivers" + SEPARTOR + "report-cli");
+    private static final String SEPARATOR = System.getProperty("file.separator");
+    private static final File REPORT_CLI = new File(HOME + SEPARATOR + "webdrivers" + SEPARATOR + "report-cli");
     private static final String ALLURE2_CLI = "reports/allure2-cli.zip";
     private static final File DEFAULT_RESULTS_DIRECTORY = new File("target/allure-results");
     private static final int DEFAULT_PORT = 8090;
@@ -64,7 +65,7 @@ public class TestRunner {
         return testNg.getStatus();
     }
 
-    public void generateReport() throws ZipException {
+    public void generateReport() throws ZipException, IOException {
         Path reportDirectory = new File(reportFolder).toPath();
 
         List<Path> resultsDirectories = new ArrayList<>();
@@ -91,8 +92,11 @@ public class TestRunner {
      * </LI>
      * </OL>
      */
-    private void extractFilesForAllure2ReportGeneration() throws ZipException {
-        ZipFile zipFile = new ZipFile(Helper.getFile(ALLURE2_CLI));
+    private void extractFilesForAllure2ReportGeneration() throws ZipException, IOException {
+        URL source = Thread.currentThread().getContextClassLoader().getResource(ALLURE2_CLI);
+        File destination = new File(REPORT_CLI + SEPARATOR + ALLURE2_CLI);
+        FileUtils.copyURLToFile(source, destination);
+        ZipFile zipFile = new ZipFile(destination);
         zipFile.extractAll(REPORT_CLI.getAbsolutePath());
     }
 
