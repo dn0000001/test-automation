@@ -316,7 +316,7 @@ public class CsvUtils {
      * @param component - Component to initialize data
      */
     public static void setData(CSVRecord csv, ColumnMapper column, PageComponent component) {
-        if (csv.isMapped(column.getColumnName())) {
+        if (isNotBlank(csv, column)) {
             String initial = component.getData(DataTypes.Initial, false);
             String expected = component.getData(DataTypes.Expected, false);
             component.initializeData(csv.get(column.getColumnName()), initial, expected);
@@ -334,7 +334,7 @@ public class CsvUtils {
      */
     public static void setData(CSVRecord csv, ColumnMapper column, int index, PageComponent component) {
         String listColumnName = getListColumnName(column, index);
-        if (csv.isMapped(listColumnName)) {
+        if (csv.isMapped(listColumnName) && StringUtils.isNotBlank(csv.get(listColumnName))) {
             String initial = component.getData(DataTypes.Initial, false);
             String expected = component.getData(DataTypes.Expected, false);
             component.initializeData(csv.get(listColumnName), initial, expected);
