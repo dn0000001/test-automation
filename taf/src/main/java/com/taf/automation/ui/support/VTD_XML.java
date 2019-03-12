@@ -1,16 +1,15 @@
 package com.taf.automation.ui.support;
 
+import com.ximpleware.AutoPilot;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-
-import com.ximpleware.AutoPilot;
-import com.ximpleware.VTDGen;
-import com.ximpleware.VTDNav;
 
 /**
  * This class uses VTD-XML for reading from an XML file. Use this class if having performance issues with the
@@ -70,7 +69,7 @@ public class VTD_XML {
      */
     public VTD_XML(InputStream in) throws Exception {
         byte[] b = IOUtils.toByteArray(in);
-        IOUtils.closeQuietly(in);
+        in.close();
         init(b);
     }
 
@@ -127,16 +126,16 @@ public class VTD_XML {
     public void initializeForOptimizedParsing(String sRootXpath, String[] eachNodesXpath) {
         /*
          * Break the root xpath into pieces for navigation by toElement
-		 */
+         */
         if (sRootXpath.startsWith("/")) {
             toRootXpath = sRootXpath.substring(1).split("/");
         } else {
             toRootXpath = sRootXpath.split("/");
         }
 
-		/*
+        /*
          * Break each node xpath into pieces for navigation by toElement
-		 */
+         */
         int nNodes = eachNodesXpath.length;
         toEachNode = new String[nNodes][getMaxArraySize(eachNodesXpath)];
         for (int i = 0; i < nNodes; i++) {
@@ -158,7 +157,7 @@ public class VTD_XML {
     protected int getMaxArraySize(String[] nodes) {
         /*
          * Step 1: Get the lengths of each array
-		 */
+         */
         int nLength = nodes.length;
         int[] arraySizes = new int[nLength];
         for (int i = 0; i < nLength; i++) {
@@ -169,9 +168,9 @@ public class VTD_XML {
             }
         }
 
-		/*
-		 * Step 2: Find the largest array size from the previous step
-		 */
+        /*
+         * Step 2: Find the largest array size from the previous step
+         */
         int nLargestArray = arraySizes[0];
         for (int i = 1; i < nLength; i++) {
             if (arraySizes[i] > nLargestArray) {
