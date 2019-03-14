@@ -306,7 +306,7 @@ public class WsUtils {
     public static boolean isSecureSite(String sUrl) {
         /*
          * Need to determine if secure site or not
-		 */
+         */
         boolean bSecureSite = false;
         if (sUrl.length() > 5) {
             String sSecurePrefix = sUrl.substring(0, 5);
@@ -532,7 +532,7 @@ public class WsUtils {
      */
     public static String toJSON_DateString(WebDriver driver, String dateString) {
         String sJS = "return Date.parse(\"" + dateString + "\");";
-        String milliseconds = String.valueOf(JsUtils.execute(driver, sJS, null));
+        String milliseconds = String.valueOf(JsUtils.execute(driver, sJS, (Object[]) null));
         String sJSON = "/Date(" + StringUtils.defaultString(milliseconds) + ")/";
         return sJSON;
     }

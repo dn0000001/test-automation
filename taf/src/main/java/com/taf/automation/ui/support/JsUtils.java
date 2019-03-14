@@ -406,7 +406,7 @@ public class JsUtils {
      * Scroll To Bottom of the page using JavaScript
      */
     public static void scrollToBottom() {
-        execute(getWebDriver(), SCROLL_TO_BOTTOM, null);
+        execute(getWebDriver(), SCROLL_TO_BOTTOM, (Object[]) null);
     }
 
     /**
