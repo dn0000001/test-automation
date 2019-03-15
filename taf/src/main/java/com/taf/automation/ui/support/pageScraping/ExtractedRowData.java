@@ -92,7 +92,7 @@ public class ExtractedRowData {
      */
     public static void compareField(String expectedFieldKey, Object expectedFieldValue, Object actualValue, AssertAggregator aggregator, String pageName, String fieldType, List<CsvOutputRecord> outputRecords) {
         int preCompareFailureCount = aggregator.getFailureCount();
-        aggregator.assertThat("comparing field:" + expectedFieldKey, expectedFieldValue, equalTo(actualValue));
+        aggregator.assertThat("comparing field:" + expectedFieldKey, actualValue, equalTo(expectedFieldValue));
         int postCompareFailureCount = aggregator.getFailureCount();
 
         // Create result record for this test

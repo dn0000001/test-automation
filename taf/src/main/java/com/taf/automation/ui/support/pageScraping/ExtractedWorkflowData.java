@@ -3,6 +3,7 @@ package com.taf.automation.ui.support.pageScraping;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.DataPersistenceV2;
 import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -125,6 +126,70 @@ public class ExtractedWorkflowData extends DataPersistenceV2 {
                 smallerWorkFlow.addPage(emptyPage);
             }
         }
+    }
+
+    /**
+     * Returns the 1st value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - Using the column name as the key
+     * @return The value to which the specified key is mapped, or null if this map contains no mapping for the key
+     */
+    public Object get(ColumnMapper key) {
+        return get(key.getColumnName());
+    }
+
+    /**
+     * Returns the 1st value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - The key whose associated value is to be returned
+     * @return The value to which the specified key is mapped, or null if this map contains no mapping for the key
+     */
+    public Object get(String key) {
+        if (pages.containsKey(key)) {
+            return pages.get(key);
+        }
+
+        for (Map.Entry<String, ExtractedPageData> entry : pages.entrySet()) {
+            if (entry.getValue().contains(key)) {
+                return entry.getValue().get(key);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Removes the 1st mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - Using the column name as the key
+     * @return The previous value associated with key, or null if there was no mapping for key
+     */
+    public Object remove(ColumnMapper key) {
+        return remove(key.getColumnName());
+    }
+
+    /**
+     * Removes the 1st mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - The key whose mapping is to be removed from the map
+     * @return The previous value associated with key, or null if there was no mapping for key
+     */
+    public Object remove(String key) {
+        if (pages.containsKey(key)) {
+            return pages.remove(key);
+        }
+
+        for (Map.Entry<String, ExtractedPageData> entry : pages.entrySet()) {
+            if (entry.getValue().contains(key)) {
+                return entry.getValue().remove(key);
+            }
+        }
+
+        return null;
     }
 
     /**

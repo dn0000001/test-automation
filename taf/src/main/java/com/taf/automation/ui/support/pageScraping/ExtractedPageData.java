@@ -153,6 +153,123 @@ public class ExtractedPageData {
         }
     }
 
+    /**
+     * Returns the 1st value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - Using the column name as the key
+     * @return The value to which the specified key is mapped, or null if this map contains no mapping for the key
+     */
+    public Object get(ColumnMapper key) {
+        return get(key.getColumnName());
+    }
+
+    /**
+     * Returns the 1st value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - The key whose associated value is to be returned
+     * @return The value to which the specified key is mapped, or null if this map contains no mapping for the key
+     */
+    public Object get(String key) {
+        if (pageData.containsKey(key)) {
+            return pageData.get(key);
+        }
+
+        for (Map.Entry<String, Object> entry : pageData.entrySet()) {
+            if (entry.getValue() instanceof ExtractedPageData) {
+                ExtractedPageData page = (ExtractedPageData) entry.getValue();
+                if (page.getPageNameKey().equals(key)) {
+                    return page;
+                }
+
+                if (page.contains(key)) {
+                    return page.get(key);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Removes the 1st mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - Using the column name as the key
+     * @return The previous value associated with key, or null if there was no mapping for key
+     */
+    public Object remove(ColumnMapper key) {
+        return remove(key.getColumnName());
+    }
+
+    /**
+     * Removes the 1st mapping for the key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - The key whose mapping is to be removed from the map
+     * @return The previous value associated with key, or null if there was no mapping for key
+     */
+    public Object remove(String key) {
+        if (pageData.containsKey(key)) {
+            return pageData.remove(key);
+        }
+
+        for (Map.Entry<String, Object> entry : pageData.entrySet()) {
+            if (entry.getValue() instanceof ExtractedPageData) {
+                ExtractedPageData page = (ExtractedPageData) entry.getValue();
+                if (page.getPageNameKey().equals(key)) {
+                    return pageData.remove(entry.getKey());
+                }
+
+                if (page.contains(key)) {
+                    return page.remove(key);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns true if this map contains a mapping for the specified key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - Using the column name as the key
+     * @return true if this map contains a mapping for the specified
+     */
+    public boolean contains(ColumnMapper key) {
+        return contains(key.getColumnName());
+    }
+
+    /**
+     * Returns true if this map contains a mapping for the specified key
+     * <BR><B>Note: </B> Recursively searches all ExtractedPageData only
+     *
+     * @param key - Key whose presence in this map is to be tested
+     * @return true if this map contains a mapping for the specified
+     */
+    public boolean contains(String key) {
+        if (pageData.containsKey(key)) {
+            return true;
+        }
+
+        for (Map.Entry<String, Object> entry : pageData.entrySet()) {
+            if (entry.getValue() instanceof ExtractedPageData) {
+                ExtractedPageData page = (ExtractedPageData) entry.getValue();
+                if (page.getPageNameKey().equals(key)) {
+                    return true;
+                }
+
+                if (page.contains(key)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public boolean equals(Object object) {
         List<String> excludeFields = new ArrayList<>();
