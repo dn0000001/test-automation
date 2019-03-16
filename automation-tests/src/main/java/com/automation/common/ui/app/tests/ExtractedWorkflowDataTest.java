@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 @Listeners(AllureTestNGListener.class)
 public class ExtractedWorkflowDataTest {
@@ -121,7 +123,34 @@ public class ExtractedWorkflowDataTest {
         P10_T2_R3_C1("p10-t2-r3-c1"),
         P10_T2_R3_C2("p10-t2-r3-c2"),
         P10_T2_R4_C1("p10-t2-r4-c1"),
-        P10_T2_R4_C2("p10-t2-r4-c2");
+        P10_T2_R4_C2("p10-t2-r4-c2"),
+
+        LEVEL1("level1"),
+        LEVEL1_PAGE1("level1-page1"),
+        LEVEL1_TABLE1("level1-table1"),
+        LEVEL1_FIELD1("level1-field1"),
+
+        LEVEL2("level2"),
+        LEVEL2_PAGE1("level2-page1"),
+        LEVEL2_TABLE1("level2-table1"),
+        LEVEL2_FIELD1("level2-field1"),
+
+        LEVEL3("level3"),
+        LEVEL3_PAGE1("level3-page1"),
+        LEVEL3_TABLE1("level3-table1"),
+        LEVEL3_FIELD1("level3-field1"),
+
+        LEVEL4("level4"),
+        LEVEL4_PAGE1("level4-page1"),
+        LEVEL4_TABLE1("level4-table1"),
+        LEVEL4_FIELD1("level4-field1"),
+
+        NOT_SEARCHED_ROW1("not-searched-row1"),
+        NOT_SEARCHED_FIELD1("not-searched-field1"),
+        NOT_SEARCHED_FIELD2("not-searched-field2"),
+        NOT_SEARCHED_FIELD3("not-searched-field3"),
+        NOT_SEARCHED_PAGE1("not-searched-page1"),
+        ;
 
         private String columnName;
 
@@ -911,6 +940,212 @@ public class ExtractedWorkflowDataTest {
         }
 
         Helper.assertThat(aggregator);
+    }
+
+    @Test
+    public void getDataTest() {
+        ExtractedTableData p2t1 = new ExtractedTableData();
+        p2t1.setTableNameKey(WorkflowKeys.P2_T1);
+
+        ExtractedRowData p2t2r1 = new ExtractedRowData();
+        p2t2r1.addField(WorkflowKeys.P2_T2_R1_C1, "cc");
+
+        ExtractedTableData p2t2 = new ExtractedTableData();
+        p2t2.setTableNameKey(WorkflowKeys.P2_T2);
+        p2t2.addRow(p2t2r1);
+
+        ExtractedRowData p2t3r1 = new ExtractedRowData();
+        p2t3r1.addField(WorkflowKeys.P2_T3_R1_C1, "dd");
+
+        ExtractedRowData p2t3r2 = new ExtractedRowData();
+        p2t3r2.addField(WorkflowKeys.P2_T3_R2_C1, "ee");
+
+        ExtractedTableData p2t3 = new ExtractedTableData();
+        p2t3.setTableNameKey(WorkflowKeys.P2_T3);
+        p2t3.addRow(p2t3r1);
+        p2t3.addRow(p2t3r2);
+
+        ExtractedPageData p2 = new ExtractedPageData();
+        p2.setPageNameKey(WorkflowKeys.P2);
+        p2.addTable(p2t1);
+        p2.addTable(p2t2);
+        p2.addTable(p2t3);
+
+        ExtractedPageData p3 = new ExtractedPageData();
+        p3.setPageNameKey(WorkflowKeys.P3);
+        p3.addField(WorkflowKeys.P3_F1, "ff");
+
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
+
+        ExtractedPageData actualP2 = (ExtractedPageData) actual.get(WorkflowKeys.P2);
+        assertThat("p2", actualP2, equalTo(p2));
+
+        ExtractedTableData actualP2T2 = (ExtractedTableData) actual.get(WorkflowKeys.P2_T2);
+        assertThat("p2t2", actualP2T2, equalTo(p2t2));
+
+        // Only pages are searched recursively
+        String actualP2T3R1 = (String) actual.get(WorkflowKeys.P2_T3_R2_C1);
+        assertThat("p2t3r2", actualP2T3R1, nullValue());
+
+        String actualP3F1 = (String) actual.get(WorkflowKeys.P3_F1);
+        assertThat("p3f1", actualP3F1, equalTo(p3.get(WorkflowKeys.P3_F1)));
+    }
+
+    @Test
+    public void removeDataTest() {
+        ExtractedWorkflowData data = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
+        assertThat("Exists p1", data.get(WorkflowKeys.P1), notNullValue());
+        assertThat("Exists p2", data.get(WorkflowKeys.P2), notNullValue());
+        assertThat("Exists p3", data.get(WorkflowKeys.P3), notNullValue());
+        assertThat("Exists p4", data.get(WorkflowKeys.P4), notNullValue());
+        assertThat("Exists p5", data.get(WorkflowKeys.P5), notNullValue());
+        assertThat("Exists p6", data.get(WorkflowKeys.P6), notNullValue());
+        assertThat("Exists p7", data.get(WorkflowKeys.P7), notNullValue());
+        assertThat("Exists p8", data.get(WorkflowKeys.P8), notNullValue());
+        assertThat("Exists p9", data.get(WorkflowKeys.P9), notNullValue());
+        assertThat("Exists p10", data.get(WorkflowKeys.P10), notNullValue());
+
+        assertThat("Remove p1", data.remove(WorkflowKeys.P1), notNullValue());
+        assertThat("Remove p2", data.remove(WorkflowKeys.P2), notNullValue());
+        assertThat("Remove p3", data.remove(WorkflowKeys.P3), notNullValue());
+        assertThat("Remove p4", data.remove(WorkflowKeys.P4), notNullValue());
+        assertThat("Remove p5", data.remove(WorkflowKeys.P5), notNullValue());
+        assertThat("Remove p6", data.remove(WorkflowKeys.P6), notNullValue());
+        assertThat("Remove p7", data.remove(WorkflowKeys.P7), notNullValue());
+        assertThat("Remove p8", data.remove(WorkflowKeys.P8), notNullValue());
+        assertThat("Remove p9", data.remove(WorkflowKeys.P9), notNullValue());
+        assertThat("Remove p10", data.remove(WorkflowKeys.P10), notNullValue());
+
+        assertThat("Get p1", data.get(WorkflowKeys.P1), nullValue());
+        assertThat("Get p2", data.get(WorkflowKeys.P2), nullValue());
+        assertThat("Get p3", data.get(WorkflowKeys.P3), nullValue());
+        assertThat("Get p4", data.get(WorkflowKeys.P4), nullValue());
+        assertThat("Get p5", data.get(WorkflowKeys.P5), nullValue());
+        assertThat("Get p6", data.get(WorkflowKeys.P6), nullValue());
+        assertThat("Get p7", data.get(WorkflowKeys.P7), nullValue());
+        assertThat("Get p8", data.get(WorkflowKeys.P8), nullValue());
+        assertThat("Get p9", data.get(WorkflowKeys.P9), nullValue());
+        assertThat("Get p10", data.get(WorkflowKeys.P10), nullValue());
+
+        assertThat("Remove Again p1", data.remove(WorkflowKeys.P1), nullValue());
+        assertThat("Remove Again p2", data.remove(WorkflowKeys.P2), nullValue());
+        assertThat("Remove Again p3", data.remove(WorkflowKeys.P3), nullValue());
+        assertThat("Remove Again p4", data.remove(WorkflowKeys.P4), nullValue());
+        assertThat("Remove Again p5", data.remove(WorkflowKeys.P5), nullValue());
+        assertThat("Remove Again p6", data.remove(WorkflowKeys.P6), nullValue());
+        assertThat("Remove Again p7", data.remove(WorkflowKeys.P7), nullValue());
+        assertThat("Remove Again p8", data.remove(WorkflowKeys.P8), nullValue());
+        assertThat("Remove Again p9", data.remove(WorkflowKeys.P9), nullValue());
+        assertThat("Remove Again p10", data.remove(WorkflowKeys.P10), nullValue());
+    }
+
+    @Test
+    public void getDataRecursiveTest() {
+        final String level1field1 = "a";
+        final String level2field1 = "bb";
+        final String level3field1 = "ccc";
+        final String level4field1 = "dddd";
+        final String notSearchedField1 = "eeee";
+        final String notSearchedField2 = "ffff";
+        final String notSearchedField3 = "gggg";
+
+        ExtractedPageData notSearchedPage1 = new ExtractedPageData();
+        notSearchedPage1.setPageNameKey(WorkflowKeys.NOT_SEARCHED_ROW1);
+        notSearchedPage1.addField(WorkflowKeys.NOT_SEARCHED_FIELD3, notSearchedField3);
+
+        ExtractedRowData notSearchedRow1 = new ExtractedRowData();
+        notSearchedRow1.addField(WorkflowKeys.NOT_SEARCHED_FIELD1, notSearchedField1);
+        notSearchedRow1.addField(WorkflowKeys.NOT_SEARCHED_FIELD2, notSearchedField2);
+        notSearchedRow1.addField(WorkflowKeys.NOT_SEARCHED_PAGE1, notSearchedPage1);
+
+        ExtractedTableData level4table1 = new ExtractedTableData();
+        level4table1.setTableNameKey(WorkflowKeys.LEVEL4_TABLE1);
+        level4table1.addRow(notSearchedRow1);
+
+        ExtractedPageData level4page1 = new ExtractedPageData();
+        level4page1.setPageNameKey(WorkflowKeys.LEVEL4);
+        level4page1.addField(WorkflowKeys.LEVEL4_FIELD1, level4field1);
+        level4page1.addTable(level4table1);
+
+        ExtractedTableData level3table1 = new ExtractedTableData();
+        level3table1.setTableNameKey(WorkflowKeys.LEVEL3_TABLE1);
+
+        ExtractedPageData level3page1 = new ExtractedPageData();
+        level3page1.setPageNameKey(WorkflowKeys.LEVEL3);
+        level3page1.addField(WorkflowKeys.LEVEL3_FIELD1, level3field1);
+        level3page1.addTable(level3table1);
+        level3page1.addField(WorkflowKeys.LEVEL3_PAGE1, level4page1);
+
+        ExtractedTableData level2table1 = new ExtractedTableData();
+        level2table1.setTableNameKey(WorkflowKeys.LEVEL2_TABLE1);
+
+        ExtractedPageData level2page1 = new ExtractedPageData();
+        level2page1.setPageNameKey(WorkflowKeys.LEVEL2);
+        level2page1.addField(WorkflowKeys.LEVEL2_FIELD1, level2field1);
+        level2page1.addTable(level2table1);
+        level2page1.addField(WorkflowKeys.LEVEL2_PAGE1, level3page1);
+
+        ExtractedTableData level1table1 = new ExtractedTableData();
+        level1table1.setTableNameKey(WorkflowKeys.LEVEL1_TABLE1);
+
+        ExtractedPageData level1page1 = new ExtractedPageData();
+        level1page1.setPageNameKey(WorkflowKeys.LEVEL1);
+        level1page1.addField(WorkflowKeys.LEVEL1_FIELD1, level1field1);
+        level1page1.addTable(level1table1);
+        level1page1.addField(WorkflowKeys.LEVEL1_PAGE1, level2page1);
+
+        ExtractedWorkflowData data = new ExtractedWorkflowData();
+        data.addPage(level1page1);
+
+        assertThat(WorkflowKeys.LEVEL1.getColumnName(), data.get(WorkflowKeys.LEVEL1), equalTo(level1page1));
+        assertThat(WorkflowKeys.LEVEL1_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL1_TABLE1), equalTo(level1table1));
+        assertThat(WorkflowKeys.LEVEL1_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL1_FIELD1), equalTo(level1field1));
+        assertThat(WorkflowKeys.LEVEL1_PAGE1.getColumnName(), data.get(WorkflowKeys.LEVEL1_PAGE1), equalTo(level2page1));
+
+        assertThat(WorkflowKeys.LEVEL2.getColumnName(), data.get(WorkflowKeys.LEVEL2), equalTo(level2page1));
+        assertThat(WorkflowKeys.LEVEL2_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL2_TABLE1), equalTo(level2table1));
+        assertThat(WorkflowKeys.LEVEL2_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL2_FIELD1), equalTo(level2field1));
+        assertThat(WorkflowKeys.LEVEL2_PAGE1.getColumnName(), data.get(WorkflowKeys.LEVEL2_PAGE1), equalTo(level3page1));
+
+        assertThat(WorkflowKeys.LEVEL3.getColumnName(), data.get(WorkflowKeys.LEVEL3), equalTo(level3page1));
+        assertThat(WorkflowKeys.LEVEL3_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL3_TABLE1), equalTo(level3table1));
+        assertThat(WorkflowKeys.LEVEL3_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL3_FIELD1), equalTo(level3field1));
+        assertThat(WorkflowKeys.LEVEL3_PAGE1.getColumnName(), data.get(WorkflowKeys.LEVEL3_PAGE1), equalTo(level4page1));
+
+        assertThat(WorkflowKeys.LEVEL4.getColumnName(), data.get(WorkflowKeys.LEVEL4), equalTo(level4page1));
+        assertThat(WorkflowKeys.LEVEL4_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL4_TABLE1), equalTo(level4table1));
+        assertThat(WorkflowKeys.LEVEL4_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL4_FIELD1), equalTo(level4field1));
+
+        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD1.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_FIELD1), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD2.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_FIELD2), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD3.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_FIELD3), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_PAGE1.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_PAGE1), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_ROW1.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_ROW1), nullValue());
+
+        //
+        // Removal Tests
+        //
+        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD1.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_FIELD1), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD2.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_FIELD2), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD3.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_FIELD3), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_PAGE1.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_PAGE1), nullValue());
+        assertThat(WorkflowKeys.NOT_SEARCHED_ROW1.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_ROW1), nullValue());
+
+        assertThat(WorkflowKeys.LEVEL4_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL4_FIELD1), equalTo(level4field1));
+        assertThat(WorkflowKeys.LEVEL4_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL4_TABLE1), equalTo(level4table1));
+
+        assertThat(WorkflowKeys.LEVEL3_PAGE1.getColumnName(), data.remove(WorkflowKeys.LEVEL3_PAGE1), equalTo(level4page1));
+        assertThat(WorkflowKeys.LEVEL3_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL3_FIELD1), equalTo(level3field1));
+        assertThat(WorkflowKeys.LEVEL3_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL3_TABLE1), equalTo(level3table1));
+        assertThat(WorkflowKeys.LEVEL3.getColumnName(), data.remove(WorkflowKeys.LEVEL3), equalTo(level3page1));
+
+        assertThat(WorkflowKeys.LEVEL2_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL2_FIELD1), equalTo(level2field1));
+        assertThat(WorkflowKeys.LEVEL2_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL2_TABLE1), equalTo(level2table1));
+
+        assertThat(WorkflowKeys.LEVEL1_PAGE1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_PAGE1), equalTo(level2page1));
+        assertThat(WorkflowKeys.LEVEL1_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_FIELD1), equalTo(level1field1));
+        assertThat(WorkflowKeys.LEVEL1_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_TABLE1), equalTo(level1table1));
+        assertThat(WorkflowKeys.LEVEL1.getColumnName(), data.remove(WorkflowKeys.LEVEL1), equalTo(level1page1));
     }
 
 }
