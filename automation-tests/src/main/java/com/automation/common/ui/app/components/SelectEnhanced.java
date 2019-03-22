@@ -54,7 +54,7 @@ public class SelectEnhanced extends PageComponent {
     /**
      * Drop Down selection options
      */
-    private enum Selection {
+    protected enum Selection {
         VISIBLE_TEXT,
         VALUE_HTML,
         INDEX,
@@ -71,7 +71,7 @@ public class SelectEnhanced extends PageComponent {
          * @param defaultOption - Default Option if no match
          * @return Selection
          */
-        private static Selection to(String value, Selection defaultOption) {
+        public static Selection to(String value, Selection defaultOption) {
             if (value == null || value.equals("")) {
                 return defaultOption;
             }
@@ -88,13 +88,13 @@ public class SelectEnhanced extends PageComponent {
     }
 
     @XStreamOmitField
-    private Select select; // Drop down element
+    protected Select select; // Drop down element
 
     @XStreamOmitField
     private Selection selection; // How to select drop down value
 
     @XStreamOmitField
-    private String rawSelectionData; // If applicable, the value to selected as a String
+    protected String rawSelectionData; // If applicable, the value to selected as a String
 
     @XStreamOmitField
     private int minRandomIndex; // If applicable, minimum random index to use
@@ -118,7 +118,7 @@ public class SelectEnhanced extends PageComponent {
      *
      * @return Selection
      */
-    private Selection getSelection() {
+    protected Selection getSelection() {
         if (selection == null) {
             parseDataAndInitializeFields();
         }
@@ -179,7 +179,7 @@ public class SelectEnhanced extends PageComponent {
     }
 
     public SelectEnhanced() {
-        //
+        super();
     }
 
     public SelectEnhanced(WebElement element) {
