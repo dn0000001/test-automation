@@ -1,11 +1,16 @@
 package com.taf.automation.ui.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.openqa.selenium.By;
+import ui.auto.core.pagecomponent.PageComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * This class provides utility methods to work with locators
@@ -39,6 +44,20 @@ public class LocatorUtils {
         }
 
         return processed;
+    }
+
+    /**
+     * Set Locator for the component
+     *
+     * @param component - Component to set locator
+     * @param locator   - Locator to be set using reflection
+     */
+    public static void setLocator(PageComponent component, By locator) {
+        try {
+            FieldUtils.writeField(component, "selector", locator, true);
+        } catch (Exception ex) {
+            assertThat("Could not set 'selector' for component due to error:  " + ex.getMessage(), false);
+        }
     }
 
 }

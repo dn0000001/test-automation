@@ -1,10 +1,8 @@
 package com.automation.common.ui.app.components;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
+import com.taf.automation.ui.support.LocatorUtils;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Component to work with a PrimeFaces Radio Button Group
@@ -22,11 +20,7 @@ public class PrimeFacesRadioButtonGroup extends PageComponent {
         component.setSelection(RadioButtonGroup.Selection.REGEX);
         initComponentDataVariables();
         component.initializeData(componentData, componentInitialData, componentExpectedData);
-        try {
-            FieldUtils.writeField(component, "selector", getLocator(), true);
-        } catch (Exception ex) {
-            assertThat("Could not set 'selector' for component due to error:  " + ex.getMessage(), false);
-        }
+        LocatorUtils.setLocator(component, getLocator());
     }
 
     /**
