@@ -27,12 +27,11 @@ public class MicroServiceResponse<T> implements GenericHttpResponse<T> {
 
         try {
             rawJSON = EntityUtils.toString(response.getEntity());
-            String attachName = "MICRO SERVICE RESPONSE ENTITY";
+            JsonUtils.attachJsonToReport(rawJSON, "RESPONSE");
             if (responseEntity != null) {
                 if (status.getStatusCode() < 400) {
                     entity = getEntityFromJSON(responseEntity, rawJSON);
                 } else {
-                    attachName = "MICRO SERVICE RESPONSE ERROR";
                     if (StringUtils.startsWithIgnoreCase(rawJSON, "<html>")) {
                         error = new JsonError();
                         error.setError(rawJSON);
@@ -41,8 +40,6 @@ public class MicroServiceResponse<T> implements GenericHttpResponse<T> {
                     }
                 }
             }
-
-            JsonUtils.attachJsonToReport(rawJSON, attachName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
