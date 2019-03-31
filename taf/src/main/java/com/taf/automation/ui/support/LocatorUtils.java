@@ -7,6 +7,7 @@ import ui.auto.core.pagecomponent.PageComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * This class provides utility methods to work with locators
  */
 public class LocatorUtils {
+    private static final String ENDS_WITH = "substring(${text}, string-length(${text}) - string-length(${suffix}) + 1) = ${suffix}";
+
     private LocatorUtils() {
         // Prevent initialization of class as all public methods should be static
     }
@@ -58,6 +61,52 @@ public class LocatorUtils {
         } catch (Exception ex) {
             assertThat("Could not set 'selector' for component due to error:  " + ex.getMessage(), false);
         }
+    }
+
+    /**
+     * Returns an xpath 1.0 compatible statement for ends with check<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>
+     * In xpath 2.0, there exists a function to check this.  However, most browsers do not support this version yet.
+     * </LI>
+     * <LI>
+     * The surround text/suffix should be a quote (or double quote) if no evaluation is required for the value.
+     * In this case, the value is treated as a string.
+     * </LI>
+     * <LI>
+     * The surround text/suffix should be empty (or null) if further evaluation is required for the value.
+     * For example, if it is an attribute (@data-bind) which needs to be evaluated.
+     * </LI>
+     * </OL>
+     * <B>Example:</B><BR>
+     * You want to find all elements that have the attribute data-bind and ends with the string LastName.  The xpath 1.0
+     * for this in the console would be the following line:
+     * $x("//*[substring(@data-bind, string-length(@data-bind) - string-length('LastName') + 1) = 'LastName']");
+     * <BR>
+     * This method can be used to generate the xpath 1.0 line with the following code:
+     * <BR>
+     * String endsWith = "$x(\"//*[" + LocatorUtils.endsWith("@data-bind", "", "LastName", "'") + "]\");";
+     * <BR>
+     *
+     * @param text           - Text string to check if it ends with the specified suffix
+     * @param surroundText   - Surround the text with this value to escape the value
+     * @param suffix         - The suffix that the string should end with
+     * @param surroundSuffix - Surround the suffix with this value to escape the value
+     * @return an xpath 1.0 compatible statement to be used
+     */
+    public static String endsWith(String text, String surroundText, String suffix, String surroundSuffix) {
+        String escapedTextWithValue = StringUtils.defaultString(surroundText);
+        String escapedText = escapedTextWithValue + text + escapedTextWithValue;
+
+        String escapedSuffixWithValue = StringUtils.defaultString(surroundSuffix);
+        String escapedSuffix = escapedSuffixWithValue + suffix + escapedSuffixWithValue;
+
+        Map<String, String> substitutions = new HashMap<>();
+        substitutions.put("text", escapedText);
+        substitutions.put("suffix", escapedSuffix);
+
+        return processForSubstitutions(ENDS_WITH, substitutions);
     }
 
 }
