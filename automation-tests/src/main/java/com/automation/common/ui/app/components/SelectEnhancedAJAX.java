@@ -1,14 +1,19 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.LocatorUtils;
 import com.taf.automation.ui.support.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import ui.auto.core.data.DataTypes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -39,6 +44,8 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class SelectEnhancedAJAX extends SelectEnhanced {
     private WebDriver driver;
+    private Map<String, String> substitutions;
+    private By staticLocator;
 
     public SelectEnhancedAJAX() {
         super();
@@ -50,7 +57,7 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
 
     @Override
     protected void init() {
-        select = new Select(getDriver().findElement(getLocator()));
+        getDriver();
     }
 
     private WebDriver getDriver() {
@@ -61,10 +68,45 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         return driver;
     }
 
+    private void initSelect() {
+        select = new Select(getDriver().findElement(getStaticLocator()));
+    }
+
+    private By getStaticLocator() {
+        if (staticLocator == null) {
+            staticLocator = LocatorUtils.processForSubstitutions(getLocator(), getSubstitutions());
+        }
+
+        return staticLocator;
+    }
+
+    private Map<String, String> getSubstitutions() {
+        if (substitutions == null) {
+            substitutions = new HashMap<>();
+        }
+
+        return substitutions;
+    }
+
+    public void setSubstitutions(Map<String, String> substitutions) {
+        this.substitutions = substitutions;
+    }
+
+    public void resetStaticLocator() {
+        this.staticLocator = null;
+    }
+
+    @Override
+    public String getValue() {
+        initSelect();
+        return super.getValue();
+    }
+
     @Override
     public void setValue() {
+        initSelect();
         boolean ajax = triggersAJAX();
-        WebElement element = (ajax) ? getDriver().findElement(getLocator()) : null;
+        WebElement element = (ajax) ? getDriver().findElement(getStaticLocator()) : null;
         super.setValue();
         if (ajax) {
             Utils.getWebDriverWait().until(ExpectedConditions.stalenessOf(element));
@@ -109,6 +151,12 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         }
 
         return !noChange;
+    }
+
+    @Override
+    public void validateData(DataTypes validationMethod) {
+        initSelect();
+        super.validateData(validationMethod);
     }
 
 }

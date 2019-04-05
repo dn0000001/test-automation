@@ -7,6 +7,7 @@ public class RegExUtils {
     public static final String NOT_ALPHANUMERIC = "\\W";
     public static final String NOT_DIGITS = "\\D";
     public static final String HTTP = "http.*";
+    public static final String BY_PREFIX = "^By.*: ";
 
     /**
      * Matches anything including newline.  Use of this should be limited.<BR>

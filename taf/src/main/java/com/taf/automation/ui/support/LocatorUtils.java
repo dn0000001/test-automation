@@ -24,6 +24,44 @@ public class LocatorUtils {
     }
 
     /**
+     * The method extracts the locator string from the By variable. Then it looks for instances of ${key} and
+     * if there is a key in the substitutions map that is equal to 'key', the substring ${key} is replaced by
+     * the value mapped to 'key'.  Finally, the processed locator string is used to create the same By locator type.
+     *
+     * @param locator       - By locator
+     * @param substitutions - Substitutions map
+     * @return By
+     */
+    public static By processForSubstitutions(final By locator, final Map<String, String> substitutions) {
+        if (substitutions == null || substitutions.isEmpty()) {
+            return locator;
+        }
+
+        String extractedLocator = locator.toString().replaceFirst(RegExUtils.BY_PREFIX, "");
+        String processedLocator = processForSubstitutions(extractedLocator, substitutions);
+        if (locator instanceof By.ById) {
+            return By.id(processedLocator);
+        } else if (locator instanceof By.ByCssSelector) {
+            return By.cssSelector(processedLocator);
+        } else if (locator instanceof By.ByXPath) {
+            return By.xpath(processedLocator);
+        } else if (locator instanceof By.ByName) {
+            return By.name(processedLocator);
+        } else if (locator instanceof By.ByLinkText) {
+            return By.linkText(processedLocator);
+        } else if (locator instanceof By.ByPartialLinkText) {
+            return By.partialLinkText(processedLocator);
+        } else if (locator instanceof By.ByTagName) {
+            return By.tagName(processedLocator);
+        } else if (locator instanceof By.ByClassName) {
+            return By.className(processedLocator);
+        } else {
+            assertThat("Unsupported By locator:  " + locator.toString(), false);
+            return By.id(processedLocator);
+        }
+    }
+
+    /**
      * The method looks for instances of ${key} and if there is a key in the substitutions map that is equal to 'key',
      * the substring ${key} is replaced by the value mapped to 'key'
      *
