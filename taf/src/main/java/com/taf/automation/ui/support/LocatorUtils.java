@@ -1,10 +1,14 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.api.ApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.pagefactory.ByAll;
+import org.openqa.selenium.support.pagefactory.ByChained;
 import ui.auto.core.pagecomponent.PageComponent;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,9 +59,40 @@ public class LocatorUtils {
             return By.tagName(processedLocator);
         } else if (locator instanceof By.ByClassName) {
             return By.className(processedLocator);
+        } else if (locator instanceof ByAll || locator instanceof ByChained) {
+            Class<?> cls = (locator instanceof ByAll) ? ByAll.class : ByChained.class;
+            Field field = FieldUtils.getDeclaredField(cls, "bys", true);
+            By[] bys = (By[]) ApiUtils.readField(field, locator);
+            return processForSubstitutions(locator, bys, substitutions);
         } else {
             assertThat("Unsupported By locator:  " + locator.toString(), false);
             return By.id(processedLocator);
+        }
+    }
+
+    /**
+     * The method processes the array of locators and uses the locator type parameter to create the desired locator
+     *
+     * @param locatorType   - Locator Type to be created
+     * @param locators      - The locators from the locator type to be processed
+     * @param substitutions - Substitutions map
+     * @return By
+     */
+    private static By processForSubstitutions(By locatorType, By[] locators, Map<String, String> substitutions) {
+        if (!(locatorType instanceof ByAll) && !(locatorType instanceof ByChained)) {
+            assertThat("Unsupported locator type:  " + locatorType.toString(), false);
+        }
+
+        List<By> processed = new ArrayList<>();
+        for (By locator : locators) {
+            By processedItem = processForSubstitutions(locator, substitutions);
+            processed.add(processedItem);
+        }
+
+        if (locatorType instanceof ByAll) {
+            return new ByAll(processed.toArray(new By[0]));
+        } else {
+            return new ByChained(processed.toArray(new By[0]));
         }
     }
 
