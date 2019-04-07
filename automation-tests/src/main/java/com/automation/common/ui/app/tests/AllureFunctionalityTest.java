@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.TNHC_DO;
+import com.automation.common.ui.app.pageObjects.TNHC_LandingPage;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.testng.Retry;
@@ -37,6 +38,10 @@ public class AllureFunctionalityTest extends TestNGBase {
     public void performTest(@Optional("data/ui/TNHC_TestData.xml") String dataSet, @Optional("true") String status) {
         // Attachment test
         new TNHC_DO(getContext()).fromResource(dataSet);
+
+        // Test that page-components library still works
+        performPageComponentLibraryConflictCheck();
+
         getContext().getDriver().get(TestProperties.getInstance().getURL());
 
         performLogin();
@@ -47,6 +52,12 @@ public class AllureFunctionalityTest extends TestNGBase {
 
         generateNestedSteps();
         performSignOut();
+    }
+
+    @Step("Perform page-component library conflict check")
+    private void performPageComponentLibraryConflictCheck() {
+        TNHC_LandingPage page = new TNHC_LandingPage();
+        page.initPage(getContext(), true);
     }
 
     @Step("Perform Login")
