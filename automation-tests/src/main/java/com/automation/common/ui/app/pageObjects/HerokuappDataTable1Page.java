@@ -44,7 +44,7 @@ public class HerokuappDataTable1Page extends PageObjectV2 {
             return cached;
         }
 
-        List<HerokuappRowTable1> all = new ArrayList<>();
+        cached = new ArrayList<>();
 
         HerokuappColumnPositionsExtractor extractor = new HerokuappColumnPositionsExtractor();
         Map<String, String> columnPositions = extractor.getMap();
@@ -60,10 +60,10 @@ public class HerokuappDataTable1Page extends PageObjectV2 {
             row.updateRowIdKey(randomIdValue);
             row.updateSubstitutions(substitutions);
             row.initPage(getContext());
-            all.add(row);
+            cached.add(row);
         }
 
-        return all;
+        return cached;
     }
 
     public HerokuappDataTable1Page reset() {
