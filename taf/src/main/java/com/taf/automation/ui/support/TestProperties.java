@@ -151,6 +151,10 @@ public class TestProperties {
     @HideInReport
     private String dbPassword;
 
+    @Property("db.integrated.security")
+    @HideInReport
+    private boolean dbIntegratedSecurity = false;
+
     @Property("db.name")
     private String dbName; // Database (name) to use
 
@@ -520,6 +524,10 @@ public class TestProperties {
 
     public String getDbPassword() {
         return dbPassword;
+    }
+
+    public boolean isDbIntegratedSecurity() {
+        return dbIntegratedSecurity;
     }
 
     public String getDbName() {
