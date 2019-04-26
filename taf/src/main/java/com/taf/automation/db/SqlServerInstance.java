@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,7 +25,7 @@ public class SqlServerInstance extends DBInstance {
     private static final String DLL = "sqljdbc_auth.dll";
     private static final String DLL_RESOURCE_FOLDER = "sql-auth/";
     private static final String INSTALL_DLL = HOME + SEPARATOR + "webdrivers" + SEPARATOR + "sql-auth";
-    private static final String DLL_PROPERTY = "java.library.path";
+    private static final String JAVA_LIBRARY_PATH = "java.library.path";
 
     private SqlServerInstance() {
         resetDBConnectionToDefault();
@@ -41,7 +42,12 @@ public class SqlServerInstance extends DBInstance {
     @Override
     protected void createDBConnection(int connectionTimeout, int socketTimeout, int queryTimeout) {
         TestProperties props = TestProperties.getInstance();
-        String connectionString = "jdbc:sqlserver://" + props.getDbHost() + ":" + props.getDbPort() + ";";
+        String connectionString = "jdbc:sqlserver://" + props.getDbHost();
+        if (props.getDbPort() > 0) {
+            connectionString += ":" + props.getDbPort();
+        }
+
+        connectionString += ";";
         if (props.getDbName() != null) {
             connectionString += "databaseName=" + props.getDbName() + ";";
         }
@@ -70,9 +76,16 @@ public class SqlServerInstance extends DBInstance {
             URL source = Thread.currentThread().getContextClassLoader().getResource(getResource());
             File destination = new File(INSTALL_DLL + SEPARATOR + DLL);
             FileUtils.copyURLToFile(source, destination);
-            System.setProperty(DLL_PROPERTY, destination.getAbsolutePath());
+
+            String path = INSTALL_DLL + ";" + System.getProperty(JAVA_LIBRARY_PATH);
+            System.setProperty(JAVA_LIBRARY_PATH, path);
+
+            // Note:  java.library.path is only read once by the JVM.  This is a workaround to get it read again
+            final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
+            sysPathsField.setAccessible(true);
+            sysPathsField.set(null, null);
         } catch (Exception ex) {
-            String reason = "Could not copy DLL due to exception:  " + ex.getMessage();
+            String reason = "Could not setup for integrated security due to exception:  " + ex.getMessage();
             LOG.error(reason);
             assertThat(reason, false);
         } finally {
