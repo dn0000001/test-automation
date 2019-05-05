@@ -6,6 +6,7 @@ import com.taf.automation.api.network.MultiSshSession;
 import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import net.jodah.failsafe.Failsafe;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -182,7 +183,7 @@ public class Helper {
 
         boolean validationFlag = false;
         for (int i = 0; i < retries; i++) {
-            component.setValue();
+            Failsafe.with(Utils.getWriteValueRetryPolicy()).run(component::setValue);
             if (!validate) {
                 validationFlag = true;
                 break;

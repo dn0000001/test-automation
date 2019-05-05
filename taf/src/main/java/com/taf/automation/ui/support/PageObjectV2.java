@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.By;
@@ -247,10 +248,7 @@ public class PageObjectV2 extends PageObject {
         int attempt = 0;
         boolean validated;
         do {
-            // We could catch any exception here but we are mimicking functionality of PageObject.setElementValue
-            // and this method does not do that
-            component.setValue();
-
+            Failsafe.with(Utils.getWriteValueRetryPolicy()).run(component::setValue);
             if (validationMethod != null) {
                 try {
                     // Execute validation using the component specific logic

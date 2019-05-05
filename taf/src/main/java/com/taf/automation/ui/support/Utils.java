@@ -16,6 +16,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
@@ -950,6 +951,25 @@ public class Utils {
      */
     public static RetryPolicy getPollingRetryPolicy() {
         return new RetryPolicy()
+                .retryOn(Exception.class, AssertionError.class)
+                .withMaxDuration(TestProperties.getInstance().getElementTimeout(), TimeUnit.SECONDS)
+                .withDelay(1, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Get RetryPolicy for writing element values<BR>
+     * <B>Notes: </B>
+     * <UL>
+     * <LI>The max duration is from the TestProperties class</LI>
+     * <LI>Does not retry if stale element exception occurs</LI>
+     * <LI>The RetryPolicy can be used with 'Failsafe.with' to retry writing an element value</LI>
+     * </UL>
+     *
+     * @return RetryPolicy
+     */
+    public static RetryPolicy getWriteValueRetryPolicy() {
+        return new RetryPolicy()
+                .abortOn(StaleElementReferenceException.class)
                 .retryOn(Exception.class, AssertionError.class)
                 .withMaxDuration(TestProperties.getInstance().getElementTimeout(), TimeUnit.SECONDS)
                 .withDelay(1, TimeUnit.SECONDS);
