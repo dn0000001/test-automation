@@ -1,5 +1,9 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.converters.Credentials;
+import com.taf.automation.ui.support.converters.CreditCard;
+import com.taf.automation.ui.support.converters.DynamicCredentials;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -34,13 +38,13 @@ public class TestContext extends PageComponentContext {
             setAlias("today_minus_" + i, sdf.format(DateUtils.addDays(today, -i)));
         }
 
-        Credentials[] credentials = props.getAppCredentials();
+        Credentials[] credentials = ObjectUtils.defaultIfNull(props.getAppCredentials(), new Credentials[0]);
         for (int i = 0; i < credentials.length; i++) {
             setAlias("email_" + (i + 1), credentials[i].getEmailOrName());
             setAlias("password_" + (i + 1), credentials[i].getPassword());
         }
 
-        CreditCard[] creditCards = props.getCreditCards();
+        CreditCard[] creditCards = ObjectUtils.defaultIfNull(props.getCreditCards(), new CreditCard[0]);
         for (int i = 0; i < creditCards.length; i++) {
             String num = (i > 0) ? "_" + i + 1 : "";
             setAlias("card_number" + num, creditCards[i].getNumber());
@@ -48,6 +52,13 @@ public class TestContext extends PageComponentContext {
             setAlias("card_year" + num, creditCards[i].getYear());
             setAlias("card_code" + num, creditCards[i].getCode());
             setAlias("card_name" + num, creditCards[i].getCardHolder());
+        }
+
+        DynamicCredentials[] dynamicCredentials = ObjectUtils.defaultIfNull(props.getDynamicCredentials(), new DynamicCredentials[0]);
+        for (DynamicCredentials item : dynamicCredentials) {
+            setAlias("user_" + item.getRole(), item.getUser());
+            String password = (item.isDecrypt()) ? new CryptoUtils().decrypt(item.getPassword()) : item.getPassword();
+            setAlias("password_" + item.getRole(), password);
         }
     }
 
