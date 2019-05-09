@@ -4,16 +4,19 @@ import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.api.clients.ApiLoginSession;
 import com.taf.automation.api.clients.UserLogin;
 import com.taf.automation.api.rest.GenericHttpResponse;
-import com.taf.automation.ui.support.Credentials;
-import com.taf.automation.ui.support.CreditCard;
+import com.taf.automation.ui.support.CryptoUtils;
 import com.taf.automation.ui.support.DataPersistenceV2;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.converters.Credentials;
+import com.taf.automation.ui.support.converters.CreditCard;
+import com.taf.automation.ui.support.converters.DynamicCredentials;
 import com.taf.automation.ui.support.csv.CsvTestData;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.Data;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -77,13 +80,13 @@ public class ApiDomainObject extends DataPersistenceV2 {
             dataAliases.put("today_minus_" + i, sdf.format(DateUtils.addDays(today, -i)));
         }
 
-        Credentials[] credentials = props.getAppCredentials();
+        Credentials[] credentials = ObjectUtils.defaultIfNull(props.getAppCredentials(), new Credentials[0]);
         for (int i = 0; i < credentials.length; i++) {
             dataAliases.put("email_" + (i + 1), credentials[i].getEmailOrName());
             dataAliases.put("password_" + (i + 1), credentials[i].getPassword());
         }
 
-        CreditCard[] creditCards = props.getCreditCards();
+        CreditCard[] creditCards = ObjectUtils.defaultIfNull(props.getCreditCards(), new CreditCard[0]);
         for (int i = 0; i < creditCards.length; i++) {
             String num = (i > 0) ? "_" + i + 1 : "";
             dataAliases.put("card_number" + num, creditCards[i].getNumber());
@@ -91,6 +94,13 @@ public class ApiDomainObject extends DataPersistenceV2 {
             dataAliases.put("card_year" + num, creditCards[i].getYear());
             dataAliases.put("card_code" + num, creditCards[i].getCode());
             dataAliases.put("card_name" + num, creditCards[i].getCardHolder());
+        }
+
+        DynamicCredentials[] dynamicCredentials = ObjectUtils.defaultIfNull(props.getDynamicCredentials(), new DynamicCredentials[0]);
+        for (DynamicCredentials item : dynamicCredentials) {
+            dataAliases.put("user_" + item.getRole(), item.getUser());
+            String password = (item.isDecrypt()) ? new CryptoUtils().decrypt(item.getPassword()) : item.getPassword();
+            dataAliases.put("password_" + item.getRole(), password);
         }
     }
 

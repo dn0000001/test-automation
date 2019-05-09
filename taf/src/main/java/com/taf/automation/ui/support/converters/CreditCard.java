@@ -1,4 +1,4 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.converters;
 
 public class CreditCard {
     private String number;

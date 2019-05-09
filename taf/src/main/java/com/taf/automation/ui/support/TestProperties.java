@@ -1,5 +1,13 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.converters.Credentials;
+import com.taf.automation.ui.support.converters.CredentialsObjectPropertyConverter;
+import com.taf.automation.ui.support.converters.CredentialsPropertyConverter;
+import com.taf.automation.ui.support.converters.CreditCard;
+import com.taf.automation.ui.support.converters.CreditCardPropertyConverter;
+import com.taf.automation.ui.support.converters.DynamicCredentials;
+import com.taf.automation.ui.support.converters.DynamicCredentialsPropertyConverter;
+import com.taf.automation.ui.support.converters.EnumPropertyConverter;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
@@ -97,6 +105,11 @@ public class TestProperties {
     @Property("app.creditcard.info")
     @HideInReport
     private CreditCard[] appCreditCards;
+
+    @Use(DynamicCredentialsPropertyConverter.class)
+    @Property("dynamic.credentials")
+    @HideInReport
+    private DynamicCredentials[] dynamicCredentials;
 
     @Use(CredentialsPropertyConverter.class)
     @Property("app.credentials")
@@ -407,6 +420,10 @@ public class TestProperties {
 
     public CreditCard[] getCreditCards() {
         return appCreditCards;
+    }
+
+    public DynamicCredentials[] getDynamicCredentials() {
+        return dynamicCredentials;
     }
 
     public Credentials[] getAppCredentials() {
