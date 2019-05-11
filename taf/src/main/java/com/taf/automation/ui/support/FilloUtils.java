@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
@@ -255,6 +258,33 @@ public class FilloUtils {
     }
 
     /**
+     * Add a new sheet to an existing excel file
+     *
+     * @param filename     - Excel file where new sheet should be added
+     * @param newSheetName - New Sheet Name
+     */
+    public static void appendSheetToExcel(String filename, String newSheetName) {
+        assertThat("Unable to add null sheetName to file[" + filename + "]", newSheetName, not(isEmptyOrNullString()));
+        try (
+                FileInputStream in = new FileInputStream(new File(filename));
+                Workbook wb = new XSSFWorkbook(in)
+        ) {
+            String errorMsg = "SheetName already exists exists in File[" + filename + "]";
+            for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
+                assertThat(errorMsg, wb.getSheetName(iSheet), not(equalTo(newSheetName)));
+            }
+
+            wb.createSheet(WorkbookUtil.createSafeSheetName(newSheetName));
+            in.close();
+            OutputStream fileOut = new FileOutputStream(filename);
+            wb.write(fileOut);
+
+        } catch (Exception ex) {
+            assertThat("Could not append to Excel file due to error:  " + ex.getMessage(), false);
+        }
+    }
+
+    /**
      * Create new Excel (xlsx) file
      *
      * @param filename      - Location &amp; File to write to
@@ -305,6 +335,43 @@ public class FilloUtils {
             wb.write(fileOut);
         } catch (Exception ex) {
             assertThat("Could not create Excel file due to error:  " + ex.getMessage(), false);
+        }
+    }
+
+    /**
+     * Set Header to Excel sheet
+     *
+     * @param filename       - Location &amp; File to write to
+     * @param workSheet      - Excel Worksheet to create
+     * @param headers        - Headers to be written
+     * @param headerRowIndex - The row where the header should be placed
+     */
+    public static void setSheetHeader(
+            String filename,
+            String workSheet,
+            String[] headers,
+            int headerRowIndex
+    ) {
+        try (FileInputStream in = new FileInputStream(new File(filename));
+             Workbook wb = new XSSFWorkbook(in)
+        ) {
+            Sheet sheet = wb.getSheet(workSheet);
+
+            // Create header row & populate
+            Row row = sheet.createRow(headerRowIndex);
+
+            int cells = 0;
+            for (String header : headers) {
+                Cell cell = row.createCell(cells);
+                cell.setCellValue(header);
+                cells++;
+            }
+
+            // Write file
+            OutputStream fileOut = new FileOutputStream(filename);
+            wb.write(fileOut);
+        } catch (Exception ex) {
+            assertThat("Could not add Header Excel Sheet due to error:  " + ex.getMessage(), false);
         }
     }
 
