@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * This class has custom ExpectedConditions and any new additions to the ExpectedConditions that are later than our current version.<BR>
@@ -149,6 +150,51 @@ public class ExpectedConditionsUtil {
             @Override
             public String toString() {
                 return String.format("number to be more than \"%s\". Current number: \"%s\"", number, currentNumber);
+            }
+        };
+    }
+
+    /**
+     * An expectation for checking number of WebElements with given locator being greater than defined number
+     * and matching the predicate<BR>
+     * <B>Example to get all element with attribute that id starts with lang:</B><BR>
+     * List<WebElement> all = Utils.getWebDriverWait().until(ExpectedConditionsUtil.numberOfElementsToBeMoreThan(
+     * By.xpath("//input"),
+     * 0,
+     * e -> StringUtils.startsWith(e.getAttribute("id"), "lang"))
+     * );
+     *
+     * @param locator - used to find the elements
+     * @param number  - used to define minimum number of elements
+     * @param include - predicate to check if the element is to be included
+     * @return Boolean true when size of elements list is greater than specified and matching the predicate
+     */
+    public static ExpectedCondition<List<WebElement>> numberOfElementsToBeMoreThan(
+            final By locator,
+            final Integer number,
+            final Predicate<WebElement> include
+    ) {
+        return new ExpectedCondition<List<WebElement>>() {
+            private Integer currentNumber = 0;
+
+            @Override
+            public List<WebElement> apply(WebDriver driver) {
+                List<WebElement> elementsThatMatchPredicate = new ArrayList<>();
+
+                List<WebElement> elements = driver.findElements(locator);
+                for (WebElement item : elements) {
+                    if (include.test(item)) {
+                        elementsThatMatchPredicate.add(item);
+                    }
+                }
+
+                currentNumber = elementsThatMatchPredicate.size();
+                return currentNumber > number ? elementsThatMatchPredicate : null;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("number of elements to be more than %s with predicate. Current number: %s", number, currentNumber);
             }
         };
     }
