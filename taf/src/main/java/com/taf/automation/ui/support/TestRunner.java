@@ -66,10 +66,16 @@ public class TestRunner {
     }
 
     public void generateReport() throws ZipException, IOException {
-        Path reportDirectory = new File(reportFolder).toPath();
+        generateReport(reportFolder, resultsFolder);
+    }
+
+    public void generateReport(String outputFolder, String... inputFolders) throws ZipException, IOException {
+        Path reportDirectory = new File(outputFolder).toPath();
 
         List<Path> resultsDirectories = new ArrayList<>();
-        resultsDirectories.add(new File(resultsFolder).toPath());
+        for (String inputFolder : inputFolders) {
+            resultsDirectories.add(new File(inputFolder).toPath());
+        }
 
         extractFilesForAllure2ReportGeneration();
         new Commands(REPORT_CLI.toPath()).generate(reportDirectory, resultsDirectories, false, new ConfigOptions());
