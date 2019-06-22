@@ -1,11 +1,16 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.LocatorUtils;
 import com.taf.automation.ui.support.Utils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -15,6 +20,8 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class TabOffTextBox extends PageComponent {
     private WebDriver driver;
+    private Map<String, String> substitutions;
+    private By staticLocator;
 
     public TabOffTextBox() {
         super();
@@ -37,6 +44,30 @@ public class TabOffTextBox extends PageComponent {
         return driver;
     }
 
+    private By getStaticLocator() {
+        if (staticLocator == null) {
+            staticLocator = LocatorUtils.processForSubstitutions(getLocator(), getSubstitutions());
+        }
+
+        return staticLocator;
+    }
+
+    private Map<String, String> getSubstitutions() {
+        if (substitutions == null) {
+            substitutions = new HashMap<>();
+        }
+
+        return substitutions;
+    }
+
+    public void setSubstitutions(Map<String, String> substitutions) {
+        this.substitutions = substitutions;
+    }
+
+    public void resetStaticLocator() {
+        this.staticLocator = null;
+    }
+
     @Override
     public void setValue() {
         setValue(getData());
@@ -49,9 +80,9 @@ public class TabOffTextBox extends PageComponent {
 
     @Override
     public String getValue() {
-        String value = getDriver().findElement(getLocator()).getAttribute("value");
+        String value = getDriver().findElement(getStaticLocator()).getAttribute("value");
         if (value == null) {
-            value = getDriver().findElement(getLocator()).getText();
+            value = getDriver().findElement(getStaticLocator()).getText();
         }
 
         return value;
