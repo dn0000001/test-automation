@@ -4,6 +4,21 @@
     <aliases>
         <player>$[CUSTOM_LIST('null', 'zzz,yyy,www,ttt')]</player>
         <value>duplicated</value>
+
+        <!-- Test the generators -->
+        <AddressGenerator>$[ADDRESS('{#} {S}, {T} {K}, {C}','null')]</AddressGenerator>
+        <AlphaNumericGenerator>$[ALPHANUMERIC('{a}{b}{c}{d}{e}', 'null')]</AlphaNumericGenerator>
+        <CustomListGenerator>$[CUSTOM_LIST('null', 'aaa, bbb, ccc')]</CustomListGenerator>
+        <DateGenerator>$[DATE('dd MMM yyyy','2016/01/01|2016/12/31|yyyy/MM/dd')]</DateGenerator>
+        <HumanNameGenerator>$[HUMAN_NAMES('{S}','null')]</HumanNameGenerator>
+        <WordGenerator>$[WORD('|A| {b} {c}','null')]</WordGenerator>
+        <NumberGenerator>$[NUMBER('000','200,999')]</NumberGenerator>
+
+        <RandomDateGenerator>$[RANDOM_DATE('yyyy-MM-dd','365|720')]</RandomDateGenerator>
+        <RandomRealUSAddressGenerator1>$[RANDOM_US_ADDRESS('{#} {C} {S} {Z} {U} {P}','')]</RandomRealUSAddressGenerator1>
+        <RandomRealUSAddressGenerator2>$[RANDOM_US_ADDRESS('{#} {C} {S} {Z} {U} {P}','')]</RandomRealUSAddressGenerator2>
+        <RandomRealUSAddressGenerator3>$[RANDOM_US_ADDRESS('{#} {C} {S} {Z} {U} {P}','NO_SHUFFLE;')]</RandomRealUSAddressGenerator3>
+        <RandomRealUSAddressGenerator4>$[RANDOM_US_ADDRESS('{#} {C} {S} {Z} {U} {P}','NO_SHUFFLE;')]</RandomRealUSAddressGenerator4>
     </aliases>
     <user>user2</user>
     <pass>password</pass>
