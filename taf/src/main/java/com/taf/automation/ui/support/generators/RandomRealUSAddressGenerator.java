@@ -23,6 +23,7 @@ import java.util.List;
  * Generator to get a random real US address (McDonald locations)
  */
 public class RandomRealUSAddressGenerator extends File2ListReader implements GeneratorInterface {
+    private static final String NO_SHUFFLE = "NO_SHUFFLE;";
     private List<String> addresses = null;
 
     /**
@@ -143,9 +144,19 @@ public class RandomRealUSAddressGenerator extends File2ListReader implements Gen
     @Override
     public String generate(String pattern, String conditions) {
         initAddresses();
-        Collections.shuffle(addresses);
 
-        if (!StringUtils.defaultString(conditions).equals("")) {
+        boolean shuffle = true;
+        String theConditions = conditions;
+        if (StringUtils.startsWithIgnoreCase(theConditions, NO_SHUFFLE)) {
+            theConditions = StringUtils.removeStartIgnoreCase(conditions, NO_SHUFFLE);
+            shuffle = false;
+        }
+
+        if (shuffle) {
+            Collections.shuffle(addresses);
+        }
+
+        if (!StringUtils.defaultString(theConditions).equals("")) {
             ExpressionParser parser = new BasicParser()
                     .withExpression(new StateEquals())
                     .withExpression(new StateNotEquals())
@@ -155,7 +166,7 @@ public class RandomRealUSAddressGenerator extends File2ListReader implements Gen
                     .withExpression(new ZipCodeEqualsFromList())
                     .withExpression(new ZipCodeSizeEquals5())
                     .withExpression(new ZipCodeSizeEquals9())
-                    .withConditions(conditions);
+                    .withConditions(theConditions);
             for (String rawAddress : addresses) {
                 USAddress checkAddress = parseAddress(rawAddress);
                 if (parser.eval(checkAddress)) {
