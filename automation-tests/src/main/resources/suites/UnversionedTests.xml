@@ -31,7 +31,7 @@
         </classes>
     </test>
 
-    <test name="Allure Functionality Test #2">
+    <test name="Allure Functionality Failure Test">
         <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
         <parameter name="status" value="0"/>
         <classes>
@@ -42,6 +42,13 @@
     <test name="Retry with Pass Test">
         <classes>
             <class name="com.automation.common.ui.app.tests.RetryTest"/>
+        </classes>
+    </test>
+
+    <test name="Component Data Test">
+        <parameter name="data-set" value="data/ui/AllComponents_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ComponentDataTest"/>
         </classes>
     </test>
 

@@ -15,17 +15,14 @@ public class SearchTextBox extends PageComponent {
 
     public SearchTextBox() {
         super();
-        defaultSendKeysDelayConfig();
+        sendKeysDelay = false;
+        delayInMilliseconds = 100;
     }
 
     public SearchTextBox(WebElement element) {
         super(element);
-        defaultSendKeysDelayConfig();
-    }
-
-    private void defaultSendKeysDelayConfig() {
-        setSendKeysDelay(false);
-        setSendKeysDelay(100);
+        sendKeysDelay = false;
+        delayInMilliseconds = 100;
     }
 
     /**

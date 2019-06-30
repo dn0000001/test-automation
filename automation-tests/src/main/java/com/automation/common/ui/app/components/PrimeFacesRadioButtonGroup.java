@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.LocatorUtils;
+import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
@@ -12,6 +13,14 @@ public class PrimeFacesRadioButtonGroup extends PageComponent {
     private String componentData;
     private String componentInitialData;
     private String componentExpectedData;
+
+    public PrimeFacesRadioButtonGroup() {
+        super();
+    }
+
+    public PrimeFacesRadioButtonGroup(WebElement element) {
+        super(element);
+    }
 
     @Override
     protected void init() {

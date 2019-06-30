@@ -6,7 +6,7 @@ import ui.auto.core.components.SelectComponent;
 
 public class Select extends SelectComponent {
     public Select() {
-
+        super();
     }
 
     public Select(WebElement element) {
@@ -26,4 +26,5 @@ public class Select extends SelectComponent {
         Utils.waitForSelectOption(this);
         super.setValue();
     }
+
 }

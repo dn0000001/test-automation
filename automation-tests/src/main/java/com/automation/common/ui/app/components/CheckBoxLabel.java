@@ -15,7 +15,7 @@ public class CheckBoxLabel extends PageComponent {
     private WebElement label;
 
     public CheckBoxLabel() {
-        //
+        super();
     }
 
     public CheckBoxLabel(WebElement element) {
