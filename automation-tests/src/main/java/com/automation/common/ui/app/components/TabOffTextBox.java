@@ -22,13 +22,38 @@ public class TabOffTextBox extends PageComponent {
     private WebDriver driver;
     private Map<String, String> substitutions;
     private By staticLocator;
+    private boolean sendKeysDelay;
+    private int delayInMilliseconds;
 
     public TabOffTextBox() {
         super();
+        sendKeysDelay = false;
+        delayInMilliseconds = 100;
     }
 
     public TabOffTextBox(WebElement element) {
         super(element);
+        sendKeysDelay = false;
+        delayInMilliseconds = 100;
+    }
+
+    /**
+     * Enable or Disable the send keys delay
+     *
+     * @param sendKeyDelay - true to enable send keys delay, false to disable any delay
+     */
+    public void setSendKeysDelay(boolean sendKeyDelay) {
+        this.sendKeysDelay = sendKeyDelay;
+    }
+
+    /**
+     * Change the send keys delay (in milliseconds)<BR>
+     * <B>Note: </B> It is necessary to enable send keys delay for this to have any effect.
+     *
+     * @param delayInMilliseconds - Delay in milliseconds between sending each key
+     */
+    public void setSendKeysDelay(int delayInMilliseconds) {
+        this.delayInMilliseconds = delayInMilliseconds;
     }
 
     @Override
@@ -75,7 +100,11 @@ public class TabOffTextBox extends PageComponent {
 
     public void setValue(String value) {
         getCoreElement().clear();
-        getCoreElement().sendKeys(value + Keys.TAB);
+        if (sendKeysDelay) {
+            Utils.sendKeysWithDelay(getCoreElement(), delayInMilliseconds, value + Keys.TAB);
+        } else {
+            getCoreElement().sendKeys(value + Keys.TAB);
+        }
     }
 
     @Override

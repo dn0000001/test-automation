@@ -16,7 +16,7 @@ public class RadioOption extends PageComponent {
     private WebElement label;
 
     public RadioOption() {
-        //
+        super();
     }
 
     public RadioOption(WebElement element) {

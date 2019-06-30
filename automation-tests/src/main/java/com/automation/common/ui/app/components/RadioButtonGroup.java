@@ -44,12 +44,12 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
 
     public RadioButtonGroup() {
         super();
-        setSelection(Selection.EQUALS);
+        selection = Selection.EQUALS;
     }
 
     public RadioButtonGroup(WebElement element) {
         super(element);
-        setSelection(Selection.EQUALS);
+        selection = Selection.EQUALS;
     }
 
     public void setClazz(Class<T> clazz) {

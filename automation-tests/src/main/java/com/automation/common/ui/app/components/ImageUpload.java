@@ -28,6 +28,14 @@ public class ImageUpload extends PageComponentNoDefaultAction {
     private RemoteWebDriver driver;
     private List<String> errors;
 
+    public ImageUpload() {
+        super();
+    }
+
+    public ImageUpload(WebElement element) {
+        super(element);
+    }
+
     @Override
     protected void init() {
         driver = (RemoteWebDriver) Utils.getWebDriver(getCoreElement());
@@ -38,6 +46,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
         return errors;
     }
 
+    @SuppressWarnings("squid:S2259")
     public void uploadFiles(List<String> imageFiles) {
         errors = new ArrayList<>();
         for (String filePath : imageFiles) {
@@ -49,7 +58,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
             File file = new File(filePath);
             if (is == null) {
-                throw new RuntimeException("Image file '" + filePath + "' was not found!");
+                assertThat("Image file '" + filePath + "' was not found!", false);
             }
 
             //
@@ -59,7 +68,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
                 FileUtils.copyInputStreamToFile(is, file);
                 is.close();
             } catch (IOException ignored) {
-
+                //
             }
 
             //
