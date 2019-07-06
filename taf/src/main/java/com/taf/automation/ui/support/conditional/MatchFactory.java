@@ -70,6 +70,8 @@ public class MatchFactory {
             return new ElementDropDownMatch();
         } else if (criteria.getCriteriaType() == CriteriaType.RELATIVE_READY) {
             return new ElementReadyRelativeToMatch();
+        } else if (criteria.getCriteriaType() == CriteriaType.EXPECTED_CONDITIONS) {
+            return new ExpectedConditionsMatch();
         } else if (criteria.getCriteriaType() == CriteriaType.ELEMENTS_EQUAL
                 || criteria.getCriteriaType() == CriteriaType.ELEMENTS_RANGE
                 || criteria.getCriteriaType() == CriteriaType.ELEMENTS_LESS_THAN

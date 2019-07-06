@@ -235,6 +235,11 @@ public enum CriteriaType {
     ELEMENTS_LESS_THAN,
 
     /**
+     * ExpectedConditions to be used
+     */
+    EXPECTED_CONDITIONS,
+
+    /**
      * Number of elements is more than
      */
     ELEMENTS_MORE_THAN

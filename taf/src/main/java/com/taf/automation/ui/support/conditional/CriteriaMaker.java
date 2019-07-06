@@ -1,13 +1,13 @@
 package com.taf.automation.ui.support.conditional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import ui.auto.core.pagecomponent.PageComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class makes the criteria objects for all the criteria types
@@ -1178,6 +1178,16 @@ public class CriteriaMaker {
         options.setLocator(locator);
         options.setMin(value);
         return forGenericCriteria(CriteriaType.ELEMENTS_LESS_THAN, options);
+    }
+
+    /**
+     * Create criteria that uses ExpectedConditions
+     *
+     * @param expectedCondition - ExpectedCondition to be used
+     * @return Criteria
+     */
+    public static Criteria forExpectedConditions(ExpectedCondition expectedCondition) {
+        return forGenericCriteria(CriteriaType.EXPECTED_CONDITIONS, expectedCondition);
     }
 
     /**
