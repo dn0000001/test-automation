@@ -75,6 +75,8 @@ public class MatchFactory {
                 || criteria.getCriteriaType() == CriteriaType.ELEMENTS_LESS_THAN
                 || criteria.getCriteriaType() == CriteriaType.ELEMENTS_MORE_THAN) {
             return new NumberOfElementsMatch();
+        } else if (criteria.getCriteriaType() == CriteriaType.LAMBDA_EXPRESSION) {
+            return new LambdaExpressionMatch();
         }
 
         throw new RuntimeException("Unsupported criteria type:  " + criteria.getCriteriaType());
