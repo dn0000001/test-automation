@@ -1200,16 +1200,6 @@ public class CriteriaMaker {
     }
 
     /**
-     * Create criteria that uses ExpectedConditions
-     *
-     * @param expectedCondition - ExpectedCondition to be used
-     * @return Criteria
-     */
-    public static Criteria forExpectedConditions(ExpectedCondition expectedCondition) {
-        return forGenericCriteria(CriteriaType.EXPECTED_CONDITIONS, expectedCondition);
-    }
-
-    /**
      * Create criteria for number of elements to be more than the value
      *
      * @param locator - Locator to be used
@@ -1231,6 +1221,16 @@ public class CriteriaMaker {
      */
     public static Criteria forLambdaExpression(Callable<Boolean> lambda) {
         return forGenericCriteria(CriteriaType.LAMBDA_EXPRESSION, lambda);
+    }
+
+    /**
+     * Create criteria that uses ExpectedConditions
+     *
+     * @param expectedCondition - ExpectedCondition to be used
+     * @return Criteria
+     */
+    public static Criteria forExpectedConditions(ExpectedCondition expectedCondition) {
+        return forGenericCriteria(CriteriaType.EXPECTED_CONDITIONS, expectedCondition);
     }
 
 }
