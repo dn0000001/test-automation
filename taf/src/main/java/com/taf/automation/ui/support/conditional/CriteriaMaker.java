@@ -8,11 +8,18 @@ import ui.auto.core.pagecomponent.PageComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * This class makes the criteria objects for all the criteria types
  */
 public class CriteriaMaker {
+    private static final String VALUE = "value";
+
+    private CriteriaMaker() {
+        // Prevent initialization of class as all public methods should be static
+    }
+
     /**
      * Generic create criteria
      *
@@ -733,6 +740,7 @@ public class CriteriaMaker {
      * @param value   - HTML Value of selected option equals value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_Equals(By locator, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_EQUALS, locator, value);
     }
@@ -744,6 +752,7 @@ public class CriteriaMaker {
      * @param value     - HTML Value of selected option equals value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_Equals(PageComponent component, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_EQUALS, component, value);
     }
@@ -755,6 +764,7 @@ public class CriteriaMaker {
      * @param value   - HTML Value of selected option equals ignoring case value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_EqualsIgnoreCase(By locator, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_EQUALS_IGNORE_CASE, locator, value);
     }
@@ -766,6 +776,7 @@ public class CriteriaMaker {
      * @param value     - HTML Value of selected option equals ignoring case value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_EqualsIgnoreCase(PageComponent component, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_EQUALS_IGNORE_CASE, component, value);
     }
@@ -777,6 +788,7 @@ public class CriteriaMaker {
      * @param regex   - HTML Value of selected option matches this Regular Expression
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_RegEx(By locator, String regex) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_REGEX, locator, regex);
     }
@@ -788,6 +800,7 @@ public class CriteriaMaker {
      * @param regex     - HTML Value of selected option matches this Regular Expression
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_RegEx(PageComponent component, String regex) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_REGEX, component, regex);
     }
@@ -799,6 +812,7 @@ public class CriteriaMaker {
      * @param value   - HTML Value of selected option does NOT equal value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_NotEqual(By locator, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_NOT_EQUAL, locator, value);
     }
@@ -810,6 +824,7 @@ public class CriteriaMaker {
      * @param value     - HTML Value of selected option does NOT equal value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_NotEqual(PageComponent component, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_NOT_EQUAL, component, value);
     }
@@ -821,6 +836,7 @@ public class CriteriaMaker {
      * @param value   - HTML Value of selected option does NOT contains value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_DoesNotContain(By locator, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_DOES_NOT_CONTAIN, locator, value);
     }
@@ -832,6 +848,7 @@ public class CriteriaMaker {
      * @param value     - HTML Value of selected option does NOT contains value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_DoesNotContain(PageComponent component, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_DOES_NOT_CONTAIN, component, value);
     }
@@ -843,6 +860,7 @@ public class CriteriaMaker {
      * @param value   - HTML Value of selected option contains value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_Contains(By locator, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_CONTAINS, locator, value);
     }
@@ -854,6 +872,7 @@ public class CriteriaMaker {
      * @param value     - HTML Value of selected option contains value
      * @return Criteria
      */
+    @SuppressWarnings("squid:S00100")
     public static Criteria forDropDownHTML_Contains(PageComponent component, String value) {
         return forGenericPattern(CriteriaType.DROPDOWN_HTML_CONTAINS, component, value);
     }
@@ -998,7 +1017,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputEquals(By locator, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS, locator, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS, locator, VALUE, value);
     }
 
     /**
@@ -1009,7 +1028,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputEquals(PageComponent component, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS, component, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS, component, VALUE, value);
     }
 
     /**
@@ -1020,7 +1039,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputEqualsIgnoreCase(By locator, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS_IGNORE_CASE, locator, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS_IGNORE_CASE, locator, VALUE, value);
     }
 
     /**
@@ -1031,7 +1050,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputEqualsIgnoreCase(PageComponent component, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS_IGNORE_CASE, component, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_EQUALS_IGNORE_CASE, component, VALUE, value);
     }
 
     /**
@@ -1042,7 +1061,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputRegEx(By locator, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_REGEX, locator, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_REGEX, locator, VALUE, value);
     }
 
     /**
@@ -1053,7 +1072,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputRegEx(PageComponent component, String regex) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_REGEX, component, "value", regex);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_REGEX, component, VALUE, regex);
     }
 
     /**
@@ -1064,7 +1083,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputNotEqual(By locator, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_NOT_EQUAL, locator, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_NOT_EQUAL, locator, VALUE, value);
     }
 
     /**
@@ -1075,7 +1094,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputNotEqual(PageComponent component, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_NOT_EQUAL, component, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_NOT_EQUAL, component, VALUE, value);
     }
 
     /**
@@ -1086,7 +1105,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputDoesNotContain(By locator, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_DOES_NOT_CONTAIN, locator, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_DOES_NOT_CONTAIN, locator, VALUE, value);
     }
 
     /**
@@ -1097,7 +1116,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputDoesNotContain(PageComponent component, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_DOES_NOT_CONTAIN, component, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_DOES_NOT_CONTAIN, component, VALUE, value);
     }
 
     /**
@@ -1108,7 +1127,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputContains(By locator, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_CONTAINS, locator, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_CONTAINS, locator, VALUE, value);
     }
 
     /**
@@ -1119,7 +1138,7 @@ public class CriteriaMaker {
      * @return Criteria
      */
     public static Criteria forInputContains(PageComponent component, String value) {
-        return forGenericAttribute(CriteriaType.ATTRIBUTE_CONTAINS, component, "value", value);
+        return forGenericAttribute(CriteriaType.ATTRIBUTE_CONTAINS, component, VALUE, value);
     }
 
     /**
@@ -1202,6 +1221,16 @@ public class CriteriaMaker {
         options.setLocator(locator);
         options.setMin(value);
         return forGenericCriteria(CriteriaType.ELEMENTS_MORE_THAN, options);
+    }
+
+    /**
+     * Create criteria to use a lambda expression to check if it matches
+     *
+     * @param lambda - Lambda expression to check if it matches
+     * @return Criteria
+     */
+    public static Criteria forLambdaExpression(Callable<Boolean> lambda) {
+        return forGenericCriteria(CriteriaType.LAMBDA_EXPRESSION, lambda);
     }
 
 }

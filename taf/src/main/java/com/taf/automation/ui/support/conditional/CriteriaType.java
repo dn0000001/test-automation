@@ -242,6 +242,11 @@ public enum CriteriaType {
     /**
      * Number of elements is more than
      */
-    ELEMENTS_MORE_THAN
+    ELEMENTS_MORE_THAN,
+
+    /**
+     * Lambda expression to evaluate
+     */
+    LAMBDA_EXPRESSION,
 
 }
