@@ -3,6 +3,7 @@ package com.taf.automation.ui.support.conditional;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.util.ArrayList;
@@ -1220,6 +1221,16 @@ public class CriteriaMaker {
      */
     public static Criteria forLambdaExpression(Callable<Boolean> lambda) {
         return forGenericCriteria(CriteriaType.LAMBDA_EXPRESSION, lambda);
+    }
+
+    /**
+     * Create criteria that uses ExpectedConditions
+     *
+     * @param expectedCondition - ExpectedCondition to be used
+     * @return Criteria
+     */
+    public static Criteria forExpectedConditions(ExpectedCondition expectedCondition) {
+        return forGenericCriteria(CriteriaType.EXPECTED_CONDITIONS, expectedCondition);
     }
 
 }
