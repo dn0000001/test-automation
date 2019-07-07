@@ -52,6 +52,20 @@
         </classes>
     </test>
 
+    <test name="Lambda Expression Matcher Test">
+        <parameter name="url" value="https://the-internet.herokuapp.com/add_remove_elements/"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.LambdaExpressionMatcherTest"/>
+        </classes>
+    </test>
+
+    <test name="Expected Conditions Matcher Test">
+        <parameter name="url" value="https://the-internet.herokuapp.com/add_remove_elements/"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ExpectedConditionsMatcherTest"/>
+        </classes>
+    </test>
+
     <!--
     <test name="Open Report Test">
         <parameter name="allure-report" value="/target/allure-report"/>
