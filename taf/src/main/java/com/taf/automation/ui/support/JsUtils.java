@@ -488,4 +488,13 @@ public class JsUtils {
         execute(getWebDriver(), REMOVE_ELEMENT, element);
     }
 
+    /**
+     * Focus Window using alert<BR>
+     * <B>Note: </B> This method should only be used if application really needs focus
+     */
+    public static void focusWindowUsingAlert() {
+        execute(getWebDriver(), "alert('Focus Window Workaround');", false);
+        Utils.dismissAlertIfPresent(getWebDriver());
+    }
+
 }
