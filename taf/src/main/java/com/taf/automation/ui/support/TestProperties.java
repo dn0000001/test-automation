@@ -130,6 +130,9 @@ public class TestProperties {
     @Property("timeout.element")
     private int element_timeout; // In seconds
 
+    @Property("timeout.negative")
+    private int negative_timeout; // In seconds
+
     @Property("test.suites")
     private String suites;
 
@@ -505,6 +508,10 @@ public class TestProperties {
 
     public int getElementTimeout() {
         return element_timeout;
+    }
+
+    public int getNegativeTimeout() {
+        return negative_timeout;
     }
 
     public List<String> getSuites() {
