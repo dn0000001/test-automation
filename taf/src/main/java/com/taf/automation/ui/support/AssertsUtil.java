@@ -17,6 +17,10 @@ import java.math.BigDecimal;
  * This class holds useful Matcher methods for assertions
  */
 public class AssertsUtil {
+    private AssertsUtil() {
+        // Prevent initialization of class as all public methods should be static
+    }
+
     /**
      * Matcher for regular expressions that are expected to match the pattern
      *
@@ -763,7 +767,7 @@ public class AssertsUtil {
             @Override
             protected boolean matchesSafely(final PageComponent component) {
                 try {
-                    wait.until(ExpectedConditions.visibilityOf(component.getCoreElement()));
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(component.getLocator()));
                     return true;
                 } catch (Exception ex) {
                     return false;
@@ -823,8 +827,38 @@ public class AssertsUtil {
             @Override
             protected boolean matchesSafely(final PageComponent component) {
                 try {
-                    wait.until(ExpectedConditionsUtil.ready(component.getCoreElement()));
+                    wait.until(ExpectedConditions.elementToBeClickable(component.getLocator()));
                     return true;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for component that is expected to be enabled
+     *
+     * @param wait - WebDriverWait
+     * @return Matcher&lt;PageComponent&gt;
+     */
+    public static Matcher<PageComponent> isComponentEnabled(final WebDriverWait wait) {
+        return new TypeSafeMatcher<PageComponent>() {
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("component was enabled before timeout");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final PageComponent component, final Description mismatchDescription) {
+                mismatchDescription.appendText(" was disabled before timeout");
+            }
+
+            @Override
+            protected boolean matchesSafely(final PageComponent component) {
+                try {
+                    WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(component.getLocator()));
+                    return element.isEnabled();
                 } catch (Exception ex) {
                     return false;
                 }

@@ -158,4 +158,8 @@ public class FakeComponentsPage extends PageObjectV2 {
         return null;
     }
 
+    public TextBox getTextBoxComponent() {
+        return textBox;
+    }
+
 }

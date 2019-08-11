@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.TNHC_DO;
+import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.automation.common.ui.app.pageObjects.TNHC_LandingPage;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.AssertsUtil;
@@ -11,9 +12,11 @@ import com.taf.automation.ui.support.testng.TestNGBase;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -23,6 +26,7 @@ import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,7 +40,7 @@ import static org.hamcrest.Matchers.greaterThan;
  * Unit testing AssertsUtil class
  */
 public class AssertsTest extends TestNGBase {
-    private static final boolean run = false;
+    private static final boolean RUN = false;
 
     private static class TestObj {
         private String fieldString1;
@@ -428,7 +432,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebElement is displayed assert with null element")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsDisplayedWithElementDoesNotExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -440,7 +444,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebElement is displayed assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsDisplayedWithElementExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -452,7 +456,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("By is displayed assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsDisplayedWithByExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -463,7 +467,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebElement is disabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsDisabledWithElementExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -475,7 +479,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebElement is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsEnabledWithElementExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -487,7 +491,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("By is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsEnabledWithByExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -498,7 +502,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebComponent is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsEnabledWithComponentExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -510,7 +514,7 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebComponent is disabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void assertIsDisabledWithComponentExistTest() {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
@@ -519,11 +523,44 @@ public class AssertsTest extends TestNGBase {
         assertThat(landing.getPlayer(), AssertsUtil.isComponentDisabled());
     }
 
+    @Features("AssertsUtil")
+    @Stories("WebComponent is not displayed assert using WebDriverWait")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test(enabled = RUN)
+    public void assertIsNotDisplayedUsingWebDriverWaitTest() {
+        WebDriverWait wait = (WebDriverWait) Utils.getWebDriverWait()
+                .withTimeout(Duration.ofSeconds(TestProperties.getInstance().getNegativeTimeout()));
+        FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
+        assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentDisplayed(wait)));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("WebComponent is not ready assert using WebDriverWait")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test(enabled = RUN)
+    public void assertIsNotReadyUsingWebDriverWaitTest() {
+        WebDriverWait wait = (WebDriverWait) Utils.getWebDriverWait()
+                .withTimeout(Duration.ofSeconds(TestProperties.getInstance().getNegativeTimeout()));
+        FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
+        assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentReady(wait)));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("WebComponent is not enabled assert using WebDriverWait")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test(enabled = RUN)
+    public void assertIsNotEnabledUsingWebDriverWaitTest() {
+        WebDriverWait wait = (WebDriverWait) Utils.getWebDriverWait()
+                .withTimeout(Duration.ofSeconds(TestProperties.getInstance().getNegativeTimeout()));
+        FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
+        assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentEnabled(wait)));
+    }
+
     @Features("Framework")
     @Stories("General Framework unit testing")
     @Severity(SeverityLevel.CRITICAL)
     @Parameters("data-set")
-    @Test(enabled = run)
+    @Test(enabled = RUN)
     public void generalUnitTest(@Optional("data/ui/TNHC_TestData.xml") String dataSet) {
         TNHC_DO hnhc = new TNHC_DO(getContext()).fromResource(dataSet);
         getContext().getDriver().get(TestProperties.getInstance().getURL());
