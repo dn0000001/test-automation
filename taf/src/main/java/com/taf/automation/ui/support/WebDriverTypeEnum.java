@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.Proxy;
@@ -15,6 +16,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -26,12 +28,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public enum WebDriverTypeEnum {
-    CHROME("chrome", ChromeDriver.class),
-    EDGE("MicrosoftEdge", EdgeDriver.class),
-    FIREFOX("firefox", FirefoxDriver.class),
-    IE("internet explorer", InternetExplorerDriver.class),
-    OPERA_BLINK("operablink", OperaDriver.class),
-    SAFARI("safari", SafariDriver.class);
+    CHROME(BrowserType.CHROME, ChromeDriver.class),
+    EDGE(BrowserType.EDGE, EdgeDriver.class),
+    FIREFOX(BrowserType.FIREFOX, FirefoxDriver.class),
+    IE(BrowserType.IE, InternetExplorerDriver.class),
+    OPERA_BLINK(BrowserType.OPERA_BLINK, OperaDriver.class),
+    SAFARI(BrowserType.SAFARI, SafariDriver.class),
+    ANDROID(BrowserType.ANDROID, AppiumDriver.class),
+    IPHONE(BrowserType.IPHONE, AppiumDriver.class),
+    IPAD(BrowserType.IPAD, AppiumDriver.class),
+    ;
 
     String driverName;
     Class<? extends WebDriver> driverClass;
@@ -122,6 +128,10 @@ public enum WebDriverTypeEnum {
             capabilities.setCapability(ChromeOptions.CAPABILITY, getChromeOptions(prop, mergeCapabilities));
         } else if (this == SAFARI) {
             capabilities.setCapability(SafariOptions.CAPABILITY, getSafariOptions(prop, mergeCapabilities));
+        } else if (this == ANDROID) {
+            capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.ANDROID);
+        } else if (this == IPHONE || this == IPAD) {
+            capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.IOS);
         } else {
             capabilities.merge(mergeCapabilities);
         }
