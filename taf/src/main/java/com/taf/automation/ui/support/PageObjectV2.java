@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import io.appium.java_client.AppiumDriver;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -12,6 +13,7 @@ import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.AjaxVisibleElementLocatorFactory;
 import ui.auto.core.pagecomponent.PageComponent;
 import ui.auto.core.pagecomponent.PageObject;
+import ui.auto.core.pagecomponent.WidgetFieldDecorator;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -64,6 +66,11 @@ public class PageObjectV2 extends PageObject {
         try {
             FieldUtils.writeField(this, "context", context, true);
             FieldUtils.writeField(this, "ajaxIsUsed", true, true);
+            if (AppiumDriver.class.isAssignableFrom(context.getDriver().getClass())) {
+                PageFactory.initElements(new WidgetFieldDecorator(context, this), this);
+                return;
+            }
+
             FieldUtils.writeField(this, "currentUrl", context.getDriver().getCurrentUrl(), true);
             if (ajaxIsUsed) {
                 AjaxVisibleElementLocatorFactory ajaxVisibleElementLocatorFactory = new AjaxVisibleElementLocatorFactory(context.getDriver(), context.getAjaxTimeOut());
