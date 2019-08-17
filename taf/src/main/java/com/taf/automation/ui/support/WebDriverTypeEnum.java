@@ -91,7 +91,7 @@ public enum WebDriverTypeEnum {
             }
         }
 
-        switch (this) {
+        switch (prop.getBrowserType()) {
             case FIREFOX:
                 return getFirefoxDriver(prop, capabilities);
             case CHROME:
@@ -123,15 +123,15 @@ public enum WebDriverTypeEnum {
         capabilities.setPlatform(platform);
         capabilities.merge(prop.getExtraCapabilities());
 
-        if (this == FIREFOX) {
+        if (prop.getBrowserType() == FIREFOX) {
             capabilities.setCapability(FirefoxOptions.FIREFOX_OPTIONS, getFirefoxOptions(prop, mergeCapabilities, false));
-        } else if (this == CHROME) {
+        } else if (prop.getBrowserType() == CHROME) {
             capabilities.setCapability(ChromeOptions.CAPABILITY, getChromeOptions(prop, mergeCapabilities));
-        } else if (this == SAFARI) {
+        } else if (prop.getBrowserType() == SAFARI) {
             capabilities.setCapability(SafariOptions.CAPABILITY, getSafariOptions(prop, mergeCapabilities));
-        } else if (this == ANDROID) {
+        } else if (prop.getBrowserType() == ANDROID) {
             capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.ANDROID);
-        } else if (this == IPHONE || this == IPAD) {
+        } else if (prop.getBrowserType() == IPHONE || prop.getBrowserType() == IPAD) {
             capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.IOS);
         } else {
             capabilities.merge(mergeCapabilities);
