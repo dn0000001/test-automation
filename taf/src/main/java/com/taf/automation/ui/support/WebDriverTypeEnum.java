@@ -53,7 +53,9 @@ public enum WebDriverTypeEnum {
     }
 
     public WebDriver getNewWebDriver() {
-        return getNewWebDriver(TestProperties.getInstance());
+        TestProperties prop = Utils.deepCopy(TestProperties.getInstance());
+        Utils.writeField(prop, "browserType", this);
+        return getNewWebDriver(prop);
     }
 
     @SuppressWarnings("squid:S00112")
