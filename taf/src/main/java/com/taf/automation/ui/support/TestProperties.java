@@ -124,12 +124,14 @@ public class TestProperties {
     @Property("timeout.page.load")
     private int pageLoadTimeout = 5; // In minutes
 
+    @SuppressWarnings("squid:S00116")
     @Property("timeout.page")
     private int page_timeout; // In seconds
 
     @Property("timeout.element")
     private int element_timeout; // In seconds
 
+    @SuppressWarnings("squid:S00116")
     @Property("timeout.negative")
     private int negative_timeout; // In seconds
 
@@ -222,6 +224,14 @@ public class TestProperties {
     @Property("firefox.no.marionette")
     private boolean useNoMarionette;
 
+    @SuppressWarnings("squid:S00116")
+    @Property("firefox.ntlm.auto")
+    private boolean firefox_NTLM_Auto;
+
+    @SuppressWarnings("squid:S00116")
+    @Property("firefox.ntlm.uris")
+    private String firefox_NTLM_URIS;
+
     @Property("webdriver.screenshot.view.port.only")
     private boolean viewPortOnly = true;
 
@@ -276,6 +286,7 @@ public class TestProperties {
     /**
      * Stores the Browser Mob Proxy for each thread
      */
+    @SuppressWarnings("squid:S1149")
     private Map<Long, BrowserMobProxy> browserMobProxies = new Hashtable<>();
 
     /**
@@ -379,9 +390,9 @@ public class TestProperties {
     public Capabilities getExtraCapabilities() {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         if (extraCapabilities != null) {
-            String params[] = extraCapabilities.split(",");
+            String[] params = extraCapabilities.split(",");
             for (String param : params) {
-                String values[] = param.split("=", 2);
+                String[] values = param.split("=", 2);
                 capabilities.setCapability(values[0].trim(), values[1].trim());
             }
         }
@@ -441,12 +452,13 @@ public class TestProperties {
     }
 
     private String fromArray(Object array) {
-        String value = "";
-        for (Object string : (Object[]) array) {
-            value += string.toString() + ", ";
+        StringBuilder sb = new StringBuilder();
+        for (Object value : (Object[]) array) {
+            sb.append(value.toString());
+            sb.append(", ");
         }
 
-        return value;
+        return StringUtils.removeEnd(sb.toString(), ", ");
     }
 
     public List<Parameter> getAsParameters() {
@@ -465,7 +477,7 @@ public class TestProperties {
                     value = "";
                 }
 
-                if (value != null && !value.trim().isEmpty()) {
+                if (StringUtils.isNotBlank(value)) {
                     params.add(new Parameter().withKey(property).withName(property).withValue(value));
                 }
             }
@@ -514,15 +526,15 @@ public class TestProperties {
         return negative_timeout;
     }
 
+    @SuppressWarnings("squid:S00112")
     public List<String> getSuites() {
         List<String> suitesList = new ArrayList<>();
         if (this.suites != null) {
-            String[] suites = this.suites.split(",");
-            for (String s : suites) {
+            String[] theSuites = this.suites.split(",");
+            for (String s : theSuites) {
                 suitesList.add(s.trim().replace("\"", "").replace("\'", ""));
                 if (isProdEnv() && !s.toLowerCase().contains("prod.xml")) {
-                    throw new RuntimeException(
-                            "The suite file name should end with 'PROD' to be able to run on PRODUCTION ENVIRONMENT!");
+                    throw new RuntimeException("The suite file name should end with 'PROD' to be able to run on PRODUCTION ENVIRONMENT!");
                 }
             }
         }
@@ -614,6 +626,24 @@ public class TestProperties {
         return useNoMarionette;
     }
 
+    @SuppressWarnings("squid:S00100")
+    public String getFirefoxNTLM_URIS() {
+        if (firefox_NTLM_Auto) {
+            List<String> uris = new ArrayList<>();
+            uris.add(getURL());
+
+            StringBuilder sb = new StringBuilder();
+            for (String uri : uris) {
+                sb.append(URLUtils.getURI(uri).getHost());
+                sb.append(",");
+            }
+
+            return StringUtils.removeEnd(sb.toString(), ",");
+        }
+
+        return firefox_NTLM_URIS;
+    }
+
     public boolean isViewPortOnly() {
         return viewPortOnly;
     }
@@ -682,13 +712,7 @@ public class TestProperties {
 
     private BrowserMobProxy getBrowserMobProxyForThread() {
         Long threadId = Thread.currentThread().getId();
-        BrowserMobProxy storedProxy = browserMobProxies.get(threadId);
-        if (storedProxy == null) {
-            storedProxy = new BrowserMobProxyServer();
-            browserMobProxies.put(threadId, storedProxy);
-        }
-
-        return storedProxy;
+        return browserMobProxies.computeIfAbsent(threadId, k -> new BrowserMobProxyServer());
     }
 
     private void removeBrowserMobProxyForThread() {
@@ -733,6 +757,7 @@ public class TestProperties {
      *
      * @param filename - File to write to
      */
+    @SuppressWarnings("squid:S00112")
     public void performWriteBrowserMobProxyLogToFile(String filename) {
         if (isBrowserMobProxy() && writeBrowserMobProxyLogToFile) {
             try {
