@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import io.appium.java_client.AppiumDriver;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.Proxy;
@@ -149,6 +150,13 @@ public enum WebDriverTypeEnum {
         profile.setPreference("focusmanager.testmode", true);
         profile.setPreference("dom.max_chrome_script_run_time", 0);
         profile.setPreference("dom.max_script_run_time", 0);
+
+        // Handle SSO on specified sites
+        String uris = prop.getFirefoxNTLM_URIS();
+        if (StringUtils.isNotBlank(uris)) {
+            profile.setPreference("network.automatic-ntlm-auth.trusted-uris", uris);
+        }
+
         profile.setAcceptUntrustedCertificates(true);
         profile.setAssumeUntrustedCertificateIssuer(false);
         if (prop.getUserAgent() != null) {
