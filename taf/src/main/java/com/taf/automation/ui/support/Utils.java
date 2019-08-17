@@ -1,6 +1,5 @@
 package com.taf.automation.ui.support;
 
-import com.google.common.base.Function;
 import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.thoughtworks.xstream.XStream;
@@ -15,6 +14,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -26,14 +26,15 @@ import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 import ui.auto.core.utils.AjaxTriggeredAction;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -45,11 +46,15 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * Utilities mainly for UI
  */
+@SuppressWarnings({"squid:S00112", "squid:S3252", "squid:S1148"})
 public class Utils {
     private static final String DOUBLE_QUOTE = "\"";
     private static final String SINGLE_QUOTE = "'";
     private static final String SEPARATOR = ",";
+    private static final String VARIABLE_DRIVER = "driver";
     private static final ReentrantLock lockContext = new ReentrantLock();
+    private static final Map<Long, WebDriver> storedWebDrivers = new HashMap<>();
+    private static final Map<Long, TestProperties> storedProperties = new HashMap<>();
 
     private Utils() {
         // Prevent initialization of class as all public methods should be static
@@ -126,7 +131,7 @@ public class Utils {
         lockContext.lock();
         try {
             if (TestNGBase.context().getDriver() == null) {
-                FieldUtils.writeField(TestNGBase.context(), "driver", driver, true);
+                FieldUtils.writeField(TestNGBase.context(), VARIABLE_DRIVER, driver, true);
             }
         } catch (Exception ex) {
             assertThat("Could not set driver for context due to exception:  " + ex.getMessage(), false);
@@ -135,6 +140,109 @@ public class Utils {
         }
 
         return TestNGBase.context();
+    }
+
+    /**
+     * Change the browser being used<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>Updates the driver in the context such that correct driver is accessible</LI>
+     * <LI>The current driver is stored such that it can be restored later</LI>
+     * <LI>After use of the browser is complete, use the method <B>restoreBrowser</B></LI>
+     * <LI>The TestProperties class is <B>NOT</B> modified as such any browser/property checks will be incorrect</LI>
+     * </UL>
+     *
+     * @param browser - Browser to use
+     * @return WebDriver
+     */
+    public static WebDriver changeBrowser(WebDriverTypeEnum browser) {
+        TestProperties prop = deepCopy(TestProperties.getInstance());
+        writeField(prop, "browserType", browser);
+        return changeBrowser(prop);
+    }
+
+    /**
+     * Change the browser being used<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>Updates the driver in the context such that correct driver is accessible</LI>
+     * <LI>The current driver is stored such that it can be restored later</LI>
+     * <LI>After use of the browser is complete, use the method <B>restoreBrowser</B></LI>
+     * <LI>The TestProperties class is <B>NOT</B> modified as such any browser/property checks will be incorrect</LI>
+     * </UL>
+     *
+     * @param prop - Test Properties to be used in changing the browser
+     * @return WebDriver
+     */
+    public static WebDriver changeBrowser(TestProperties prop) {
+        lockContext.lock();
+        try {
+            // Store WebDriver such that it can be restored later
+            storedWebDrivers.put(Thread.currentThread().getId(), TestNGBase.context().getDriver());
+
+            // Store the properties such that it can be retrieved
+            storedProperties.put(Thread.currentThread().getId(), prop);
+
+            // Initialize driver using specified properties
+            WebDriver driver = WebDriverTypeEnum.FIREFOX.getNewWebDriver(prop);
+
+            // Resize the browser
+            String res = prop.getScreenSize();
+            if (res != null) {
+                String[] resWH = res.toLowerCase().split("x");
+                int width = Integer.parseInt(resWH[0].trim());
+                int height = Integer.parseInt(resWH[1].trim());
+                Dimension dim = new Dimension(width, height);
+                driver.manage().window().setSize(dim);
+            } else {
+                driver.manage().window().maximize();
+            }
+
+            // Change the driver in the context such that the specified browser is returned
+            writeField(TestNGBase.context(), VARIABLE_DRIVER, driver);
+            return driver;
+        } finally {
+            lockContext.unlock();
+        }
+    }
+
+    /**
+     * Restore the browser to the stored version<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>If no driver was stored, then the current driver is return</LI>
+     * <LI>Updates the driver in the context such that correct driver is accessible</LI>
+     * <LI>Closes the stored driver</LI>
+     * </UL>
+     *
+     * @return WebDriver
+     */
+    public static WebDriver restoreBrowser() {
+        lockContext.lock();
+        try {
+            // Restore to the stored WebDriver
+            WebDriver driver = storedWebDrivers.remove(Thread.currentThread().getId());
+            storedProperties.remove(Thread.currentThread().getId());
+            if (driver == null) {
+                return TestNGBase.context().getDriver();
+            }
+
+            // The changed browser will no longer be accessible as such close it
+            TestNGBase.context().getDriver().quit();
+
+            // Change the driver in the context such that the initial browser is returned
+            writeField(TestNGBase.context(), VARIABLE_DRIVER, driver);
+            return driver;
+        } finally {
+            lockContext.unlock();
+        }
+    }
+
+    /**
+     * @return the stored test properties if non-null else the current test properties
+     */
+    public static TestProperties getStoredTestProperties() {
+        return storedProperties.getOrDefault(Thread.currentThread().getId(), TestProperties.getInstance());
     }
 
     /**
@@ -185,6 +293,7 @@ public class Utils {
      *
      * @param milliseconds - MilliSeconds to pause for
      */
+    @SuppressWarnings("squid:S2142")
     public static void sleep(long milliseconds) {
         try {
             Thread.sleep(milliseconds);
@@ -229,26 +338,22 @@ public class Utils {
      * @param select - Drop Down component
      */
     public static WebElement waitForSelectOption(final PageComponent select) {
-        return getWebDriverWait().until(new Function<WebDriver, WebElement>() {
-            @Nullable
-            @Override
-            public WebElement apply(@Nullable WebDriver driver) {
-                WebElement optionEl = null;
-                try {
-                    List<WebElement> options = select.findElements(By.tagName("option"));
-                    if (options.size() > 0) {
+        return getWebDriverWait().until(driver -> {
+                    WebElement optionEl = null;
+                    try {
+                        List<WebElement> options = select.findElements(By.tagName("option"));
                         for (WebElement option : options) {
                             if (option.getText().trim().equals(select.getData())) {
                                 optionEl = option;
+                                break;
                             }
                         }
+                    } catch (Exception e) {
+                        /* Do nothing */
                     }
-                } catch (Exception e) {
-                    /* Do nothing */
+                    return optionEl;
                 }
-                return optionEl;
-            }
-        });
+        );
     }
 
     /**
@@ -847,6 +952,7 @@ public class Utils {
      *
      * @return true if driver implementation is known to support deleting cookies else false
      */
+    @SuppressWarnings("squid:S1126")
     public static boolean isCleanCookiesSupported() {
         WebDriverTypeEnum browser = TestProperties.getInstance().getBrowserType();
 
@@ -1041,6 +1147,7 @@ public class Utils {
      * @param unsafeValue - Value to ensure is safe
      * @return the equivalent unsafe value constructed using the xpath function concat
      */
+    @SuppressWarnings("squid:S1643")
     public static String constructXpathSafeValue(String unsafeValue) {
         if (StringUtils.defaultString(unsafeValue).equals("")) {
             return "concat('', '')";

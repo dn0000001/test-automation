@@ -86,6 +86,14 @@
     -->
 
     <!--
+    <test name="Change Browser Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ChangeBrowserTest"/>
+        </classes>
+    </test>
+    -->
+
+    <!--
     <test name="Excel 2013 Test">
         <parameter name="excel" value="data/ui/excel-test-cases.xlsx"/>
         <parameter name="worksheet" value="Sheet1"/>
