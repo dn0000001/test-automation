@@ -54,6 +54,7 @@ public class PageObjectV2 extends PageObject {
         initPage(context, expectedUrl, true);
     }
 
+    @SuppressWarnings("squid:S2177")
     private <T extends PageComponentContext> void initPage(T context, String expectedUrl, boolean ajaxIsUsed) {
         initPage(context, ajaxIsUsed);
         if (expectedUrl != null) {
@@ -61,6 +62,7 @@ public class PageObjectV2 extends PageObject {
         }
     }
 
+    @SuppressWarnings("squid:S00112")
     @Override
     public <T extends PageComponentContext> void initPage(T context, boolean ajaxIsUsed) {
         try {
@@ -91,6 +93,7 @@ public class PageObjectV2 extends PageObject {
      * @param substitutions - Substitutions map of keys/values
      * @param <T>           - Object Type
      */
+    @SuppressWarnings("squid:S00112")
     public <T extends PageComponentContext> void initPage(T context, Map<String, String> substitutions) {
         try {
             FieldUtils.writeField(this, "context", context, true);
@@ -246,6 +249,7 @@ public class PageObjectV2 extends PageObject {
      * @param validationMethod - Validation Method (if null then no validation is performed)
      * @param tries            - Number of attempts to set value &amp; validate
      */
+    @SuppressWarnings("squid:S00112")
     protected void setElementValueV2(PageComponent component, DataTypes validationMethod, int tries) {
         if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
             return;
@@ -344,6 +348,7 @@ public class PageObjectV2 extends PageObject {
      * @param component - Component
      * @return true if element is displayed else false
      */
+    @SuppressWarnings("squid:S00112")
     protected boolean isDisplayed(PageComponent component) {
         By by = component.getLocator();
         if (by == null) {

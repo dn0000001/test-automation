@@ -62,12 +62,21 @@ public class TestContext extends PageComponentContext {
         }
     }
 
+    public TestProperties getProps() {
+        return props;
+    }
+
     public void setTestProperties(TestProperties props) {
         this.props = props;
     }
 
     public void init() {
         driver = props.getBrowserType().getNewWebDriver(props);
+        if (props.getBrowserType().isAppiumDriver()) {
+            // Appium (as of 1.14.0) does not support setting timeouts or window size
+            return;
+        }
+
         if (props.getPageLoadTimeout() > 0) {
             driver.manage().timeouts().pageLoadTimeout(props.getPageLoadTimeout(), TimeUnit.MINUTES);
         }

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * <B>Notes: </B> The Listeners are not added here because it causes duplicate results with BDD.
  */
 public class TestNGBaseWithoutListeners {
-    protected static final Logger LOG = LoggerFactory.getLogger(TestNGBase.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(TestNGBaseWithoutListeners.class);
     private static final ThreadLocal<TestContext> context = ThreadLocal.withInitial(TestContext::new);
     private static final ThreadLocal<ITestContext> testNgContext = new ThreadLocal<>();
     private long time;
@@ -89,7 +89,7 @@ public class TestNGBaseWithoutListeners {
      * @param driverName         - Driver Name
      * @param driverPropertyName - Driver Property Name
      */
-    @SuppressWarnings({"squid:S3457", "squid:S2629", "squid:S00112"})
+    @SuppressWarnings({"squid:S3457", "squid:S2629", "squid:S00112", "squid:S899"})
     private void installDriver(String driverName, String driverPropertyName) {
         String os = System.getProperty("os.name").toUpperCase();
         String replaceOS = "<REPLACE_OS>";
@@ -222,7 +222,7 @@ public class TestNGBaseWithoutListeners {
     }
 
     protected TestContext getContext(TestProperties props) {
-        if (isDriverInitializationRequired()) {
+        if (isDriverInitializationRequired(props.getBrowserType().isAppiumDriver())) {
             context().setTestProperties(props);
             context().init();
             logInfo("+INITIALIZING CONTEXT: " + context().getDriver().toString());
@@ -234,9 +234,10 @@ public class TestNGBaseWithoutListeners {
     /**
      * Check if driver Initialization required (or possible)
      *
+     * @param appiumDriver - true if appium driver
      * @return true if initialization of the driver is required else false
      */
-    private boolean isDriverInitializationRequired() {
+    private boolean isDriverInitializationRequired(boolean appiumDriver) {
         if (context() == null) {
             // If context is null, then we cannot initialize the driver
             return false;
@@ -248,8 +249,11 @@ public class TestNGBaseWithoutListeners {
         }
 
         try {
-            //  Try to switch to the current window
-            context().getDriver().switchTo().window(context().getDriver().getWindowHandle());
+            // Try to switch to the current window
+            // Note:  Appium (as of 1.14.0) does not support getting the window handle
+            if (!appiumDriver) {
+                context().getDriver().switchTo().window(context().getDriver().getWindowHandle());
+            }
 
             // Able to switch to the current window as such no initialization of the driver is necessary
             return false;
