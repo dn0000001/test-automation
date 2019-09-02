@@ -1,6 +1,8 @@
 package com.taf.automation.ui.support;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
@@ -35,9 +37,9 @@ public enum WebDriverTypeEnum {
     IE(BrowserType.IE, InternetExplorerDriver.class),
     OPERA_BLINK(BrowserType.OPERA_BLINK, OperaDriver.class),
     SAFARI(BrowserType.SAFARI, SafariDriver.class),
-    ANDROID(BrowserType.ANDROID, AppiumDriver.class),
-    IPHONE(BrowserType.IPHONE, AppiumDriver.class),
-    IPAD(BrowserType.IPAD, AppiumDriver.class),
+    ANDROID(BrowserType.ANDROID, AndroidDriver.class),
+    IPHONE(BrowserType.IPHONE, IOSDriver.class),
+    IPAD(BrowserType.IPAD, IOSDriver.class),
     ;
 
     String driverName;
@@ -85,7 +87,7 @@ public enum WebDriverTypeEnum {
 
         capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
 
-        if (prop.getRemoteURL() != null) {
+        if (prop.getRemoteURL() != null && !prop.getBrowserType().isAppiumDriver()) {
             try {
                 return new RemoteWebDriver(new URL(prop.getRemoteURL()), getRemoteCapabilities(prop, capabilities));
             } catch (MalformedURLException e) {
@@ -102,6 +104,11 @@ public enum WebDriverTypeEnum {
                 return getSafariDriver(prop, capabilities);
             case EDGE:
                 return getEdgeDriver(prop, capabilities);
+            case ANDROID:
+                return getAndroidDriver(prop, capabilities);
+            case IPAD:
+            case IPHONE:
+                return getIOSDriver(prop, capabilities);
             default:
                 try {
                     Constructor<? extends WebDriver> constructor = driverClass.getConstructor(Capabilities.class);
@@ -131,10 +138,6 @@ public enum WebDriverTypeEnum {
             capabilities.setCapability(ChromeOptions.CAPABILITY, getChromeOptions(prop, mergeCapabilities));
         } else if (prop.getBrowserType() == SAFARI) {
             capabilities.setCapability(SafariOptions.CAPABILITY, getSafariOptions(prop, mergeCapabilities));
-        } else if (prop.getBrowserType() == ANDROID) {
-            capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.ANDROID);
-        } else if (prop.getBrowserType() == IPHONE || prop.getBrowserType() == IPAD) {
-            capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.IOS);
         } else {
             capabilities.merge(mergeCapabilities);
         }
@@ -233,6 +236,36 @@ public enum WebDriverTypeEnum {
         EdgeOptions options = new EdgeOptions();
         options.merge(mergeCapabilities);
         return options;
+    }
+
+    private AndroidDriver getAndroidDriver(TestProperties prop, DesiredCapabilities capabilities) {
+        capabilities.setBrowserName(null);
+        capabilities.setPlatform(null);
+        capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.ANDROID);
+        capabilities.merge(prop.getExtraCapabilities());
+        return new AndroidDriver(getRemoteURL(prop), capabilities);
+    }
+
+    private IOSDriver getIOSDriver(TestProperties prop, DesiredCapabilities capabilities) {
+        capabilities.setBrowserName(null);
+        capabilities.setPlatform(null);
+        capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.IOS);
+        capabilities.merge(prop.getExtraCapabilities());
+        return new IOSDriver(getRemoteURL(prop), capabilities);
+    }
+
+    @SuppressWarnings("squid:S00112")
+    private URL getRemoteURL(TestProperties prop) {
+        try {
+            return new URL(prop.getRemoteURL());
+        } catch (Exception ex) {
+            String message = "webdriver.remote.url property had invalid URL:  " + prop.getRemoteURL();
+            throw new RuntimeException(message, ex);
+        }
+    }
+
+    public boolean isAppiumDriver() {
+        return AppiumDriver.class.isAssignableFrom(driverClass);
     }
 
 }

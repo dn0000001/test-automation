@@ -630,11 +630,14 @@ public class TestProperties {
     public String getFirefoxNTLM_URIS() {
         if (firefox_NTLM_Auto) {
             List<String> uris = new ArrayList<>();
-            uris.add(getURL());
+
+            if (StringUtils.isNotBlank(getURL())) {
+                uris.add(getURL());
+            }
 
             StringBuilder sb = new StringBuilder();
             for (String uri : uris) {
-                sb.append(URLUtils.getURI(uri).getHost());
+                sb.append(URLUtils.getURI(StringUtils.trim(uri)).getHost());
                 sb.append(",");
             }
 
