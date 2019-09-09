@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.mobile.AppConfigBuilder;
 import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.thoughtworks.xstream.XStream;
@@ -19,6 +20,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -175,27 +177,71 @@ public class Utils {
      * @return WebDriver
      */
     public static WebDriver changeBrowser(TestProperties prop) {
+        return changeBrowser(prop, null, true);
+    }
+
+    /**
+     * Change the browser being used<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>Updates the driver in the context such that correct driver is accessible</LI>
+     * <LI>The current driver is stored such that it can be restored later</LI>
+     * <LI>After use of the browser is complete, use the method <B>restoreBrowser</B></LI>
+     * <LI>The TestProperties class is <B>NOT</B> modified as such any browser/property checks will be incorrect</LI>
+     * </UL>
+     *
+     * @param appConfigBuilder - App Config Builder for the Test Properties &amp; DesiredCapabilities
+     * @return WebDriver
+     */
+    public static WebDriver changeBrowser(AppConfigBuilder appConfigBuilder) {
+        return changeBrowser(appConfigBuilder.getTestProperties(), appConfigBuilder.getCapabilities(), true);
+    }
+
+    /**
+     * Change the browser being used<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>Updates the driver in the context such that correct driver is accessible</LI>
+     * <LI>The current driver is stored such that it can be restored later based on flag</LI>
+     * <LI>After use of the browser is complete, use the method <B>restoreBrowser</B></LI>
+     * <LI>The TestProperties class is <B>NOT</B> modified as such any browser/property checks will be incorrect</LI>
+     * <LI>The extra Desired Capabilities is applied first.  The Test Properties Extra Capabilities is applied after</LI>
+     * <LI>The extra Desired Capabilities is mainly used for mobile testing.
+     * There should be <B>NO</B> need to use it for normal desktop testing</LI>
+     * </UL>
+     *
+     * @param prop        - Test Properties to be used in changing the browser
+     * @param extra       - The extra Desired Capabilities (not applied to remote execution)
+     * @param storeDriver - true to store the driver such that is can be restored later
+     * @return WebDriver
+     */
+    public static WebDriver changeBrowser(TestProperties prop, DesiredCapabilities extra, boolean storeDriver) {
         lockContext.lock();
         try {
             // Store WebDriver such that it can be restored later
-            storedWebDrivers.put(Thread.currentThread().getId(), TestNGBase.context().getDriver());
+            if (storeDriver) {
+                storedWebDrivers.put(Thread.currentThread().getId(), TestNGBase.context().getDriver());
+            }
 
             // Store the properties such that it can be retrieved
             storedProperties.put(Thread.currentThread().getId(), prop);
 
             // Initialize driver using specified properties
-            WebDriver driver = WebDriverTypeEnum.FIREFOX.getNewWebDriver(prop);
+            WebDriver driver = WebDriverTypeEnum.FIREFOX.getNewWebDriver(prop, extra);
 
             // Resize the browser
-            String res = prop.getScreenSize();
-            if (res != null) {
-                String[] resWH = res.toLowerCase().split("x");
-                int width = Integer.parseInt(resWH[0].trim());
-                int height = Integer.parseInt(resWH[1].trim());
-                Dimension dim = new Dimension(width, height);
-                driver.manage().window().setSize(dim);
-            } else {
-                driver.manage().window().maximize();
+            // Note:  Appium (as of 1.14.0) does not support setting timeouts or window size
+            if (!prop.getBrowserType().isAppiumDriver()) {
+                String res = prop.getScreenSize();
+                if (res != null) {
+                    String[] resWH = res.toLowerCase().split("x");
+                    int width = Integer.parseInt(resWH[0].trim());
+                    int height = Integer.parseInt(resWH[1].trim());
+                    Dimension dim = new Dimension(width, height);
+                    driver.manage().window().setSize(dim);
+                } else {
+                    driver.manage().window().maximize();
+                }
             }
 
             // Change the driver in the context such that the specified browser is returned

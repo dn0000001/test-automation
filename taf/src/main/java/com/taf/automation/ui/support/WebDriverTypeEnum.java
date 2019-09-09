@@ -60,8 +60,29 @@ public enum WebDriverTypeEnum {
         return getNewWebDriver(prop);
     }
 
-    @SuppressWarnings("squid:S00112")
+    /**
+     * Get a New Web Driver based on the passed Test Properties
+     *
+     * @param prop - Test Properties to be used to get the new WebDriver
+     * @return WebDriver
+     */
     public WebDriver getNewWebDriver(TestProperties prop) {
+        return getNewWebDriver(prop, null);
+    }
+
+    /**
+     * Get a New Web Driver based on the passed Test Properties &amp; Desired Capabilities<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>The extra Desired Capabilities is applied first.  The Test Properties Extra Capabilities is applied after</LI>
+     * </OL>
+     *
+     * @param prop  - Test Properties to be used to get the new WebDriver
+     * @param extra - The extra Desired Capabilities (not applied to remote execution)
+     * @return WebDriver
+     */
+    @SuppressWarnings("squid:S00112")
+    public WebDriver getNewWebDriver(TestProperties prop, DesiredCapabilities extra) {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         Proxy proxy = null;
         if (prop.getHttpProxy() != null) {
@@ -94,6 +115,9 @@ public enum WebDriverTypeEnum {
                 throw new RuntimeException("Malformed URL!", e);
             }
         }
+
+        // Note:  Null desired capabilities will just skip
+        capabilities.merge(extra);
 
         switch (prop.getBrowserType()) {
             case FIREFOX:

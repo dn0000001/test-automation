@@ -5,6 +5,7 @@ import com.taf.automation.ui.support.TestContext;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.openqa.selenium.support.FindBy;
+import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.MobileComponent;
 
 /**
@@ -99,74 +100,92 @@ public class CalculatorApp extends PageObjectV2 {
         super(context);
     }
 
+    @Step("Click 1")
     public void clickOne() {
         one.click();
     }
 
+    @Step("Click 2")
     public void clickTwo() {
         two.click();
     }
 
+    @Step("Click 3")
     public void clickThree() {
         three.click();
     }
 
+    @Step("Click 4")
     public void clickFour() {
         four.click();
     }
 
+    @Step("Click 5")
     public void clickFive() {
         five.click();
     }
 
+    @Step("Click 6")
     public void clickSix() {
         six.click();
     }
 
+    @Step("Click 7")
     public void clickSeven() {
         seven.click();
     }
 
+    @Step("Click 8")
     public void clickEight() {
         eight.click();
     }
 
+    @Step("Click 9")
     public void clickNine() {
         nine.click();
     }
 
+    @Step("Click 0")
     public void clickZero() {
         zero.click();
     }
 
+    @Step("Click .")
     public void clickPeriod() {
         period.click();
     }
 
+    @Step("Click +")
     public void clickPlus() {
         plus.click();
     }
 
+    @Step("Click -")
     public void clickMinus() {
         minus.click();
     }
 
+    @Step("Click X")
     public void clickMultiply() {
         multiply.click();
     }
 
+    @Step("Click Divide")
     public void clickDivide() {
         divide.click();
     }
 
+    @Step("Click DEL")
     public void clickDelete() {
         delete.click();
     }
 
+    @Step("Click =")
     public void clickEquals() {
         equals.click();
     }
 
+    @Step("Click CLR")
     public void clickClear() {
         clear.click();
     }

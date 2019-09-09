@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<calculator-do>
+<mobile-do>
     <aliases>
         <CHECK_BOX_AJAX>a1</CHECK_BOX_AJAX>
         <CHECK_BOX_LABEL>b2</CHECK_BOX_LABEL>
@@ -15,4 +15,4 @@
         <TAB_OFF_TEXT_BOX>k11</TAB_OFF_TEXT_BOX>
         <TEXT_BOX>l12</TEXT_BOX>
     </aliases>
-</calculator-do>
+</mobile-do>

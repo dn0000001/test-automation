@@ -102,6 +102,23 @@
     -->
 
     <!--
+    <test name="Calculator App Test">
+        <parameter name="data-set" value="data/mobile/Calculator_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.mobile.tests.CalculatorAppTest"/>
+        </classes>
+    </test>
+    -->
+
+    <!--
+    <test name="Change Apps Test">
+        <classes>
+            <class name="com.automation.common.mobile.tests.ChangeAppsTest"/>
+        </classes>
+    </test>
+    -->
+
+    <!--
     <test name="Excel 2013 Test">
         <parameter name="excel" value="data/ui/excel-test-cases.xlsx"/>
         <parameter name="worksheet" value="Sheet1"/>
