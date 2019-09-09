@@ -7,6 +7,7 @@ import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
 import datainstiller.data.DataPersistence;
+import io.appium.java_client.AppiumDriver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -68,6 +69,9 @@ public class TestNGBaseWithoutListeners {
                 attachmentFile = (context().getDriver().getPageSource()).getBytes();
                 attachmentTitle = title;
                 type = "text/html";
+                if (AppiumDriver.class.isAssignableFrom(context().getDriver().getClass())) {
+                    type = "text/xml";
+                }
             } catch (Exception ex) {
                 String shortMessage = "Could not take HTML for " + title;
                 StringWriter sw = new StringWriter();

@@ -1,22 +1,24 @@
 package com.automation.common.mobile.domainObjects;
 
 import com.automation.common.mobile.pageObjects.CalculatorApp;
+import com.automation.common.mobile.pageObjects.ClockApp;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.TestContext;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Object to hold data for the Calculator App Test
+ * Object to hold data for the Mobile App Tests
  */
-@XStreamAlias("calculator-do")
-public class CalculatorDO extends DomainObject {
+@XStreamAlias("mobile-do")
+public class MobileDO extends DomainObject {
     private CalculatorApp calculatorApp;
+    private ClockApp clockApp;
 
-    public CalculatorDO() {
+    public MobileDO() {
         super();
     }
 
-    public CalculatorDO(TestContext context) {
+    public MobileDO(TestContext context) {
         super(context);
     }
 
@@ -30,6 +32,18 @@ public class CalculatorDO extends DomainObject {
         }
 
         return calculatorApp;
+    }
+
+    public ClockApp getClockApp() {
+        if (clockApp == null) {
+            clockApp = new ClockApp();
+        }
+
+        if (clockApp.getContext() == null) {
+            clockApp.initPage(getContext());
+        }
+
+        return clockApp;
     }
 
 }

@@ -5,6 +5,7 @@ import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
 import com.taf.automation.ui.support.conditional.ResultType;
 import com.taf.automation.ui.support.testng.Attachment;
+import io.appium.java_client.AppiumDriver;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -354,9 +355,12 @@ public class ExpectedConditionsUtil {
             @Override
             public List<Attachment> apply(WebDriver driver) {
                 try {
+                    boolean appium = AppiumDriver.class.isAssignableFrom(driver.getClass());
+
                     List<Criteria> criteria = new ArrayList<>();
                     criteria.add(CriteriaMaker.forAlertDismiss());
                     criteria.add(CriteriaMaker.forUrlRegEx(".*"));
+                    criteria.add(CriteriaMaker.forLambdaExpression(() -> appium));
                     Conditional conditional = new Conditional(driver);
                     int index = conditional.match(criteria);
                     if (index < 0) {
@@ -377,7 +381,7 @@ public class ExpectedConditionsUtil {
                     String append = "";
 
                     try {
-                        if (viewPortOnly) {
+                        if (viewPortOnly || appium) {
                             throw new Exception("User wants view port only screenshot");
                         }
 
