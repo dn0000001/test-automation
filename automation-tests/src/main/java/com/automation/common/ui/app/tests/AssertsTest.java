@@ -33,15 +33,21 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 /**
  * Unit testing AssertsUtil class
  */
+@SuppressWarnings({"squid:S1192", "squid:S00112", "squid:S00100", "squid:S1481", "squid:S00117"})
 public class AssertsTest extends TestNGBase {
     private static final boolean RUN = false;
 
+    @SuppressWarnings("squid:S1068")
     private static class TestObj {
         private String fieldString1;
         private String fieldString2;
@@ -2406,6 +2412,81 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+    }
+
+    @Test
+    public void testDateGreaterThan() {
+        String actual = "12/31/2018";
+        String expected = "12/29/2018";
+        String pattern = "MM/dd/yyyy";
+        assertThat("testDateGreaterThan", actual, AssertsUtil.dateGreaterThan(expected, pattern));
+    }
+
+    @Test
+    public void testBigDecimalGreaterThan() {
+        BigDecimal actual = new BigDecimal("5.01");
+        BigDecimal expected = new BigDecimal("5");
+        assertThat("testBigDecimalGreaterThan", actual, greaterThan(expected));
+    }
+
+    @Test
+    public void testDateGreaterThanOrEqualTo() {
+        String actual = "12/31/2018";
+        String expected = "12/29/2018";
+        String pattern = "MM/dd/yyyy";
+        assertThat("testDateGreaterThanOrEqualTo", actual, AssertsUtil.dateGreaterThanOrEqualTo(expected, pattern));
+    }
+
+    @Test
+    public void testBigDecimalGreaterThanOrEqualTo() {
+        BigDecimal actual = new BigDecimal("5.01");
+        BigDecimal expected = new BigDecimal("5");
+        assertThat("testBigDecimalGreaterThanOrEqualTo", actual, greaterThanOrEqualTo(expected));
+    }
+
+    @Test
+    public void testDateLessThan() {
+        String actual = "12/30/2018";
+        String expected = "12/31/2018";
+        String pattern = "MM/dd/yyyy";
+        assertThat("testDateLessThan", actual, AssertsUtil.dateLessThan(expected, pattern));
+    }
+
+    @Test
+    public void testBigDecimalLessThan() {
+        BigDecimal actual = new BigDecimal("5");
+        BigDecimal expected = new BigDecimal("5.01");
+        assertThat("testBigDecimalLessThan", actual, lessThan(expected));
+    }
+
+    @Test
+    public void testDateLessThanOrEqualTo() {
+        String actual = "12/30/2018";
+        String expected = "12/31/2018";
+        String pattern = "MM/dd/yyyy";
+        assertThat("testDateLessThanOrEqualTo", actual, AssertsUtil.dateLessThanOrEqualTo(expected, pattern));
+    }
+
+    @Test
+    public void testBigDecimalLessThanOrEqualTo() {
+        BigDecimal actual = new BigDecimal("5");
+        BigDecimal expected = new BigDecimal("5.01");
+        assertThat("testBigDecimalLessThanOrEqualTo", actual, lessThanOrEqualTo(expected));
+    }
+
+    @Test
+    public void testDateEqualTo() {
+        String actual = "12/31/2018";
+        String expected = "12/31/2018";
+        String pattern = "MM/dd/yyyy";
+        assertThat("testDateEqualTo", actual, AssertsUtil.dateEqualTo(expected, pattern));
+    }
+
+    @Test
+    public void testBigDecimalEqualTo() {
+        BigDecimal actual = new BigDecimal("5");
+        BigDecimal expected = new BigDecimal("5.00");
+        assertThat("testBigDecimalEqualTo", actual, comparesEqualTo(expected));
     }
 
 }

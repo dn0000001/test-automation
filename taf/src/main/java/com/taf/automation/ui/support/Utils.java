@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.StandardToStringStyle;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -33,6 +34,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1419,6 +1421,23 @@ public class Utils {
             return StringUtils.defaultString(component.getValue());
         } else {
             return StringUtils.defaultString(Failsafe.with(getRetryPolicy(0)).get(actionToScrapeData));
+        }
+    }
+
+    /**
+     * Parses a string representing a date by trying a variety of different parsers.  The parse will try each parse
+     * pattern in turn. A parse is only deemed successful if it parses the whole of the input string.
+     * The parser parses strictly - it does not allow for dates such as "February 942, 1996"
+     *
+     * @param value         - The date to parse
+     * @param parsePatterns - The date format patterns to use, see SimpleDateFormat
+     * @return null if cannot parse else Date
+     */
+    public static Date parseDateStrictly(String value, String... parsePatterns) {
+        try {
+            return DateUtils.parseDateStrictly(value, parsePatterns);
+        } catch (Exception ex) {
+            return null;
         }
     }
 
