@@ -26,7 +26,6 @@ import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -528,8 +527,7 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test(enabled = RUN)
     public void assertIsNotDisplayedUsingWebDriverWaitTest() {
-        WebDriverWait wait = (WebDriverWait) Utils.getWebDriverWait()
-                .withTimeout(Duration.ofSeconds(TestProperties.getInstance().getNegativeTimeout()));
+        WebDriverWait wait = Utils.getNegativeWebDriverWait();
         FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
         assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentDisplayed(wait)));
     }
@@ -539,8 +537,7 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test(enabled = RUN)
     public void assertIsNotReadyUsingWebDriverWaitTest() {
-        WebDriverWait wait = (WebDriverWait) Utils.getWebDriverWait()
-                .withTimeout(Duration.ofSeconds(TestProperties.getInstance().getNegativeTimeout()));
+        WebDriverWait wait = Utils.getNegativeWebDriverWait();
         FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
         assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentReady(wait)));
     }
@@ -550,8 +547,7 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test(enabled = RUN)
     public void assertIsNotEnabledUsingWebDriverWaitTest() {
-        WebDriverWait wait = (WebDriverWait) Utils.getWebDriverWait()
-                .withTimeout(Duration.ofSeconds(TestProperties.getInstance().getNegativeTimeout()));
+        WebDriverWait wait = Utils.getNegativeWebDriverWait();
         FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
         assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentEnabled(wait)));
     }
