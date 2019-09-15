@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -475,6 +476,16 @@ public class Utils {
      */
     public static WebDriverWait getWebDriverWait(WebDriver driver) {
         return new WebDriverWait(driver, getElementTimeout(), 100L);
+    }
+
+    /**
+     * Get WebDriverWait configured with negative timeout and poll interval of 100ms
+     *
+     * @return WebDriverWait
+     */
+    public static WebDriverWait getNegativeWebDriverWait() {
+        return (WebDriverWait) getWebDriverWait()
+                .withTimeout(Duration.ofSeconds(TestProperties.getInstance().getNegativeTimeout()));
     }
 
     /**
