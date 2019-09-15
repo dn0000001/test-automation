@@ -12,10 +12,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * This class holds useful Matcher methods for assertions
  */
+@SuppressWarnings("squid:S1192")
 public class AssertsUtil {
     private AssertsUtil() {
         // Prevent initialization of class as all public methods should be static
@@ -859,6 +862,361 @@ public class AssertsUtil {
                 try {
                     WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(component.getLocator()));
                     return element.isEnabled();
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for date that is expected to be greater than the actual date
+     *
+     * @param expectedDate  - Expected Date
+     * @param parsePatterns - Parse Patterns for the actual &amp; expected dates
+     * @return Matcher&lt;String&gt;
+     */
+    public static Matcher<String> dateGreaterThan(final String expectedDate, final String... parsePatterns) {
+        return new TypeSafeMatcher<String>() {
+            private int compareValue = 1;
+            private boolean parsedActual = false;
+            private boolean parsedExpected = false;
+            private String actualValue = null;
+
+            @Override
+            public void describeTo(final Description description) {
+                if (parsedActual) {
+                    description.appendText("date '" + actualValue + "' greater than");
+                    return;
+                }
+
+                description.appendText("date '" + actualValue + "' to be a valid date and greater than");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final String actualDate, final Description mismatchDescription) {
+                if (!parsedActual && !parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' or date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedActual) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (compareValue == 0) {
+                    mismatchDescription.appendText("it was equal to date '" + expectedDate + "'");
+                    return;
+                }
+
+                mismatchDescription.appendText("it was less than date '" + expectedDate + "'");
+            }
+
+            @SuppressWarnings("squid:S2259")
+            @Override
+            protected boolean matchesSafely(final String item) {
+                actualValue = item;
+
+                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                parsedActual = actual != null;
+
+                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                parsedExpected = expected != null;
+
+                try {
+                    compareValue = actual.compareTo(expected);
+                    return compareValue > 0;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for date that is expected to be greater than or equal to the actual date
+     *
+     * @param expectedDate  - Expected Date
+     * @param parsePatterns - Parse Patterns for the actual &amp; expected dates
+     * @return Matcher&lt;String&gt;
+     */
+    public static Matcher<String> dateGreaterThanOrEqualTo(final String expectedDate, final String... parsePatterns) {
+        return new TypeSafeMatcher<String>() {
+            private boolean parsedActual = false;
+            private boolean parsedExpected = false;
+            private String actualValue = null;
+
+            @Override
+            public void describeTo(final Description description) {
+                if (parsedActual) {
+                    description.appendText("date '" + actualValue + "' greater than or equal to");
+                    return;
+                }
+
+                description.appendText("date '" + actualValue + "' to be a valid date and greater than or equal to");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final String actualDate, final Description mismatchDescription) {
+                if (!parsedActual && !parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' or date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedActual) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                mismatchDescription.appendText("it was less than date '" + expectedDate + "'");
+            }
+
+            @SuppressWarnings("squid:S2259")
+            @Override
+            protected boolean matchesSafely(final String item) {
+                actualValue = item;
+
+                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                parsedActual = actual != null;
+
+                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                parsedExpected = expected != null;
+
+                try {
+                    return actual.compareTo(expected) >= 0;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for date that is expected to be less than the actual date
+     *
+     * @param expectedDate  - Expected Date
+     * @param parsePatterns - Parse Patterns for the actual &amp; expected dates
+     * @return Matcher&lt;String&gt;
+     */
+    public static Matcher<String> dateLessThan(final String expectedDate, final String... parsePatterns) {
+        return new TypeSafeMatcher<String>() {
+            private int compareValue = -1;
+            private boolean parsedActual = false;
+            private boolean parsedExpected = false;
+            private String actualValue = null;
+
+            @Override
+            public void describeTo(final Description description) {
+                if (parsedActual) {
+                    description.appendText("date '" + actualValue + "' less than");
+                    return;
+                }
+
+                description.appendText("date '" + actualValue + "' to be a valid date and less than");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final String actualDate, final Description mismatchDescription) {
+                if (!parsedActual && !parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' or date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedActual) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (compareValue == 0) {
+                    mismatchDescription.appendText("it was equal to date '" + expectedDate + "'");
+                    return;
+                }
+
+                mismatchDescription.appendText("it was greater than date '" + expectedDate + "'");
+            }
+
+            @SuppressWarnings("squid:S2259")
+            @Override
+            protected boolean matchesSafely(final String item) {
+                actualValue = item;
+
+                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                parsedActual = actual != null;
+
+                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                parsedExpected = expected != null;
+
+                try {
+                    compareValue = actual.compareTo(expected);
+                    return compareValue < 0;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for date that is expected to be less than or equal to the actual date
+     *
+     * @param expectedDate  - Expected Date
+     * @param parsePatterns - Parse Patterns for the actual &amp; expected dates
+     * @return Matcher&lt;String&gt;
+     */
+    public static Matcher<String> dateLessThanOrEqualTo(final String expectedDate, final String... parsePatterns) {
+        return new TypeSafeMatcher<String>() {
+            private boolean parsedActual = false;
+            private boolean parsedExpected = false;
+            private String actualValue = null;
+
+            @Override
+            public void describeTo(final Description description) {
+                if (parsedActual) {
+                    description.appendText("date '" + actualValue + "' less than or equal to");
+                    return;
+                }
+
+                description.appendText("date '" + actualValue + "' to be a valid date and less than or equal to");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final String actualDate, final Description mismatchDescription) {
+                if (!parsedActual && !parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' or date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedActual) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                mismatchDescription.appendText("it was greater than date '" + expectedDate + "'");
+            }
+
+            @SuppressWarnings("squid:S2259")
+            @Override
+            protected boolean matchesSafely(final String item) {
+                actualValue = item;
+
+                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                parsedActual = actual != null;
+
+                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                parsedExpected = expected != null;
+
+                try {
+                    return actual.compareTo(expected) <= 0;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for date that is expected to be equal to the actual date
+     *
+     * @param expectedDate  - Expected Date
+     * @param parsePatterns - Parse Patterns for the actual &amp; expected dates
+     * @return Matcher&lt;String&gt;
+     */
+    public static Matcher<String> dateEqualTo(final String expectedDate, final String... parsePatterns) {
+        return new TypeSafeMatcher<String>() {
+            private int compareValue = 0;
+            private boolean parsedActual = false;
+            private boolean parsedExpected = false;
+            private String actualValue = null;
+
+            @Override
+            public void describeTo(final Description description) {
+                if (parsedActual) {
+                    description.appendText("date '" + actualValue + "' equal to");
+                    return;
+                }
+
+                description.appendText("date '" + actualValue + "' to be a valid date and equal to");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final String actualDate, final Description mismatchDescription) {
+                if (!parsedActual && !parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' or date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedActual) {
+                    mismatchDescription.appendText("could not parse date '" + actualDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (!parsedExpected) {
+                    mismatchDescription.appendText("could not parse date '" + expectedDate
+                            + "' using any of " + Arrays.toString(parsePatterns));
+                    return;
+                }
+
+                if (compareValue < 0) {
+                    mismatchDescription.appendText("it was less than date '" + expectedDate + "'");
+                } else {
+                    mismatchDescription.appendText("it was greater than date '" + expectedDate + "'");
+                }
+            }
+
+            @SuppressWarnings("squid:S2259")
+            @Override
+            protected boolean matchesSafely(final String item) {
+                actualValue = item;
+
+                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                parsedActual = actual != null;
+
+                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                parsedExpected = expected != null;
+
+                try {
+                    compareValue = actual.compareTo(expected);
+                    return compareValue == 0;
                 } catch (Exception ex) {
                     return false;
                 }
