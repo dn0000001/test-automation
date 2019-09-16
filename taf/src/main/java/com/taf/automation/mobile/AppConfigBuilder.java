@@ -3,6 +3,7 @@ package com.taf.automation.mobile;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.WebDriverTypeEnum;
+import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -17,14 +18,14 @@ public class AppConfigBuilder {
     public AppConfigBuilder() {
         capabilities = new DesiredCapabilities();
         testProperties = Utils.deepCopy(TestProperties.getInstance());
+        withExtraCapabilities(null);  // Prevent any conflicts or unexpected errors
 
         //
         // Add your defaults
         //
 
         withPlatformVersion("8.1");
-        withAutomationName("UiAutomator2");
-        withExtraCapabilities(null);
+        withAutomationName(AutomationName.ANDROID_UIAUTOMATOR2);
     }
 
     public AppConfigBuilder merge(Capabilities extraCapabilities) {
@@ -47,6 +48,12 @@ public class AppConfigBuilder {
         return this;
     }
 
+    /**
+     * With Automation Name
+     *
+     * @param value - Value (Recommended to use AutomationName interface to get a valid value)
+     * @return AppConfigBuilder
+     */
     public AppConfigBuilder withAutomationName(String value) {
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, value);
         return this;
