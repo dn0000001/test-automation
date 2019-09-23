@@ -17,6 +17,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -1136,6 +1138,26 @@ public class Utils {
         return new RetryPolicy()
                 .abortOn(StaleElementReferenceException.class)
                 .retryOn(Exception.class, AssertionError.class)
+                .withMaxDuration(TestProperties.getInstance().getElementTimeout(), TimeUnit.SECONDS)
+                .withDelay(1, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Get RetryPolicy for clicking problematic elements<BR>
+     * <B>Notes: </B>
+     * <UL>
+     * <LI>The max duration is from the TestProperties class</LI>
+     * <LI>Only retries on exceptions specific to clicking that cannot be detected (ElementClickInterceptedException
+     * and ElementNotInteractableException)
+     * </LI>
+     * <LI>The RetryPolicy can be used with 'Failsafe.with' to retry clicking an element that is problematic</LI>
+     * </UL>
+     *
+     * @return RetryPolicy
+     */
+    public static RetryPolicy getClickRetryPolicy() {
+        return new RetryPolicy()
+                .retryOn(ElementClickInterceptedException.class, ElementNotInteractableException.class)
                 .withMaxDuration(TestProperties.getInstance().getElementTimeout(), TimeUnit.SECONDS)
                 .withDelay(1, TimeUnit.SECONDS);
     }
