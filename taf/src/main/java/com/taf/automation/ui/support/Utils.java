@@ -794,14 +794,30 @@ public class Utils {
 
     /**
      * Convert currency amount from a String to BigDecimal<BR>
-     * <B>Notes:</B>
+     * <B>Notes:</B><BR>
      * 1) The locale determines what is the decimal separator and the group separator<BR>
+     * 2) Only successfully parsed amounts greater than or equal to 0 will be returned<BR>
      *
      * @param amount - Currency amount as a String
      * @param locale - Locale.CANADA for English or Locale.CANADA_FRENCH for French currency format
      * @return BigDecimal version of the currency amount
      */
     public static BigDecimal parse(final String amount, final Locale locale) {
+        return parse(amount, locale, null);
+    }
+
+    /**
+     * Convert currency amount from a String to BigDecimal<BR>
+     * <B>Notes:</B><BR>
+     * 1) The locale determines what is the decimal separator and the group separator<BR>
+     * 2) Only successfully parsed amounts greater than or equal to 0 will be returned<BR>
+     *
+     * @param amount       - Currency amount as a String
+     * @param locale       - Locale.CANADA for English or Locale.CANADA_FRENCH for French currency format
+     * @param defaultValue - If unable to parse the amount, then return this value unless it is <B>null</B>
+     * @return BigDecimal version of the currency amount
+     */
+    public static BigDecimal parse(final String amount, final Locale locale, final BigDecimal defaultValue) {
         final NumberFormat format = NumberFormat.getNumberInstance(locale);
         if (format instanceof DecimalFormat) {
             ((DecimalFormat) format).setParseBigDecimal(true);
@@ -812,8 +828,8 @@ public class Utils {
         try {
             return (BigDecimal) format.parse(cleanedAmount);
         } catch (ParseException exception) {
-            assertThat("Unable to parse value to BigDecimal:  " + cleanedAmount, false);
-            return BigDecimal.ZERO;
+            assertThat("Unable to parse value to BigDecimal:  " + cleanedAmount, defaultValue, notNullValue());
+            return defaultValue;
         }
     }
 
@@ -821,6 +837,7 @@ public class Utils {
      * Convert currency amount from a String to BigDecimal<BR>
      * <B>Notes:</B>
      * 1) The locale determines what is the decimal separator and the group separator<BR>
+     * 2) Only successfully parsed amounts greater than or equal to 0 will be returned<BR>
      *
      * @param amount         - Currency amount as a String
      * @param locale         - Locale.CANADA for English or Locale.CANADA_FRENCH for French currency format
