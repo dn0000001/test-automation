@@ -21,6 +21,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * This class provides utility methods to work with locators
  */
 public class LocatorUtils {
+    private static final String DOUBLE_QUOTE = "\"";
+    private static final String SINGLE_QUOTE = "'";
+    private static final String SEPARATOR = ",";
     private static final String ENDS_WITH = "substring(${text}, string-length(${text}) - string-length(${suffix}) + 1) = ${suffix}";
 
     private LocatorUtils() {
@@ -180,6 +183,102 @@ public class LocatorUtils {
         substitutions.put("suffix", escapedSuffix);
 
         return processForSubstitutions(ENDS_WITH, substitutions);
+    }
+
+    /**
+     * Construct an xpath safe value<BR>
+     * <B>Note: </B> Insert this value without escaping into the xpath<BR>
+     *
+     * @param unsafeValue - Value to ensure is safe
+     * @return the equivalent unsafe value constructed using the xpath function concat
+     */
+    @SuppressWarnings("squid:S1643")
+    public static String constructXpathSafeValue(String unsafeValue) {
+        if (StringUtils.defaultString(unsafeValue).equals("")) {
+            return "concat('', '')";
+        }
+
+        // If no problem quotes, then it is simple to make it safe with concat
+        if (!unsafeValue.contains(SINGLE_QUOTE) && !unsafeValue.contains(DOUBLE_QUOTE)) {
+            return "concat('" + unsafeValue + "', '')";
+        }
+
+        // Store the safe string as it is constructed
+        String safe = "concat(";
+
+        String afterPart = unsafeValue;
+        int splitPos = -1;
+        do {
+            int indexOfSingleQuote = StringUtils.indexOf(afterPart, SINGLE_QUOTE);
+            int indexOfDoubleQuote = StringUtils.indexOf(afterPart, DOUBLE_QUOTE);
+
+            final String outerQuoteToUse;
+            final String problemQuote = findFirstProblemQuote(indexOfSingleQuote, indexOfDoubleQuote);
+            if (StringUtils.defaultString(problemQuote).equals(SINGLE_QUOTE)) {
+                // First found problem quote
+                splitPos = indexOfSingleQuote;
+
+                // The character to surround the problem quote with
+                outerQuoteToUse = DOUBLE_QUOTE;
+            } else if (StringUtils.defaultString(problemQuote).equals(DOUBLE_QUOTE)) {
+                // First found problem quote
+                splitPos = indexOfDoubleQuote;
+
+                // The character to surround the problem quote with
+                outerQuoteToUse = SINGLE_QUOTE;
+            } else {
+                // No problem quote found
+                splitPos = -1;
+
+                // Still need to add the part to the safe string
+                outerQuoteToUse = SINGLE_QUOTE;
+            }
+
+            if (splitPos >= 0) {
+                // The part which does not have a single quote or double quote
+                String beforePart = StringUtils.substring(afterPart, 0, splitPos);
+
+                // Update the safe string with the before part and the problem quote
+                safe += outerQuoteToUse + beforePart + outerQuoteToUse + SEPARATOR
+                        + outerQuoteToUse + problemQuote + outerQuoteToUse + SEPARATOR;
+
+                // Update the after part which still needs to be processed
+                afterPart = StringUtils.substring(afterPart, splitPos + 1);
+            } else {
+                // Add the last part to the safe string
+                safe += outerQuoteToUse + afterPart + outerQuoteToUse + SEPARATOR;
+            }
+        } while (splitPos >= 0);
+
+        safe = StringUtils.removeEnd(safe, ",") + ")";
+        return safe;
+    }
+
+    /**
+     * Find 1st problem quote (if any)
+     *
+     * @param indexOfSingleQuote - Index of (1st) Single Quote (negative indicates no single quote)
+     * @param indexOfDoubleQuote - Index of (1st) Double Quote (negative indicates no double quote)
+     * @return null if no problem quote else the 1st problem quote (SINGLE_QUOTE or DOUBLE_QUOTE)
+     */
+    private static String findFirstProblemQuote(int indexOfSingleQuote, int indexOfDoubleQuote) {
+        if (indexOfSingleQuote >= 0 && indexOfDoubleQuote >= 0) {
+            if (indexOfSingleQuote < indexOfDoubleQuote) {
+                return SINGLE_QUOTE;
+            } else {
+                return DOUBLE_QUOTE;
+            }
+        }
+
+        if (indexOfSingleQuote >= 0) {
+            return SINGLE_QUOTE;
+        }
+
+        if (indexOfDoubleQuote >= 0) {
+            return DOUBLE_QUOTE;
+        }
+
+        return null;
     }
 
 }
