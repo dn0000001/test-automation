@@ -1,5 +1,6 @@
 package com.automation.common.ui.app.tests;
 
+import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.LocatorUtils;
 import com.taf.automation.ui.support.RegExUtils;
 import org.openqa.selenium.By;
@@ -15,6 +16,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class LocatorUtilsTest {
+    private static final String DOUBLE_QUOTE = "\"";
+    private static final String ESCAPE_DOUBLE_QUOTE = "\\" + DOUBLE_QUOTE;
+    private static final String SINGLE_QUOTE = "'";
+    private static final String SEPARATOR = ",";
+    private static final String VALUE = "value";
+    private static final String PART = "Part";
+    private static final String ANOTHER = "another";
+    private static final String SOMETHING = "Something";
+    private static final String CAPS = "UPPER";
+    private static final String SAFE_START = "concat(";
+    private static final String SAFE_END = ")";
     private static final String KEY = "row";
     private static final String ROW_SUBSTITUTION = "${" + KEY + "}";
 
@@ -266,6 +278,314 @@ public class LocatorUtilsTest {
                 + "})";
         assertThat("performMixedRecursive2Test - instanceof", test instanceof ByAll);
         assertThat("performMixedRecursive2Test- locator", test.toString(), equalTo(expected));
+    }
+
+    /**
+     * Output a console command that can be run to verify the unsafeValue &amp; safeValue are the same
+     *
+     * @param unsafeValue - Unsafe Value
+     * @param safeValue   - Safe Value
+     */
+    private void outputConsoleComand(String unsafeValue, String safeValue) {
+        String console = "$x("
+                + DOUBLE_QUOTE + safeValue.replace(DOUBLE_QUOTE, ESCAPE_DOUBLE_QUOTE) + DOUBLE_QUOTE
+                + ") === "
+                + DOUBLE_QUOTE + unsafeValue.replace(DOUBLE_QUOTE, ESCAPE_DOUBLE_QUOTE) + DOUBLE_QUOTE;
+        Helper.log(console, true);
+    }
+
+    @Test
+    public void performNoQuotesTest() {
+        String unsafeValue = VALUE;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + SINGLE_QUOTE + VALUE + SINGLE_QUOTE
+                + SEPARATOR
+                + " " + SINGLE_QUOTE + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performNoQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performMatchingSingleQuotesTest() {
+        String unsafeValue = VALUE + SINGLE_QUOTE + PART + SINGLE_QUOTE + ANOTHER;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + VALUE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + PART + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + ANOTHER + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performMatchingSingleQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performMatchingDoubleQuotesTest() {
+        String unsafeValue = VALUE + DOUBLE_QUOTE + PART + DOUBLE_QUOTE + ANOTHER;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + SINGLE_QUOTE + VALUE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + PART + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + ANOTHER + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performMatchingDoubleQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performMatchingMixQuotesSequentialTest() {
+        String unsafeValue = VALUE + SINGLE_QUOTE + PART + SINGLE_QUOTE + ANOTHER + DOUBLE_QUOTE + SOMETHING + DOUBLE_QUOTE + CAPS;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + VALUE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + PART + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + ANOTHER + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + SOMETHING + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + CAPS + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performMatchingMixQuotesSequentialTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performMatchingMixQuotesAlternatingTest() {
+        String unsafeValue = VALUE + SINGLE_QUOTE + PART + DOUBLE_QUOTE + ANOTHER + SINGLE_QUOTE + SOMETHING + DOUBLE_QUOTE + CAPS;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + VALUE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + PART + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + ANOTHER + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + SOMETHING + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + CAPS + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performMatchingMixQuotesAlternatingTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performSingleQuoteTest() {
+        String unsafeValue = VALUE + SINGLE_QUOTE + PART;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + VALUE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + PART + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performSingleQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performDoubleQuoteTest() {
+        String unsafeValue = VALUE + DOUBLE_QUOTE + PART;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + SINGLE_QUOTE + VALUE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + PART + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performDoubleQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performSingleQuoteStartTest() {
+        String unsafeValue = SINGLE_QUOTE + VALUE;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + VALUE + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performSingleQuoteStartTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performDoubleQuoteStartTest() {
+        String unsafeValue = DOUBLE_QUOTE + VALUE;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + SINGLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + VALUE + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performDoubleQuoteStartTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performSingleQuoteEndTest() {
+        String unsafeValue = VALUE + SINGLE_QUOTE;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + VALUE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performSingleQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performDoubleQuoteEndTest() {
+        String unsafeValue = VALUE + DOUBLE_QUOTE;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + SINGLE_QUOTE + VALUE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performDoubleQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performMixQuoteTest() {
+        String unsafeValue = VALUE + SINGLE_QUOTE + PART + DOUBLE_QUOTE + ANOTHER;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + VALUE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + PART + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + ANOTHER + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performMixQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performMixQuoteSequentialTest() {
+        String unsafeValue = VALUE + SINGLE_QUOTE + DOUBLE_QUOTE + PART;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + VALUE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + PART + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performMixQuoteSequentialTest", actualSafeValue, equalTo(expectedSafeValue));
+    }
+
+    @Test
+    public void performMixQuoteEndTest() {
+        String unsafeValue = SINGLE_QUOTE + VALUE + DOUBLE_QUOTE;
+        String actualSafeValue = LocatorUtils.constructXpathSafeValue(unsafeValue);
+        String expectedSafeValue = SAFE_START
+                + DOUBLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + DOUBLE_QUOTE + SINGLE_QUOTE + DOUBLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + VALUE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + DOUBLE_QUOTE + SINGLE_QUOTE
+                + SEPARATOR
+                + SINGLE_QUOTE + SINGLE_QUOTE
+                + SAFE_END;
+
+        Helper.log(unsafeValue, true);
+        outputConsoleComand(unsafeValue, actualSafeValue);
+
+        assertThat("performMixQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
 }
