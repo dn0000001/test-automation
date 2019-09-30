@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.math.BigDecimal;
@@ -1219,6 +1220,68 @@ public class AssertsUtil {
                     return compareValue == 0;
                 } catch (Exception ex) {
                     return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for component that cannot be set with specified value<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>This method does not consider validation.
+     * So, as long as the value can be set this is a failure even if the validation would fail.</LI>
+     * <LI>This method uses setElementValueV2 to set the value.
+     * If the setElementValueV2 method is successful, then this is considered a failure.  So, on unexpected failures
+     * you should check that the component is not checking if the value is already entered which could be considered a
+     * successful setting of the component</LI>
+     * <LI>This method should only be used to valid that an option cannot be set because it is not valid
+     * and not that it is disabled</LI>
+     * </OL>
+     *
+     * @param valueToUse - Value to use when attempting to set the component
+     * @return Matcher&lt;PageComponent&gt;
+     */
+    public static Matcher<PageComponent> componentCannotBeSet(String valueToUse) {
+        return new TypeSafeMatcher<PageComponent>() {
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("component cannot be set");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final PageComponent component, final Description mismatchDescription) {
+                mismatchDescription.appendText(" able to set using value:  " + valueToUse);
+            }
+
+            @Override
+            protected boolean matchesSafely(final PageComponent component) {
+                String restoreData;
+                String restoreInitialData;
+                String restoreExpectedData;
+
+                try {
+                    restoreData = component.getData(DataTypes.Data, false);
+                    restoreInitialData = component.getData(DataTypes.Initial, false);
+                    restoreExpectedData = component.getData(DataTypes.Expected, false);
+                } catch (Exception ex) {
+                    // Could not get the restore data.  So just consider this a fail
+                    return false;
+                }
+
+                try {
+                    // Initialize component data for the test
+                    component.initializeData(valueToUse, null, null);
+
+                    // This should fail as component cannot be set
+                    new PageObjectV2().setElementValueV2(component, null, 0);
+
+                    // If we reach here, then component could be set and this is a failure
+                    return false;
+                } catch (Exception | AssertionError ex) {
+                    return true;
+                } finally {
+                    component.initializeData(restoreData, restoreInitialData, restoreExpectedData);
                 }
             }
         };
