@@ -928,10 +928,10 @@ public class AssertsUtil {
             protected boolean matchesSafely(final String item) {
                 actualValue = item;
 
-                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                Date actual = DateActions.parseDateStrictly(item, parsePatterns);
                 parsedActual = actual != null;
 
-                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                Date expected = DateActions.parseDateStrictly(expectedDate, parsePatterns);
                 parsedExpected = expected != null;
 
                 try {
@@ -996,10 +996,10 @@ public class AssertsUtil {
             protected boolean matchesSafely(final String item) {
                 actualValue = item;
 
-                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                Date actual = DateActions.parseDateStrictly(item, parsePatterns);
                 parsedActual = actual != null;
 
-                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                Date expected = DateActions.parseDateStrictly(expectedDate, parsePatterns);
                 parsedExpected = expected != null;
 
                 try {
@@ -1069,10 +1069,10 @@ public class AssertsUtil {
             protected boolean matchesSafely(final String item) {
                 actualValue = item;
 
-                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                Date actual = DateActions.parseDateStrictly(item, parsePatterns);
                 parsedActual = actual != null;
 
-                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                Date expected = DateActions.parseDateStrictly(expectedDate, parsePatterns);
                 parsedExpected = expected != null;
 
                 try {
@@ -1137,10 +1137,10 @@ public class AssertsUtil {
             protected boolean matchesSafely(final String item) {
                 actualValue = item;
 
-                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                Date actual = DateActions.parseDateStrictly(item, parsePatterns);
                 parsedActual = actual != null;
 
-                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                Date expected = DateActions.parseDateStrictly(expectedDate, parsePatterns);
                 parsedExpected = expected != null;
 
                 try {
@@ -1209,10 +1209,10 @@ public class AssertsUtil {
             protected boolean matchesSafely(final String item) {
                 actualValue = item;
 
-                Date actual = Utils.parseDateStrictly(item, parsePatterns);
+                Date actual = DateActions.parseDateStrictly(item, parsePatterns);
                 parsedActual = actual != null;
 
-                Date expected = Utils.parseDateStrictly(expectedDate, parsePatterns);
+                Date expected = DateActions.parseDateStrictly(expectedDate, parsePatterns);
                 parsedExpected = expected != null;
 
                 try {

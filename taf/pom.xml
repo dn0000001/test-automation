@@ -254,6 +254,11 @@
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxb.impl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.jollyday</groupId>
+            <artifactId>jollyday</artifactId>
+            <version>${jollyday.version}</version>
+        </dependency>
         <!-- START:  BDD specific dependencies -->
         <dependency>
             <groupId>info.cukes</groupId>
