@@ -57,6 +57,7 @@
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.core.version>2.3.0.1</jaxb.core.version>
         <jaxb.impl.version>2.3.1</jaxb.impl.version>
+        <jollyday.version>0.5.8</jollyday.version>
     </properties>
 
     <build>
