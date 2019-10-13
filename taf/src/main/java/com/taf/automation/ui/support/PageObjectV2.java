@@ -19,6 +19,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+
 /**
  * This is an enhanced version of the PageObject that handles the JavascriptException thrown by geckodriver sometimes
  * instead of the StaleElementReferenceException.  Also, it has an initialization method to handle dynamic locators.
@@ -433,6 +436,19 @@ public class PageObjectV2 extends PageObject {
 
         DataTypes validationMethod = (component.getData(DataTypes.Expected, true) != null) ? DataTypes.Expected : DataTypes.Data;
         component.validateData(validationMethod);
+    }
+
+    /**
+     * Click component using locator when it is ready.  Method uses a retry policy to handle
+     * click specific exceptions (ElementClickInterceptedException and ElementNotInteractableException) if they occur
+     *
+     * @param component - Component to use locator to click when ready
+     * @return the element that was clicked
+     */
+    protected WebElement click(PageComponent component) {
+        assertThat("Click Component", component, notNullValue());
+        assertThat("Click Component's Locator", component.getLocator(), notNullValue());
+        return Failsafe.with(Utils.getClickRetryPolicy()).get(() -> Utils.clickWhenReady(component.getLocator()));
     }
 
 }
