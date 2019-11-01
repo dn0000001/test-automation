@@ -26,7 +26,9 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -277,6 +279,43 @@ public class ApiUtils {
 
         assertThat("Could not read field (" + field.getName() + ") due to error:  " + error, false);
         return null;
+    }
+
+    /**
+     * Configure xStream with all the fields as aliases prefixed with specified prefix + ":"<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>This is useful when dealing with SOAP endpoints as normally they are something like <B>abc:field</B>.
+     * This normally requires using XStreamAlias on each of the fields.</LI>
+     * </OL>
+     *
+     * @param xStream       - xStream to configure the aliases
+     * @param definedIn     - the type that declares the field
+     * @param aliasPrefix   - the prefix to append to the fields (a colon will be added)
+     */
+    public static void aliasField(XStream xStream, Class definedIn, String aliasPrefix) {
+        aliasField(xStream, definedIn, aliasPrefix, new HashSet<>());
+    }
+
+    /**
+     * Configure xStream with all the fields as aliases prefixed with specified prefix + ":"<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>This is useful when dealing with SOAP endpoints as normally they are something like <B>abc:field</B>.
+     * This normally requires using XStreamAlias on each of the fields.</LI>
+     * </OL>
+     *
+     * @param xStream       - xStream to configure the aliases
+     * @param definedIn     - the type that declares the field
+     * @param aliasPrefix   - the prefix to append to the fields (a colon will be added)
+     * @param excludeFields - fields to exclude in the alias configuration
+     */
+    public static void aliasField(XStream xStream, Class definedIn, String aliasPrefix, Set<String> excludeFields) {
+        for (Field item : FieldUtils.getAllFields(definedIn)) {
+            if (!excludeFields.contains(item.getName())) {
+                xStream.aliasField(aliasPrefix + ":" + item.getName(), definedIn, item.getName());
+            }
+        }
     }
 
 }
