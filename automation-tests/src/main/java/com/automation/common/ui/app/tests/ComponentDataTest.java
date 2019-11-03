@@ -123,6 +123,10 @@ public class ComponentDataTest extends TestNGBase {
             return "l12";
         }
 
+        if (component == FakeComponentsPage.Type.TEXT_BOX_BACKSPACE) {
+            return "m13";
+        }
+
         assertThat("Unsupported Component Type:  " + component, false);
         return null;
     }

@@ -12,6 +12,7 @@ import com.automation.common.ui.app.components.SelectEnhanced;
 import com.automation.common.ui.app.components.SelectEnhancedAJAX;
 import com.automation.common.ui.app.components.TabOffTextBox;
 import com.automation.common.ui.app.components.TextBox;
+import com.automation.common.ui.app.components.TextBoxBackspace;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.Utils;
@@ -60,6 +61,9 @@ public class FakeComponentsPage extends PageObjectV2 {
     @FindBy(id = "does not exist")
     private TextBox textBox;
 
+    @FindBy(id = "does not exist")
+    private TextBoxBackspace textBoxBackspace;
+
     public enum Type {
         CHECK_BOX_AJAX,
         CHECK_BOX_LABEL,
@@ -72,7 +76,8 @@ public class FakeComponentsPage extends PageObjectV2 {
         SELECT_ENHANCED,
         SELECT_ENHANCED_JAX,
         TAB_OFF_TEXT_BOX,
-        TEXT_BOX
+        TEXT_BOX,
+        TEXT_BOX_BACKSPACE
     }
 
     public FakeComponentsPage() {
@@ -102,7 +107,8 @@ public class FakeComponentsPage extends PageObjectV2 {
                 Utils.isNotBlank(selectEnhanced) ||
                 Utils.isNotBlank(selectEnhancedAJAX) ||
                 Utils.isNotBlank(tabOffTextBox) ||
-                Utils.isNotBlank(textBox);
+                Utils.isNotBlank(textBox) ||
+                Utils.isNotBlank(textBoxBackspace);
     }
 
     public String getTestData(Type component, boolean resolveAliases) {
@@ -152,6 +158,10 @@ public class FakeComponentsPage extends PageObjectV2 {
 
         if (component == Type.TEXT_BOX) {
             return textBox.getData(DataTypes.Data, resolveAliases);
+        }
+
+        if (component == Type.TEXT_BOX_BACKSPACE) {
+            return textBoxBackspace.getData(DataTypes.Data, resolveAliases);
         }
 
         assertThat("Unsupported Component Type:  " + component, false);

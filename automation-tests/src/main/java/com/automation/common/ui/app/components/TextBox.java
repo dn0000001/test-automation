@@ -7,21 +7,34 @@ import ui.auto.core.components.WebComponent;
 public class TextBox extends WebComponent {
     private boolean sendKeysDelay;
     private int delayInMilliseconds;
+    boolean clearUsingBackspace;
 
     public TextBox() {
         super();
         sendKeysDelay = false;
         delayInMilliseconds = 100;
+        clearUsingBackspace = false;
     }
 
     public TextBox(WebElement element) {
         super(element);
         sendKeysDelay = false;
         delayInMilliseconds = 100;
+        clearUsingBackspace = false;
+    }
+
+    @Override
+    public void setValue() {
+        setValue(getData());
     }
 
     public void setValue(String value) {
-        getCoreElement().clear();
+        if (clearUsingBackspace) {
+            Utils.clearUsingBackspace(getCoreElement());
+        } else {
+            getCoreElement().clear();
+        }
+
         if (sendKeysDelay) {
             Utils.sendKeysWithDelay(getCoreElement(), delayInMilliseconds, value);
         } else {
@@ -46,6 +59,10 @@ public class TextBox extends WebComponent {
      */
     public void setSendKeysDelay(int delayInMilliseconds) {
         this.delayInMilliseconds = delayInMilliseconds;
+    }
+
+    public void setClearUsingBackspace(boolean clearUsingBackspace) {
+        this.clearUsingBackspace = clearUsingBackspace;
     }
 
 }
