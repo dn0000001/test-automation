@@ -85,6 +85,9 @@ public class TestProperties {
     @Property("app.environment")
     private Environment environment;
 
+    @Property("app.environment.target")
+    private String environmentTarget;
+
     @Use(CredentialsObjectPropertyConverter.class)
     @Property("app.credentials.api")
     @HideInReport
@@ -408,11 +411,19 @@ public class TestProperties {
         return environment.isProdEnv();
     }
 
+    private String replaceWithTargetEnv(String url) {
+        if (url == null || environmentTarget == null) {
+            return url;
+        }
+
+        return url.replaceAll("(?i)\\$\\{env}", environmentTarget);
+    }
+
     public String getApiUrl() {
         if (isProdEnv()) {
             return apiUrlProd;
         } else {
-            return apiUrl;
+            return replaceWithTargetEnv(apiUrl);
         }
     }
 
@@ -610,7 +621,7 @@ public class TestProperties {
         if (isProdEnv()) {
             return urlProd;
         } else {
-            return url;
+            return replaceWithTargetEnv(url);
         }
     }
 
