@@ -14,6 +14,7 @@
         <SELECT_ENHANCED_JAX>j10</SELECT_ENHANCED_JAX>
         <TAB_OFF_TEXT_BOX>k11</TAB_OFF_TEXT_BOX>
         <TEXT_BOX>l12</TEXT_BOX>
+        <TEXT_BOX_BACKSPACE>m13</TEXT_BOX_BACKSPACE>
     </aliases>
     <fakeComponentsPage>
         <checkBoxAJAX>${CHECK_BOX_AJAX}</checkBoxAJAX>
@@ -28,5 +29,6 @@
         <selectEnhancedAJAX>${SELECT_ENHANCED_JAX}</selectEnhancedAJAX>
         <tabOffTextBox>${TAB_OFF_TEXT_BOX}</tabOffTextBox>
         <textBox>${TEXT_BOX}</textBox>
+        <textBoxBackspace>${TEXT_BOX_BACKSPACE}</textBoxBackspace>
     </fakeComponentsPage>
 </components-do>
