@@ -6,6 +6,7 @@ import com.taf.automation.api.clients.UserLogin;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.ui.support.CryptoUtils;
 import com.taf.automation.ui.support.DataPersistenceV2;
+import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.converters.Credentials;
@@ -63,8 +64,9 @@ public class ApiDomainObject extends DataPersistenceV2 {
 
     @Override
     public <T extends DataPersistence> T fromResource(String resourceFile) {
-        T dataSet = super.fromResource(resourceFile, true);
-        Utils.attachDataSet(dataSet, resourceFile);
+        String useResourceFile = Helper.getEnvironmentBasedFile(resourceFile);
+        T dataSet = super.fromResource(useResourceFile, true);
+        Utils.attachDataSet(dataSet, useResourceFile);
         return dataSet;
     }
 

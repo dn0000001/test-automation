@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<components-do>
+    <aliases>
+        <CHECK_BOX_AJAX>a1</CHECK_BOX_AJAX>
+        <CHECK_BOX_LABEL>b2</CHECK_BOX_LABEL>
+        <IMAGE_UPLOAD>c3</IMAGE_UPLOAD>
+        <PRIME_FACES_RADIO_BUTTON_GROUP>d4</PRIME_FACES_RADIO_BUTTON_GROUP>
+        <RADIO_BUTTON_GROUP>e5</RADIO_BUTTON_GROUP>
+        <RADIO_OPTION>f6</RADIO_OPTION>
+        <SEARCH_TEXT_BOX>g7</SEARCH_TEXT_BOX>
+        <SELECT>h8</SELECT>
+        <SELECT_ENHANCED>i9</SELECT_ENHANCED>
+        <SELECT_ENHANCED_JAX>j10</SELECT_ENHANCED_JAX>
+        <TAB_OFF_TEXT_BOX>k11</TAB_OFF_TEXT_BOX>
+        <TEXT_BOX>l12</TEXT_BOX>
+        <TEXT_BOX_BACKSPACE>m13</TEXT_BOX_BACKSPACE>
+    </aliases>
+    <fakeComponentsPage>
+        <checkBoxAJAX>${CHECK_BOX_AJAX}</checkBoxAJAX>
+        <checkBoxLabel>${CHECK_BOX_LABEL}</checkBoxLabel>
+        <imageUpload>${IMAGE_UPLOAD}</imageUpload>
+        <primeFacesRadioButtonGroup>${PRIME_FACES_RADIO_BUTTON_GROUP}</primeFacesRadioButtonGroup>
+        <radioButtonGroup>${RADIO_BUTTON_GROUP}</radioButtonGroup>
+        <radioOption>${RADIO_OPTION}</radioOption>
+        <searchTextBox>${SEARCH_TEXT_BOX}</searchTextBox>
+        <select>${SELECT}</select>
+        <selectEnhanced>${SELECT_ENHANCED}</selectEnhanced>
+        <selectEnhancedAJAX>${SELECT_ENHANCED_JAX}</selectEnhancedAJAX>
+        <tabOffTextBox>${TAB_OFF_TEXT_BOX}</tabOffTextBox>
+        <textBox>${TEXT_BOX}</textBox>
+        <textBoxBackspace>${TEXT_BOX_BACKSPACE}</textBoxBackspace>
+    </fakeComponentsPage>
+</components-do>
