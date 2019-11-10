@@ -111,6 +111,11 @@ public class DomainObject extends DataPersistence {
     }
 
     @Override
+    public <T extends DataPersistence> T fromResource(String resourceFilePath, boolean resolveAliases) {
+        return super.fromResource(Helper.getEnvironmentBasedFile(resourceFilePath), resolveAliases);
+    }
+
+    @Override
     public void generateData() {
         DataPersistence obj = getGenerator().generate(this.getClass());
         deepCopy(obj, this);

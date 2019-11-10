@@ -8,7 +8,9 @@ import com.taf.automation.ui.support.conditional.Criteria;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.Header;
@@ -1187,6 +1189,50 @@ public class Helper {
         } catch (Exception ex) {
             return new File(readFolder);
         }
+    }
+
+    /**
+     * Get Environment Based File
+     *
+     * @param readFrom - Read from resources or absolute location
+     * @return environment based file if one exists or the specified variable otherwise
+     */
+    public static String getEnvironmentBasedFile(String readFrom) {
+        return getEnvironmentBasedFile(readFrom, TestProperties.getInstance());
+    }
+
+    /**
+     * Get Environment Based File
+     *
+     * @param readFrom - Read from resources or absolute location
+     * @param props    - Test Properties to be used
+     * @return environment based file if one exists or the specified variable otherwise
+     */
+    public static String getEnvironmentBasedFile(String readFrom, TestProperties props) {
+        String env = (props.isProdEnv()) ? "prod" : props.getEnvironmentTarget();
+        if (StringUtils.isBlank(env)) {
+            return readFrom;
+        }
+
+        //
+        // Construct the path to the environment specific data file.
+        // This should can be customized to suit your needs.
+        // Currently, we are just prefixing the data file with the environment name in lowercase.
+        // Example with environment as QA:  sampleTestData.xml -> qa-sampleTestData.xml
+        //
+        String environmentSpecific = FilenameUtils.getFullPath(readFrom)
+                + env.toLowerCase() + "-" + FilenameUtils.getName(readFrom);
+
+        //
+        // Check if the specific data file exists for the environment
+        //
+        File file = getFile(environmentSpecific);
+        if (file.exists() && !file.isDirectory()) {
+            return environmentSpecific;
+        }
+
+        // No specific data file exists for the environment
+        return readFrom;
     }
 
 }

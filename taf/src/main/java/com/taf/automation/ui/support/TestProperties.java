@@ -411,6 +411,10 @@ public class TestProperties {
         return environment.isProdEnv();
     }
 
+    public String getEnvironmentTarget() {
+        return environmentTarget;
+    }
+
     private String replaceWithTargetEnv(String url) {
         if (url == null || environmentTarget == null) {
             return url;
