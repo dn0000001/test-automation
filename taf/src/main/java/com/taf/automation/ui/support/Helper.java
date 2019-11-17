@@ -32,6 +32,7 @@ import ui.auto.core.pagecomponent.SkipAutoFill;
 import ui.auto.core.pagecomponent.SkipAutoValidate;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -1180,13 +1181,18 @@ public class Helper {
      * Get File object
      *
      * @param readFolder - Read folder from resources or absolute location
-     * @return File
+     * @return File (if resource a temp file is created that will be deleted on exit.)
      */
     public static File getFile(String readFolder) {
+        File temp = null;
         try {
-            URL url = Thread.currentThread().getContextClassLoader().getResource(readFolder);
-            return new File(url.toURI());
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(readFolder);
+            temp = File.createTempFile("auto", null);
+            temp.deleteOnExit();
+            FileUtils.copyInputStreamToFile(is, temp);
+            return temp;
         } catch (Exception ex) {
+            FileUtils.deleteQuietly(temp);
             return new File(readFolder);
         }
     }
@@ -1226,7 +1232,12 @@ public class Helper {
         //
         // Check if the specific data file exists for the environment
         //
-        File file = getFile(environmentSpecific);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(environmentSpecific);
+        if (url != null) {
+            return environmentSpecific;
+        }
+
+        File file = new File(environmentSpecific);
         if (file.exists() && !file.isDirectory()) {
             return environmentSpecific;
         }
