@@ -15,6 +15,9 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class holds useful Matcher methods for assertions
@@ -1283,6 +1286,41 @@ public class AssertsUtil {
                 } finally {
                     component.initializeData(restoreData, restoreInitialData, restoreExpectedData);
                 }
+            }
+        };
+    }
+
+    /**
+     * Matcher for string items that are expected to be contained in the actual items list
+     *
+     * @param expectedItems - Expected items that must be in the actual items list
+     * @return Matcher&lt;List&lt;String&gt;&gt;
+     */
+    public static Matcher<List<String>> contains(final List<String> expectedItems) {
+        return new TypeSafeMatcher<List<String>>() {
+            Set<String> failures;
+
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText(expectedItems.toString() + " to be contained in list");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final List<String> items, final Description mismatchDescription) {
+                mismatchDescription.appendText(failures.toString() + " was not contained in list " + items.toString());
+            }
+
+            @Override
+            protected boolean matchesSafely(final List<String> actualItems) {
+                if (expectedItems == null || expectedItems.isEmpty()) {
+                    return true;
+                }
+
+                Set<String> actual = new HashSet<>(actualItems);
+                Set<String> expected = new HashSet<>(expectedItems);
+                expected.removeAll(actual);
+                failures = new HashSet<>(expected);
+                return failures.isEmpty();
             }
         };
     }

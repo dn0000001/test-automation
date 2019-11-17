@@ -12,7 +12,6 @@ import com.taf.automation.ui.support.testng.TestNGBase;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,6 +26,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +38,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Unit testing AssertsUtil class
@@ -535,7 +536,7 @@ public class AssertsTest extends TestNGBase {
     public void assertIsNotDisplayedUsingWebDriverWaitTest() {
         WebDriverWait wait = Utils.getNegativeWebDriverWait();
         FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
-        assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentDisplayed(wait)));
+        assertThat(fakeComponentsPage.getTextBoxComponent(), not(AssertsUtil.isComponentDisplayed(wait)));
     }
 
     @Features("AssertsUtil")
@@ -545,7 +546,7 @@ public class AssertsTest extends TestNGBase {
     public void assertIsNotReadyUsingWebDriverWaitTest() {
         WebDriverWait wait = Utils.getNegativeWebDriverWait();
         FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
-        assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentReady(wait)));
+        assertThat(fakeComponentsPage.getTextBoxComponent(), not(AssertsUtil.isComponentReady(wait)));
     }
 
     @Features("AssertsUtil")
@@ -555,7 +556,7 @@ public class AssertsTest extends TestNGBase {
     public void assertIsNotEnabledUsingWebDriverWaitTest() {
         WebDriverWait wait = Utils.getNegativeWebDriverWait();
         FakeComponentsPage fakeComponentsPage = new FakeComponentsPage(getContext());
-        assertThat(fakeComponentsPage.getTextBoxComponent(), Matchers.not(AssertsUtil.isComponentEnabled(wait)));
+        assertThat(fakeComponentsPage.getTextBoxComponent(), not(AssertsUtil.isComponentEnabled(wait)));
     }
 
     @Features("Framework")
@@ -2483,6 +2484,55 @@ public class AssertsTest extends TestNGBase {
         BigDecimal actual = new BigDecimal("5");
         BigDecimal expected = new BigDecimal("5.00");
         assertThat("testBigDecimalEqualTo", actual, comparesEqualTo(expected));
+    }
+
+    @Test
+    public void testNullEmptyExpectedContainsList() {
+        List<String> actual = Arrays.asList("100", "102", "102");
+        List<String> expected = null;
+        assertThat("null expected", actual, AssertsUtil.contains(expected));
+
+        expected = new ArrayList<>();
+        assertThat("empty expected", actual, AssertsUtil.contains(expected));
+    }
+
+    @Test
+    public void testNullEmptyActualContainsList() {
+        List<String> actual = null;
+        List<String> expected = Arrays.asList("100", "102", "102");
+        assertThat("null actual", actual, not(AssertsUtil.contains(expected)));
+
+        actual = new ArrayList<>();
+        assertThat("empty actual", actual, not(AssertsUtil.contains(expected)));
+    }
+
+    @Test
+    public void testContainsList() {
+        List<String> actual = Arrays.asList("100", "102", "102");
+        List<String> expected = Arrays.asList("100");
+        assertThat("single expected", actual, AssertsUtil.contains(expected));
+        assertThat("actual unmodified", actual.size(), equalTo(3));
+        assertThat("expected unmodified", expected.size(), equalTo(1));
+
+        expected = Arrays.asList("100", "102");
+        assertThat("multiple expected", actual, AssertsUtil.contains(expected));
+        assertThat("actual unmodified", actual.size(), equalTo(3));
+        assertThat("expected unmodified", expected.size(), equalTo(2));
+
+        expected = Arrays.asList("100", "100");
+        assertThat("duplicate expected", actual, AssertsUtil.contains(expected));
+        assertThat("actual unmodified", actual.size(), equalTo(3));
+        assertThat("expected unmodified", expected.size(), equalTo(2));
+
+        expected = Arrays.asList("99", "100");
+        assertThat("missing expected", actual, not(AssertsUtil.contains(expected)));
+        assertThat("actual unmodified", actual.size(), equalTo(3));
+        assertThat("expected unmodified", expected.size(), equalTo(2));
+
+        expected = Arrays.asList("99", "10");
+        assertThat("missing multiple expected", actual, not(AssertsUtil.contains(expected)));
+        assertThat("actual unmodified", actual.size(), equalTo(3));
+        assertThat("expected unmodified", expected.size(), equalTo(2));
     }
 
 }
