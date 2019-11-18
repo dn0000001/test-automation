@@ -1,14 +1,18 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.LocatorUtils;
 import com.taf.automation.ui.support.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.taf.automation.ui.support.AssertsUtil.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,6 +36,8 @@ import static org.hamcrest.Matchers.notNullValue;
  * @param <T> PageComponent
  */
 public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
+    private Map<String, String> substitutions;
+    private By staticLocator;
     private Class<T> clazz;
     private Selection selection;
 
@@ -74,8 +80,32 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
         return component;
     }
 
+    private By getStaticLocator() {
+        if (staticLocator == null) {
+            staticLocator = LocatorUtils.processForSubstitutions(getLocator(), getSubstitutions());
+        }
+
+        return staticLocator;
+    }
+
+    private Map<String, String> getSubstitutions() {
+        if (substitutions == null) {
+            substitutions = new HashMap<>();
+        }
+
+        return substitutions;
+    }
+
+    public void setSubstitutions(Map<String, String> substitutions) {
+        this.substitutions = substitutions;
+    }
+
+    public void resetStaticLocator() {
+        this.staticLocator = null;
+    }
+
     private List<WebElement> getOptions() {
-        return Utils.getWebDriverWait().until(ExpectedConditions.numberOfElementsToBeMoreThan(getLocator(), 0));
+        return Utils.getWebDriverWait().until(ExpectedConditions.numberOfElementsToBeMoreThan(getStaticLocator(), 0));
     }
 
     private boolean isMatchedOption(String displayedText, String matchToData) {
