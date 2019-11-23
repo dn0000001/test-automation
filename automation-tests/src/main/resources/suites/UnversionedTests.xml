@@ -72,6 +72,30 @@
         </classes>
     </test>
 
+    <test name="BDD without feature files - scenario 1 - Test">
+        <parameter name="url" value="https://krebsonsecurity.com/"/>
+        <parameter name="data-set" value="data/ui/NoFeatureFilesForBDDScenario1_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.NoFeatureFilesForBDDTest"/>
+        </classes>
+    </test>
+
+    <test name="BDD without feature files - scenario 2 - Test">
+        <parameter name="url" value="https://www.theregister.co.uk/"/>
+        <parameter name="data-set" value="data/ui/NoFeatureFilesForBDDScenario2_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.NoFeatureFilesForBDDTest"/>
+        </classes>
+    </test>
+
+    <test name="BDD without feature files - scenario 3 - Test">
+        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
+        <parameter name="data-set" value="data/ui/NoFeatureFilesForBDDScenario3_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.NoFeatureFilesForBDDTest"/>
+        </classes>
+    </test>
+
     <!--
     <test name="Open Report Test">
         <parameter name="allure-report" value="/target/allure-report"/>

@@ -77,6 +77,7 @@ public class DomainObject extends DataPersistence {
         TestContext cont = getContext();
         T data = super.fromXml(xml, resolveAliases);
         addToGlobalAliases(data);
+        DomainObjectUtils.overwriteTestParameters(data);
         ((DomainObject) data).context = cont;
         return data;
     }
@@ -86,6 +87,7 @@ public class DomainObject extends DataPersistence {
         TestContext cont = getContext();
         T data = super.fromURL(url, resolveAliases);
         addToGlobalAliases(data);
+        DomainObjectUtils.overwriteTestParameters(data);
         ((DomainObject) data).context = cont;
         Utils.attachDataSet(data, url.getPath());
         return data;
@@ -96,6 +98,7 @@ public class DomainObject extends DataPersistence {
         TestContext cont = getContext();
         T data = super.fromInputStream(inputStream, resolveAliases);
         addToGlobalAliases(data);
+        DomainObjectUtils.overwriteTestParameters(data);
         ((DomainObject) data).context = cont;
         return data;
     }
@@ -105,6 +108,7 @@ public class DomainObject extends DataPersistence {
         TestContext cont = getContext();
         T data = super.fromFile(filePath, resolveAliases);
         addToGlobalAliases(data);
+        DomainObjectUtils.overwriteTestParameters(data);
         ((DomainObject) data).context = cont;
         Utils.attachDataSet(data, filePath);
         return data;
