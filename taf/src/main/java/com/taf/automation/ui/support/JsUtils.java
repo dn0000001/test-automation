@@ -1,15 +1,20 @@
 package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.exceptions.JavaScriptException;
-import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
+import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * This class provides utility methods to work with JavaScript
@@ -28,6 +33,7 @@ public class JsUtils {
     private static final String ADD_ATTRIBUTE_TO_ELEMENT = Utils.readResource("JS/AddAttributeToElement.js");
     private static final String ADD_ELEMENT_TO_PARENT = Utils.readResource("JS/AddElementToParent.js");
     private static final String REMOVE_ELEMENT = Utils.readResource("JS/RemoveElement.js");
+    private static final String WAIT_FOR_XHR = Utils.readResource("JS/WaitForXHR.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -39,7 +45,7 @@ public class JsUtils {
      * @return WebDriver
      */
     private static WebDriver getWebDriver() {
-        return TestNGBase.context().getDriver();
+        return TestNGBaseWithoutListeners.context().getDriver();
     }
 
     /**
@@ -495,6 +501,21 @@ public class JsUtils {
     public static void focusWindowUsingAlert() {
         execute(getWebDriver(), "alert('Focus Window Workaround');", false);
         Utils.dismissAlertIfPresent(getWebDriver());
+    }
+
+    public static void waitForXHR() {
+        waitForXHR(TestProperties.getInstance().getElementTimeout());
+    }
+
+    public static void waitForXHR(int maxDurationInSeconds) {
+        execute(getWebDriver(), WAIT_FOR_XHR, (Object[]) null);
+        Failsafe.with(Utils.getPollingRetryPolicy(maxDurationInSeconds)).run(JsUtils::validateXHR);
+    }
+
+    private static void validateXHR() {
+        WebElement element = getWebDriver().findElement(By.cssSelector("body"));
+        String ajaxCounter = element.getAttribute("ajaxcounter");
+        assertThat("AJAX Counter", NumberUtils.toInt(ajaxCounter, -1), equalTo(0));
     }
 
 }

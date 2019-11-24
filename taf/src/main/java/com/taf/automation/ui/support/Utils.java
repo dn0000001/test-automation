@@ -1136,6 +1136,21 @@ public class Utils {
     }
 
     /**
+     * Get Polling RetryPolicy that can be used to poll for a specific condition<BR>
+     * <B>Note: </B> <BR>
+     * 1)  The RetryPolicy can then be used with 'Failsafe.with' to poll for a specific condition<BR>
+     *
+     * @param maxDurationInSeconds - Max Duration in seconds
+     * @return RetryPolicy
+     */
+    public static RetryPolicy getPollingRetryPolicy(int maxDurationInSeconds) {
+        return new RetryPolicy()
+                .retryOn(Exception.class, AssertionError.class)
+                .withMaxDuration(maxDurationInSeconds, TimeUnit.SECONDS)
+                .withDelay(1, TimeUnit.SECONDS);
+    }
+
+    /**
      * Get RetryPolicy for writing element values<BR>
      * <B>Notes: </B>
      * <UL>
