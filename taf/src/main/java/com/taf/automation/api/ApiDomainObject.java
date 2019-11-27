@@ -66,8 +66,14 @@ public class ApiDomainObject extends DataPersistenceV2 {
     @Override
     public <T extends DataPersistence> T fromResource(String resourceFile) {
         String useResourceFile = Helper.getEnvironmentBasedFile(resourceFile);
+
+        // When resolve alias is true, then the aliases will be made null after loading
+        // as such get the aliases before loading
+        T temp = super.fromResource(useResourceFile, false);
+        DataAliases aliases = temp.getDataAliases();
+
         T dataSet = super.fromResource(useResourceFile, true);
-        DomainObjectUtils.overwriteTestParameters(dataSet);
+        DomainObjectUtils.overwriteTestParameters(aliases);
         Utils.attachDataSet(dataSet, useResourceFile);
         return dataSet;
     }

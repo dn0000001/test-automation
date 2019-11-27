@@ -96,6 +96,27 @@
         </classes>
     </test>
 
+    <test name="API - BDD without feature files - scenario 1 - Test">
+        <parameter name="data-set" value="data/api/NoFeatureFilesForBDDScenario1_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.api.tests.NoFeatureFilesForBDDTest"/>
+        </classes>
+    </test>
+
+    <test name="API - BDD without feature files - scenario 2 - Test">
+        <parameter name="data-set" value="data/api/NoFeatureFilesForBDDScenario2_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.api.tests.NoFeatureFilesForBDDTest"/>
+        </classes>
+    </test>
+
+    <test name="API - BDD without feature files - scenario 3 - Test">
+        <parameter name="data-set" value="data/api/NoFeatureFilesForBDDScenario3_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.api.tests.NoFeatureFilesForBDDTest"/>
+        </classes>
+    </test>
+
     <!--
     <test name="Open Report Test">
         <parameter name="allure-report" value="/target/allure-report"/>

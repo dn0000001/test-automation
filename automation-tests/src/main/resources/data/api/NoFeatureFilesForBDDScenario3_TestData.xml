@@ -1,0 +1,17 @@
+<json-ip-do>
+    <aliases>
+        <!--
+        Let's see what happens when the BDD aliases are not provided
+        -->
+    </aliases>
+
+    <response>
+        <status>
+            <statusCode>200</statusCode>
+            <reasonPhrase>OK</reasonPhrase>
+        </status>
+
+        <about>/about</about>
+        <pro>http://getjsonip.com</pro>
+    </response>
+</json-ip-do>

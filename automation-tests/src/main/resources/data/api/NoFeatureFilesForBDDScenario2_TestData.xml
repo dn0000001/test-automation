@@ -1,0 +1,26 @@
+<json-ip-do>
+    <aliases>
+        <!--
+        Aliases that are required to do BDD without feature files, step definitions, glue, etc.
+        It is only necessary to override the ones that you need.  Also, this is only necessary if the
+        same test class is being used with different test data.  (It overrides the annotation in the class.)
+        -->
+        <test-name>API Name #2</test-name>
+        <test-description>API Description #2</test-description>
+        <test-features>API Feature #2</test-features>
+        <test-stories>API Some different story</test-stories>
+        <test-issues>BUG-003,BUG-004</test-issues>
+        <test-IDs>TEST-003,TEST-004</test-IDs>
+        <test-severity>TRIVIAL</test-severity>
+    </aliases>
+
+    <response>
+        <status>
+            <statusCode>200</statusCode>
+            <reasonPhrase>OK</reasonPhrase>
+        </status>
+
+        <about>/about</about>
+        <pro>http://getjsonip.com</pro>
+    </response>
+</json-ip-do>
