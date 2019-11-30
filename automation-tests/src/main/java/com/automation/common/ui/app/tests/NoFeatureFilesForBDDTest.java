@@ -12,15 +12,15 @@ import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
 /**
- * This is a test to show how to do BDD without feature files
+ * This is a test to show how to do GUI - BDD without feature files
  */
 public class NoFeatureFilesForBDDTest extends TestNGBase {
     @Features("Framework")
-    @Stories("BDD without feature files")
+    @Stories("GUI - BDD without feature files")
     @Severity(SeverityLevel.CRITICAL)
     @Parameters({"url", "data-set"})
     @Test
-    public void getAllDataTest(
+    public void performTest(
             @Optional("https://the-internet.herokuapp.com/tables") String url,
             @Optional("data/ui/NoFeatureFilesForBDDScenario1_TestData.xml") String dataSet
     ) {
