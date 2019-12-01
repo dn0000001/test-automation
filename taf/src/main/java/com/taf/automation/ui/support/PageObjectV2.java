@@ -232,6 +232,23 @@ public class PageObjectV2 extends PageObject {
      * <B>Notes:</B><BR>
      * 1) Similar to the PageObject.setElementValue except validation occurs using component's validation method<BR>
      *
+     * @param component            - Component to set value and validate
+     * @param actionBeforeSetValue - Lambda expression to run before setting value
+     */
+    protected void setElementValueV2(PageComponent component, final Runnable actionBeforeSetValue) {
+        if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
+            return;
+        }
+
+        actionBeforeSetValue.run();
+        setElementValueV2(component);
+    }
+
+    /**
+     * Set value and validate using component's validation method<BR>
+     * <B>Notes:</B><BR>
+     * 1) Similar to the PageObject.setElementValue except validation occurs using component's validation method<BR>
+     *
      * @param component - Component to set value and validate
      */
     protected void setElementValueV2(PageComponent component) {
