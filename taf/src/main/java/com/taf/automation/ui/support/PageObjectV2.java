@@ -12,8 +12,8 @@ import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.AjaxVisibleElementLocatorFactory;
 import ui.auto.core.pagecomponent.PageComponent;
-import ui.auto.core.pagecomponent.PageObject;
 import ui.auto.core.pagecomponent.WidgetFieldDecorator;
+import ui.auto.core.support.PageObjectModel;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
  * This is an enhanced version of the PageObject that handles the JavascriptException thrown by geckodriver sometimes
  * instead of the StaleElementReferenceException.  Also, it has an initialization method to handle dynamic locators.
  */
-public class PageObjectV2 extends PageObject {
+public class PageObjectV2 extends PageObjectModel {
     protected <T extends PageComponentContext> PageObjectV2(T context) {
         initPage(context);
     }

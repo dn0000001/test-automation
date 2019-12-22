@@ -2,20 +2,14 @@ package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.csv.CsvTestData;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.DataAliases;
-import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
-import org.testng.annotations.Test;
 import ui.auto.core.context.PageComponentContext;
+import ui.auto.core.support.DomainObjectModel;
 
-import java.io.InputStream;
 import java.net.URL;
 
-public class DomainObject extends DataPersistence {
-    @XStreamOmitField
-    private TestContext context;
-
+public class DomainObject extends DomainObjectModel {
     public DomainObject(TestContext context) {
         this.context = context;
     }
@@ -29,10 +23,6 @@ public class DomainObject extends DataPersistence {
         XStream xStream = DataInstillerUtils.getXStream();
         xStream.processAnnotations(this.getClass());
         return xStream;
-    }
-
-    private DataGenerator getGenerator() {
-        return DataInstillerUtils.getGenerator();
     }
 
     private void addToGlobalAliases(DataPersistence data) {
@@ -73,87 +63,12 @@ public class DomainObject extends DataPersistence {
     }
 
     @Override
-    public <T extends DataPersistence> T fromXml(String xml, boolean resolveAliases) {
-        TestContext cont = getContext();
-        T data = super.fromXml(xml, resolveAliases);
-        addToGlobalAliases(data);
-        DomainObjectUtils.overwriteTestParameters(data);
-        ((DomainObject) data).context = cont;
-        return data;
-    }
-
-    @Override
-    public <T extends DataPersistence> T fromURL(URL url, boolean resolveAliases) {
-        TestContext cont = getContext();
-        T data = super.fromURL(url, resolveAliases);
-        addToGlobalAliases(data);
-        DomainObjectUtils.overwriteTestParameters(data);
-        ((DomainObject) data).context = cont;
-        Utils.attachDataSet(data, url.getPath());
-        return data;
-    }
-
-    @Override
-    public <T extends DataPersistence> T fromInputStream(InputStream inputStream, boolean resolveAliases) {
-        TestContext cont = getContext();
-        T data = super.fromInputStream(inputStream, resolveAliases);
-        addToGlobalAliases(data);
-        DomainObjectUtils.overwriteTestParameters(data);
-        ((DomainObject) data).context = cont;
-        return data;
-    }
-
-    @Override
-    public <T extends DataPersistence> T fromFile(String filePath, boolean resolveAliases) {
-        TestContext cont = getContext();
-        T data = super.fromFile(filePath, resolveAliases);
-        addToGlobalAliases(data);
-        DomainObjectUtils.overwriteTestParameters(data);
-        ((DomainObject) data).context = cont;
-        Utils.attachDataSet(data, filePath);
-        return data;
-    }
-
-    @Override
     public <T extends DataPersistence> T fromResource(String resourceFilePath, boolean resolveAliases) {
         return super.fromResource(Helper.getEnvironmentBasedFile(resourceFilePath), resolveAliases);
     }
 
-    @Override
-    public void generateData() {
-        DataPersistence obj = getGenerator().generate(this.getClass());
-        deepCopy(obj, this);
-    }
-
-    @Override
-    public String generateXML() {
-        DataPersistence obj = getGenerator().generate(this.getClass());
-        return obj.toXML();
-    }
-
-    @Override
-    public String toXML() {
-        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n";
-        XStream xstream = getXstream();
-        xstream.aliasSystemAttribute(null, "class");
-        String xml = xstream.toXML(this);
-        xml = xml.replaceAll(" xmlns.*\"schemaLocation\"", "");
-        return header + xml;
-    }
-
-    public TestContext getContext() {
-        return context;
-    }
-
     public void setContext(TestContext context) {
         this.context = context;
-    }
-
-    @SuppressWarnings("squid:S106")
-    @Test
-    @Override
-    public void generate() {
-        System.out.println(generateXML());
     }
 
     /**

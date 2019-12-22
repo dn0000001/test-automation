@@ -1,13 +1,13 @@
 package com.taf.automation.api.converters;
 
-import java.lang.reflect.Method;
-
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
 import datainstiller.data.DataValueConverter;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Converter for Generic Enumeration
@@ -32,13 +32,14 @@ public class EnumConverter implements DataValueConverter {
     /**
      * Parses the specified string into an object (Enum)
      *
-     * @param str - String to be parsed
-     * @param cls - Specific enumeration
+     * @param str   - String to be parsed
+     * @param cls   - Specific enumeration
+     * @param field - Is not used in this specific implementation
      * @return Specific enumeration
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public <T> T fromString(String str, Class<T> cls) {
+    public <T> T fromString(String str, Class<T> cls, Field field) {
         Enum enumValue = null;
         try {
             enumValue = Enum.valueOf(typeEnum.getClass(), str);
@@ -93,7 +94,7 @@ public class EnumConverter implements DataValueConverter {
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         reader.moveDown();
-        Object o = fromString(reader.getValue(), type);
+        Object o = fromString(reader.getValue(), type, null);
         reader.moveUp();
         return o;
     }

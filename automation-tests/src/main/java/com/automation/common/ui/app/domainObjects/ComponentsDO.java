@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Object to hold data for components data test
  */
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 @XStreamAlias("components-do")
 public class ComponentsDO extends DomainObject {
     private FakeComponentsPage fakeComponentsPage;

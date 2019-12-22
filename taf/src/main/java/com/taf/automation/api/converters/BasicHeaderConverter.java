@@ -1,13 +1,13 @@
 package com.taf.automation.api.converters;
 
-import org.apache.http.message.BasicHeader;
-
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
 import datainstiller.data.DataValueConverter;
+import org.apache.http.message.BasicHeader;
+
+import java.lang.reflect.Field;
 
 /**
  * Converter for BasicHeader
@@ -17,13 +17,14 @@ public class BasicHeaderConverter implements DataValueConverter {
     /**
      * Parses the specified string into an object (BasicHeader)
      *
-     * @param str - String to be parsed
-     * @param cls - Is not used in this specific implementation
+     * @param str   - String to be parsed
+     * @param cls   - Is not used in this specific implementation
+     * @param field - Is not used in this specific implementation
      * @return BasicHeader
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T fromString(String str, Class<T> cls) {
+    public <T> T fromString(String str, Class<T> cls, Field field) {
         String name = "";
         String value = "";
         String[] parts = str.split("\\|");
@@ -63,7 +64,7 @@ public class BasicHeaderConverter implements DataValueConverter {
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         String name = reader.getAttribute("name");
         String value = reader.getAttribute("value");
-        return fromString(name + "|" + value, BasicHeader.class);
+        return fromString(name + "|" + value, BasicHeader.class, null);
     }
 
     @SuppressWarnings("rawtypes")
