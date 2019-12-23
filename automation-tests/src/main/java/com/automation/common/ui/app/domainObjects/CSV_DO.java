@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Object to hold data for CSV testing
  */
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 @XStreamAlias("csv-do")
 public class CSV_DO extends DomainObject {
     private List<FakeLoginPage> userLogins;

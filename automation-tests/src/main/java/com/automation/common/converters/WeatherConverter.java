@@ -5,8 +5,9 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
 import datainstiller.data.DataValueConverter;
+
+import java.lang.reflect.Field;
 
 /**
  * This the converter for the information returned from the weather service response
@@ -198,13 +199,14 @@ public class WeatherConverter implements DataValueConverter {
     /**
      * Converts the string to the desired object
      *
-     * @param str - String to convert into object
-     * @param cls - The Class representing the object type to be converted
+     * @param str   - String to convert into object
+     * @param cls   - The Class representing the object type to be converted
+     * @param field - Is not used in this specific implementation
      * @return Object that converter is for
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T fromString(String str, Class<T> cls) {
+    public <T> T fromString(String str, Class<T> cls, Field field) {
         Weather weather = new Weather();
 
         weather.setSuccess(false);

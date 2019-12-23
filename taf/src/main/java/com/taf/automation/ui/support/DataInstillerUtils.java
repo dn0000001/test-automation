@@ -226,7 +226,7 @@ public class DataInstillerUtils {
      * @return DataGenerator
      */
     public static DataGenerator getGenerator() {
-        DataGenerator generator = new DataGenerator(getConverters());
+        DataGenerator generator = new DataGenerator(getXStream(), getConverters());
         registerCustomGenerators(generator);
         return generator;
     }

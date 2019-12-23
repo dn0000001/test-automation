@@ -1,21 +1,21 @@
 package com.automation.common.converters;
 
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import datainstiller.data.DataValueConverter;
+
+import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
-import datainstiller.data.DataValueConverter;
-
 public class MapEntryConverter implements DataValueConverter {
 
     @Override
-    public <T> T fromString(String str, Class<T> cls) {
+    public <T> T fromString(String str, Class<T> cls, Field field) {
         return null;
     }
 

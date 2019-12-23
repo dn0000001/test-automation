@@ -10,6 +10,7 @@ import org.apache.commons.csv.CSVRecord;
 /**
  * Object to hold data for True North Hockey Canada
  */
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 @XStreamAlias("true-north-hockey-canada")
 public class TNHC_DO extends DomainObject {
     private TNHC_LandingPage landing;

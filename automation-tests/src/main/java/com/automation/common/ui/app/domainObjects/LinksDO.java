@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.lessThan;
 /**
  * Class to hold all links to validate
  */
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 @XStreamAlias("links-do")
 public class LinksDO extends DomainObject {
     private static final String USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0";

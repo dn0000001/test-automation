@@ -90,8 +90,8 @@
         </dependency>
         <dependency>
             <groupId>com.googlecode.page-component</groupId>
-            <artifactId>page-component</artifactId>
-            <version>${page-component.version}</version>
+            <artifactId>ui_auto_core</artifactId>
+            <version>${ui.auto.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
