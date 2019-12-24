@@ -117,6 +117,14 @@
         </classes>
     </test>
 
+    <test name="PrimeFaces Dashboard Test">
+        <parameter name="url" value="https://www.primefaces.org/showcase/ui/panel/dashboard.xhtml"/>
+        <parameter name="data-set" value="data/ui/PrimeFacesDashboard_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.PrimeFacesDashboardTest"/>
+        </classes>
+    </test>
+
     <!--
     <test name="Open Report Test">
         <parameter name="allure-report" value="/target/allure-report"/>
