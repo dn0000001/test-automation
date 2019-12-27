@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<prime-faces-dashboard-do>
+    <aliases>
+        <test-name>PrimeFaces Dashboard Test</test-name>
+    </aliases>
+    <primeFacesDashboardPage>
+        <sportsPanel>
+            <title>Sports</title>
+            <panelContent>Sports Content</panelContent>
+        </sportsPanel>
+        <lifestylePanel>
+            <title>Lifestyle</title>
+            <panelContent>Lifestyle Content</panelContent>
+        </lifestylePanel>
+        <politicsPanel>
+            <title>Politics</title>
+            <panelContent>Politics Content</panelContent>
+        </politicsPanel>
+        <financePanel>
+            <title>Finance</title>
+            <panelContent>Finance Content</panelContent>
+        </financePanel>
+        <weatherPanel>
+            <title>Weather</title>
+            <panelContent>Weather Content</panelContent>
+        </weatherPanel>
+    </primeFacesDashboardPage>
+</prime-faces-dashboard-do>
