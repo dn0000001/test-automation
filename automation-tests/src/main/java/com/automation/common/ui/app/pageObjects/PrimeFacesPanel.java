@@ -8,6 +8,7 @@ import ui.auto.core.components.WebComponent;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Using this class like a component to test functionality of page object with locator which should make all locators
@@ -34,6 +35,13 @@ public class PrimeFacesPanel extends PageObjectV2 {
 
     public String getPanelContent() {
         return panelContent.getText();
+    }
+
+    @Step("Validate Locators Not Null")
+    public void validateLocatorsNotNull() {
+        // Due to re-factoring the locators may be changed, this is to ensure that they are not null
+        assertThat("Title Locator", title.getLocator(), notNullValue());
+        assertThat("Panel Content Locator", panelContent.getLocator(), notNullValue());
     }
 
     @Step("Validate Title")

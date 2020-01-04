@@ -80,23 +80,28 @@ public class ComponentFieldDecoratorV2 extends DefaultFieldDecorator {
         return componentProxy;
     }
 
-    @SuppressWarnings("squid:S00112")
-    private By modifyLocator(ElementLocator locator, By parentLocator) {
+    private By modifyLocator(ElementLocator locator, By parentLocator) throws IllegalAccessException, NoSuchFieldException {
         By bys = null;
+
         if (DefaultElementLocator.class.isAssignableFrom(locator.getClass())) {
-            try {
-                Field by = DefaultElementLocator.class.getDeclaredField("by");
-                by.setAccessible(true);
-                By childLocator = (By) by.get(locator);
-                if (parentLocator != null) {
-                    bys = new ByChained(parentLocator, childLocator);
-                    by.set(locator, bys);
-                } else {
-                    bys = childLocator;
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            bys = getConstructedLocator(DefaultElementLocator.class.getDeclaredField("by"), locator, parentLocator);
+        } else if (DynamicElementLocator.class.isAssignableFrom(locator.getClass())) {
+            bys = getConstructedLocator(DynamicElementLocator.class.getDeclaredField("by"), locator, parentLocator);
+        }
+
+        return bys;
+    }
+
+    private By getConstructedLocator(Field by, ElementLocator locator, By parentLocator) throws IllegalAccessException {
+        By bys;
+
+        by.setAccessible(true);
+        By childLocator = (By) by.get(locator);
+        if (parentLocator != null) {
+            bys = new ByChained(parentLocator, childLocator);
+            by.set(locator, bys);
+        } else {
+            bys = childLocator;
         }
 
         return bys;

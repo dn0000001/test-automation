@@ -4,10 +4,14 @@ import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.openqa.selenium.support.FindBy;
+import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Example of using dynamic locators to work with a row in a table.<BR>
@@ -75,6 +79,16 @@ public class HerokuappRow extends PageObjectV2 {
 
     public String getWebsite() {
         return website.getText();
+    }
+
+    @Step("Validate Locators Not Null")
+    public void validateLocatorsNotNull() {
+        // Due to re-factoring the locators may be changed, this is to ensure that they are not null
+        assertThat("Last Name Locator", lastName.getLocator(), notNullValue());
+        assertThat("First Name Locator", firstName.getLocator(), notNullValue());
+        assertThat("Email Locator", email.getLocator(), notNullValue());
+        assertThat("Dues Locator", dues.getLocator(), notNullValue());
+        assertThat("Website Locator", website.getLocator(), notNullValue());
     }
 
 }

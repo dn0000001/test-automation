@@ -55,6 +55,7 @@ public class HerokuappDataTableTest extends TestNGBase {
         HerokuappDataTablesPage tablesPage = new HerokuappDataTablesPage(getContext());
         List<HerokuappRow> all = tablesPage.getAllRows();
         for (HerokuappRow row : all) {
+            row.validateLocatorsNotNull();
             Table2 actual = new Table2();
             actual.lastName = row.getLastName();
             actual.firstName = row.getFirstName();
