@@ -456,16 +456,21 @@ public class PageObjectV2 extends PageObjectModel {
     }
 
     /**
-     * Click component using locator when it is ready.  Method uses a retry policy to handle
+     * Click component when it is ready.  Method uses a retry policy to handle
      * click specific exceptions (ElementClickInterceptedException and ElementNotInteractableException) if they occur
      *
-     * @param component - Component to use locator to click when ready
-     * @return the element that was clicked
+     * @param component - Component to click when ready
+     * @return the element using component locator which in most cases will have been clicked but the component is
+     * controlling the click logic and sometimes this may not be the case based on the component
      */
     protected WebElement click(PageComponent component) {
         assertThat("Click Component", component, notNullValue());
         assertThat("Click Component's Locator", component.getLocator(), notNullValue());
-        return Failsafe.with(Utils.getClickRetryPolicy()).get(() -> Utils.clickWhenReady(component.getLocator()));
+        return Failsafe.with(Utils.getClickRetryPolicy()).get(() -> {
+            WebElement element = Utils.getWebDriverWait().until(ExpectedConditionsUtil.ready(component));
+            component.click();
+            return element;
+        });
     }
 
 }

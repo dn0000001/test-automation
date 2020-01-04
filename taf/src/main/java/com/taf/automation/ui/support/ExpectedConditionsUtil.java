@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 /**
  * This class has custom ExpectedConditions and any new additions to the ExpectedConditions that are later than our current version.<BR>
  */
+@SuppressWarnings("squid:S1168")
 public class ExpectedConditionsUtil {
     private ExpectedConditionsUtil() {
         // Prevent initialization of class as all public methods should be static
@@ -57,13 +58,31 @@ public class ExpectedConditionsUtil {
     }
 
     /**
-     * An expectation for checking WebElement found using the component's locator is ready (enabled &amp; displayed)
+     * An expectation for checking component is ready (enabled &amp; displayed)
      *
-     * @param component - Component used to get locator
-     * @return non-null WebElement when element found using locator is ready else null
+     * @param component - Component used to checked ready (enabled &amp; displayed)
+     * @return non-null WebElement (using component locator) when component is ready else null
      */
     public static ExpectedCondition<WebElement> ready(PageComponent component) {
-        return ready(component.getLocator());
+        return new ExpectedCondition<WebElement>() {
+            @Override
+            public WebElement apply(WebDriver driver) {
+                try {
+                    if (component.isDisplayed() && component.isEnabled()) {
+                        return driver.findElement(component.getLocator());
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "component to be ready (enabled & displayed) using locator:  " + component.getLocator();
+            }
+        };
     }
 
     /**
@@ -350,6 +369,7 @@ public class ExpectedConditionsUtil {
      * @param viewPortOnly - true to only take screenshot of the view port, false to attempt full screenshot
      * @return List of attachments
      */
+    @SuppressWarnings({"squid:S1141", "squid:S00112"})
     public static ExpectedCondition<List<Attachment>> takeScreenshot(final String title, final boolean viewPortOnly) {
         return new ExpectedCondition<List<Attachment>>() {
             @Override
@@ -787,6 +807,65 @@ public class ExpectedConditionsUtil {
                 return "url to match any of the regular expressions"
                         + debugInfo
                         + "  Current URL:  " + currentUrl;
+            }
+        };
+    }
+
+    /**
+     * An expectation for checking component is enabled<BR>
+     * <B>Note: </B> If using the framework to get the component, then component must always be displayed
+     * which makes this work the same as the component ready expectation even though there is no explicit check
+     * for displayed<BR>
+     *
+     * @param component - Component used to checked enabled
+     * @return non-null WebElement (using component locator) when component is enabled else null
+     */
+    public static ExpectedCondition<WebElement> enabled(PageComponent component) {
+        return new ExpectedCondition<WebElement>() {
+            @Override
+            public WebElement apply(WebDriver driver) {
+                try {
+                    if (component.isEnabled()) {
+                        return driver.findElement(component.getLocator());
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "component to be enabled using locator:  " + component.getLocator();
+            }
+        };
+    }
+
+    /**
+     * An expectation for checking component is displayed
+     *
+     * @param component - Component used to checked displayed
+     * @return non-null WebElement (using component locator) when component is displayed else null
+     */
+    public static ExpectedCondition<WebElement> displayed(PageComponent component) {
+        return new ExpectedCondition<WebElement>() {
+            @Override
+            public WebElement apply(WebDriver driver) {
+                try {
+                    if (component.isDisplayed()) {
+                        return driver.findElement(component.getLocator());
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "component to be displayed using locator:  " + component.getLocator();
             }
         };
     }

@@ -774,7 +774,7 @@ public class AssertsUtil {
             @Override
             protected boolean matchesSafely(final PageComponent component) {
                 try {
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(component.getLocator()));
+                    wait.until(ExpectedConditionsUtil.displayed(component));
                     return true;
                 } catch (Exception ex) {
                     return false;
@@ -834,7 +834,7 @@ public class AssertsUtil {
             @Override
             protected boolean matchesSafely(final PageComponent component) {
                 try {
-                    wait.until(ExpectedConditions.elementToBeClickable(component.getLocator()));
+                    wait.until(ExpectedConditionsUtil.ready(component));
                     return true;
                 } catch (Exception ex) {
                     return false;
@@ -864,8 +864,8 @@ public class AssertsUtil {
             @Override
             protected boolean matchesSafely(final PageComponent component) {
                 try {
-                    WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(component.getLocator()));
-                    return element.isEnabled();
+                    wait.until(ExpectedConditionsUtil.enabled(component));
+                    return true;
                 } catch (Exception ex) {
                     return false;
                 }
