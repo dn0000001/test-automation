@@ -22,6 +22,8 @@ public class PrimeFacesDashboardTest extends TestNGBase {
     ) {
         getContext().getDriver().get(url);
         PrimeFacesDashboardDO primeFacesDashboardDO = new PrimeFacesDashboardDO(getContext()).fromResource(dataSet);
+        primeFacesDashboardDO.getPrimeFacesDashboardPage().validateLocatorsNotNull();
+        primeFacesDashboardDO.getPrimeFacesDashboardPage().validateFakePanelLocatorIsNull();
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validateSportsPanel();
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validateLifestylePanel();
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validatePoliticsPanel();
