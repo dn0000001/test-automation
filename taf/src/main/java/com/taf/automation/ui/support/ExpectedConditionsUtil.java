@@ -68,8 +68,9 @@ public class ExpectedConditionsUtil {
             @Override
             public WebElement apply(WebDriver driver) {
                 try {
-                    if (component.isDisplayed() && component.isEnabled()) {
-                        return driver.findElement(component.getLocator());
+                    List<WebElement> elements = driver.findElements(component.getLocator());
+                    if (!elements.isEmpty() && component.isDisplayed() && component.isEnabled()) {
+                        return elements.get(0);
                     }
                 } catch (Exception ex) {
                     //
@@ -825,8 +826,9 @@ public class ExpectedConditionsUtil {
             @Override
             public WebElement apply(WebDriver driver) {
                 try {
-                    if (component.isEnabled()) {
-                        return driver.findElement(component.getLocator());
+                    List<WebElement> elements = driver.findElements(component.getLocator());
+                    if (!elements.isEmpty() && component.isEnabled()) {
+                        return elements.get(0);
                     }
                 } catch (Exception ex) {
                     //
@@ -853,8 +855,9 @@ public class ExpectedConditionsUtil {
             @Override
             public WebElement apply(WebDriver driver) {
                 try {
-                    if (component.isDisplayed()) {
-                        return driver.findElement(component.getLocator());
+                    List<WebElement> elements = driver.findElements(component.getLocator());
+                    if (!elements.isEmpty() && component.isDisplayed()) {
+                        return elements.get(0);
                     }
                 } catch (Exception ex) {
                     //
