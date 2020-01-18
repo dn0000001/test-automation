@@ -11,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 import ui.auto.core.data.ComponentData;
 import ui.auto.core.pagecomponent.PageComponent;
+import ui.auto.core.pagecomponent.PageObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -35,6 +36,11 @@ public class ComponentMethodInterceptorV2 implements MethodInterceptor {
             if (dataMethod.getName().equals(methodName)) {
                 return proxy.invokeSuper(obj, args);
             }
+        }
+
+        // Skip page objects
+        if (obj != null && PageObject.class.isAssignableFrom(obj.getClass())) {
+            return proxy.invokeSuper(obj, args);
         }
 
         // Skip finalize method

@@ -36,7 +36,7 @@ public class ComponentFieldDecoratorV2 extends DefaultFieldDecorator {
         }
 
         if (PageObject.class.isAssignableFrom(field.getType())) {
-            decoratePageObject(field);
+            return decoratePageObject(field);
         }
 
         return super.decorate(loader, field);
@@ -108,21 +108,33 @@ public class ComponentFieldDecoratorV2 extends DefaultFieldDecorator {
     }
 
     @SuppressWarnings("squid:S00112")
-    private void decoratePageObject(final Field field) {
+    private Object decoratePageObject(final Field field) {
         field.setAccessible(true);
         if (field.getAnnotation(FindBy.class) != null) {
             PageObject po;
             try {
                 field.setAccessible(true);
                 po = (PageObject) field.get(page);
+
+                // Handle case in which page object has annotation for locator but does not have any data specified
+                if (po == null) {
+                    Enhancer enhancer = new Enhancer();
+                    enhancer.setSuperclass(field.getType());
+                    enhancer.setCallback(new ComponentMethodInterceptorV2(factory.createLocator(field)));
+                    po = (PageObject) enhancer.create();
+                }
+
                 if (po != null) {
                     Annotations annotations = new Annotations(field);
                     FieldUtils.writeField(po, "locator", annotations.buildBy(), true);
+                    return po;
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+
+        return null;
     }
 
 }

@@ -29,6 +29,7 @@ public class PrimeFacesDashboardTest extends TestNGBase {
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validatePoliticsPanel();
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validateFinancePanel();
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validateWeatherPanel();
+        primeFacesDashboardDO.getPrimeFacesDashboardPage().validateDocumentationText();
     }
 
 }
