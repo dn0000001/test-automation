@@ -5,8 +5,11 @@ import com.taf.automation.ui.support.TestContext;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
+import ui.auto.core.components.WebComponent;
 
+import static com.taf.automation.ui.support.AssertsUtil.isComponentDisplayed;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -31,6 +34,17 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
 
     @XStreamOmitField
     private PrimeFacesPanel fakePanel;
+
+    @FindBy(css = "[id$=':weather']")
+    private PrimeFacesPanel weatherPanelWithNoData;
+
+    @XStreamOmitField
+    @FindBy(css = "[id$=':finance']")
+    private PrimeFacesPanel financePanelWithNoData;
+
+    @XStreamOmitField
+    @FindBy(css = ".documentation-link")
+    private WebComponent documentation;
 
     public PrimeFacesDashboardPage() {
         super();
@@ -112,6 +126,30 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
         return fakePanel;
     }
 
+    private PrimeFacesPanel getWeatherPanelWithNoData() {
+        if (weatherPanelWithNoData == null) {
+            weatherPanelWithNoData = new PrimeFacesPanel();
+        }
+
+        if (weatherPanelWithNoData.getContext() == null) {
+            weatherPanelWithNoData.initPage(getContext());
+        }
+
+        return weatherPanelWithNoData;
+    }
+
+    private PrimeFacesPanel getFinancePanelWithNoData() {
+        if (financePanelWithNoData == null) {
+            financePanelWithNoData = new PrimeFacesPanel();
+        }
+
+        if (financePanelWithNoData.getContext() == null) {
+            financePanelWithNoData.initPage(getContext());
+        }
+
+        return financePanelWithNoData;
+    }
+
     @Step("Validate Locators Not Null")
     public void validateLocatorsNotNull() {
         // Due to re-factoring the locators may be changed, this is to ensure that they are not null
@@ -120,6 +158,8 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
         assertThat("Politics Panel Locator", getPoliticsPanel().getLocator(), notNullValue());
         assertThat("Finance Panel Locator", getFinancePanel().getLocator(), notNullValue());
         assertThat("Weather Panel Locator", getWeatherPanel().getLocator(), notNullValue());
+        assertThat("Weather Panel With No Data Locator", getWeatherPanelWithNoData().getLocator(), notNullValue());
+        assertThat("Finance Panel With No Data Locator", getFinancePanelWithNoData().getLocator(), notNullValue());
     }
 
     @Step("Validate the Fake Panel Locator is Null")
@@ -154,6 +194,8 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
         getFinancePanel().validateLocatorsNotNull();
         getFinancePanel().validateTitle();
         getFinancePanel().validateContent();
+        assertThat("FinancePanelWithNoData - Title", getFinancePanel().getTitle(), equalTo(getFinancePanelWithNoData().getTitle()));
+        assertThat("FinancePanelWithNoData - Content", getFinancePanel().getPanelContent(), equalTo(getFinancePanelWithNoData().getPanelContent()));
     }
 
     @Step("Validate Weather Panel")
@@ -161,6 +203,15 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
         getWeatherPanel().validateLocatorsNotNull();
         getWeatherPanel().validateTitle();
         getWeatherPanel().validateContent();
+        assertThat("WeatherPanelWithNoData - Title", getWeatherPanel().getTitle(), equalTo(getWeatherPanelWithNoData().getTitle()));
+        assertThat("WeatherPanelWithNoData - Content", getWeatherPanel().getPanelContent(), equalTo(getWeatherPanelWithNoData().getPanelContent()));
+    }
+
+    @SuppressWarnings("squid:S1192")
+    @Step("Validate Documentation Text")
+    public void validateDocumentationText() {
+        assertThat("Documentation", documentation, isComponentDisplayed());
+        assertThat("Documentation", documentation.getText(), equalTo("Documentation"));
     }
 
 }
