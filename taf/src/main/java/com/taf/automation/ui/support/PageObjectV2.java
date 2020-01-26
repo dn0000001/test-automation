@@ -312,6 +312,36 @@ public class PageObjectV2 extends PageObjectModel {
     }
 
     /**
+     * Fill and Validate Page Object Component
+     *
+     * @param component - Page Object component to fill
+     */
+    protected void setElementValueV2(ComponentPO component) {
+        if (component == null || !component.hasData()) {
+            return;
+        }
+
+        String exception = "";
+        boolean successful;
+
+        try {
+            Failsafe.with(Utils.getWriteValueRetryPolicy()).run(() -> {
+                component.fill();
+                component.validate();
+            });
+            successful = true;
+        } catch (Exception | AssertionError ignore) {
+            // Catch any thrown error or assertion error
+            successful = false;
+            exception = ignore.getMessage();
+        }
+
+        String error = "Unable to fill (" + component.getClass().getSimpleName() + ")"
+                + " & validate before timeout:  " + exception;
+        assertThat(error, successful);
+    }
+
+    /**
      * Set the value of all the pageComponents(if displayed and enabled) to the specified data type.
      * This method will not modify the original values in the data types (initial, data, expected)
      *
