@@ -1,14 +1,11 @@
 package com.automation.common.ui.app.pageObjects;
 
-import com.taf.automation.ui.support.PageObjectV2;
+import com.taf.automation.ui.support.GenericRow;
 import com.taf.automation.ui.support.TestContext;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -18,47 +15,34 @@ import static org.hamcrest.Matchers.notNullValue;
  * Site:  <a href="https://the-internet.herokuapp.com/tables">https://the-internet.herokuapp.com/tables</a><BR>
  * Table from Example 2
  */
-public class HerokuappRow extends PageObjectV2 {
-    private Map<String, String> substitutions;
-
+@SuppressWarnings("squid:MaximumInheritanceDepth")
+public class HerokuappRow extends GenericRow {
     @XStreamOmitField
-    @FindBy(css = "[id='${row-id}'] .last-name")
+    @FindBy(css = "[id='${row}'] .last-name")
     private WebComponent lastName;
 
     @XStreamOmitField
-    @FindBy(css = "[id='${row-id}'] .first-name")
+    @FindBy(css = "[id='${row}'] .first-name")
     private WebComponent firstName;
 
     @XStreamOmitField
-    @FindBy(css = "[id='${row-id}'] .email")
+    @FindBy(css = "[id='${row}'] .email")
     private WebComponent email;
 
     @XStreamOmitField
-    @FindBy(css = "[id='${row-id}'] .dues")
+    @FindBy(css = "[id='${row}'] .dues")
     private WebComponent dues;
 
     @XStreamOmitField
-    @FindBy(css = "[id='${row-id}'] .web-site")
+    @FindBy(css = "[id='${row}'] .web-site")
     private WebComponent website;
 
     public HerokuappRow() {
         super();
     }
 
-    private Map<String, String> getSubstitutions() {
-        if (substitutions == null) {
-            substitutions = new HashMap<>();
-        }
-
-        return substitutions;
-    }
-
-    public void updateRowIdKey(String value) {
-        getSubstitutions().put("row-id", value);
-    }
-
-    public void initPage(TestContext context) {
-        initPage(context, getSubstitutions());
+    public HerokuappRow(TestContext context) {
+        super(context);
     }
 
     public String getLastName() {
