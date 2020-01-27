@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<robo-form-do>
+    <aliases>
+        <test-name>RoboForm Test</test-name>
+    </aliases>
+    <roboFormPage>
+        <firstName>Robo</firstName>
+        <lastName>Form</lastName>
+        <creditCard>
+            <creditCardType>Visa (Preferred)</creditCardType>
+            <credit-card-number>1111222233334444</credit-card-number>
+            <cardVerificationCode>999</cardVerificationCode>
+            <card-expiration-date>
+                <month>01</month>
+                <year>2025</year>
+            </card-expiration-date>
+            <cardUserName>Robo Form</cardUserName>
+        </creditCard>
+    </roboFormPage>
+</robo-form-do>
