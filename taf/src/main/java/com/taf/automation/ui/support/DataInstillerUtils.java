@@ -71,23 +71,11 @@ public class DataInstillerUtils {
      * <B>Note: </B> It is necessary to use method <B>processAnnotations(this.getClass())</B> on the returned XStream
      * to prevent exception <B>CannotResolveClassException</B> when using XStreamAlias.
      *
+     * @param jexlContext - Jexl Context if null a default will be provided
      * @return XStream
      */
-    public static XStream getXStream() {
-        return getXStream(null, getConverters());
-    }
-
-    /**
-     * Get an XStream with the default converters<BR>
-     * <B>Note: </B> If the specified XStream is null, then it is necessary to use method
-     * <B>processAnnotations(this.getClass())</B> on the returned XStream to prevent exception
-     * <B>CannotResolveClassException</B> when using XStreamAlias.
-     *
-     * @param existingXStream - XStream variable to register the converters to
-     * @return XStream
-     */
-    public static XStream getXStream(XStream existingXStream) {
-        return getXStream(existingXStream, getConverters());
+    public static XStream getXStream(JexlContext jexlContext) {
+        return getXStream(null, getConverters(), jexlContext);
     }
 
     /**
@@ -107,8 +95,8 @@ public class DataInstillerUtils {
      * @param existingConverters - Existing converters to be registered
      * @return XStream
      */
-    public static XStream getXStream(XStream existingXStream, List<DataValueConverter> existingConverters) {
-        XStream xstream = (existingXStream == null) ? getDefaultXStream() : existingXStream;
+    public static XStream getXStream(XStream existingXStream, List<DataValueConverter> existingConverters, JexlContext jexlContext) {
+        XStream xstream = (existingXStream == null) ? getDefaultXStream(jexlContext) : existingXStream;
         addAliases(xstream);
         registerConverters(xstream, existingConverters);
         return xstream;
@@ -121,10 +109,12 @@ public class DataInstillerUtils {
      *
      * @return XStream
      */
-    private static XStream getDefaultXStream() {
+    private static XStream getDefaultXStream(JexlContext existingJexlContext) {
+        JexlContext jexlContext = (existingJexlContext == null) ? getDefaultJexlContext() : existingJexlContext;
+        addCustomGenerators(jexlContext);
         XStream xstream = new XStream();
 
-        xstream.registerConverter(new DataAliasesConverterV2(getDefaultJexlContext()));
+        xstream.registerConverter(new DataAliasesConverterV2(jexlContext));
         xstream.registerConverter(new ISO8601GregorianCalendarConverter());
 
         return xstream;
@@ -149,9 +139,6 @@ public class DataInstillerUtils {
         jContext.set("File2ListGen", new File2ListGenerator());
         jContext.set("now", LocalDateTime.now());
         jContext.set("DateTimeFormatter", DateTimeFormatter.BASIC_ISO_DATE);
-
-        // Custom Generators
-        addCustomGenerators(jContext);
 
         return jContext;
     }
@@ -225,8 +212,8 @@ public class DataInstillerUtils {
      *
      * @return DataGenerator
      */
-    public static DataGenerator getGenerator() {
-        DataGenerator generator = new DataGenerator(getXStream(), getConverters());
+    public static DataGenerator getGenerator(JexlContext jexlContext) {
+        DataGenerator generator = new DataGenerator(getXStream(jexlContext), getConverters());
         registerCustomGenerators(generator);
         return generator;
     }

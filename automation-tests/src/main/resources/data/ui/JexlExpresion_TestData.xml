@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jexl-expression-do>
+    <aliases>
+        <test-name>Validate that Jexl Expressions being evaluated properly</test-name>
+        <var1>${str1}</var1>
+        <var2>${str2}</var2>
+        <var3>${str1 + " " + str2}</var3>
+        <var4>${str2 + " " + str1}</var4>
+        <RandomDateGenerator>$[RANDOM_DATE('yyyy-MM-dd','365|720')]</RandomDateGenerator>
+        <RandomRealUSAddressGenerator>$[RANDOM_US_ADDRESS('{#} {C} {S} {Z} {U} {P}','')]</RandomRealUSAddressGenerator>
+        <orgPass>$[ALPHANUMERIC('{a}{b}{c}{d}{e}', 'null')]</orgPass>
+        <encPass>${crypto.encrypt(orgPass)}</encPass>
+        <decPass>${crypto.decrypt(encPass)}</decPass>
+    </aliases>
+    <someField initial="${var4} ${RandomDateGenerator} ${RandomRealUSAddressGenerator}" expected="${var1} ${var2}">${var3}</someField>
+    <anotherField initial="${encPass}" expected="${decPass}">${orgPass}</anotherField>
+</jexl-expression-do>

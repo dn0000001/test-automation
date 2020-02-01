@@ -69,7 +69,7 @@ public class DataAliasesConverterV2 implements Converter {
                     throw new PatternUnmarshalException(value + " - invalid data generation expression!");
                 }
 
-                GeneratorInterface genType = DataInstillerUtils.getGenerator().getGenerator(matcher.group(1).trim());
+                GeneratorInterface genType = DataInstillerUtils.getGenerator(jexlContext).getGenerator(matcher.group(1).trim());
                 String init = matcher.group(2);
                 String val = matcher.group(3);
                 value = genType.generate(init, val);
