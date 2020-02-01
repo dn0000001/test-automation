@@ -822,6 +822,38 @@ public class Helper {
     }
 
     /**
+     * Runs validation action only if based on field has data<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>If based on field is null, then method just returns</LI>
+     * <LI>The validation action is run unless, the type is supported and there is no data</LI>
+     * <LI>Supported types are ComponentPO, PageComponent, String Objects</LI>
+     * </OL>
+     *
+     * @param basedOnField     - Based On Field
+     * @param validationAction - Validation Action to be run if necessary
+     * @param <T>              - Type
+     */
+    public static <T> void assertThat(T basedOnField, Runnable validationAction) {
+        if (basedOnField == null) {
+            return;
+        }
+
+        boolean runValidation = true;
+        if (PageComponent.class.isAssignableFrom(basedOnField.getClass())) {
+            runValidation = Utils.isNotBlank((PageComponent) basedOnField);
+        } else if (ComponentPO.class.isAssignableFrom(basedOnField.getClass())) {
+            runValidation = ((ComponentPO) basedOnField).hasData();
+        } else if (String.class.isAssignableFrom(basedOnField.getClass())) {
+            runValidation = StringUtils.isNotBlank((String) basedOnField);
+        }
+
+        if (runValidation) {
+            validationAction.run();
+        }
+    }
+
+    /**
      * Create a cache of the items. The key is the xml representation of the object
      *
      * @param items - List to generate a cache from

@@ -52,4 +52,8 @@ public class CardExpirationDateFields extends ComponentPO {
         // No actions required to validate
     }
 
+    public void updateMonthTestData(String value) {
+        month.initializeData(value, null, null);
+    }
+
 }
