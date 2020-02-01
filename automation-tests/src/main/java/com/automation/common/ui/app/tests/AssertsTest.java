@@ -1,5 +1,7 @@
 package com.automation.common.ui.app.tests;
 
+import com.automation.common.ui.app.components.CardExpirationDateFields;
+import com.automation.common.ui.app.components.TextBox;
 import com.automation.common.ui.app.domainObjects.TNHC_DO;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.automation.common.ui.app.pageObjects.TNHC_LandingPage;
@@ -2533,6 +2535,74 @@ public class AssertsTest extends TestNGBase {
         assertThat("missing multiple expected", actual, not(AssertsUtil.contains(expected)));
         assertThat("actual unmodified", actual.size(), equalTo(3));
         assertThat("expected unmodified", expected.size(), equalTo(2));
+    }
+
+    @Test(enabled = RUN)
+    public void testValidationActionRunBasedOnField() {
+        String skipMessage = "Validation Action was run for:  ";
+        String runMessage = "Validation Action was not run for:  ";
+        String blankText = "   ";
+        String runText = "run";
+
+        //
+        // ComponentPO object tests
+        //
+
+        CardExpirationDateFields componentPO = null;
+        Helper.assertThat(componentPO, () -> assertThat(skipMessage + "ComponentPO (null)", false));
+
+        componentPO = new CardExpirationDateFields(getContext());
+        Helper.assertThat(componentPO, () -> assertThat(skipMessage + "ComponentPO (skip)", false));
+
+        componentPO.updateMonthTestData(blankText);
+        Helper.assertThat(componentPO, () -> assertThat(skipMessage + "ComponentPO (blank)", false));
+
+        componentPO.updateMonthTestData(runText);
+        try {
+            Helper.assertThat(componentPO, () -> assertThat(runMessage + "ComponentPO (run)", false));
+            throw new RuntimeException(runMessage + "ComponentPO(run)");
+        } catch (AssertionError ae) {
+            Helper.log(skipMessage + "ComponentPO (run)", true);
+        }
+
+        //
+        // PageComponent object tests
+        //
+
+        TextBox pageComponent = null;
+        Helper.assertThat(pageComponent, () -> assertThat(skipMessage + "Page Component (null)", false));
+
+        pageComponent = new TextBox();
+        Helper.assertThat(pageComponent, () -> assertThat(skipMessage + "Page Component (skip)", false));
+
+        pageComponent.initializeData(blankText, null, null);
+        Helper.assertThat(pageComponent, () -> assertThat(skipMessage + "Page Component (blank)", false));
+
+        pageComponent.initializeData(runText, null, null);
+        try {
+            Helper.assertThat(pageComponent, () -> assertThat(runMessage + "Page Component (run)", false));
+            throw new RuntimeException(runMessage + "Page Component (run)");
+        } catch (AssertionError ae) {
+            Helper.log(skipMessage + "Page Component (run)", true);
+        }
+
+        //
+        // String tests
+        //
+
+        String strObj = null;
+        Helper.assertThat(strObj, () -> assertThat(skipMessage + "String (null)", false));
+
+        strObj = blankText;
+        Helper.assertThat(strObj, () -> assertThat(skipMessage + "String (blank)", false));
+
+        strObj = runText;
+        try {
+            Helper.assertThat(strObj, () -> assertThat(runMessage + "String (run)", false));
+            throw new RuntimeException(runMessage + "String (run)");
+        } catch (AssertionError ae) {
+            Helper.log(skipMessage + "String (run)", true);
+        }
     }
 
 }
