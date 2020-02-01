@@ -89,10 +89,12 @@ public class DataInstillerUtils {
      * <LI>If the specified XStream is null, then it is necessary to use method
      * <B>processAnnotations(this.getClass())</B> on the returned XStream to prevent exception
      * <B>CannotResolveClassException</B> when using XStreamAlias.</LI>
+     * <LI>If the Jexl Context is null, then a Jexl Context with the default configuration is used</LI>
      * </OL>
      *
      * @param existingXStream    - XStream variable to register the converters to
      * @param existingConverters - Existing converters to be registered
+     * @param jexlContext        - Jexl Context
      * @return XStream
      */
     public static XStream getXStream(XStream existingXStream, List<DataValueConverter> existingConverters, JexlContext jexlContext) {
@@ -107,6 +109,7 @@ public class DataInstillerUtils {
      * <B>Note: </B> It is necessary to use method <B>processAnnotations(this.getClass())</B> on the returned XStream
      * to prevent exception <B>CannotResolveClassException</B> when using XStreamAlias.
      *
+     * @param existingJexlContext - Jexl Context
      * @return XStream
      */
     private static XStream getDefaultXStream(JexlContext existingJexlContext) {
@@ -208,8 +211,10 @@ public class DataInstillerUtils {
     }
 
     /**
-     * Get the default generator
+     * Get the default generator<BR>
+     * <B>Note:  </B> If the Jexl Context is null, then a Jexl Context with the default configuration is used
      *
+     * @param jexlContext - Jexl Context
      * @return DataGenerator
      */
     public static DataGenerator getGenerator(JexlContext jexlContext) {

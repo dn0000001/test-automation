@@ -72,13 +72,13 @@ public class JsonIpDO extends ApiDomainObject {
             String json = ip.getEntityAsString();
             Map<String, Object> actual = WsUtils.toMap(json);
             String actualIP = String.valueOf(actual.get("ip"));
-            String actualAbout = String.valueOf(actual.get("geo-ip"));
-            String actualPro = String.valueOf(actual.get("API Help"));
+            String actualGeoIp = String.valueOf(actual.get("geo-ip"));
+            String actualApiHelp = String.valueOf(actual.get("API Help"));
 
             Helper.log("Actual IP:  " + actualIP);
             assertThat("Invalid IP Address", Pattern.matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", actualIP), equalTo(true));
-            assertThat("GEO IP Incorrect", actualAbout, equalTo(geoIP));
-            assertThat("API Help Incorrect", actualPro, equalTo(apiHelp));
+            assertThat("GEO IP Incorrect", actualGeoIp, equalTo(geoIP));
+            assertThat("API Help Incorrect", actualApiHelp, equalTo(apiHelp));
         }
     }
 
