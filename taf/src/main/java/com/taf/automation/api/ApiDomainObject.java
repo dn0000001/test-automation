@@ -18,6 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.Data;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
+import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.Header;
@@ -48,6 +49,11 @@ public class ApiDomainObject extends DataPersistenceV2 {
 
     @XStreamOmitField
     private DataAliases dataAliases;
+
+    @Override
+    protected void initJexlContext(JexlContext jexlContext) {
+        jexlContext.set("crypto", new CryptoUtils());
+    }
 
     @Override
     public String toXML() {

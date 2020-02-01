@@ -1,5 +1,13 @@
 <json-ip-do>
     <aliases>
+        <test-name>Json Ip Test</test-name>
+        <part1>https://</part1>
+        <part2>getjsonip.com</part2>
+        <part3>/#plus</part3>
+        <geoIP>${part1+part2+part3}</geoIP>
+        <apiHelp>${part1 + part2 + "/#docs"}</apiHelp>
+        <encApiHelp>${crypto.encrypt(apiHelp)}</encApiHelp>
+        <decApiHelp>${crypto.decrypt(encApiHelp)}</decApiHelp>
     </aliases>
 
     <response>
@@ -8,7 +16,7 @@
             <reasonPhrase>OK</reasonPhrase>
         </status>
 
-        <about>/about</about>
-        <pro>http://getjsonip.com</pro>
+        <geoIP>${geoIP}</geoIP>
+        <apiHelp>${decApiHelp}</apiHelp>
     </response>
 </json-ip-do>

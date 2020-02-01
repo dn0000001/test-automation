@@ -29,21 +29,20 @@ public class JsonIpDO extends ApiDomainObject {
 
     private static class IP_Details {
         private String ip;
-        private String about;
 
-        @SerializedName("Pro!")
-        private String pro;
+        @SerializedName("geo-ip")
+        private String geoIP;
 
-        @SerializedName("reject-fascism")
-        private String rejectFascism;
+        @SerializedName("API Help")
+        private String apiHelp;
     }
 
     // Here you create an entity for the response
     private static class Response {
         // The Expected values to verify against
         BasicStatusLine status;
-        String about;
-        String pro;
+        String geoIP;
+        String apiHelp;
 
         // Here is the actual response entity
         @XStreamOmitField
@@ -63,8 +62,8 @@ public class JsonIpDO extends ApiDomainObject {
             IP_Details actualDetails = ip.getEntity();
             assertThat("Response Entity", actualDetails, notNullValue());
             assertThat("Invalid IP Address", Pattern.matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", actualDetails.ip), equalTo(true));
-            assertThat("About Incorrect", actualDetails.about, equalTo(about));
-            assertThat("Pro Incorrect", actualDetails.pro, equalTo(pro));
+            assertThat("About Incorrect", actualDetails.geoIP, equalTo(geoIP));
+            assertThat("Pro Incorrect", actualDetails.apiHelp, equalTo(apiHelp));
 
             //
             // Not Recommended way just to show another to get the information
@@ -73,13 +72,13 @@ public class JsonIpDO extends ApiDomainObject {
             String json = ip.getEntityAsString();
             Map<String, Object> actual = WsUtils.toMap(json);
             String actualIP = String.valueOf(actual.get("ip"));
-            String actualAbout = String.valueOf(actual.get("about"));
-            String actualPro = String.valueOf(actual.get("Pro!"));
+            String actualAbout = String.valueOf(actual.get("geo-ip"));
+            String actualPro = String.valueOf(actual.get("API Help"));
 
             Helper.log("Actual IP:  " + actualIP);
             assertThat("Invalid IP Address", Pattern.matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", actualIP), equalTo(true));
-            assertThat("About Incorrect", actualAbout, equalTo(about));
-            assertThat("Pro Incorrect", actualPro, equalTo(pro));
+            assertThat("GEO IP Incorrect", actualAbout, equalTo(geoIP));
+            assertThat("API Help Incorrect", actualPro, equalTo(apiHelp));
         }
     }
 

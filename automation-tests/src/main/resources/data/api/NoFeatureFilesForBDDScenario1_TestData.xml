@@ -18,7 +18,7 @@
             <reasonPhrase>OK</reasonPhrase>
         </status>
 
-        <about>/about</about>
-        <pro>http://getjsonip.com</pro>
+        <geoIP>https://getjsonip.com/#plus</geoIP>
+        <apiHelp>https://getjsonip.com/#docs</apiHelp>
     </response>
 </json-ip-do>
