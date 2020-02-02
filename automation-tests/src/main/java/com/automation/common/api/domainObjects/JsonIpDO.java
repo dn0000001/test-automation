@@ -62,8 +62,8 @@ public class JsonIpDO extends ApiDomainObject {
             IP_Details actualDetails = ip.getEntity();
             assertThat("Response Entity", actualDetails, notNullValue());
             assertThat("Invalid IP Address", Pattern.matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", actualDetails.ip), equalTo(true));
-            assertThat("About Incorrect", actualDetails.geoIP, equalTo(geoIP));
-            assertThat("Pro Incorrect", actualDetails.apiHelp, equalTo(apiHelp));
+            assertThat("GEO IP Incorrect", actualDetails.geoIP, equalTo(geoIP));
+            assertThat("API Help Incorrect", actualDetails.apiHelp, equalTo(apiHelp));
 
             //
             // Not Recommended way just to show another to get the information
