@@ -4,10 +4,14 @@ import com.taf.automation.ui.support.csv.CsvTestData;
 import com.thoughtworks.xstream.XStream;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
+import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.support.DomainObjectModel;
 
 import java.net.URL;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DomainObject extends DomainObjectModel {
     public DomainObject(TestContext context) {
@@ -19,8 +23,26 @@ public class DomainObject extends DomainObjectModel {
     }
 
     @Override
+    protected void initJexlContext(JexlContext jexlContext) {
+        super.initJexlContext(jexlContext);
+        jexlContext.set("crypto", new CryptoUtils());
+    }
+
+    /**
+     * @return use reflection to get the Jexl Context from the class DataPersistence in which it is private
+     */
+    private JexlContext getJexlContext() {
+        try {
+            return (JexlContext) FieldUtils.readField(this, "jexlContext", true);
+        } catch (Exception ex) {
+            assertThat("Could not read jexlContext due to exception:  " + ex.getMessage(), false);
+            return null;
+        }
+    }
+
+    @Override
     public XStream getXstream() {
-        XStream xStream = DataInstillerUtils.getXStream();
+        XStream xStream = DataInstillerUtils.getXStream(getJexlContext());
         xStream.processAnnotations(this.getClass());
         return xStream;
     }

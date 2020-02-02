@@ -184,7 +184,7 @@ public class CsvUtils {
             Matcher matcher = pattern.matcher(value);
             assertThat(value + " - invalid data generation expression!", matcher.find());
 
-            GeneratorInterface genType = DataInstillerUtils.getGenerator().getGenerator(matcher.group(1).trim());
+            GeneratorInterface genType = DataInstillerUtils.getGenerator(null).getGenerator(matcher.group(1).trim());
             String init = matcher.group(2);
             String val = matcher.group(3);
             return genType.generate(init, val);

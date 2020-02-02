@@ -133,6 +133,21 @@
         </classes>
     </test>
 
+    <test name="Jexl Expression Test">
+        <parameter name="data-set" value="data/ui/JexlExpresion_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.JexlExpressionTest"/>
+        </classes>
+    </test>
+
+    <test name="JSON IP Test">
+        <parameter name="api-url" value="https://jsonip.com"/>
+        <parameter name="data-json-ip" value="data/api/JsonIp_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.api.tests.JsonIpTest"/>
+        </classes>
+    </test>
+
     <!--
     <test name="Open Report Test">
         <parameter name="allure-report" value="/target/allure-report"/>
@@ -334,14 +349,5 @@
             <class name="com.automation.common.api.tests.WeatherTest"/>
         </classes>
     </test>
-    -->
-
-    <!--
-        <test name="JSON IP Test" parallel="methods">
-            <parameter name="data-json-ip" value="data/api/JsonIp_TestData.xml"/>
-            <classes>
-                <class name="com.automation.common.api.tests.JsonIpTest"/>
-            </classes>
-        </test>
     -->
 </suite>
