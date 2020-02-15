@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<row-matching-do>
+    <aliases>
+        <test-name>Validate that rows in tables can be matched properly</test-name>
+    </aliases>
+    <singleRowMatch>
+        <lastName>Doe</lastName>
+        <firstName>Jason</firstName>
+        <email>jdoe@hotmail.com</email>
+        <dues>\$100.00</dues>
+        <website>http://www.jdoe.com</website>
+    </singleRowMatch>
+    <multiRowMatch>
+        <firstName>J.*</firstName>
+        <email>.*l.com</email>
+        <dues>.*0.*</dues>
+        <website>.*www.*</website>
+    </multiRowMatch>
+    <noRowMatch>
+        <lastName>.*John.*</lastName>
+        <firstName>.*Doe.*</firstName>
+        <email>.*@.*</email>
+        <dues>.*0.*</dues>
+        <website>.*www.*</website>
+    </noRowMatch>
+</row-matching-do>

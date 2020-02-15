@@ -16,6 +16,14 @@
         </classes>
     </test>
 
+    <test name="Row Matching Test">
+        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
+        <parameter name="data-set" value="data/ui/RowMatching_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.RowMatchingTest"/>
+        </classes>
+    </test>
+
     <test name="Data Provider Test">
         <parameter name="Data Provider Test" value="data/ui/LinksTestData.xml"/>
         <classes>
