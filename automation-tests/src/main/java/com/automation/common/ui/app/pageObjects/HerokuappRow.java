@@ -2,10 +2,10 @@ package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.GenericRow;
 import com.taf.automation.ui.support.TestContext;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
+import ui.auto.core.data.DataTypes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -17,23 +17,18 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class HerokuappRow extends GenericRow {
-    @XStreamOmitField
     @FindBy(css = "[id='${row}'] .last-name")
     private WebComponent lastName;
 
-    @XStreamOmitField
     @FindBy(css = "[id='${row}'] .first-name")
     private WebComponent firstName;
 
-    @XStreamOmitField
     @FindBy(css = "[id='${row}'] .email")
     private WebComponent email;
 
-    @XStreamOmitField
     @FindBy(css = "[id='${row}'] .dues")
     private WebComponent dues;
 
-    @XStreamOmitField
     @FindBy(css = "[id='${row}'] .web-site")
     private WebComponent website;
 
@@ -73,6 +68,14 @@ public class HerokuappRow extends GenericRow {
         assertThat("Email Locator", email.getLocator(), notNullValue());
         assertThat("Dues Locator", dues.getLocator(), notNullValue());
         assertThat("Website Locator", website.getLocator(), notNullValue());
+    }
+
+    public boolean isMatch(HerokuappRow rowToMatch) {
+        return isMatch(this::getLastName, rowToMatch.lastName.getData(DataTypes.Data, true)) &&
+                isMatch(this::getFirstName, rowToMatch.firstName.getData(DataTypes.Data, true)) &&
+                isMatch(this::getEmail, rowToMatch.email.getData(DataTypes.Data, true)) &&
+                isMatch(this::getDues, rowToMatch.dues.getData(DataTypes.Data, true)) &&
+                isMatch(this::getWebsite, rowToMatch.website.getData(DataTypes.Data, true));
     }
 
 }

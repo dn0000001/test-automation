@@ -109,6 +109,62 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
     }
 
     /**
+     * Find 1st row that matches the given row. Null/Empty data fields in the given row are ignored when matching.<BR>
+     * <B>Notes:</B> The method isMatch needs to be implemented with the desired logic for matching rows as the
+     * default implementation just causes an assertion failure.
+     *
+     * @param rowToMatch - Row to find in the table
+     * @return a matching row
+     */
+    public T findTableRow(T rowToMatch) {
+        return findTableRow(rowToMatch, true);
+    }
+
+    /**
+     * Find 1st row that matches the given row. Null/Empty data fields in the given row are ignored when matching.<BR>
+     * <B>Notes:</B> The method isMatch needs to be implemented with the desired logic for matching rows as the
+     * default implementation just causes an assertion failure.
+     *
+     * @param rowToMatch - Row to find in the table
+     * @param mustExist  - true to expect a match and fail if no match
+     * @return a matching row
+     */
+    public T findTableRow(T rowToMatch, boolean mustExist) {
+        assertThat("The row to match must be specified", rowToMatch, notNullValue());
+
+        if (rowToMatch.getContext() == null) {
+            rowToMatch.initPage(getContext());
+        }
+
+        T match = null;
+        for (T row : getTableRows()) {
+            if (isMatch(row, rowToMatch)) {
+                match = row;
+                break;
+            }
+        }
+
+        if (mustExist) {
+            assertThat("Could not find a matching row:  " + rowToMatch, match, notNullValue());
+        }
+
+        return match;
+    }
+
+    /**
+     * Method to determine if 2 rows are considered a match<BR>
+     * <B>Note: </B> This needs to be implemented in the extending class to be able to match on the entire row.
+     *
+     * @param actualRow  - Actual page row from the table
+     * @param rowToMatch - Target row to be matched
+     * @return whether they match
+     */
+    protected boolean isMatch(T actualRow, T rowToMatch) {
+        assertThat("Implementation does not support entire row matching", false);
+        return false;
+    }
+
+    /**
      * @return the attribute that will be used to extract the row key
      */
     protected String getAttributeToExtractRowKey() {

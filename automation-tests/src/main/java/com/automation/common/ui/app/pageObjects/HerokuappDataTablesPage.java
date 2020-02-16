@@ -85,4 +85,9 @@ public class HerokuappDataTablesPage extends GenericTable<HerokuappRow> {
         return row;
     }
 
+    @Override
+    protected boolean isMatch(HerokuappRow actualRow, HerokuappRow rowToMatch) {
+        return actualRow.isMatch(rowToMatch);
+    }
+
 }
