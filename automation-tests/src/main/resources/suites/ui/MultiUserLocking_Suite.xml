@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Multi User Locking Suite"  verbose="1" parallel="tests" thread-count="5" data-provider-thread-count="5">
+
+    <test name="User Lock Manger Test #1">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User1_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #2">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User2_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #3">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User1_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #4">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User2_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #5">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_RandomizedUser_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #6">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User1_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #7">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User2_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #8">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User1_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #9">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_User2_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+    <test name="User Lock Manger Test #10">
+        <parameter name="delay" value="2000"/>
+        <parameter name="data-set" value="data/ui/locking/UserLockManger_RandomizedUser_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.UserLockMangerTest"/>
+        </classes>
+    </test>
+
+</suite>
