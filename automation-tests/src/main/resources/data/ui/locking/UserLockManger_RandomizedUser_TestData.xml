@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jexl-expression-do>
+    <aliases>
+        <randomLetters>$[ALPHANUMERIC('{a}{b}{c}{d}{e}', 'null')]</randomLetters>
+        <randomNumbers>$[NUMBER('000','200,999')]</randomNumbers>
+        <user>${randomLetters+randomNumbers}</user>
+        <thread-id>${userLockManager.lock(user)}</thread-id>
+    </aliases>
+    <someField>User=${user}</someField>
+    <anotherField>Thread Id=${thread-id}</anotherField>
+</jexl-expression-do>
