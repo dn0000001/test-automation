@@ -12,6 +12,8 @@ import org.apache.commons.jexl3.JexlBuilder;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.JxltEngine;
 import org.apache.commons.jexl3.MapContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -21,6 +23,7 @@ import java.util.regex.Pattern;
  * This is based on the DataAliasesConverter but there are changes to allow for custom generators to be used
  */
 public class DataAliasesConverterV2 implements Converter {
+    private static final Logger LOG = LoggerFactory.getLogger(DataAliasesConverterV2.class);
     private JexlContext jexlContext;
 
     public DataAliasesConverterV2(JexlContext jexlContext) {
@@ -79,7 +82,7 @@ public class DataAliasesConverterV2 implements Converter {
                     objValue = expr.evaluate(jexlContext);
                     value = objValue.toString();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOG.warn(e.getMessage());
                 }
             }
 

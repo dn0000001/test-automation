@@ -1,6 +1,8 @@
 package com.taf.automation.ui.support;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import com.thoughtworks.xstream.converters.extended.ISO8601GregorianCalendarConverter;
 import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
 import org.apache.commons.jexl3.JexlContext;
@@ -14,8 +16,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * unusual to use xml namespaces (i.e. the attribute "xmlns".)
  */
 public abstract class DataPersistenceV2 extends DataPersistence {
+    @XStreamOmitField
+    private boolean useXstreamForAliases;
+
     protected DataPersistenceV2() {
         //
+    }
+
+    protected void useAliasesXstreamFlag() {
+        useXstreamForAliases = true;
+    }
+
+    protected void useNormalXstreamFlag() {
+        useXstreamForAliases = false;
     }
 
     /**
@@ -45,7 +58,15 @@ public abstract class DataPersistenceV2 extends DataPersistence {
 
     @Override
     public XStream getXstream() {
-        XStream xStream = DataInstillerUtils.getXStream(getJexlContext());
+        XStream xStream;
+        if (useXstreamForAliases) {
+            xStream = new XStream();
+            xStream.registerConverter(new DataAliasesConverterV2(null));
+            xStream.registerConverter(new ISO8601GregorianCalendarConverter());
+        } else {
+            xStream = DataInstillerUtils.getXStream(getJexlContext());
+        }
+
         xStream.processAnnotations(this.getClass());
         return xStream;
     }
