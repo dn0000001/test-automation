@@ -50,6 +50,18 @@ public class PrimeFacesRadioButtonGroup extends PageComponent {
         LocatorUtils.setLocator(component, getLocator());
     }
 
+    @Override
+    public void initializeData(String data, String initialData, String expectedData) {
+        componentData = data;
+        componentInitialData = initialData;
+        componentExpectedData = expectedData;
+        if (component != null) {
+            component.initializeData(componentData, componentInitialData, componentExpectedData);
+        }
+
+        super.initializeData(data, initialData, expectedData);
+    }
+
     /**
      * For performance reasons, only initialize the data once
      */
