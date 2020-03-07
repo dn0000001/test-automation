@@ -75,8 +75,10 @@ public class ApiDomainObject extends DataPersistenceV2 {
 
         // When resolve alias is true, then the aliases will be made null after loading
         // as such get the aliases before loading
+        useAliasesXstreamFlag();
         T temp = super.fromResource(useResourceFile, false);
         DataAliases aliases = temp.getDataAliases();
+        useNormalXstreamFlag();
 
         T dataSet = super.fromResource(useResourceFile, true);
         DomainObjectUtils.overwriteTestParameters(aliases);
