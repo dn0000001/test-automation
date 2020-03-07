@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Move Clock Twice" verbose="1" parallel="tests" thread-count="2" data-provider-thread-count="1">
+
+    <!--
+    If you want to test, the reservation window, then do not set test.parallel.threads and it will take 1 minute
+    before any reservations are served.  To make serving the reservations immediate, then set test.parallel.threads=2
+
+    test-id=bbb will always get to wait for the clock first but test-id=aaa will always move the clock first
+    test-id=aaa will always complete and then test-id=bbb will move the clock and finish the test
+    -->
+
+    <test name="Move Clock Test #1 - Plus 1">
+        <parameter name="test-id" value="aaa"/>
+        <parameter name="plus-days" value="1"/>
+        <parameter name="before-clock-move-actions-time" value="3000"/>
+        <parameter name="after-clock-move-actions-time" value="3000"/>
+        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MoveClockOnceTest"/>
+        </classes>
+    </test>
+
+    <test name="Move Clock Test #2 - Plus 5">
+        <parameter name="test-id" value="bbb"/>
+        <parameter name="plus-days" value="5"/>
+        <parameter name="before-clock-move-actions-time" value="1000"/>
+        <parameter name="after-clock-move-actions-time" value="1000"/>
+        <parameter name="url" value="https://the-internet.herokuapp.com/abtest"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MoveClockOnceTest"/>
+        </classes>
+    </test>
+
+</suite>

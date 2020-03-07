@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Move Clock 9 times - 0 Common" verbose="1" parallel="tests" thread-count="3" data-provider-thread-count="1">
+
+    <!--
+    If you want to test, the reservation window, then do not set test.parallel.threads and it will take 1 minute
+    before any reservations are served.  To make serving the reservations immediate, then set test.parallel.threads=3
+
+    it is expected that the clock will move 9 times
+    it is expected that the clock will move 1st by test-id='aaa' for +1
+    it is expected that the clock will move 2nd by test-id='bbb' for +2
+    it is expected that the clock will move 3rd by test-id='aaa' for +3
+    it is expected that the clock will move 4th by test-id='ccc' for +4
+    it is expected that the clock will move 5th by test-id='aaa' for +5
+    it is expected that the clock will move 6th by test-id='ccc' for +6
+    it is expected that the clock will move 7th by test-id='bbb' for +8
+    it is expected that the clock will move 8th by test-id='bbb' for +9
+    it is expected that the clock will move 9th by test-id='ccc' for +10
+    -->
+
+    <test name="Move Clock Test #1 - Plus 1, Plus 3 &amp; Plus 5">
+        <parameter name="test-id" value="aaa"/>
+        <parameter name="plus-days-1" value="1"/>
+        <parameter name="plus-days-2" value="3"/>
+        <parameter name="plus-days-3" value="5"/>
+        <parameter name="before-clock-move-actions-time" value="1000"/>
+        <parameter name="after-clock-move-actions-time-1" value="1000"/>
+        <parameter name="after-clock-move-actions-time-2" value="1000"/>
+        <parameter name="after-clock-move-actions-time-3" value="1000"/>
+        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MoveClockThreeTimesTest"/>
+        </classes>
+    </test>
+
+    <test name="Move Clock Test #2 - Plus 2, Plus 8 &amp; Plus 9">
+        <parameter name="test-id" value="bbb"/>
+        <parameter name="plus-days-1" value="2"/>
+        <parameter name="plus-days-2" value="8"/>
+        <parameter name="plus-days-3" value="9"/>
+        <parameter name="before-clock-move-actions-time" value="1000"/>
+        <parameter name="after-clock-move-actions-time-1" value="1000"/>
+        <parameter name="after-clock-move-actions-time-2" value="1000"/>
+        <parameter name="after-clock-move-actions-time-3" value="1000"/>
+        <parameter name="url" value="https://the-internet.herokuapp.com/abtest"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MoveClockThreeTimesTest"/>
+        </classes>
+    </test>
+
+    <test name="Move Clock Test #3 - Plus 4, Plus 6 &amp; Plus 10">
+        <parameter name="test-id" value="ccc"/>
+        <parameter name="plus-days-1" value="4"/>
+        <parameter name="plus-days-2" value="6"/>
+        <parameter name="plus-days-3" value="10"/>
+        <parameter name="before-clock-move-actions-time" value="1000"/>
+        <parameter name="after-clock-move-actions-time-1" value="1000"/>
+        <parameter name="after-clock-move-actions-time-2" value="1000"/>
+        <parameter name="after-clock-move-actions-time-3" value="1000"/>
+        <parameter name="url" value="https://the-internet.herokuapp.com/drag_and_drop"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MoveClockThreeTimesTest"/>
+        </classes>
+    </test>
+
+</suite>
