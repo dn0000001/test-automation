@@ -595,16 +595,17 @@ public class SystemDateManager {
      * Close the reservation ticket
      *
      * @param ticket - Ticket to be closed
+     * @return true if ticket removed, else false
      */
-    public void closeReservation(Long ticket) {
+    public boolean closeReservation(Long ticket) {
         if (ticket == null || ticket.equals(NO_RESERVATION)) {
-            return;
+            return false;
         }
 
         action.lock();
         try {
             if (!stamped.validate(ticket)) {
-                return;
+                return false;
             }
 
             currentReservations--;
@@ -616,6 +617,8 @@ public class SystemDateManager {
                 resetEndReservationTime();
                 openReservations.signalAll();
             }
+
+            return true;
         } finally {
             action.unlock();
         }

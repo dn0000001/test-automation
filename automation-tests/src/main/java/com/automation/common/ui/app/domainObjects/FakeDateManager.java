@@ -155,9 +155,9 @@ public class FakeDateManager {
 
     public void closeReservation(String testId, Long ticket) {
         Date start = new Date();
-        SystemDateManager.getInstance().closeReservation(ticket);
+        boolean result = SystemDateManager.getInstance().closeReservation(ticket);
         Date end = new Date();
-        addLogEntry(testId + " - " + CLOSE_RESERVATION, ticket, start, end);
+        addLogEntry(testId + " - " + CLOSE_RESERVATION + " (" + result + ")", ticket, start, end);
     }
 
     private void addLogEntry(String log, Long ticket, Date start, Date end) {
