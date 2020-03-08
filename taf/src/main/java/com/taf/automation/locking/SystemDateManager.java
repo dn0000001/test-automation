@@ -604,7 +604,7 @@ public class SystemDateManager {
 
         action.lock();
         try {
-            if (!stamped.validate(ticket)) {
+            if (!validate(ticket)) {
                 return false;
             }
 
@@ -622,6 +622,16 @@ public class SystemDateManager {
         } finally {
             action.unlock();
         }
+    }
+
+    /**
+     * Validate ticket
+     *
+     * @param ticket - Ticket to be validated
+     * @return true the ticket is valid else false
+     */
+    public boolean validate(Long ticket) {
+        return stamped.validate(ticket) && storedReservations.containsKey(ticket);
     }
 
 }

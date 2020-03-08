@@ -23,7 +23,6 @@ public class MoveClockTwiceTest extends TestNGBase {
     private Long ticket1;
     private Long ticket2;
     private String testId;
-    private boolean closedTicket1;
 
     @Features("Framework")
     @Stories("Validate moving the clock twice")
@@ -71,8 +70,8 @@ public class MoveClockTwiceTest extends TestNGBase {
 
         // Close the first reservation after the validations are complete
         // This is necessary to unblock moving the clock
-        FakeDateManager.getInstance().closeReservation(testId, ticket1);
-        closedTicket1 = true;
+        boolean closed = FakeDateManager.getInstance().closeReservation(testId, ticket1);
+        assertThat("Close Reservation (" + ticket1 + ")", closed);
 
         // Wait for the reservation to be completed which moves the clock the 2nd time
         FakeDateManager.getInstance().waitForReservation(testId, ticket2);
@@ -107,7 +106,7 @@ public class MoveClockTwiceTest extends TestNGBase {
         // This should be using the annotation AfterTest but I want to always see the output log entries
         // and AfterTest does not display this if it passes
         //
-        if (!closedTicket1) {
+        if (FakeDateManager.getInstance().validate(ticket1)) {
             FakeDateManager.getInstance().closeReservation(testId, ticket1);
         }
 

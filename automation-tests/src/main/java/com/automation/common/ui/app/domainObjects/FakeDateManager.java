@@ -153,11 +153,16 @@ public class FakeDateManager {
         addLogEntry(testId + " - " + WAIT_FOR_RESERVATION, ticket, start, end);
     }
 
-    public void closeReservation(String testId, Long ticket) {
+    public boolean closeReservation(String testId, Long ticket) {
         Date start = new Date();
         boolean result = SystemDateManager.getInstance().closeReservation(ticket);
         Date end = new Date();
         addLogEntry(testId + " - " + CLOSE_RESERVATION + " (" + result + ")", ticket, start, end);
+        return result;
+    }
+
+    public boolean validate(Long ticket) {
+        return SystemDateManager.getInstance().validate(ticket);
     }
 
     private void addLogEntry(String log, Long ticket, Date start, Date end) {

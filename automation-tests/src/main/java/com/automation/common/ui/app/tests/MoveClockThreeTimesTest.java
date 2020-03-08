@@ -24,8 +24,6 @@ public class MoveClockThreeTimesTest extends TestNGBase {
     private Long ticket2;
     private Long ticket3;
     private String testId;
-    private boolean closedTicket1;
-    private boolean closedTicket2;
 
     @SuppressWarnings("java:S107")
     @Features("Framework")
@@ -80,8 +78,8 @@ public class MoveClockThreeTimesTest extends TestNGBase {
 
         // Close the first reservation after the validations are complete
         // This is necessary to unblock moving the clock
-        FakeDateManager.getInstance().closeReservation(testId, ticket1);
-        closedTicket1 = true;
+        boolean closed = FakeDateManager.getInstance().closeReservation(testId, ticket1);
+        assertThat("Close Reservation (" + ticket1 + ")", closed);
 
         // Wait for the reservation to be completed which moves the clock the 2nd time
         FakeDateManager.getInstance().waitForReservation(testId, ticket2);
@@ -94,8 +92,8 @@ public class MoveClockThreeTimesTest extends TestNGBase {
 
         // Close the second reservation after the validations are complete
         // This is necessary to unblock moving the clock
-        FakeDateManager.getInstance().closeReservation(testId, ticket2);
-        closedTicket2 = true;
+        closed = FakeDateManager.getInstance().closeReservation(testId, ticket2);
+        assertThat("Close Reservation (" + ticket2 + ")", closed);
 
         // Wait for the reservation to be completed which moves the clock the 3rd time
         FakeDateManager.getInstance().waitForReservation(testId, ticket3);
@@ -130,11 +128,11 @@ public class MoveClockThreeTimesTest extends TestNGBase {
         // This should be using the annotation AfterTest but I want to always see the output log entries
         // and AfterTest does not display this if it passes
         //
-        if (!closedTicket1) {
+        if (FakeDateManager.getInstance().validate(ticket1)) {
             FakeDateManager.getInstance().closeReservation(testId, ticket1);
         }
 
-        if (!closedTicket2) {
+        if (FakeDateManager.getInstance().validate(ticket2)) {
             FakeDateManager.getInstance().closeReservation(testId, ticket2);
         }
 
