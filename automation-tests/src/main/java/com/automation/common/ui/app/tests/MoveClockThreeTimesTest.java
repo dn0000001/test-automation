@@ -14,8 +14,6 @@ import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -111,9 +109,7 @@ public class MoveClockThreeTimesTest extends TestNGBase {
 
     @Step("Validate Move Clock Days between {0} and {1} is {2}")
     private void validateMoveClockDays(Date startDate, Date endDate, String plusDays) {
-        LocalDate start = DateActions.toLocalDate(startDate);
-        LocalDate end = DateActions.toLocalDate(endDate);
-        Long noOfDaysBetween = ChronoUnit.DAYS.between(start, end);
+        Long noOfDaysBetween = DateActions.daysBetween(startDate, endDate);
         assertThat("Move Clock Days", noOfDaysBetween, equalTo(Long.valueOf(plusDays)));
     }
 

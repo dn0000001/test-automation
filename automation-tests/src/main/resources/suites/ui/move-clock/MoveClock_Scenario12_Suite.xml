@@ -3,8 +3,7 @@
 <suite name="Move Clock 10 times - 3 Common" verbose="1" parallel="tests" thread-count="5" data-provider-thread-count="1">
 
     <!--
-    If you want to test, the reservation window, then do not set test.parallel.threads and it will take 1 minute
-    before any reservations are served.  To make serving the reservations immediate, then set test.parallel.threads=5
+    If you want to test, the reservation window, then set test.parallel.threads=2
 
     it is expected that the clock will move only 10 times
     it is expected that the clock will move 1st by test-id='aaa' for +1
