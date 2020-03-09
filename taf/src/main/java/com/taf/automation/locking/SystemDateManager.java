@@ -32,6 +32,7 @@ public class SystemDateManager {
     private static final ReentrantReadWriteLock reservation = new ReentrantReadWriteLock();
     private static final Map<Long, ReservationInfo> storedReservations = new HashMap<>();
 
+    private boolean manuallyClosedReservations;
     private Long endReservationTime;
     private int currentReservations = 0;
     private int pollOpenReservations = 1000;
@@ -192,6 +193,9 @@ public class SystemDateManager {
             return NO_RESERVATION;
         }
 
+        // Ensure the end reservation time gets set even if at maximum reservations
+        getEndReservationTime();
+
         while (!isOpenReservation()) {
             try {
                 openReservations.await();
@@ -296,10 +300,7 @@ public class SystemDateManager {
             reservation.readLock().unlock();
         }
 
-        while (isOpenReservation()) {
-            Utils.sleep(pollOpenReservations);
-        }
-
+        waitForReservationWindowClosed();
         action.lock();
         try {
             currentReservations++;
@@ -374,7 +375,14 @@ public class SystemDateManager {
      * @return true if ticket reservations are being accepted else false
      */
     private boolean isOpenReservation() {
+        // Handle case in which the current time is before the end reservation time but the open reservation window
+        // was closed early as max reservations was reached.
+        if (manuallyClosedReservations) {
+            return false;
+        }
+
         if (currentReservations >= MAX_RESERVATIONS) {
+            manuallyClosedReservations = true;  // Close reservations early as max reservations reached
             return false;
         }
 
@@ -615,6 +623,7 @@ public class SystemDateManager {
             reservation.writeLock().unlock();
             if (storedReservations.isEmpty() || currentReservations == 0) {
                 resetEndReservationTime();
+                manuallyClosedReservations = false;
                 openReservations.signalAll();
             }
 
