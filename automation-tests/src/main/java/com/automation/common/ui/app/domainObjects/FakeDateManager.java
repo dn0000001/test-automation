@@ -3,6 +3,8 @@ package com.automation.common.ui.app.domainObjects;
 import com.taf.automation.locking.SystemDateManager;
 import com.taf.automation.ui.support.TestContext;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.yandex.qatools.allure.annotations.Step;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import static org.hamcrest.Matchers.not;
  * Wrapper class for using/testing of the SystemDateManager class
  */
 public class FakeDateManager {
+    private static final Logger LOG = LoggerFactory.getLogger(FakeDateManager.class);
     private static final String OPEN_RESERVATION = "Open Reservation";
     private static final String ADDITIONAL_RESERVATION = "Additional Reservation";
     private static final String MOVE_CLOCK = "Move Clock";
@@ -66,7 +69,9 @@ public class FakeDateManager {
         Date end = new Date();
 
         // For testing purposes, this is creating a log.
+        action.lock();
         moveClockLog.put(ticket, systemDate);
+        action.unlock();
         addLogEntry(MOVE_CLOCK + " - Days (" + days + ")", ticket, start, end);
     }
 
@@ -146,7 +151,9 @@ public class FakeDateManager {
         Date start = new Date();
         boolean causedClockMove = SystemDateManager.getInstance().waitForReservation(ticket);
         if (!causedClockMove) {
+            action.lock();
             moveClockLog.put(ticket, getCurrentSystemDate());
+            action.unlock();
         }
 
         Date end = new Date();
@@ -168,7 +175,9 @@ public class FakeDateManager {
     private void addLogEntry(String log, Long ticket, Date start, Date end) {
         action.lock();
         String entry = "%s - Ticket (%s) - Started at %s, Ended at %s";
-        logOfActions.add(String.format(entry, log, ticket, start, end));
+        String message = String.format(entry, log, ticket, start, end);
+        logOfActions.add(message);
+        LOG.info(message);
         action.unlock();
     }
 
