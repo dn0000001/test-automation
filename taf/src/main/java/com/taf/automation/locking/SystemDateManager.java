@@ -545,6 +545,11 @@ public class SystemDateManager {
 
             for (Map.Entry<Long, ReservationInfo> entry : storedReservations.entrySet()) {
                 ReservationState state = entry.getValue().getState();
+                if (state == ReservationState.CLOCK_MOVED) {
+                    // Any existing reservation that is clock moved must be less than this reservation
+                    return false;
+                }
+
                 Integer addDays = entry.getValue().getPlusDays();
                 if ((state == ReservationState.WAITING || state == ReservationState.RESERVED)
                         && addDays != null && addDays < reservationInfo.getPlusDays()
