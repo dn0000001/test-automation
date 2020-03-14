@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Move Clock 4 times - 1 Common" verbose="1" parallel="tests" thread-count="2" data-provider-thread-count="1">
+
+    <!--
+    If you want to test, the reservation window, then do not set test.parallel.threads and it will take 1 minute
+    before any reservations are served.  To make serving the reservations immediate, then set test.parallel.threads=2
+
+    it is expected that the clock will move only 4 times
+    it is expected that the clock will move 1st by test-id='aaa' for +3
+    it is expected that the clock will move 2nd by +8 and this serves test-id='aaa' and test-id='bbb'
+    it is expected that the clock will move 3rd by test-id='aaa' for +9
+    it is expected that the clock will move 4th by test-id='bbb' for +15 which only happens after test-id='aaa' is complete
+    -->
+
+    <test name="Move Clock Test #1 - Plus 3, Plus 8 &amp; Plus 9">
+        <parameter name="test-id" value="aaa"/>
+        <parameter name="plus-days-1" value="3"/>
+        <parameter name="plus-days-2" value="8"/>
+        <parameter name="plus-days-3" value="9"/>
+        <parameter name="before-clock-move-actions-time" value="1000"/>
+        <parameter name="after-clock-move-actions-time-1" value="1000"/>
+        <parameter name="after-clock-move-actions-time-2" value="1000"/>
+        <parameter name="after-clock-move-actions-time-3" value="1000"/>
+        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MoveClockThreeTimesTest"/>
+        </classes>
+    </test>
+
+    <test name="Move Clock Test #2 - Plus 8 &amp; Plus 15">
+        <parameter name="test-id" value="bbb"/>
+        <parameter name="plus-days-1" value="8"/>
+        <parameter name="plus-days-2" value="15"/>
+        <parameter name="before-clock-move-actions-time" value="1000"/>
+        <parameter name="after-clock-move-actions-time-1" value="1000"/>
+        <parameter name="after-clock-move-actions-time-2" value="1000"/>
+        <parameter name="url" value="https://the-internet.herokuapp.com/abtest"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MoveClockTwiceTest"/>
+        </classes>
+    </test>
+
+</suite>

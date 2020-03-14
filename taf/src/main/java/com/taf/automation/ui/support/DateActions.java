@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -223,6 +224,33 @@ public class DateActions {
     public static String format(Date date, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(date);
+    }
+
+    /**
+     * The number of days between the start date and end date
+     *
+     * @param startDate - Start Date
+     * @param endDate   - End Date
+     * @return the amount of time between startDate and endDate in terms of days;
+     * positive if endDate is later than startDate, negative if earlier
+     */
+    public static Long daysBetween(Date startDate, Date endDate) {
+        return between(ChronoUnit.DAYS, startDate, endDate);
+    }
+
+    /**
+     * The number of ChronoUnit between the start date and end date
+     *
+     * @param chronoUnit - ChronoUnit
+     * @param startDate  - Start Date
+     * @param endDate    - End Date
+     * @return the amount of time between startDate and endDate in terms of this unit;
+     * positive if endDate is later than startDate, negative if earlier
+     */
+    public static Long between(ChronoUnit chronoUnit, Date startDate, Date endDate) {
+        LocalDate start = DateActions.toLocalDate(startDate);
+        LocalDate end = DateActions.toLocalDate(endDate);
+        return chronoUnit.between(start, end);
     }
 
 }
