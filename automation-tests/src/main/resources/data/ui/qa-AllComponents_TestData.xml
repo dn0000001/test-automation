@@ -15,6 +15,8 @@
         <TAB_OFF_TEXT_BOX>k11</TAB_OFF_TEXT_BOX>
         <TEXT_BOX>l12</TEXT_BOX>
         <TEXT_BOX_BACKSPACE>m13</TEXT_BOX_BACKSPACE>
+        <WEB_COMPONENT>n14</WEB_COMPONENT>
+        <ALIASED_STRING>o15</ALIASED_STRING>
     </aliases>
     <fakeComponentsPage>
         <checkBoxAJAX>${CHECK_BOX_AJAX}</checkBoxAJAX>
@@ -30,5 +32,7 @@
         <tabOffTextBox>${TAB_OFF_TEXT_BOX}</tabOffTextBox>
         <textBox>${TEXT_BOX}</textBox>
         <textBoxBackspace>${TEXT_BOX_BACKSPACE}</textBoxBackspace>
+        <generalWebComponent>${WEB_COMPONENT}</generalWebComponent>
+        <generalAliasedString>${ALIASED_STRING}</generalAliasedString>
     </fakeComponentsPage>
 </components-do>

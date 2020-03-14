@@ -13,10 +13,12 @@ import com.automation.common.ui.app.components.SelectEnhancedAJAX;
 import com.automation.common.ui.app.components.TabOffTextBox;
 import com.automation.common.ui.app.components.TextBox;
 import com.automation.common.ui.app.components.TextBoxBackspace;
+import com.taf.automation.ui.support.AliasedString;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.Utils;
 import org.openqa.selenium.support.FindBy;
+import ui.auto.core.components.WebComponent;
 import ui.auto.core.data.DataTypes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,6 +66,12 @@ public class FakeComponentsPage extends PageObjectV2 {
     @FindBy(id = "does not exist")
     private TextBoxBackspace textBoxBackspace;
 
+    @FindBy(id = "does not exist")
+    private WebComponent generalWebComponent;
+
+    @FindBy(id = "does not exist")
+    private AliasedString generalAliasedString;
+
     public enum Type {
         CHECK_BOX_AJAX,
         CHECK_BOX_LABEL,
@@ -77,7 +85,9 @@ public class FakeComponentsPage extends PageObjectV2 {
         SELECT_ENHANCED_JAX,
         TAB_OFF_TEXT_BOX,
         TEXT_BOX,
-        TEXT_BOX_BACKSPACE
+        TEXT_BOX_BACKSPACE,
+        WEB_COMPONENT,
+        ALIASED_STRING
     }
 
     public FakeComponentsPage() {
@@ -108,7 +118,9 @@ public class FakeComponentsPage extends PageObjectV2 {
                 Utils.isNotBlank(selectEnhancedAJAX) ||
                 Utils.isNotBlank(tabOffTextBox) ||
                 Utils.isNotBlank(textBox) ||
-                Utils.isNotBlank(textBoxBackspace);
+                Utils.isNotBlank(textBoxBackspace) ||
+                Utils.isNotBlank(generalWebComponent) ||
+                Utils.isNotBlank(generalAliasedString);
     }
 
     public String getTestData(Type component, boolean resolveAliases) {
@@ -162,6 +174,14 @@ public class FakeComponentsPage extends PageObjectV2 {
 
         if (component == Type.TEXT_BOX_BACKSPACE) {
             return textBoxBackspace.getData(DataTypes.Data, resolveAliases);
+        }
+
+        if (component == Type.WEB_COMPONENT) {
+            return generalWebComponent.getData(DataTypes.Data, resolveAliases);
+        }
+
+        if (component == Type.ALIASED_STRING) {
+            return generalAliasedString.getData(DataTypes.Data, resolveAliases);
         }
 
         assertThat("Unsupported Component Type:  " + component, false);
