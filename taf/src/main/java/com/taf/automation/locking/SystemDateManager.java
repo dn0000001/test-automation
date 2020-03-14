@@ -645,7 +645,11 @@ public class SystemDateManager {
      * @return true the ticket is valid else false
      */
     public boolean validate(Long ticket) {
-        return stamped.validate(ticket) && storedReservations.containsKey(ticket);
+        try {
+            return stamped.validate(ticket) && storedReservations.containsKey(ticket);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
 }
