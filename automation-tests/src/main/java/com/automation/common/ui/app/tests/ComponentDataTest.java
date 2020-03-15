@@ -26,6 +26,11 @@ public class ComponentDataTest extends TestNGBase {
     @Parameters("data-set")
     @Test
     public void performTest(@Optional("data/ui/AllComponents_TestData.xml") String dataSet) {
+        //
+        // Note:  The test data for this test exists for app.environment.target=QA
+        // If test data does not appear to be correct, then check that you modified
+        // data/ui/qa-AllComponents_TestData.xml when app.environment.target=QA
+        //
         componentsDO = new ComponentsDO(getContext()).fromResource(dataSet);
         performCheckForCodeGenerationException();
         performCheckThatAliasNotResolved();
@@ -125,6 +130,14 @@ public class ComponentDataTest extends TestNGBase {
 
         if (component == FakeComponentsPage.Type.TEXT_BOX_BACKSPACE) {
             return "m13";
+        }
+
+        if (component == FakeComponentsPage.Type.WEB_COMPONENT) {
+            return "n14";
+        }
+
+        if (component == FakeComponentsPage.Type.ALIASED_STRING) {
+            return "o15";
         }
 
         assertThat("Unsupported Component Type:  " + component, false);
