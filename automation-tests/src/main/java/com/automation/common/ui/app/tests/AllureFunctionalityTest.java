@@ -16,6 +16,7 @@ import ru.yandex.qatools.allure.annotations.Issue;
 import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.annotations.TestCaseId;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,6 +33,7 @@ public class AllureFunctionalityTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Parameters({"data-set", "status"})
     @Issue("Issue-001")
+    @TestCaseId("TestCase-001")
     @Description("This is a test description")
     @Test
     @Retry

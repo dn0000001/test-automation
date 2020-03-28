@@ -150,6 +150,9 @@ public class TestProperties {
     @Property("report.its.pattern")
     private String issueTrackingSystemPattern;
 
+    @Property("allure.tests.management.pattern")
+    private String testsManagementPattern;
+
     @Property("report.port")
     private int reportPort = 8090;
 
@@ -300,6 +303,10 @@ public class TestProperties {
         PropertyLoader.populate(this);
         if (issueTrackingSystemPattern != null) {
             System.setProperty("allure.issues.tracker.pattern", issueTrackingSystemPattern);
+        }
+
+        if (testsManagementPattern != null) {
+            System.setProperty("allure.tests.management.pattern", testsManagementPattern);
         }
     }
 
