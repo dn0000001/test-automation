@@ -42,7 +42,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -1080,11 +1079,11 @@ public class Utils {
      *
      * @return RetryPolicy
      */
-    public static RetryPolicy getRetryPolicy() {
-        return new RetryPolicy()
-                .retryOn(Exception.class, AssertionError.class)
+    public static RetryPolicy<Object> getRetryPolicy() {
+        return new RetryPolicy<>()
+                .handle(Exception.class, AssertionError.class)
                 .withMaxRetries(TestProperties.getInstance().getTestDefaultRetry())
-                .withDelay(1, TimeUnit.SECONDS);
+                .withDelay(Duration.ofSeconds(1));
     }
 
     /**
@@ -1095,7 +1094,7 @@ public class Utils {
      * @param maxRetries - Max Retries
      * @return RetryPolicy
      */
-    public static RetryPolicy getRetryPolicy(int maxRetries) {
+    public static RetryPolicy<Object> getRetryPolicy(int maxRetries) {
         return getRetryPolicy().withMaxRetries(maxRetries);
     }
 
@@ -1104,7 +1103,7 @@ public class Utils {
      *
      * @return RetryPolicy
      */
-    public static RetryPolicy getRetryOncePolicy() {
+    public static RetryPolicy<Object> getRetryOncePolicy() {
         return getRetryPolicy(1);
     }
 
@@ -1115,7 +1114,7 @@ public class Utils {
      *
      * @return RetryPolicy
      */
-    public static RetryPolicy getRetryAtleastOncePolicy() {
+    public static RetryPolicy<Object> getRetryAtleastOncePolicy() {
         int retries = Math.max(1, TestProperties.getInstance().getTestDefaultRetry());
         return getRetryPolicy(retries);
     }
@@ -1128,11 +1127,8 @@ public class Utils {
      *
      * @return RetryPolicy
      */
-    public static RetryPolicy getPollingRetryPolicy() {
-        return new RetryPolicy()
-                .retryOn(Exception.class, AssertionError.class)
-                .withMaxDuration(TestProperties.getInstance().getElementTimeout(), TimeUnit.SECONDS)
-                .withDelay(1, TimeUnit.SECONDS);
+    public static RetryPolicy<Object> getPollingRetryPolicy() {
+        return getPollingRetryPolicy(TestProperties.getInstance().getElementTimeout());
     }
 
     /**
@@ -1143,11 +1139,12 @@ public class Utils {
      * @param maxDurationInSeconds - Max Duration in seconds
      * @return RetryPolicy
      */
-    public static RetryPolicy getPollingRetryPolicy(int maxDurationInSeconds) {
-        return new RetryPolicy()
-                .retryOn(Exception.class, AssertionError.class)
-                .withMaxDuration(maxDurationInSeconds, TimeUnit.SECONDS)
-                .withDelay(1, TimeUnit.SECONDS);
+    public static RetryPolicy<Object> getPollingRetryPolicy(int maxDurationInSeconds) {
+        return new RetryPolicy<>()
+                .handle(Exception.class, AssertionError.class)
+                .withMaxRetries(-1)
+                .withMaxDuration(Duration.ofSeconds(maxDurationInSeconds))
+                .withDelay(Duration.ofSeconds(1));
     }
 
     /**
@@ -1161,12 +1158,13 @@ public class Utils {
      *
      * @return RetryPolicy
      */
-    public static RetryPolicy getWriteValueRetryPolicy() {
-        return new RetryPolicy()
+    public static RetryPolicy<Object> getWriteValueRetryPolicy() {
+        return new RetryPolicy<>()
                 .abortOn(StaleElementReferenceException.class)
-                .retryOn(Exception.class, AssertionError.class)
-                .withMaxDuration(TestProperties.getInstance().getElementTimeout(), TimeUnit.SECONDS)
-                .withDelay(1, TimeUnit.SECONDS);
+                .handle(Exception.class, AssertionError.class)
+                .withMaxRetries(-1)
+                .withMaxDuration(Duration.ofSeconds(TestProperties.getInstance().getElementTimeout()))
+                .withDelay(Duration.ofSeconds(1));
     }
 
     /**
@@ -1182,11 +1180,12 @@ public class Utils {
      *
      * @return RetryPolicy
      */
-    public static RetryPolicy getClickRetryPolicy() {
-        return new RetryPolicy()
-                .retryOn(ElementClickInterceptedException.class, ElementNotInteractableException.class)
-                .withMaxDuration(TestProperties.getInstance().getElementTimeout(), TimeUnit.SECONDS)
-                .withDelay(1, TimeUnit.SECONDS);
+    public static RetryPolicy<Object> getClickRetryPolicy() {
+        return new RetryPolicy<>()
+                .handle(ElementClickInterceptedException.class, ElementNotInteractableException.class)
+                .withMaxRetries(-1)
+                .withMaxDuration(Duration.ofSeconds(TestProperties.getInstance().getElementTimeout()))
+                .withDelay(Duration.ofSeconds(1));
     }
 
     /**
@@ -1384,7 +1383,7 @@ public class Utils {
         if (actionToScrapeData == null) {
             return StringUtils.defaultString(component.getValue());
         } else {
-            return StringUtils.defaultString(Failsafe.with(getRetryPolicy(0)).get(actionToScrapeData));
+            return StringUtils.defaultString(Failsafe.with(getRetryPolicy(0)).get(actionToScrapeData::call));
         }
     }
 
