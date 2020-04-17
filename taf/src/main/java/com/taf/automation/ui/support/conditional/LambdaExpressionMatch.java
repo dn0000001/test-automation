@@ -35,7 +35,7 @@ public class LambdaExpressionMatch implements Match {
         }
 
         try {
-            if (Failsafe.with(Utils.getRetryPolicy(0)).get(getLambda())) {
+            if (Failsafe.with(Utils.getRetryPolicy(0)).get(getLambda()::call)) {
                 resultInfo = new ResultInfo();
                 resultInfo.setMatch(true);
                 resultInfo.setCriteriaType(criteria.getCriteriaType());

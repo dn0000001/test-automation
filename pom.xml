@@ -30,7 +30,7 @@
         <java.mail.version>1.4.1</java.mail.version>
         <jsoup.version>1.8.3</jsoup.version>
         <jsch.version>0.1.53</jsch.version>
-        <failsafe.version>1.0.4</failsafe.version>
+        <failsafe.version>2.3.4</failsafe.version>
         <springframework.version>4.2.4.RELEASE</springframework.version>
         <mysql-connector.version>5.1.38</mysql-connector.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

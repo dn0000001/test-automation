@@ -107,7 +107,7 @@ public class GenericRow extends PageObjectV2 {
             return true;
         }
 
-        return StringUtils.defaultString(Failsafe.with(Utils.getRetryPolicy(0)).get(actionToScrapeData)).matches(regex);
+        return StringUtils.defaultString(Failsafe.with(Utils.getRetryPolicy(0)).get(actionToScrapeData::call)).matches(regex);
     }
 
 }
