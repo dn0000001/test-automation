@@ -35,6 +35,8 @@ public class DateActionsTest {
     private static final Date sept23 = DateActions.parseDateStrictly("09/23/2019", DATE_FORMAT);
     private static final Date dec24 = DateActions.parseDateStrictly("12/24/2019", DATE_FORMAT);
     private static final Date dec27 = DateActions.parseDateStrictly("12/27/2019", DATE_FORMAT);
+    private static final Date sept11 = DateActions.parseDateStrictly("09/11/2019", DATE_FORMAT);
+    private static final Date sept25 = DateActions.parseDateStrictly("09/25/2019", DATE_FORMAT);
 
     @Test
     public void performResultDateIsBusinessDayTest() {
@@ -50,6 +52,30 @@ public class DateActionsTest {
 
         actual = dateActions.previousBusinessDay(sept18anchor, -1);
         assertThat("Previous Business Day - 1 Day Before", actual, equalTo(sept17));
+
+        actual = dateActions.nextBusinessDay(sept18anchor, 7);
+        assertThat("Next Business Day - 1 Week After", actual, equalTo(sept25));
+
+        actual = dateActions.previousBusinessDay(sept18anchor, -7);
+        assertThat("Previous Business Day - 1 Week Before", actual, equalTo(sept11));
+
+        actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 0);
+        assertThat("Only Business Days After - No Days Added", actual, equalTo(sept18anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(sept18anchor, 0);
+        assertThat("Only Business Days Before - No Days Added", actual, equalTo(sept18anchor));
+
+        actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 1);
+        assertThat("Only Business Days After - 1 Day After", actual, equalTo(sept19));
+
+        actual = dateActions.onlyBusinessDaysBefore(sept18anchor, -1);
+        assertThat("Only Business Days Before - 1 Day Before", actual, equalTo(sept17));
+
+        actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 5);
+        assertThat("Only Business Days After - 1 Week After", actual, equalTo(sept25));
+
+        actual = dateActions.onlyBusinessDaysBefore(sept18anchor, -5);
+        assertThat("Only Business Days Before - 1 Week Before", actual, equalTo(sept11));
     }
 
     @Test
@@ -66,6 +92,18 @@ public class DateActionsTest {
 
         actual = dateActions.previousBusinessDay(sept18anchor, -3);
         assertThat("Previous Business Day - 3 Days Before", actual, equalTo(sept13));
+
+        actual = dateActions.onlyBusinessDaysAfter(sept15anchor, 0);
+        assertThat("Only Business Days After - No Days Added", actual, equalTo(sept16));
+
+        actual = dateActions.onlyBusinessDaysBefore(sept15anchor, 0);
+        assertThat("Only Business Days Before - No Days Added", actual, equalTo(sept13));
+
+        actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 3);
+        assertThat("Only Business Days After - 3 Days After", actual, equalTo(sept23));
+
+        actual = dateActions.onlyBusinessDaysBefore(sept18anchor, -3);
+        assertThat("Only Business Days Before - 3 Days Before", actual, equalTo(sept13));
     }
 
     @Test
@@ -82,6 +120,18 @@ public class DateActionsTest {
 
         actual = dateActions.previousBusinessDay(dec26anchor, -1);
         assertThat("Christmas - Previous Business Day - 1 Day Before", actual, equalTo(dec24));
+
+        actual = dateActions.onlyBusinessDaysAfter(dec25anchor, 0);
+        assertThat("Christmas - Only Business Days After - No Days Added", actual, equalTo(dec27));
+
+        actual = dateActions.onlyBusinessDaysBefore(dec25anchor, 0);
+        assertThat("Christmas - Only Business Days Before - No Days Added", actual, equalTo(dec24));
+
+        actual = dateActions.onlyBusinessDaysAfter(dec24anchor, 1);
+        assertThat("Christmas - Only Business Days After - 1 Day After", actual, equalTo(dec27));
+
+        actual = dateActions.onlyBusinessDaysBefore(dec26anchor, -1);
+        assertThat("Christmas - Only Business Days Before - 1 Day Before", actual, equalTo(dec24));
     }
 
     @Test
@@ -98,6 +148,18 @@ public class DateActionsTest {
 
         actual = dateActions.previousBusinessDay(april20anchor, -1);
         assertThat("Good Friday - Previous Business Day - 1 Day Before", actual, equalTo(april18anchor));
+
+        actual = dateActions.onlyBusinessDaysAfter(april19anchor, 0);
+        assertThat("Good Friday - Only Business Days After - No Days Added", actual, equalTo(april22));
+
+        actual = dateActions.onlyBusinessDaysBefore(april19anchor, 0);
+        assertThat("Good Friday - Only Business Days Before - No Days Added", actual, equalTo(april18anchor));
+
+        actual = dateActions.onlyBusinessDaysAfter(april18anchor, 1);
+        assertThat("Good Friday - Only Business Days After - 1 Day After", actual, equalTo(april22));
+
+        actual = dateActions.onlyBusinessDaysBefore(april20anchor, -1);
+        assertThat("Good Friday - Only Business Days Before - 1 Day Before", actual, equalTo(april18anchor));
     }
 
     @Test
@@ -114,6 +176,18 @@ public class DateActionsTest {
 
         actual = dateActions.previousBusinessDay(jul2anchor, -1);
         assertThat("Canada Day - Previous Business Day - 1 Day Before", actual, equalTo(jun28));
+
+        actual = dateActions.onlyBusinessDaysAfter(jul1anchor, 0);
+        assertThat("Canada Day - Only Business Days After - No Days Added", actual, equalTo(jul2anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(jul1anchor, 0);
+        assertThat("Canada Day - Only Business Days Before - No Days Added", actual, equalTo(jun28));
+
+        actual = dateActions.onlyBusinessDaysAfter(jun30anchor, 1);
+        assertThat("Canada Day - Only Business Days After - 1 Day After", actual, equalTo(jul2anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(jul2anchor, -1);
+        assertThat("Canada Day - Only Business Days Before - 1 Day Before", actual, equalTo(jun28));
     }
 
     @Test
@@ -130,6 +204,18 @@ public class DateActionsTest {
 
         actual = dateActions.previousBusinessDay(oct15anchor, -1);
         assertThat("Thanksgiving - Previous Business Day - 1 Day Before", actual, equalTo(oct11));
+
+        actual = dateActions.onlyBusinessDaysAfter(oct14anchor, 0);
+        assertThat("Thanksgiving - Only Business Days After - No Days Added", actual, equalTo(oct15anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(oct14anchor, 0);
+        assertThat("Thanksgiving - Only Business Days Before - No Days Added", actual, equalTo(oct11));
+
+        actual = dateActions.onlyBusinessDaysAfter(oct13anchor, 1);
+        assertThat("Thanksgiving - Only Business Days After - 1 Day After", actual, equalTo(oct15anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(oct15anchor, -1);
+        assertThat("Thanksgiving - Only Business Days Before - 1 Day Before", actual, equalTo(oct11));
     }
 
 }
