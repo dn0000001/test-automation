@@ -17,7 +17,7 @@ public abstract class DBInstance {
     protected static final Logger LOG = LoggerFactory.getLogger(DBInstance.class);
     protected SSHSession sshSession;
     protected JdbcTemplate jdbcTemplate;
-    public static DateTimeFormatter DB_DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DB_DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     public JdbcTemplate jdbcTemplate() {
         return jdbcTemplate;
@@ -80,6 +80,23 @@ public abstract class DBInstance {
      */
     public void updateDBConnection(int connectionTimeout, int socketTimeout, int queryTimeout) {
         createDBConnection(connectionTimeout, socketTimeout, queryTimeout);
+    }
+
+    /**
+     * Get the size of the result set<BR>
+     * <B>Note: </B> Moves the cursor back to before first
+     *
+     * @param rs - Result Set
+     * @return size of result set
+     */
+    public int size(SqlRowSet rs) {
+        int size = 0;
+        if (rs.last()) {
+            size = rs.getRow();
+            rs.beforeFirst();
+        }
+
+        return size;
     }
 
     /**
