@@ -144,6 +144,51 @@ public class DateActions {
     }
 
     /**
+     * Calculate the business day that is the specified number of business days from the specified date.<BR>
+     * <B>Note: </B> When you buy stuff online it will say delivery in (something like) 2-4 business days.  This means
+     * that the shop only works on a business day (Monday to Friday excluding holidays) to process your order.  This
+     * method calculates that date.
+     *
+     * @param date             - Date
+     * @param businessDaysFrom - Days from (positive in future, negative in the past relative to the specified date)
+     * @param next             - true to move to next business day, false to move to previous business day
+     * @return the business day that is the specified number of business days from the specified date
+     */
+    private Date onlyBusinessDays(Date date, int businessDaysFrom, boolean next) {
+        int count = 0;
+        int businessDays = 0;
+        int specifiedBusinessDaysFrom = Math.abs(businessDaysFrom);
+        LocalDate result = toLocalDate(date, zone);
+        Set<Holiday> holidays = getPossibleHolidays(date);
+
+        // Handle special case if business days from is 0 and start date is non-business day or holiday
+        if (specifiedBusinessDaysFrom == 0 && (isNonBusinessDay(result) || isHoliday(holidays, result))) {
+            businessDays--;
+        }
+
+        int moveDays = (next) ? 1 : -1;
+        while (businessDays < specifiedBusinessDaysFrom) {
+            result = result.plusDays(moveDays);
+            if (!isNonBusinessDay(result) && !isHoliday(holidays, result)) {
+                businessDays++;
+            }
+
+            count++;
+            assertThat("Could not calculate business day tried all days in year", count, lessThan(370));
+        }
+
+        return toDate(result, zone);
+    }
+
+    public Date onlyBusinessDaysAfter(Date date, int daysFrom) {
+        return onlyBusinessDays(date, daysFrom, true);
+    }
+
+    public Date onlyBusinessDaysBefore(Date date, int daysFrom) {
+        return onlyBusinessDays(date, daysFrom, false);
+    }
+
+    /**
      * Parses a string representing a date by trying a variety of different parsers.  The parse will try each parse
      * pattern in turn. A parse is only deemed successful if it parses the whole of the input string.
      * The parser parses strictly - it does not allow for dates such as "February 942, 1996"
@@ -251,6 +296,17 @@ public class DateActions {
         LocalDate start = DateActions.toLocalDate(startDate);
         LocalDate end = DateActions.toLocalDate(endDate);
         return chronoUnit.between(start, end);
+    }
+
+    /**
+     * Get SimpleDateFormat with the pattern applied<BR>
+     * <B>Note: </B> Main use should be for JEXL expressions
+     *
+     * @param pattern - The pattern describing the date and time format
+     * @return SimpleDateFormat
+     */
+    public static SimpleDateFormat getSimpleDateFormat(String pattern) {
+        return new SimpleDateFormat(pattern);
     }
 
 }
