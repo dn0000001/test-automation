@@ -4,10 +4,12 @@ import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.api.clients.ApiLoginSession;
 import com.taf.automation.api.clients.UserLogin;
 import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.locking.UserLockManager;
 import com.taf.automation.ui.support.CryptoUtils;
 import com.taf.automation.ui.support.DataPersistenceV2;
 import com.taf.automation.ui.support.DomainObjectUtils;
 import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.converters.Credentials;
@@ -53,6 +55,8 @@ public class ApiDomainObject extends DataPersistenceV2 {
     @Override
     protected void initJexlContext(JexlContext jexlContext) {
         jexlContext.set("crypto", new CryptoUtils());
+        jexlContext.set("userLockManager", UserLockManager.getInstance());
+        jexlContext.set("lookup", Lookup.getInstance());
     }
 
     @Override
