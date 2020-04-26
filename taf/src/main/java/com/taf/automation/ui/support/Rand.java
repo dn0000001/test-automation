@@ -62,6 +62,15 @@ public class Rand {
     }
 
     /**
+     * Get Instance for use with JEXL Expressions
+     *
+     * @return Rand
+     */
+    public static Rand getInstance() {
+        return new Rand();
+    }
+
+    /**
      * Gets the default special characters.
      *
      * @return SPECIAL

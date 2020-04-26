@@ -28,6 +28,7 @@ public class DomainObject extends DomainObjectModel {
         super.initJexlContext(jexlContext);
         jexlContext.set("crypto", new CryptoUtils());
         jexlContext.set("userLockManager", UserLockManager.getInstance());
+        jexlContext.set("lookup", Lookup.getInstance());
     }
 
     /**

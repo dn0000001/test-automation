@@ -1,6 +1,8 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.JexlExpressionDO;
+import com.taf.automation.ui.support.Lookup;
+import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -22,7 +24,7 @@ import static org.hamcrest.Matchers.not;
 public class JexlExpressionTest extends TestNGBase {
     private static final List<String> jexlVariables = Arrays.asList(
             "str1", "str2", "RANDOM_DATE", "RANDOM_US_ADDRESS",
-            "ALPHANUMERIC", "crypto"
+            "ALPHANUMERIC", "crypto", "lookup"
     );
     private static final String GENERIC = "Variable %s was not evaluated by Jexl for %s";
 
@@ -32,12 +34,18 @@ public class JexlExpressionTest extends TestNGBase {
     @Parameters("data-set")
     @Test
     public void testJexlExpresionEvaluation(@Optional("data/ui/JexlExpresion_TestData.xml") String dataSet) {
+        Lookup.getInstance().put("beforeLoadResource1", Rand.alphanumeric(5, 10));
+        Lookup.getInstance().put("beforeLoadResource2", Rand.alphanumeric(5, 10));
         JexlExpressionDO jexlDO = new JexlExpressionDO(getContext()).fromResource(dataSet);
         validateFieldValue("Some Field", jexlDO.getSomeField(), jexlDO.getSomeFieldExpected());
         validateFieldValue("Another Field", jexlDO.getAnotherField(), jexlDO.getAnotherFieldExpected());
+        validateFieldValue("Extra Field 1", jexlDO.getExtraField1(), jexlDO.getExtraField1Expected());
+        validateFieldValue("Extra Field 2", jexlDO.getExtraField2(), jexlDO.getExtraField2Expected());
         for (String var : jexlVariables) {
             validateField(var, jexlDO.getSomeField(), jexlDO.getSomeFieldExpected(), jexlDO.getSomeFieldInitial());
             validateField(var, jexlDO.getAnotherField(), jexlDO.getAnotherFieldExpected(), jexlDO.getAnotherFieldInitial());
+            validateField(var, jexlDO.getExtraField1(), jexlDO.getExtraField1Expected(), jexlDO.getExtraField1Initial());
+            validateField(var, jexlDO.getExtraField2(), jexlDO.getExtraField2Expected(), jexlDO.getExtraField2Initial());
         }
     }
 

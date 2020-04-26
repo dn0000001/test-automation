@@ -12,6 +12,8 @@ import ui.auto.core.data.DataTypes;
 public class JexlExpressionDO extends DomainObject {
     private AliasedString someField;
     private AliasedString anotherField;
+    private AliasedString extraField1;
+    private AliasedString extraField2;
 
     public JexlExpressionDO() {
         super();
@@ -50,6 +52,30 @@ public class JexlExpressionDO extends DomainObject {
 
     public String getAnotherFieldInitial() {
         return anotherField.getData(DataTypes.Initial, true);
+    }
+
+    public String getExtraField1() {
+        return extraField1.getData();
+    }
+
+    public String getExtraField1Expected() {
+        return extraField1.getData(DataTypes.Expected, true);
+    }
+
+    public String getExtraField1Initial() {
+        return extraField1.getData(DataTypes.Initial, true);
+    }
+
+    public String getExtraField2() {
+        return extraField2.getData();
+    }
+
+    public String getExtraField2Expected() {
+        return extraField2.getData(DataTypes.Expected, true);
+    }
+
+    public String getExtraField2Initial() {
+        return extraField2.getData(DataTypes.Initial, true);
     }
 
 }

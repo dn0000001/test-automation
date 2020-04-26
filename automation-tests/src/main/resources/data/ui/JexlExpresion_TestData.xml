@@ -7,6 +7,12 @@
         <var2>${str2}</var2>
         <var3>${str1 + " " + str2}</var3>
         <var4>${str2 + " " + str1}</var4>
+        <!-- Remove is only necessary if running the same test multiple times in the same thread -->
+        <var5>${lookup.remove("runtime001").append("runtime001", "12345").append("runtime001", "xyz").get("runtime001")}</var5>
+        <var6>12345xyz</var6>
+        <var7>${lookup.get("beforeLoadResource1") + lookup.get("beforeLoadResource2")}</var7>
+        <var8>${lookup.get("beforeLoadResource1")}</var8>
+        <var9>${lookup.get("beforeLoadResource2")}</var9>
         <RandomDateGenerator>$[RANDOM_DATE('yyyy-MM-dd','365|720')]</RandomDateGenerator>
         <RandomRealUSAddressGenerator>$[RANDOM_US_ADDRESS('{#} {C} {S} {Z} {U} {P}','')]</RandomRealUSAddressGenerator>
         <orgPass>$[ALPHANUMERIC('{a}{b}{c}{d}{e}', 'null')]</orgPass>
@@ -15,4 +21,6 @@
     </aliases>
     <someField initial="${var4} ${RandomDateGenerator} ${RandomRealUSAddressGenerator}" expected="${var1} ${var2}">${var3}</someField>
     <anotherField initial="${encPass}" expected="${decPass}">${orgPass}</anotherField>
+    <extraField1 initial="${var5}" expected="${var6}">${var5}</extraField1>
+    <extraField2 initial="${var7}" expected="${var7}">${var8}${var9}</extraField2>
 </jexl-expression-do>
