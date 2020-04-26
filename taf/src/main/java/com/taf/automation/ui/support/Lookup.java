@@ -7,7 +7,7 @@ import java.util.Map;
  * Stores variables that can be retrieved later (from JEXL expressions)
  */
 public class Lookup {
-    private final ThreadLocal<Map<String, String>> storedVariables = ThreadLocal.withInitial(HashMap::new);
+    private static final ThreadLocal<Map<String, String>> storedVariables = ThreadLocal.withInitial(HashMap::new);
 
     private Lookup() {
         //
@@ -21,7 +21,7 @@ public class Lookup {
         return Lookup.LazyHolder.INSTANCE;
     }
 
-    private Map<String, String> getStoredVariables() {
+    private static Map<String, String> getStoredVariables() {
         return storedVariables.get();
     }
 
