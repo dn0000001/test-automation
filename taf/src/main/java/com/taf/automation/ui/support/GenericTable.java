@@ -22,6 +22,8 @@ import static org.hamcrest.Matchers.notNullValue;
  * Generic class for representing a page containing a table
  */
 public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
+    private static final String NO_PAGINATION = "Pagination is not supported by this table";
+
     @XStreamOmitField
     private List<T> tableRows;
 
@@ -33,7 +35,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
         super(context);
     }
 
-    protected GenericTable resetTableRows() {
+    protected GenericTable<T> resetTableRows() {
         tableRows = null;
         return this;
     }
@@ -149,6 +151,131 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
         }
 
         return match;
+    }
+
+    /**
+     * Find 1st row that matches the given row. Null/Empty data fields in the given row are ignored when matching.<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>
+     * The method <B>isMatch</B> needs to be implemented with the desired logic for matching rows as the
+     * default implementation just causes an assertion failure.
+     * </LI>
+     * <LI>
+     * The method <B>getMaxIterations</B> needs to be implemented to return the max iterations/pages to search
+     * to prevent an infinite loop. The default implementation just causes an assertion failure.
+     * </LI>
+     * <LI>
+     * The method <B>isNextPage</B> needs to be implemented to return whether there is a next page to search.
+     * The default implementation just causes an assertion failure.
+     * </LI>
+     * <LI>
+     * The method <B>isPreviousPage</B> needs to be implemented to return whether there is a previous page to search.
+     * The default implementation just causes an assertion failure.
+     * </LI>
+     * <LI>
+     * The method <B>clickNextPage</B>needs to be implemented with the logic to go to the next page.
+     * The default implementation just causes an assertion failure.
+     * </LI>
+     * <LI>
+     * The method <B>clickPreviousPage</B> needs to be implemented with the logic to go to the previous page.
+     * The default implementation just causes an assertion failure.
+     * </LI>
+     * <LI>
+     * If you want want to support searching a specific direction, then only the methods in that direction need to
+     * be implemented.
+     * </LI>
+     * </UL>
+     *
+     * @param rowToMatch - Row to find in the table
+     * @param mustExist  - true to expect a match and fail if no match
+     * @param allPages   - true to search all pages from the current page
+     * @param next       - true to search in the forward (next) direction, false to search in the backward (previous) direction
+     * @return a matching row
+     */
+    protected T findTableRow(T rowToMatch, boolean mustExist, boolean allPages, boolean next) {
+        T match = findTableRow(rowToMatch, false);
+        if (allPages) {
+            int counter = 0;
+            while (match == null && isAnotherPage(next) && counter < getMaxIterations()) {
+                moveToAnotherPage(next);
+                resetTableRows();
+                match = findTableRow(rowToMatch, false);
+                counter++;
+            }
+        }
+
+        if (mustExist) {
+            assertThat("Could not find a matching row:  " + rowToMatch, match, notNullValue());
+        }
+
+        return match;
+    }
+
+    /**
+     * @return the max iterations to prevent an infinite loop
+     */
+    protected int getMaxIterations() {
+        assertThat(NO_PAGINATION, false);
+        return 0;
+    }
+
+    /**
+     * Determine if there is another page
+     *
+     * @param next - true to check for next page, false to check for previous page
+     * @return true the is another (next or previous) page
+     */
+    protected boolean isAnotherPage(boolean next) {
+        if (next) {
+            return isNextPage();
+        } else {
+            return isPreviousPage();
+        }
+    }
+
+    /**
+     * @return true if there is a next page else false
+     */
+    protected boolean isNextPage() {
+        assertThat(NO_PAGINATION, false);
+        return false;
+    }
+
+    /**
+     * @return true if there is a previous page else false
+     */
+    @SuppressWarnings("java:S4144")
+    protected boolean isPreviousPage() {
+        assertThat(NO_PAGINATION, false);
+        return false;
+    }
+
+    /**
+     * Move to another page in the sequence (next/previous) and wait for the page to be loaded
+     *
+     * @param next - true to go to the next page, false to go to the previous page
+     */
+    protected void moveToAnotherPage(boolean next) {
+        if (next) {
+            clickNextPage();
+        } else {
+            clickPreviousPage();
+        }
+    }
+
+    /**
+     * Click Next Page which needs to take the actions to move to the next page and wait for the page to be loaded
+     */
+    protected void clickNextPage() {
+        assertThat(NO_PAGINATION, false);
+    }
+
+    /**
+     * Click Previous Page which needs to take the actions to move to the next page and wait for the page to be loaded
+     */
+    protected void clickPreviousPage() {
+        assertThat(NO_PAGINATION, false);
     }
 
     /**
