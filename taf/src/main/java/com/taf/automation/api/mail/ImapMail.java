@@ -1,6 +1,5 @@
 package com.taf.automation.api.mail;
 
-import com.sun.mail.pop3.POP3Store;
 import com.taf.automation.api.network.SSHSession;
 import com.taf.automation.ui.support.CryptoUtils;
 import com.taf.automation.ui.support.Environment;
@@ -16,6 +15,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.search.SearchTerm;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,61 +23,69 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class Pop3Mail {
-    private static final Logger LOG = LoggerFactory.getLogger(Pop3Mail.class);
+public class ImapMail {
+    private static final Logger LOG = LoggerFactory.getLogger(ImapMail.class);
     private SSHSession sshSession;
-    private POP3Store store;
+    private Store store;
+    private final String mailServer = TestProperties.getInstance().getMailServer();
     private final long mailTimeOut = TestProperties.getInstance().getMailTimeout();
+    private boolean headerMatchesEnv;
 
-    public Pop3Mail() {
+    public ImapMail() {
+        withHeaderMatchesEnv(true);
+
         TestProperties tProps = TestProperties.getInstance();
         Properties props = System.getProperties();
-        String mailServer = tProps.getMailServer();
-        int port = (tProps.getMailServerPort() > 0) ? tProps.getMailServerPort() : 110;
+        int port = (tProps.getMailServerPort() > 0) ? tProps.getMailServerPort() : 993;
 
-        if (tProps.getSshHost() != null) {
-            sshSession = new SSHSession(mailServer, port);
-            port = sshSession.getPort();
-            mailServer = "localhost";
-        }
-
-        props.setProperty("mail.pop3.host", mailServer);
-        props.setProperty("mail.pop3.port", "" + port);
+        props.setProperty("mail.imap.ssl.trust", "*");
+        props.setProperty("mail.imap.port", "" + port);
         Session session = Session.getDefaultInstance(props);
         try {
-            store = (POP3Store) session.getStore("pop3");
+            store = session.getStore("imaps");
         } catch (NoSuchProviderException e) {
-            LOG.error("Exception occurred in Pop3Mail()", e);
+            LOG.error("Exception occurred in ImapMail()", e);
         }
     }
 
-    private Folder getFolder(String user) {
+    /**
+     * Set flag that indicates the header on the emails is needed for a match when searching
+     *
+     * @param headerMatchesEnv - true to consider the header matches the environment when search
+     * @return ImapMail
+     */
+    public ImapMail withHeaderMatchesEnv(boolean headerMatchesEnv) {
+        this.headerMatchesEnv = headerMatchesEnv;
+        return this;
+    }
+
+    private Folder getFolder(String user, String encodedPassword) {
         Folder folder = null;
         try {
             if (store.isConnected()) {
                 store.close();
             }
 
-            store.connect(user, new CryptoUtils().decrypt(TestProperties.getInstance().getMailPassword()));
+            store.connect(mailServer, user, new CryptoUtils().decrypt(encodedPassword));
             folder = store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
         } catch (MessagingException e) {
-            LOG.error("Exception occurred in Pop3Mail.getFolder", e);
+            LOG.error("Exception occurred in ImapMail.getFolder", e);
         }
 
         return folder;
     }
 
     @SuppressWarnings("java:S112")
-    private Folder getFolderForUser(String user) {
+    private Folder getFolderForUser(String user, String encodedPassword) {
         Folder folder;
-        long time_out = System.currentTimeMillis() + mailTimeOut;
+        long timeout = System.currentTimeMillis() + mailTimeOut;
         do {
-            folder = getFolder(user);
+            folder = getFolder(user, encodedPassword);
             if (folder == null) {
                 Utils.sleep(200);
             }
-        } while (folder == null && System.currentTimeMillis() < time_out);
+        } while (folder == null && System.currentTimeMillis() < timeout);
 
         if (folder == null) {
             throw new RuntimeException("Timeout reached on email store connection:  " + user);
@@ -87,11 +95,21 @@ public class Pop3Mail {
     }
 
     public List<MailMessage> searchForEmail(String recipient, boolean waitForEmail, boolean deleteEmails) {
-        return searchForEmail(recipient, "", "", waitForEmail, deleteEmails);
+        String encodedPassword = TestProperties.getInstance().getMailPassword();
+        return searchForEmail(recipient, encodedPassword, waitForEmail, deleteEmails);
     }
 
-    public List<MailMessage> searchForEmail(String recipient, String subject, boolean waitForEmail, boolean deleteEmails) {
-        return searchForEmail(recipient, subject, "", waitForEmail, deleteEmails);
+    public List<MailMessage> searchForEmail(String recipient, String encodedPassword, boolean waitForEmail, boolean deleteEmails) {
+        return searchForEmail(recipient, encodedPassword, "", "", waitForEmail, deleteEmails);
+    }
+
+    public List<MailMessage> searchForEmail(String recipient, boolean waitForEmail, boolean deleteEmails, String subject) {
+        String encodedPassword = TestProperties.getInstance().getMailPassword();
+        return searchForEmail(recipient, encodedPassword, waitForEmail, deleteEmails, subject);
+    }
+
+    public List<MailMessage> searchForEmail(String recipient, String encodedPassword, boolean waitForEmail, boolean deleteEmails, String subject) {
+        return searchForEmail(recipient, encodedPassword, subject, "", waitForEmail, deleteEmails);
     }
 
     private SearchTerm getSearchTerm(String subject, String text) {
@@ -104,19 +122,18 @@ public class Pop3Mail {
                     Environment env = TestProperties.getInstance().getEnvironment();
                     String[] headerArray = message.getHeader("X-Env-Flag");
                     String headers = (headerArray != null) ? Arrays.asList(headerArray).toString().toLowerCase() : "";
-                    if (!env.isProdEnv() && !headers.contains(env.toString())) {
+                    if (headerMatchesEnv && !env.isProdEnv() && !headers.contains(env.toString())) {
                         return false;
                     }
 
                     if (StringUtils.defaultString(message.getSubject()).contains(subject)) {
                         String content = new MailMessage(message).getTextBody();
                         if (content.contains(text)) {
-                            message.setFlag(Flags.Flag.DELETED, true);
                             return true;
                         }
                     }
                 } catch (MessagingException | IOException e) {
-                    LOG.error("Exception occurred in Pop3Mail.getSearchTerm", e);
+                    LOG.error("Exception occurred in ImapMail.getSearchTerm", e);
                 }
 
                 return false;
@@ -124,9 +141,21 @@ public class Pop3Mail {
         };
     }
 
+    public List<MailMessage> searchForEmail(
+            String recipient,
+            String subject,
+            String text,
+            boolean waitForEmail,
+            boolean deleteEmails
+    ) {
+        String encodedPassword = TestProperties.getInstance().getMailPassword();
+        return searchForEmail(recipient, encodedPassword, subject, text, waitForEmail, deleteEmails);
+    }
+
     @SuppressWarnings("java:S112")
     public List<MailMessage> searchForEmail(
             String recipient,
+            String encodedPassword,
             String subject,
             String text,
             boolean waitForEmail,
@@ -136,12 +165,12 @@ public class Pop3Mail {
         SearchTerm term = getSearchTerm(subject, text);
 
         try {
-            long time_out = System.currentTimeMillis();
+            long timeout = System.currentTimeMillis();
             if (waitForEmail) {
-                time_out += mailTimeOut;
+                timeout += mailTimeOut;
             }
 
-            Folder folder = getFolderForUser(recipient);
+            Folder folder = getFolderForUser(recipient, encodedPassword);
             Message[] messages;
             do {
                 messages = folder.search(term);
@@ -149,7 +178,7 @@ public class Pop3Mail {
                     folder.close(false);
                     folder.open(Folder.READ_WRITE);
                 }
-            } while (messages.length == 0 && System.currentTimeMillis() < time_out);
+            } while (messages.length == 0 && System.currentTimeMillis() < timeout);
 
             if (waitForEmail && messages.length == 0) {
                 throw new RuntimeException("No emails where received for " + recipient + " in " + mailTimeOut + " milliseconds!");
@@ -157,11 +186,12 @@ public class Pop3Mail {
 
             for (Message msg : messages) {
                 mailMessages.add(new MailMessage(msg));
+                msg.setFlag(Flags.Flag.DELETED, deleteEmails);
             }
 
             folder.close(deleteEmails);
         } catch (MessagingException | IOException e) {
-            LOG.error("Exception occurred in Pop3Mail.searchForEmail", e);
+            LOG.error("Exception occurred in ImapMail.searchForEmail", e);
         }
 
         return mailMessages;
@@ -174,23 +204,38 @@ public class Pop3Mail {
      * @return null if MessagingException occurs else all the messages
      */
     public List<MailMessage> getAllMessages(String recipient) {
+        return getAllMessages(recipient, TestProperties.getInstance().getMailPassword());
+    }
+
+    /**
+     * Get all messages for the recipient regardless of the header information which specifies the environment
+     *
+     * @param recipient       - Recipient to get all messages
+     * @param encodedPassword - Encoded Password for the Recipient
+     * @return null if MessagingException occurs else all the messages
+     */
+    public List<MailMessage> getAllMessages(String recipient, String encodedPassword) {
         List<MailMessage> mailMessages = new ArrayList<>();
 
         try {
-            Folder folder = getFolderForUser(recipient);
+            Folder folder = getFolderForUser(recipient, encodedPassword);
             Message[] messages = folder.getMessages();
             for (Message msg : messages) {
                 mailMessages.add(new MailMessage(msg));
             }
         } catch (MessagingException | IOException e) {
-            LOG.error("Exception occurred in Pop3Mail.getAllMessages", e);
+            LOG.error("Exception occurred in ImapMail.getAllMessages", e);
         }
 
         return mailMessages;
     }
 
     public void deleteAll(String recipient) {
-        if (getFolder(recipient) != null) {
+        deleteAll(recipient, TestProperties.getInstance().getMailPassword());
+    }
+
+    public void deleteAll(String recipient, String encodedPassword) {
+        if (getFolder(recipient, encodedPassword) != null) {
             List<MailMessage> msgs = searchForEmail(recipient, false, true);
             LOG.info("Deleted {} mail messages", msgs.size());
         }
@@ -200,7 +245,7 @@ public class Pop3Mail {
         try {
             store.close();
         } catch (MessagingException e) {
-            LOG.error("Exception occurred in Pop3Mail.close()", e);
+            LOG.error("Exception occurred in ImapMail.close()", e);
         }
 
         if (sshSession != null) {

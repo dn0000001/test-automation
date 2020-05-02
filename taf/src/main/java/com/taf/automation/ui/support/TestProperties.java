@@ -252,8 +252,11 @@ public class TestProperties {
     @Property("documentation.mode")
     private boolean documentationMode = false;
 
-    @Property("mail.pop3.server")
+    @Property("mail.server")
     private String mailServer;
+
+    @Property("mail.server.port")
+    private int mailServerPort;
 
     @Property("mail.password")
     @HideInReport
@@ -697,6 +700,10 @@ public class TestProperties {
 
     public String getMailServer() {
         return mailServer;
+    }
+
+    public int getMailServerPort() {
+        return mailServerPort;
     }
 
     public String getMailPassword() {
