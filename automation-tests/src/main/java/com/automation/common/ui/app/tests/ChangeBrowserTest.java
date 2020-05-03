@@ -20,13 +20,13 @@ public class ChangeBrowserTest extends TestNGBase {
     private static final String SITE_1_VALIDATION = "google";
     private static final String SITE_2 = "https://the-internet.herokuapp.com/broken_images";
     private static final String SITE_2_VALIDATION = "the-internet.herokuapp.com";
-    private static final WebDriverTypeEnum CHANGE_BROWSER = WebDriverTypeEnum.FIREFOX;
+    private static final WebDriverTypeEnum CHANGE_BROWSER = TestProperties.getInstance().getBrowserType();
 
     /**
      * The CHANGE_BROWSER should always be the same.  However, for testing purposes to see a failure change
      * the EXPECTED_BROWSER to something different.
      */
-    private static final WebDriverTypeEnum EXPECTED_BROWSER = WebDriverTypeEnum.FIREFOX;
+    private static final WebDriverTypeEnum EXPECTED_BROWSER = TestProperties.getInstance().getBrowserType();
 
     @Features("Framework")
     @Stories("Verify changing of browsers")
