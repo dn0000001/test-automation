@@ -151,7 +151,7 @@ public enum WebDriverTypeEnum {
         }
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setBrowserName(getDriverName());
+        capabilities.setBrowserName(prop.getBrowserType().getDriverName());
         capabilities.setVersion(prop.getBrowserVersion());
         capabilities.setPlatform(platform);
         capabilities.merge(prop.getExtraCapabilities());
