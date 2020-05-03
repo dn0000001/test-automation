@@ -24,6 +24,12 @@
         </classes>
     </test>
 
+    <test name="Change Browser Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ChangeBrowserTest"/>
+        </classes>
+    </test>
+
     <test name="Data Provider Test">
         <parameter name="Data Provider Test" value="data/ui/LinksTestData.xml"/>
         <classes>
@@ -171,14 +177,6 @@
         <parameter name="allure-results" value="/home/user/allure-results-run1,/home/user/allure-results-run3"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.CreateAllureReportTest"/>
-        </classes>
-    </test>
-    -->
-
-    <!--
-    <test name="Change Browser Test">
-        <classes>
-            <class name="com.automation.common.ui.app.tests.ChangeBrowserTest"/>
         </classes>
     </test>
     -->
