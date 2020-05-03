@@ -16,29 +16,38 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 public class ChangeBrowserTest extends TestNGBase {
-    private static final String GOOGLE = "google";
-    private static final String TSN = "tsn.ca";
+    private static final String SITE_1 = "https://www.google.ca";
+    private static final String SITE_1_VALIDATION = "google";
+    private static final String SITE_2 = "https://the-internet.herokuapp.com/broken_images";
+    private static final String SITE_2_VALIDATION = "the-internet.herokuapp.com";
+    private static final WebDriverTypeEnum CHANGE_BROWSER = WebDriverTypeEnum.FIREFOX;
+
+    /**
+     * The CHANGE_BROWSER should always be the same.  However, for testing purposes to see a failure change
+     * the EXPECTED_BROWSER to something different.
+     */
+    private static final WebDriverTypeEnum EXPECTED_BROWSER = WebDriverTypeEnum.FIREFOX;
 
     @Features("Framework")
     @Stories("Verify changing of browsers")
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void performTest() {
-        getContext().getDriver().get("https://www.google.ca");
-        assertThat("Initial Context URL", getContext().getDriver().getCurrentUrl(), containsString(GOOGLE));
+        getContext().getDriver().get(SITE_1);
+        assertThat("Initial Context URL", getContext().getDriver().getCurrentUrl(), containsString(SITE_1_VALIDATION));
 
         Utils.restoreBrowser();
-        assertThat("Restore Browser No Effect", getContext().getDriver().getCurrentUrl(), containsString(GOOGLE));
+        assertThat("Restore Browser No Effect", getContext().getDriver().getCurrentUrl(), containsString(SITE_1_VALIDATION));
         assertThat("Test Properties No Effect", Utils.getStoredTestProperties().getBrowserType(), equalTo(TestProperties.getInstance().getBrowserType()));
 
-        Utils.changeBrowser(WebDriverTypeEnum.CHROME);
-        getContext().getDriver().get("https://www.tsn.ca");
-        assertThat("Changed Context URL", getContext().getDriver().getCurrentUrl(), containsString(TSN));
-        assertThat("Changed Test Properties", Utils.getStoredTestProperties().getBrowserType(), equalTo(WebDriverTypeEnum.CHROME));
+        Utils.changeBrowser(CHANGE_BROWSER);
+        getContext().getDriver().get(SITE_2);
+        assertThat("Changed Context URL", getContext().getDriver().getCurrentUrl(), containsString(SITE_2_VALIDATION));
+        assertThat("Changed Test Properties", Utils.getStoredTestProperties().getBrowserType(), equalTo(EXPECTED_BROWSER));
 
         Utils.restoreBrowser();
-        assertThat("Restored Context URL Diff", getContext().getDriver().getCurrentUrl(), not(containsString(TSN)));
-        assertThat("Restored Context URL Same", getContext().getDriver().getCurrentUrl(), containsString(GOOGLE));
+        assertThat("Restored Context URL Diff", getContext().getDriver().getCurrentUrl(), not(containsString(SITE_2_VALIDATION)));
+        assertThat("Restored Context URL Same", getContext().getDriver().getCurrentUrl(), containsString(SITE_1_VALIDATION));
         assertThat("Restored Test Properties", Utils.getStoredTestProperties().getBrowserType(), equalTo(TestProperties.getInstance().getBrowserType()));
     }
 

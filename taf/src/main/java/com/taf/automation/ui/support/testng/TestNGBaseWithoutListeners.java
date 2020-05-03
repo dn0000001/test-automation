@@ -183,6 +183,7 @@ public class TestNGBaseWithoutListeners {
     public void closeDriver() {
         time = (System.currentTimeMillis() - time) / 1000;
         if (context() != null && context().getDriver() != null) {
+            Utils.restoreBrowser(); // If browser was changed, ensure it is closed
             logInfo("-CLOSING CONTEXT: " + context().getDriver().toString());
             context().getDriver().quit();
         }

@@ -9,7 +9,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Step;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,6 +32,9 @@ public class SameThreadTest extends TestNGBase {
         expectedThreadId = Thread.currentThread().getId();
     }
 
+    @Features("Framework")
+    @Stories("Validate the same thread is being used")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void performTest() {
         Helper.log("Running Test", true);
