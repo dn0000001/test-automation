@@ -894,9 +894,12 @@ public class Utils {
      * @return WebElement that was clicked
      */
     public static WebElement clickWhenReady(WebElement element) {
-        getWebDriverWait().until(ExpectedConditionsUtil.ready(element));
-        element.click();
-        return element;
+        return Failsafe.with(getClickRetryPolicy())
+                .get(() -> {
+                    getWebDriverWait().until(ExpectedConditionsUtil.ready(element));
+                    element.click();
+                    return element;
+                });
     }
 
     /**
@@ -906,9 +909,12 @@ public class Utils {
      * @return WebElement that was clicked
      */
     public static WebElement clickWhenReady(By locator) {
-        WebElement element = getWebDriverWait().until(ExpectedConditionsUtil.ready(locator));
-        element.click();
-        return element;
+        return Failsafe.with(getClickRetryPolicy())
+                .get(() -> {
+                    WebElement element = getWebDriverWait().until(ExpectedConditionsUtil.ready(locator));
+                    element.click();
+                    return element;
+                });
     }
 
     /**
@@ -919,9 +925,12 @@ public class Utils {
      * @return WebElement that was clicked
      */
     public static WebElement clickWhenReady(WebElement anchor, By relative) {
-        WebElement element = getWebDriverWait().until(ExpectedConditionsUtil.ready(anchor, relative));
-        element.click();
-        return element;
+        return Failsafe.with(getClickRetryPolicy())
+                .get(() -> {
+                    WebElement element = getWebDriverWait().until(ExpectedConditionsUtil.ready(anchor, relative));
+                    element.click();
+                    return element;
+                });
     }
 
     /**
@@ -965,7 +974,7 @@ public class Utils {
      * @param element - Element to click and wait for it to become stale
      */
     public static void clickAndWaitForStale(WebElement element) {
-        element.click();
+        Failsafe.with(getClickRetryPolicy()).run(element::click);
         getWebDriverWait().until(ExpectedConditions.stalenessOf(element));
     }
 
@@ -986,7 +995,7 @@ public class Utils {
      * @param locator - Locator to find element to click and wait for it to become invisible
      */
     public static void clickAndWaitForInvisible(By locator) {
-        getWebDriverWait().until(ExpectedConditions.elementToBeClickable(locator)).click();
+        Failsafe.with(getClickRetryPolicy()).run(getWebDriverWait().until(ExpectedConditionsUtil.ready(locator))::click);
         getWebDriverWait().until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
 
