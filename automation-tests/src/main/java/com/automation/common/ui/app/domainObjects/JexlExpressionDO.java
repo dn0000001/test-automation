@@ -39,7 +39,7 @@ public class JexlExpressionDO extends DomainObject {
         jexlContext.set("str2", "bbb");
         jexlContext.set("dateActions", new DateActions());
         jexlContext.set("dateUtils", new DateUtils());
-        jexlContext.set("today", "" + DateActions.format(new Date(), "MM/dd/yyyy"));
+        jexlContext.set("today", DateActions.format(new Date(), "MM/dd/yyyy"));
     }
 
     public String getSomeField() {
