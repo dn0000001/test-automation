@@ -22,7 +22,7 @@
         <random_date_pattern>MM/dd/yyyy</random_date_pattern>
         <random_date_range_min>90</random_date_range_min>
         <random_date_range_max>365</random_date_range_max>
-        <calcCurrentSystemDate>${(lookup.get("currentSystemDate")==null)?today:lookup.get("currentSystemDate")}</calcCurrentSystemDate>
+        <calcCurrentSystemDate>${lookup.getOrDefault("CURRENT_SYSTEM_DATE", today)}</calcCurrentSystemDate>
         <currentSystemDate>${dateActions.parseDateStrictly(calcCurrentSystemDate, random_date_pattern)}</currentSystemDate>
         <calcDate1>${dateActions.format(dateUtils.addDays(currentSystemDate, 1), random_date_pattern)}</calcDate1>
         <calcDate2>${dateActions.format(dateUtils.addMonths(currentSystemDate, 1), random_date_pattern)}</calcDate2>
@@ -33,4 +33,5 @@
     <extraField1 initial="${var5}" expected="${var6}">${var5}</extraField1>
     <extraField2 initial="${var7}" expected="${var7}">${var8}${var9}</extraField2>
     <extraField3 initial="${calcDate1} ${calcDate2}" expected="${calcDate3}">${calcDate3}</extraField3>
+    <currentSystemDate>${calcCurrentSystemDate}</currentSystemDate>
 </jexl-expression-do>

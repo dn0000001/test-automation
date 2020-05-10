@@ -14,14 +14,20 @@ import ui.auto.core.data.DataTypes;
 
 import java.util.Date;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 @XStreamAlias("jexl-expression-do")
 public class JexlExpressionDO extends DomainObject {
+    private static final String TODAY = DateActions.format(new Date(), "MM/dd/yyyy");
+    private static final String CURRENT_SYSTEM_DATE = "CURRENT_SYSTEM_DATE";
     private AliasedString someField;
     private AliasedString anotherField;
     private AliasedString extraField1;
     private AliasedString extraField2;
     private AliasedString extraField3;
+    private AliasedString currentSystemDate;
 
     public JexlExpressionDO() {
         super();
@@ -39,7 +45,7 @@ public class JexlExpressionDO extends DomainObject {
         jexlContext.set("str2", "bbb");
         jexlContext.set("dateActions", new DateActions());
         jexlContext.set("dateUtils", new DateUtils());
-        jexlContext.set("today", DateActions.format(new Date(), "MM/dd/yyyy"));
+        jexlContext.set("today", TODAY);
     }
 
     public String getSomeField() {
@@ -102,11 +108,22 @@ public class JexlExpressionDO extends DomainObject {
         return extraField3.getData(DataTypes.Initial, true);
     }
 
+    @Step("Validate Current System Date Before Load")
+    public void validateCurrentSystemDateBeforeLoad() {
+        assertThat("Current System Date Before Load", currentSystemDate.getData(), equalTo(TODAY));
+    }
+
+    @Step("Validate Current System Date After Load")
+    public void validateCurrentSystemDateAfterLoad() {
+        String expected = Lookup.getInstance().get(CURRENT_SYSTEM_DATE);
+        assertThat("Current System Date After Load", currentSystemDate.getData(), equalTo(expected));
+    }
+
     @Step("Perform Pre From Resource Actions")
     public void performPreFromResourceActions() {
         Lookup.getInstance().put("beforeLoadResource1", Rand.alphanumeric(5, 10));
         Lookup.getInstance().put("beforeLoadResource2", Rand.alphanumeric(5, 10));
-        Lookup.getInstance().put("currentSystemDate", RandomDateUtil.getInstance().random());
+        Lookup.getInstance().put(CURRENT_SYSTEM_DATE, RandomDateUtil.getInstance().random());
     }
 
 }
