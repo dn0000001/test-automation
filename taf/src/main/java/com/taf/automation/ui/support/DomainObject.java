@@ -10,6 +10,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.support.DomainObjectModel;
 
+import java.io.File;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -90,6 +91,33 @@ public class DomainObject extends DomainObjectModel {
     @Override
     public <T extends DataPersistence> T fromResource(String resourceFilePath, boolean resolveAliases) {
         return super.fromResource(Helper.getEnvironmentBasedFile(resourceFilePath), resolveAliases);
+    }
+
+    /**
+     * Loads a domain object from resources or file system without attaching the data file to the report<BR>
+     * <B>Note: </B> This method should only be used if you want to load the same data file multiple files
+     * but do not want the data file attached to the report multiple times.  Alternatively, you need to load
+     * a domain object to get lookup data for another data file and do not want this data file attached to the
+     * report because it would be duplicated.
+     *
+     * @param resourceFilePath - Resource File Path
+     * @param <T>              Domain Object
+     * @return T
+     */
+    public <T extends DataPersistence> T fromResourceSilent(String resourceFilePath) {
+        String useResourceFile = Helper.getEnvironmentBasedFile(resourceFilePath);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(useResourceFile);
+        if (url != null) {
+            return fromURL(url, false);
+        }
+
+        File file = new File(useResourceFile);
+        if (file.exists()) {
+            return fromFile(file.getAbsolutePath(), false);
+        }
+
+        assertThat("File '" + useResourceFile + "' was not found!", false);
+        return null;
     }
 
     public void setContext(TestContext context) {
