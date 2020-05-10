@@ -35,10 +35,12 @@ public class JexlExpressionTest extends TestNGBase {
         // For convenience (and/or no extra data files), you may want to re-use an existing data file
         // to perform the lookup actions for the test data that you need them
         JexlExpressionDO usedForLookupActions = new JexlExpressionDO().fromResourceSilent(dataSet);
+        usedForLookupActions.validateCurrentSystemDateBeforeLoad();
         usedForLookupActions.performPreFromResourceActions();
 
         // All the lookup variables have been set and we can load the test data
         JexlExpressionDO jexlDO = new JexlExpressionDO(getContext()).fromResource(dataSet);
+        jexlDO.validateCurrentSystemDateAfterLoad();
         validateFieldValue("Some Field", jexlDO.getSomeField(), jexlDO.getSomeFieldExpected());
         validateFieldValue("Another Field", jexlDO.getAnotherField(), jexlDO.getAnotherFieldExpected());
         validateFieldValue("Extra Field 1", jexlDO.getExtraField1(), jexlDO.getExtraField1Expected());
