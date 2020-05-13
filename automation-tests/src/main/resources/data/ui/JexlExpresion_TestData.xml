@@ -13,6 +13,8 @@
         <var7>${lookup.get("beforeLoadResource1") + lookup.get("beforeLoadResource2")}</var7>
         <var8>${lookup.get("beforeLoadResource1")}</var8>
         <var9>${lookup.get("beforeLoadResource2")}</var9>
+        <var10>${lookup.get("int100") + lookup.get("int200")}</var10>
+        <var11>300</var11>
         <RandomDateGenerator>$[RANDOM_DATE('yyyy-MM-dd','365|720')]</RandomDateGenerator>
         <RandomRealUSAddressGenerator>$[RANDOM_US_ADDRESS('{#} {C} {S} {Z} {U} {P}','')]</RandomRealUSAddressGenerator>
         <orgPass>$[ALPHANUMERIC('{a}{b}{c}{d}{e}', 'null')]</orgPass>
@@ -33,5 +35,6 @@
     <extraField1 initial="${var5}" expected="${var6}">${var5}</extraField1>
     <extraField2 initial="${var7}" expected="${var7}">${var8}${var9}</extraField2>
     <extraField3 initial="${calcDate1} ${calcDate2}" expected="${calcDate3}">${calcDate3}</extraField3>
+    <extraField4 initial="${calcDate1} ${calcDate2}" expected="${var11}">${var10}</extraField4>
     <currentSystemDate>${calcCurrentSystemDate}</currentSystemDate>
 </jexl-expression-do>

@@ -46,12 +46,14 @@ public class JexlExpressionTest extends TestNGBase {
         validateFieldValue("Extra Field 1", jexlDO.getExtraField1(), jexlDO.getExtraField1Expected());
         validateFieldValue("Extra Field 2", jexlDO.getExtraField2(), jexlDO.getExtraField2Expected());
         validateFieldValue("Extra Field 3", jexlDO.getExtraField3(), jexlDO.getExtraField3Expected());
+        validateFieldValue("Extra Field 4", jexlDO.getExtraField4(), jexlDO.getExtraField4Expected());
         for (String var : jexlVariables) {
             validateField(var, jexlDO.getSomeField(), jexlDO.getSomeFieldExpected(), jexlDO.getSomeFieldInitial());
             validateField(var, jexlDO.getAnotherField(), jexlDO.getAnotherFieldExpected(), jexlDO.getAnotherFieldInitial());
             validateField(var, jexlDO.getExtraField1(), jexlDO.getExtraField1Expected(), jexlDO.getExtraField1Initial());
             validateField(var, jexlDO.getExtraField2(), jexlDO.getExtraField2Expected(), jexlDO.getExtraField2Initial());
             validateField(var, jexlDO.getExtraField3(), jexlDO.getExtraField3Expected(), jexlDO.getExtraField3Initial());
+            validateField(var, jexlDO.getExtraField4(), jexlDO.getExtraField4Expected(), jexlDO.getExtraField4Initial());
         }
     }
 
