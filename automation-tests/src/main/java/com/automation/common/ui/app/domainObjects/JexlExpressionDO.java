@@ -27,6 +27,7 @@ public class JexlExpressionDO extends DomainObject {
     private AliasedString extraField1;
     private AliasedString extraField2;
     private AliasedString extraField3;
+    private AliasedString extraField4;
     private AliasedString currentSystemDate;
 
     public JexlExpressionDO() {
@@ -108,14 +109,27 @@ public class JexlExpressionDO extends DomainObject {
         return extraField3.getData(DataTypes.Initial, true);
     }
 
+    public String getExtraField4() {
+        return extraField4.getData();
+    }
+
+    public String getExtraField4Expected() {
+        return extraField4.getData(DataTypes.Expected, true);
+    }
+
+    public String getExtraField4Initial() {
+        return extraField4.getData(DataTypes.Initial, true);
+    }
+
     @Step("Validate Current System Date Before Load")
     public void validateCurrentSystemDateBeforeLoad() {
         assertThat("Current System Date Before Load", currentSystemDate.getData(), equalTo(TODAY));
     }
 
+    @SuppressWarnings("java:S1905")
     @Step("Validate Current System Date After Load")
     public void validateCurrentSystemDateAfterLoad() {
-        String expected = Lookup.getInstance().get(CURRENT_SYSTEM_DATE);
+        String expected = (String) Lookup.getInstance().get(CURRENT_SYSTEM_DATE);
         assertThat("Current System Date After Load", currentSystemDate.getData(), equalTo(expected));
     }
 
@@ -123,6 +137,8 @@ public class JexlExpressionDO extends DomainObject {
     public void performPreFromResourceActions() {
         Lookup.getInstance().put("beforeLoadResource1", Rand.alphanumeric(5, 10));
         Lookup.getInstance().put("beforeLoadResource2", Rand.alphanumeric(5, 10));
+        Lookup.getInstance().put("int100", 100);
+        Lookup.getInstance().put("int200", 200);
         Lookup.getInstance().put(CURRENT_SYSTEM_DATE, RandomDateUtil.getInstance().random());
     }
 
