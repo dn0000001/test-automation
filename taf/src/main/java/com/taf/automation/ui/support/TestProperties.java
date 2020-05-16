@@ -8,6 +8,7 @@ import com.taf.automation.ui.support.converters.CreditCardPropertyConverter;
 import com.taf.automation.ui.support.converters.DynamicCredentials;
 import com.taf.automation.ui.support.converters.DynamicCredentialsPropertyConverter;
 import com.taf.automation.ui.support.converters.EnumPropertyConverter;
+import com.taf.automation.ui.support.converters.EnvironmentPropertyConverter;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
@@ -23,6 +24,7 @@ import ru.yandex.qatools.properties.PropertyLoader;
 import ru.yandex.qatools.properties.annotations.Property;
 import ru.yandex.qatools.properties.annotations.Resource;
 import ru.yandex.qatools.properties.annotations.Use;
+import ui.auto.core.support.EnvironmentsSetup;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +39,11 @@ import java.util.Map;
  */
 @Resource.Classpath("test.properties")
 public class TestProperties {
+    @Use(EnvironmentPropertyConverter.class)
+    @Property("test.env")
+    @HideInReport
+    private EnvironmentsSetup.Environment testEnvironment;
+
     @Property("always.install.drivers")
     private boolean alwaysInstallDrivers = false;
 
@@ -352,6 +359,19 @@ public class TestProperties {
         return null;
     }
 
+    public EnvironmentsSetup.Environment getTestEnvironment() {
+        return testEnvironment;
+    }
+
+    private String getEnvironmentCustom(String key, boolean decode) {
+        if (getTestEnvironment() != null) {
+            String value = getTestEnvironment().getCustom(key);
+            return (decode) ? value : new CryptoUtils().decrypt(value);
+        }
+
+        return null;
+    }
+
     public boolean isAlwaysInstallDrivers() {
         return alwaysInstallDrivers;
     }
@@ -434,11 +454,12 @@ public class TestProperties {
     }
 
     public String getApiUrl() {
-        if (isProdEnv()) {
-            return apiUrlProd;
-        } else {
-            return replaceWithTargetEnv(apiUrl);
+        String value = (isProdEnv()) ? apiUrlProd : replaceWithTargetEnv(apiUrl);
+        if (value == null) {
+            value = getEnvironmentCustom("apiUrl", false);
         }
+
+        return value;
     }
 
     public Credentials getApiCredentials() {
@@ -584,7 +605,7 @@ public class TestProperties {
     }
 
     public String getDbPassword() {
-        return dbPassword;
+        return (dbPassword == null) ? getEnvironmentCustom("dbPassword", true) : dbPassword;
     }
 
     public boolean isDbIntegratedSecurity() {
@@ -632,11 +653,12 @@ public class TestProperties {
     }
 
     public String getURL() {
-        if (isProdEnv()) {
-            return urlProd;
-        } else {
-            return replaceWithTargetEnv(url);
+        String value = (isProdEnv()) ? urlProd : replaceWithTargetEnv(url);
+        if (value == null && getTestEnvironment() != null) {
+            value = getTestEnvironment().getUrl();
         }
+
+        return value;
     }
 
     public Integer getThreadCount() {

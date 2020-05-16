@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<setup>
+    <environment environmentName="QA" url="https://www.tsn.ca">
+        <prop name="apiUrl" value="http://www.holidaywebservice.com"/>
+        <prop name="dbPassword" value="feuGPPZDZlkVmHXJwOISwQ=="/>
+
+        <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
+        <user role=""/>
+    </environment>
+    <environment environmentName="DEV" url="https://www.google.ca">
+        <prop name="apiUrl" value="https://jsonip.com"/>
+        <prop name="dbPassword" value="Q27p7DXgP2AzDxxBDw/E0g=="/>
+
+        <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
+        <user role=""/>
+    </environment>
+    <environment environmentName="PROD" url="http://www.truenorthhockey.com">
+        <prop name="apiUrl" value="http://wsf.cdyne.com"/>
+        <prop name="dbPassword" value="xzRZ75G077/YqCsRSAHGMw=="/>
+
+        <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
+        <user role=""/>
+    </environment>
+</setup>
