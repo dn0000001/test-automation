@@ -71,6 +71,13 @@ public class AllureTestNGListener extends AllureTestListener {
         lifecycle.fire(new TestCaseFinishedEvent());
     }
 
+    @Override
+    public void onConfigurationFailure(ITestResult iTestResult) {
+        TestNGBase.takeScreenshot("Configuration Failure Screenshot");
+        TestNGBase.takeHTML("Configuration Failure HTML Source");
+        super.onConfigurationFailure(iTestResult);
+    }
+
     private void fireTestCaseCancel(ITestResult iTestResult) {
         Throwable skipMessage = iTestResult.getThrowable();
         if (skipMessage == null) {
