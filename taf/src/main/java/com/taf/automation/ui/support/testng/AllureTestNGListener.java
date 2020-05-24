@@ -78,6 +78,12 @@ public class AllureTestNGListener extends AllureTestListener {
         super.onConfigurationFailure(iTestResult);
     }
 
+    @Override
+    public void onConfigurationSkip(ITestResult iTestResult) {
+        // Configuration method will be shown in the report only on its failure in any other situation it is not listed
+        // Note:  If this is not the behavior desire and you want the default Allure behavior then remove this method.
+    }
+
     private void fireTestCaseCancel(ITestResult iTestResult) {
         Throwable skipMessage = iTestResult.getThrowable();
         if (skipMessage == null) {
