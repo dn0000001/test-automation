@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import static com.taf.automation.ui.support.AssertsUtil.isComponentDisplayed;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -177,6 +178,7 @@ public class Helper {
      * @param validate  - true to validate value set properly, false to skip validation
      * @param retries   - Number of retries
      */
+    @SuppressWarnings("java:S135")
     @Step("Set Value for {0}")
     private static void performSetValue(String log, PageComponent component, boolean validate, int retries) {
         String validationData = component.getData(DataTypes.Data, true);
@@ -488,6 +490,7 @@ public class Helper {
      *                       (If a match is found, then all fields will be verified.)
      * @param <T>            - Type
      */
+    @SuppressWarnings("java:S4276")
     public static <T> void assertThat(
             String type,
             AssertAggregator aggregator,
@@ -516,6 +519,7 @@ public class Helper {
      * @param excludeFields  - The fields in each item that will be excluded from the comparison
      * @param <T>            - Type
      */
+    @SuppressWarnings({"java:S2259", "java:S4276", "java:S5411"})
     @Step("Validate the Actual List of {0} contains the Expected items")
     private static <T> void assertThatSubset(
             String type,
@@ -609,6 +613,7 @@ public class Helper {
      * @param expected - Expected List
      * @param <T>      - Type of objects in the list to compare
      */
+    @SuppressWarnings({"java:S3776", "java:S2259"})
     public static <T> void assertThat(List<T> actual, List<T> expected) {
         // Consider both lists to be equal if both are null
         if (actual == null && expected == null) {
@@ -712,6 +717,7 @@ public class Helper {
      * @param subset - List of all items that must exist in the actual list
      * @param <T>    - Type of objects in the list to compare
      */
+    @SuppressWarnings({"java:S3776", "java:S2259"})
     public static <T> void assertThatSubset(List<T> actual, List<T> subset) {
         // Consider null or empty subset to be satisfying the assert
         if (subset == null || subset.isEmpty()) {
@@ -851,6 +857,34 @@ public class Helper {
         if (runValidation) {
             validationAction.run();
         }
+    }
+
+    /**
+     * Verify that component is displayed and component <B>text</B> is equal to test data<BR>
+     * <B>Note: </B> The validations are only executed if the component is not null &amp; the data is not blank
+     *
+     * @param reason    - Reason
+     * @param component - Component to validate against
+     */
+    public static void assertThatText(String reason, PageComponent component) {
+        assertThat(component, () -> {
+            MatcherAssert.assertThat(reason, component, isComponentDisplayed());
+            MatcherAssert.assertThat(reason, component.getText(), equalTo(component.getData()));
+        });
+    }
+
+    /**
+     * Verify that component is displayed and component <B>value</B> is equal to test data<BR>
+     * <B>Note: </B> The validations are only executed if the component is not null &amp; the data is not blank
+     *
+     * @param reason    - Reason
+     * @param component - Component to validate against
+     */
+    public static void assertThatValue(String reason, PageComponent component) {
+        assertThat(component, () -> {
+            MatcherAssert.assertThat(reason, component, isComponentDisplayed());
+            MatcherAssert.assertThat(reason, component.getValue(), equalTo(component.getData()));
+        });
     }
 
     /**
@@ -1001,6 +1035,7 @@ public class Helper {
      * @param retries  - Number of times to retry if entering the field fails (either during input or validation)
      * @param all      - true to get all fields (including inherited fields), false to get only declared fields
      */
+    @SuppressWarnings({"java:S3776", "java:S112"})
     public static void autoFillPage(PageObject page, boolean validate, int retries, boolean all) {
         Field[] fields;
         if (all) {
