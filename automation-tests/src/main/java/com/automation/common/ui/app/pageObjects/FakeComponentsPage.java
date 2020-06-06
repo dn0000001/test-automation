@@ -39,6 +39,7 @@ public class FakeComponentsPage extends PageObjectV2 {
     @FindBy(id = "does not exist")
     private PrimeFacesRadioButtonGroup primeFacesRadioButtonGroup;
 
+    @SuppressWarnings("java:S3740")
     @FindBy(id = "does not exist")
     private RadioButtonGroup radioButtonGroup;
 
@@ -106,21 +107,22 @@ public class FakeComponentsPage extends PageObjectV2 {
      * @return true if any component has non-blank data else false
      */
     public boolean hasData() {
-        return Utils.isNotBlank(checkBoxAJAX) ||
-                Utils.isNotBlank(checkBoxLabel) ||
-                Utils.isNotBlank(imageUpload) ||
-                Utils.isNotBlank(primeFacesRadioButtonGroup) ||
-                Utils.isNotBlank(radioButtonGroup) ||
-                Utils.isNotBlank(radioOption) ||
-                Utils.isNotBlank(searchTextBox) ||
-                Utils.isNotBlank(select) ||
-                Utils.isNotBlank(selectEnhanced) ||
-                Utils.isNotBlank(selectEnhancedAJAX) ||
-                Utils.isNotBlank(tabOffTextBox) ||
-                Utils.isNotBlank(textBox) ||
-                Utils.isNotBlank(textBoxBackspace) ||
-                Utils.isNotBlank(generalWebComponent) ||
-                Utils.isNotBlank(generalAliasedString);
+        return Utils.isNotBlank(checkBoxAJAX)
+                || Utils.isNotBlank(checkBoxLabel)
+                || Utils.isNotBlank(imageUpload)
+                || Utils.isNotBlank(primeFacesRadioButtonGroup)
+                || Utils.isNotBlank(radioButtonGroup)
+                || Utils.isNotBlank(radioOption)
+                || Utils.isNotBlank(searchTextBox)
+                || Utils.isNotBlank(select)
+                || Utils.isNotBlank(selectEnhanced)
+                || Utils.isNotBlank(selectEnhancedAJAX)
+                || Utils.isNotBlank(tabOffTextBox)
+                || Utils.isNotBlank(textBox)
+                || Utils.isNotBlank(textBoxBackspace)
+                || Utils.isNotBlank(generalWebComponent)
+                || Utils.isNotBlank(generalAliasedString)
+                ;
     }
 
     public String getTestData(Type component, boolean resolveAliases) {

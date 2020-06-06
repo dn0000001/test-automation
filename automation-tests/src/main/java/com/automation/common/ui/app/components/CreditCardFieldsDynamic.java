@@ -7,11 +7,15 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
+
 /**
- * A page object that acts as a component and contains a sub-page object component
+ * A dynamic page object that acts as a component and contains a dynamic sub-page object component
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class CreditCardFields extends ComponentPO {
+public class CreditCardFieldsDynamic extends ComponentPO {
     @FindBy(css = "select[name$='type']")
     private SelectEnhanced creditCardType;
 
@@ -19,22 +23,30 @@ public class CreditCardFields extends ComponentPO {
     @FindBy(css = "[name$='ccnumber']")
     private TextBox creditCardNumber;
 
-    @FindBy(css = "[name$='cvc']")
+    @FindBy(css = "[name$='${cvc}']")
     private TextBox cardVerificationCode;
 
     @XStreamAlias("card-expiration-date")
     @FindBy(xpath = "//*[select[contains(@name, 'ccexp_yy')] and select[contains(@name, 'ccexp_mm')]]")
-    private CardExpirationDateFields cardExpirationDate;
+    private CardExpirationDateFieldsDynamic cardExpirationDate;
 
     @FindBy(css = "[name$='cc_uname']")
     private TextBox cardUserName;
 
-    public CreditCardFields() {
+    public CreditCardFieldsDynamic() {
         super();
     }
 
-    public CreditCardFields(TestContext context) {
+    public CreditCardFieldsDynamic(TestContext context) {
         super(context);
+    }
+
+    public void updateCvcKey(String value) {
+        getSubstitutions().put("cvc", value);
+    }
+
+    public void updateCommonFieldKey(String value) {
+        getSubstitutions().put(CardExpirationDateFieldsDynamic.getCommonFieldKey(), value);
     }
 
     @Override
@@ -47,12 +59,15 @@ public class CreditCardFields extends ComponentPO {
                 ;
     }
 
-    private CardExpirationDateFields getCardExpirationDate() {
+    private CardExpirationDateFieldsDynamic getCardExpirationDate() {
         if (cardExpirationDate == null) {
-            cardExpirationDate = new CardExpirationDateFields();
+            cardExpirationDate = new CardExpirationDateFieldsDynamic();
         }
 
         if (cardExpirationDate.getContext() == null) {
+            String key = getSubstitutions().get(CardExpirationDateFieldsDynamic.getCommonFieldKey());
+            assertThat("Common Field Key", key, not(isEmptyOrNullString()));
+            cardExpirationDate.updateCommonFieldKey(key);
             cardExpirationDate.initPage(getContext());
         }
 

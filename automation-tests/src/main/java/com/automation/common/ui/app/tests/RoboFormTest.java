@@ -7,6 +7,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
@@ -22,7 +23,21 @@ public class RoboFormTest extends TestNGBase {
     ) {
         getContext().getDriver().get(url);
         RoboFormDO roboFormDO = new RoboFormDO(getContext()).fromResource(dataSet);
+        if (roboFormDO.isUseDynamicPage()) {
+            fillUsingDynamicComponentPO(roboFormDO);
+        } else {
+            fillUsingNormalComponentPO(roboFormDO);
+        }
+    }
+
+    @Step("Fill Using Normal ComponentPO")
+    private void fillUsingNormalComponentPO(RoboFormDO roboFormDO) {
         roboFormDO.getRoboFormPage().fill();
+    }
+
+    @Step("Fill Using Dynamic ComponentPO")
+    private void fillUsingDynamicComponentPO(RoboFormDO roboFormDO) {
+        roboFormDO.getRoboFormDynamicPage().fill();
     }
 
 }

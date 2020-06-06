@@ -1,35 +1,37 @@
 package com.automation.common.ui.app.pageObjects;
 
-import com.automation.common.ui.app.components.CreditCardFields;
+import com.automation.common.ui.app.components.CreditCardFieldsDynamic;
 import com.automation.common.ui.app.components.TextBox;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 
-public class RoboFormPage extends PageObjectV2 {
+public class RoboFormDynamicPage extends PageObjectV2 {
     @FindBy(css = "[name$='frstname']")
     private TextBox firstName;
 
     @FindBy(css = "[name$='lastname']")
     private TextBox lastName;
 
-    private CreditCardFields creditCard;
+    private CreditCardFieldsDynamic creditCard;
 
-    public RoboFormPage() {
+    public RoboFormDynamicPage() {
         super();
     }
 
-    public RoboFormPage(TestContext context) {
+    public RoboFormDynamicPage(TestContext context) {
         super(context);
     }
 
-    private CreditCardFields getCreditCard() {
+    private CreditCardFieldsDynamic getCreditCard() {
         if (creditCard == null) {
-            creditCard = new CreditCardFields();
+            creditCard = new CreditCardFieldsDynamic();
         }
 
         if (creditCard.getContext() == null) {
+            creditCard.updateCvcKey("cvc");
+            creditCard.updateCommonFieldKey("ccexp_");
             creditCard.initPage(getContext());
         }
 
