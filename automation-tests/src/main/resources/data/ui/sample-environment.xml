@@ -4,22 +4,28 @@
     <environment environmentName="QA" url="https://www.tsn.ca">
         <prop name="apiUrl" value="http://www.holidaywebservice.com"/>
         <prop name="dbPassword" value="feuGPPZDZlkVmHXJwOISwQ=="/>
+        <prop name="user-count" value="2"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
-        <user role=""/>
+        <user role="user" userName="u1" password="feuGPPZDZlkVmHXJwOISwQ=="/>
+        <user role="admin" userName="a1" password="xzRZ75G077/YqCsRSAHGMw=="/>
     </environment>
     <environment environmentName="DEV" url="https://www.google.ca">
         <prop name="apiUrl" value="https://jsonip.com"/>
         <prop name="dbPassword" value="Q27p7DXgP2AzDxxBDw/E0g=="/>
+        <prop name="user-count" value="3"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
-        <user role=""/>
+        <user role="user" userName="u2" password="xzRZ75G077/YqCsRSAHGMw=="/>
+        <user role="super" userName="s2" password="feuGPPZDZlkVmHXJwOISwQ=="/>
+        <user role="admin" userName="a2" password="Q27p7DXgP2AzDxxBDw/E0g=="/>
     </environment>
     <environment environmentName="PROD" url="http://www.truenorthhockey.com">
         <prop name="apiUrl" value="http://wsf.cdyne.com"/>
         <prop name="dbPassword" value="xzRZ75G077/YqCsRSAHGMw=="/>
+        <prop name="user-count" value="1"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
-        <user role=""/>
+        <user role="user" userName="u3" password="Q27p7DXgP2AzDxxBDw/E0g=="/>
     </environment>
 </setup>
