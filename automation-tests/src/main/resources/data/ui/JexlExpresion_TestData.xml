@@ -29,6 +29,18 @@
         <calcDate1>${dateActions.format(dateUtils.addDays(currentSystemDate, 1), random_date_pattern)}</calcDate1>
         <calcDate2>${dateActions.format(dateUtils.addMonths(currentSystemDate, 1), random_date_pattern)}</calcDate2>
         <calcDate3>${dateActions.format(dateUtils.addYears(currentSystemDate, 1), random_date_pattern)}</calcDate3>
+
+        <role>user</role>
+        <user>${env.getUser(role).getUserName()}</user>
+        <password>${crypto.decrypt(env.getUser(role).getPassword())}</password>
+
+        <role2>super</role2>
+        <user2>${env.getUser(role2).getUserName()}</user2>
+        <password2>${crypto.decrypt(env.getUser(role2).getPassword())}</password2>
+
+        <role3>admin</role3>
+        <user3>${env.getUser(role3).getUserName()}</user3>
+        <password3>${crypto.decrypt(env.getUser(role3).getPassword())}</password3>
     </aliases>
     <someField initial="${var4} ${RandomDateGenerator} ${RandomRealUSAddressGenerator}" expected="${var1} ${var2}">${var3}</someField>
     <anotherField initial="${encPass}" expected="${decPass}">${orgPass}</anotherField>
@@ -37,4 +49,8 @@
     <extraField3 initial="${calcDate1} ${calcDate2}" expected="${calcDate3}">${calcDate3}</extraField3>
     <extraField4 initial="${calcDate1} ${calcDate2}" expected="${var11}">${var10}</extraField4>
     <currentSystemDate>${calcCurrentSystemDate}</currentSystemDate>
+
+    <userField1 initial="${role}" expected="u2 password2">${user} ${password}</userField1>
+    <userField2 initial="${role2}" expected="s2 password1">${user2} ${password2}</userField2>
+    <userField3 initial="${role3}" expected="a2 password">${user3} ${password3}</userField3>
 </jexl-expression-do>

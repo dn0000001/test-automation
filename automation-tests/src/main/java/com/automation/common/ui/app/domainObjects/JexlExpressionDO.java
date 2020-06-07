@@ -29,6 +29,9 @@ public class JexlExpressionDO extends DomainObject {
     private AliasedString extraField3;
     private AliasedString extraField4;
     private AliasedString currentSystemDate;
+    private AliasedString userField1;
+    private AliasedString userField2;
+    private AliasedString userField3;
 
     public JexlExpressionDO() {
         super();
@@ -119,6 +122,30 @@ public class JexlExpressionDO extends DomainObject {
 
     public String getExtraField4Initial() {
         return extraField4.getData(DataTypes.Initial, true);
+    }
+
+    public String getUserField1() {
+        return userField1.getData();
+    }
+
+    public String getUserField1Expected() {
+        return userField1.getData(DataTypes.Expected, true);
+    }
+
+    public String getUserField2() {
+        return userField2.getData();
+    }
+
+    public String getUserField2Expected() {
+        return userField2.getData(DataTypes.Expected, true);
+    }
+
+    public String getUserField3() {
+        return userField3.getData();
+    }
+
+    public String getUserField3Expected() {
+        return userField3.getData(DataTypes.Expected, true);
     }
 
     @Step("Validate Current System Date Before Load")
