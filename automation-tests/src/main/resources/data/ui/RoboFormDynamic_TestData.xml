@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<robo-form-do>
+    <aliases>
+        <test-name>RoboFormDynamic Test</test-name>
+    </aliases>
+    <useDynamicPage>true</useDynamicPage>
+    <roboFormDynamicPage>
+        <firstName>Dynamic</firstName>
+        <lastName>Test</lastName>
+        <creditCard>
+            <creditCardType>Master Card</creditCardType>
+            <credit-card-number>5555666677778888</credit-card-number>
+            <cardVerificationCode>333</cardVerificationCode>
+            <card-expiration-date>
+                <month>02</month>
+                <year>2026</year>
+            </card-expiration-date>
+            <cardUserName>Dynamic Test</cardUserName>
+        </creditCard>
+    </roboFormDynamicPage>
+</robo-form-do>

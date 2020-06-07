@@ -147,6 +147,14 @@
         </classes>
     </test>
 
+    <test name="RoboFormDynamic Test">
+        <parameter name="url" value="https://www.roboform.com/filling-test-all-fields"/>
+        <parameter name="data-set" value="data/ui/RoboFormDynamic_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.RoboFormTest"/>
+        </classes>
+    </test>
+
     <test name="Jexl Expression Test">
         <parameter name="data-set" value="data/ui/JexlExpresion_TestData.xml"/>
         <classes>
