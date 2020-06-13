@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<address-provider-do>
+    <aliases>
+        <test-name>Validate that a generic address data file can be used for all states</test-name>
+
+        <testState>${lookup.get("state")}</testState>
+        <address>${addresses.get(testState)}</address>
+        <addressCount>${addresses.getAll(testState).size()}</addressCount>
+
+        <street>${address.getStreet()}</street>
+        <city>${address.getCity()}</city>
+        <state>${address.getState()}</state>
+        <zipCode>${address.getZipCode()}</zipCode>
+        <country>${address.getCountry()}</country>
+        <phoneNumber>${address.getPhoneNumber()}</phoneNumber>
+    </aliases>
+    <addressInfo street="${street}" city="${city}" state="${state}" zipCode="${zipCode}" country="${country}" phoneNumber="${phoneNumber}"/>
+    <addressCount>${addressCount}</addressCount>
+</address-provider-do>

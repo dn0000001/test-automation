@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<address-provider>
+    <address state="AL">
+        <address street="600 HIGHLAND AVE" city="SELMA" state="AL" zipCode="36701" country="USA" phoneNumber="(334) 874-9122"/>
+        <address street="720 S MEMORIAL DR" city="PRATTVILLE" state="AL" zipCode="36067" country="USA" phoneNumber="(334) 365-0838"/>
+        <address street="290 INTERSTATE COMMERCIAL PARK LOOP" city="PRATTVILLE" zipCode="36066"/>
+    </address>
+    <address state="CO">
+        <address street="10863 I25 FRONTAGE RD" city="LONGMONT" zipCode="80504" country="USA"/>
+        <address street="5950 FIRESTONE BLVD" city="FIRESTONE" state="CO" zipCode="80504" phoneNumber="(303) 776-8087"/>
+        <address street="1800 28TH STREET" city="BOULDER" zipCode="80301"/>
+        <address street="2920 BASELINE RD" city="BOULDER" state="CO" zipCode="80303-2314"/>
+        <address street="2171 N FRONTAGE RD WEST" city="VAIL" state="CO" zipCode="81657-4957"/>
+        <address street="811 CASTLE VALLEY BLVD" city="NEW CASTLE" state="CO" zipCode="81647"/>
+    </address>
+    <address state="ID">
+        <address street="1201 SOUTH 25TH EAST" city="AMMON" state="ID" zipCode="83406"/>
+        <address street="1875 SOUTH 25TH EAST" city="AMMON" state="ID" zipCode="83406"/>
+        <address street="1575 N GATE MILE" city="IDAHO FALLS" state="ID" zipCode="83401"/>
+        <address street="1485 W BROADWAY" city="IDAHO FALLS" state="ID" zipCode="83402"/>
+    </address>
+</address-provider>

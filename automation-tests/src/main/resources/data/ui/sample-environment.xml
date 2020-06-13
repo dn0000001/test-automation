@@ -14,6 +14,7 @@
         <prop name="apiUrl" value="https://jsonip.com"/>
         <prop name="dbPassword" value="Q27p7DXgP2AzDxxBDw/E0g=="/>
         <prop name="user-count" value="3"/>
+        <prop name="address-provider-config" value="data/ui/sample-addresses.xml"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
         <user role="user" userName="u2" password="xzRZ75G077/YqCsRSAHGMw=="/>
