@@ -1,14 +1,27 @@
 package com.taf.automation.expressions;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * This class holds the US address information used in RandomRealUSAddressGenerator
  */
 public class USAddress {
+    @XStreamAsAttribute
     private String street;
+
+    @XStreamAsAttribute
     private String city;
+
+    @XStreamAsAttribute
     private String state;
+
+    @XStreamAsAttribute
     private String zipCode;
+
+    @XStreamAsAttribute
     private String country;
+
+    @XStreamAsAttribute
     private String phoneNumber;
 
     public String getStreet() {
