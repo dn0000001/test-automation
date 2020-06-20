@@ -205,23 +205,28 @@ public class SelectEnhanced extends PageComponent {
     private void setValueAttempt() {
         if (getSelection() == Selection.VISIBLE_TEXT) {
             select.selectByVisibleText(rawSelectionData);
+            return;
         }
 
         if (getSelection() == Selection.VALUE_HTML) {
             select.selectByValue(rawSelectionData);
+            return;
         }
 
         if (getSelection() == Selection.INDEX) {
             selectedIndex = Integer.parseInt(rawSelectionData);
             select.selectByIndex(selectedIndex);
+            return;
         }
 
         if (getSelection() == Selection.VISIBLE_TEXT_REGEX) {
             setValueUsingTextRegEx();
+            return;
         }
 
         if (getSelection() == Selection.VALUE_HTML_REGEX) {
             setValueUsingHtmlRegEx();
+            return;
         }
 
         if (getSelection() == Selection.RANDOM_INDEX || getSelection() == Selection.RANDOM_INDEX_RANGE) {
@@ -230,6 +235,7 @@ public class SelectEnhanced extends PageComponent {
             selectedIndex = Rand.randomRange(minRandomIndex, max - 1);
             assertThat("Invalid Index", selectedIndex, range(0, all.size() - 1));
             select.selectByIndex(selectedIndex);
+            return;
         }
 
         if (getSelection() == Selection.RANDOM_INDEX_VALUES) {
@@ -240,7 +246,10 @@ public class SelectEnhanced extends PageComponent {
             List<WebElement> all = select.getOptions();
             assertThat("Invalid Index", selectedIndex, range(0, all.size() - 1));
             select.selectByIndex(selectedIndex);
+            return;
         }
+
+        assertThat("Unsupported Selection:  " + getSelection(), false);
     }
 
     private void setValueUsingTextRegEx() {
