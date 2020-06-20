@@ -199,7 +199,7 @@ public enum WebDriverTypeEnum {
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         firefoxOptions.merge(mergeCapabilities);
         firefoxOptions.setProfile(profile);
-        firefoxOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.DISMISS);
+        firefoxOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.IGNORE);
         firefoxOptions.setAcceptInsecureCerts(true);
         firefoxOptions.setLogLevel(FirefoxDriverLogLevel.WARN);
         firefoxOptions.addArguments("--log fatal");
@@ -234,7 +234,7 @@ public enum WebDriverTypeEnum {
         }
 
         chromeOptions.merge(mergeCapabilities);
-        chromeOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.DISMISS);
+        chromeOptions.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.IGNORE);
         return chromeOptions;
     }
 
