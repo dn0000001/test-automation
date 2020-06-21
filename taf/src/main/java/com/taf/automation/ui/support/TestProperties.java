@@ -15,6 +15,7 @@ import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
 import net.lightbody.bmp.proxy.CaptureType;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.Proxy;
@@ -363,10 +364,50 @@ public class TestProperties {
         return testEnvironment;
     }
 
+    /**
+     * Get the field with fallback to environment property
+     *
+     * @param field            - Field from this class
+     * @param replaceTargetENV - true to replace the target environment in the field
+     * @param key              - the environment custom key to lookup value if necessary
+     * @param decode           - true to decode the environment value if necessary
+     * @return String
+     */
+    private String getFieldWithFallBack(String field, boolean replaceTargetENV, String key, boolean decode) {
+        String value = (replaceTargetENV) ? replaceWithTargetEnv(field) : field;
+        if (value == null && key != null) {
+            value = getEnvironmentCustom(key, decode);
+        }
+
+        return value;
+    }
+
+    /**
+     * Get the field with fallback to environment property
+     *
+     * @param field             - Field from this class
+     * @param fallbackAttemptOn - if the field equals this value, then use environment to lookup value
+     * @param key               - the environment custom key to lookup value if necessary
+     * @param decode            - true to decode the environment value if necessary
+     * @return int
+     */
+    private int getFieldWithFallBack(int field, int fallbackAttemptOn, String key, boolean decode) {
+        if (field == fallbackAttemptOn) {
+            String value = getEnvironmentCustom(key, decode);
+            return NumberUtils.toInt(value, field);
+        } else {
+            return field;
+        }
+    }
+
     private String getEnvironmentCustom(String key, boolean decode) {
         if (getTestEnvironment() != null) {
-            String value = getTestEnvironment().getCustom(key);
-            return (decode) ? value : new CryptoUtils().decrypt(value);
+            try {
+                String value = getTestEnvironment().getCustom(key);
+                return (decode) ? new CryptoUtils().decrypt(value) : value;
+            } catch (Exception ex) {
+                return null;
+            }
         }
 
         return null;
@@ -605,7 +646,8 @@ public class TestProperties {
     }
 
     public String getDbPassword() {
-        return (dbPassword == null) ? getEnvironmentCustom("dbPassword", true) : dbPassword;
+        // Field is encrypted and classes that use decrypt as such leaving encrypted
+        return getFieldWithFallBack(dbPassword, false, "dbPassword", false);
     }
 
     public boolean isDbIntegratedSecurity() {
@@ -721,15 +763,16 @@ public class TestProperties {
     }
 
     public String getMailServer() {
-        return mailServer;
+        return getFieldWithFallBack(mailServer, true, "mailServer", false);
     }
 
     public int getMailServerPort() {
-        return mailServerPort;
+        return getFieldWithFallBack(mailServerPort, 0, "mailServerPort", false);
     }
 
     public String getMailPassword() {
-        return mailPassword;
+        // Field is encrypted and classes that use decrypt as such leaving encrypted
+        return getFieldWithFallBack(mailPassword, false, "mailPassword", false);
     }
 
     public int getMailTimeout() {
