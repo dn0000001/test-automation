@@ -52,6 +52,9 @@ public class JexlExpressionTest extends TestNGBase {
         validateFieldValue("User Field 2", jexlDO.getUserField2(), jexlDO.getUserField2Expected());
         validateFieldValue("User Field 3", jexlDO.getUserField3(), jexlDO.getUserField3Expected());
 
+        validateFieldValue("BigDecimal Field 1", jexlDO.getBdField1(), jexlDO.getBdField1Expected());
+        validateFieldValue("BigDecimal Field 2", jexlDO.getBdField2(), jexlDO.getBdField2Expected());
+
         for (String var : jexlVariables) {
             validateField(var, jexlDO.getSomeField(), jexlDO.getSomeFieldExpected(), jexlDO.getSomeFieldInitial());
             validateField(var, jexlDO.getAnotherField(), jexlDO.getAnotherFieldExpected(), jexlDO.getAnotherFieldInitial());
