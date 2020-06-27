@@ -2,6 +2,7 @@ package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.DateActions;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import de.jollyday.HolidayCalendar;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
@@ -241,6 +242,81 @@ public class DateActionsTest {
 
         actual = dateActions.onlyBusinessDaysBefore(oct15anchor, -1);
         assertThat("Thanksgiving - Only Business Days Before - 1 Day Before", actual, equalTo(oct11));
+    }
+
+    @Features("DateActions")
+    @Stories("Result Date Is Independence Day Shifted to Friday")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsIndependenceDayShiftedToFridayTest() {
+        DateActions dateActions = new DateActions().withHolidayCalendar(HolidayCalendar.UNITED_STATES);
+        // Independence Day in this case is July 3 because July 4th is a Saturday
+        Date july3 = DateActions.parseDateStrictly("07/03/2020", DATE_FORMAT);
+
+        Date july2 = DateActions.parseDateStrictly("07/02/2020", DATE_FORMAT);
+        Date july5 = DateActions.parseDateStrictly("07/05/2020", DATE_FORMAT);
+        Date july6 = DateActions.parseDateStrictly("07/06/2020", DATE_FORMAT);
+
+        Date actual = dateActions.nextBusinessDay(july3, 0);
+        assertThat("Independence Day - Next Business Day - No Days Added", actual, equalTo(july6));
+
+        actual = dateActions.previousBusinessDay(july3, 0);
+        assertThat("Independence Day - Previous Business Day - No Days Added", actual, equalTo(july2));
+
+        actual = dateActions.nextBusinessDay(july2, 1);
+        assertThat("Independence Day - Next Business Day - 1 Day After", actual, equalTo(july6));
+
+        actual = dateActions.previousBusinessDay(july5, -1);
+        assertThat("Independence Day - Previous Business Day - 1 Day Before", actual, equalTo(july2));
+
+        actual = dateActions.onlyBusinessDaysAfter(july3, 0);
+        assertThat("Independence Day - Only Business Days After - No Days Added", actual, equalTo(july6));
+
+        actual = dateActions.onlyBusinessDaysBefore(july3, 0);
+        assertThat("Independence Day - Only Business Days Before - No Days Added", actual, equalTo(july2));
+
+        actual = dateActions.onlyBusinessDaysAfter(july2, 1);
+        assertThat("Independence Day - Only Business Days After - 1 Day After", actual, equalTo(july6));
+
+        actual = dateActions.onlyBusinessDaysBefore(july5, -1);
+        assertThat("Independence Day - Only Business Days Before - 1 Day Before", actual, equalTo(july2));
+    }
+
+    @Features("DateActions")
+    @Stories("Result Date Is Independence Day Shifted to Monday")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsIndependenceDayShiftedToMondayTest() {
+        DateActions dateActions = new DateActions().withHolidayCalendar(HolidayCalendar.UNITED_STATES);
+        // Independence Day in this case is July 5 because July 4th is a Sunday
+        Date july5 = DateActions.parseDateStrictly("07/05/2021", DATE_FORMAT);
+
+        Date july2 = DateActions.parseDateStrictly("07/02/2021", DATE_FORMAT);
+        Date july6 = DateActions.parseDateStrictly("07/06/2021", DATE_FORMAT);
+
+        Date actual = dateActions.nextBusinessDay(july5, 0);
+        assertThat("Independence Day - Next Business Day - No Days Added", actual, equalTo(july6));
+
+        actual = dateActions.previousBusinessDay(july5, 0);
+        assertThat("Independence Day - Previous Business Day - No Days Added", actual, equalTo(july2));
+
+        actual = dateActions.nextBusinessDay(july2, 1);
+        assertThat("Independence Day - Next Business Day - 1 Day After", actual, equalTo(july6));
+
+        actual = dateActions.previousBusinessDay(july6, -1);
+        assertThat("Independence Day - Previous Business Day - 1 Day Before", actual, equalTo(july2));
+
+        actual = dateActions.onlyBusinessDaysAfter(july5, 0);
+        assertThat("Independence Day - Only Business Days After - No Days Added", actual, equalTo(july6));
+
+        actual = dateActions.onlyBusinessDaysBefore(july5, 0);
+        assertThat("Independence Day - Only Business Days Before - No Days Added", actual, equalTo(july2));
+
+        actual = dateActions.onlyBusinessDaysAfter(july2, 1);
+        assertThat("Independence Day - Only Business Days After - 1 Day After", actual, equalTo(july6));
+
+        actual = dateActions.onlyBusinessDaysBefore(july6, -1);
+        assertThat("Independence Day - Only Business Days Before - 1 Day Before", actual, equalTo(july2));
     }
 
 }

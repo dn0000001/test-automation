@@ -6,6 +6,7 @@ import de.jollyday.HolidayManager;
 import de.jollyday.HolidayType;
 import de.jollyday.ManagerParameters;
 import de.jollyday.util.CalendarUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.text.SimpleDateFormat;
@@ -15,7 +16,9 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
@@ -100,7 +103,77 @@ public class DateActions {
         holidays.addAll(hm.getHolidays(previousYear, regions));
         holidays.addAll(hm.getHolidays(nextYear, regions));
 
+        // Certain holidays that land on the weekend should be shifted to when they are observed
+        holidays.addAll(getHolidaysThatLandOnWeekendWhichAreShifted(holidays));
+
         return holidays;
+    }
+
+    private Set<Holiday> getHolidaysThatLandOnWeekendWhichAreShifted(Set<Holiday> holidays) {
+        Set<Holiday> shiftedHolidays = new HashSet<>();
+
+        if (holidayCalendar == HolidayCalendar.UNITED_STATES) {
+            shiftedHolidays.addAll(getUnitedStatesHolidaysThatLandOnWeekendWhichAreShifted(holidays));
+        } else if (holidayCalendar == HolidayCalendar.CANADA) {
+            shiftedHolidays.addAll(getCanadianHolidaysThatLandOnWeekendWhichAreShifted(holidays));
+        }
+
+        return shiftedHolidays;
+    }
+
+    private Set<Holiday> getUnitedStatesHolidaysThatLandOnWeekendWhichAreShifted(Set<Holiday> holidays) {
+        Set<Holiday> shiftedHolidays = new HashSet<>();
+
+        // Certain holidays that land on the weekend should be shifted to either Friday or Monday when they are observed
+        List<Holiday> problemHolidays = holidays.stream().filter(this::isWeekEndHolidayToShift).collect(Collectors.toList());
+        for (Holiday holiday : problemHolidays) {
+            Date date = toDate(holiday.getDate());
+            if (holiday.getDate().getDayOfWeek() == DayOfWeek.SATURDAY) {
+                LocalDate shiftedDate = toLocalDate(DateUtils.addDays(date, -1));
+                Holiday shiftedHoliday = new Holiday(shiftedDate, holiday.getPropertiesKey(), holiday.getType());
+                shiftedHolidays.add(shiftedHoliday);
+            } else if (holiday.getDate().getDayOfWeek() == DayOfWeek.SUNDAY) {
+                LocalDate shiftedDate = toLocalDate(DateUtils.addDays(date, 1));
+                Holiday shiftedHoliday = new Holiday(shiftedDate, holiday.getPropertiesKey(), holiday.getType());
+                shiftedHolidays.add(shiftedHoliday);
+            }
+        }
+
+        return shiftedHolidays;
+    }
+
+    private Set<Holiday> getCanadianHolidaysThatLandOnWeekendWhichAreShifted(Set<Holiday> holidays) {
+        Set<Holiday> shiftedHolidays = new HashSet<>();
+
+        // TODO Determine what the rules are and implement
+
+        return shiftedHolidays;
+    }
+
+    private boolean isWeekEndHolidayToShift(Holiday holiday) {
+        return getStandardNonBusinessDays().contains(holiday.getDate().getDayOfWeek()) && isProblemHoliday(holiday);
+    }
+
+    private boolean isProblemHoliday(Holiday holiday) {
+        if (holidayCalendar == HolidayCalendar.UNITED_STATES) {
+            // Note:  I have only put federal holidays
+            return StringUtils.equals(holiday.getPropertiesKey(), "NEW_YEAR")
+                    || StringUtils.equals(holiday.getPropertiesKey(), "INDEPENDENCE_DAY")
+                    || StringUtils.equals(holiday.getPropertiesKey(), "CHRISTMAS")
+                    ;
+        }
+
+        if (holidayCalendar == HolidayCalendar.CANADA) {
+            return StringUtils.equals(holiday.getPropertiesKey(), "NEW_YEAR")
+                    || StringUtils.equals(holiday.getPropertiesKey(), "NATIONAL_DAY")
+                    || StringUtils.equals(holiday.getPropertiesKey(), "CHRISTMAS")
+                    || StringUtils.equals(holiday.getPropertiesKey(), "BOXING_DAY")
+                    || StringUtils.equals(holiday.getPropertiesKey(), "REMEMBRANCE")
+                    || StringUtils.equals(holiday.getPropertiesKey(), "SAINT_JEAN_BAPTISTE_DAY")
+                    ;
+        }
+
+        return false;
     }
 
     private boolean isNonBusinessDay(LocalDate date) {
