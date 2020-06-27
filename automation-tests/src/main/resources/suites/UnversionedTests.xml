@@ -210,14 +210,14 @@
         </classes>
     </test>
 
-    <test name="After Class Failure Test">
+    <test name="After Test Failure Test">
         <parameter name="scenario" value="AFTER_TEST_FAILURE"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
         </classes>
     </test>
 
-    <test name="After Test Failure Test">
+    <test name="After Class Failure Test">
         <parameter name="scenario" value="AFTER_CLASS_FAILURE"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
