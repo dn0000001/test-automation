@@ -2,6 +2,8 @@ package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.DateActions;
 import de.jollyday.HolidayCalendar;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -13,6 +15,7 @@ import java.util.Date;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+@Listeners(AllureTestNGListener.class)
 public class DateActionsTest {
     private static final String DATE_FORMAT = "MM/dd/yyyy";
     private static final Date april18anchor = DateActions.parseDateStrictly("04/18/2019", DATE_FORMAT);
@@ -43,6 +46,9 @@ public class DateActionsTest {
     private static final Date sept11 = DateActions.parseDateStrictly("09/11/2019", DATE_FORMAT);
     private static final Date sept25 = DateActions.parseDateStrictly("09/25/2019", DATE_FORMAT);
 
+    @Features("DateActions")
+    @Stories("Result Date Is Business Day")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performResultDateIsBusinessDayTest() {
         DateActions dateActions = new DateActions();
@@ -83,6 +89,9 @@ public class DateActionsTest {
         assertThat("Only Business Days Before - 1 Week Before", actual, equalTo(sept11));
     }
 
+    @Features("DateActions")
+    @Stories("Result Date Is Non-Business Day")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performResultDateIsNonBusinessDayTest() {
         DateActions dateActions = new DateActions();
@@ -111,6 +120,9 @@ public class DateActionsTest {
         assertThat("Only Business Days Before - 3 Days Before", actual, equalTo(sept13));
     }
 
+    @Features("DateActions")
+    @Stories("Result Date Is Christmas")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performResultDateIsChristmasTest() {
         DateActions dateActions = new DateActions().withRegions(new String[]{"on"});
@@ -139,6 +151,9 @@ public class DateActionsTest {
         assertThat("Christmas - Only Business Days Before - 1 Day Before", actual, equalTo(dec24));
     }
 
+    @Features("DateActions")
+    @Stories("Result Date Is Good Friday")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performResultDateIsGoodFridayTest() {
         DateActions dateActions = new DateActions();
@@ -167,6 +182,9 @@ public class DateActionsTest {
         assertThat("Good Friday - Only Business Days Before - 1 Day Before", actual, equalTo(april18anchor));
     }
 
+    @Features("DateActions")
+    @Stories("Result Date Is Canada Day")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performResultDateIsCanadaDayTest() {
         DateActions dateActions = new DateActions();
@@ -195,6 +213,9 @@ public class DateActionsTest {
         assertThat("Canada Day - Only Business Days Before - 1 Day Before", actual, equalTo(jun28));
     }
 
+    @Features("DateActions")
+    @Stories("Result Date Is Thanksgiving")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performResultDateIsThanksgivingTest() {
         DateActions dateActions = new DateActions().withRegions(new String[]{"on"});

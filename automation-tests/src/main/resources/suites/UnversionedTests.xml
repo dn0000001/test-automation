@@ -210,14 +210,14 @@
         </classes>
     </test>
 
-    <test name="After Class Failure Test">
+    <test name="After Test Failure Test">
         <parameter name="scenario" value="AFTER_TEST_FAILURE"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
         </classes>
     </test>
 
-    <test name="After Test Failure Test">
+    <test name="After Class Failure Test">
         <parameter name="scenario" value="AFTER_CLASS_FAILURE"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
@@ -245,6 +245,30 @@
         <parameter name="state" value="ID"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.AddressProviderTest"/>
+        </classes>
+    </test>
+
+    <test name="Date Actions Tests">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.DateActionsTest"/>
+        </classes>
+    </test>
+
+    <test name="LocatorUtils Tests">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.LocatorUtilsTest"/>
+        </classes>
+    </test>
+
+    <test name="Page Level Summaries Tests">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.PageLevelSummariesTest"/>
+        </classes>
+    </test>
+
+    <test name="Parsing And Condition Tests">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ParsingAndConditionTest"/>
         </classes>
     </test>
 
