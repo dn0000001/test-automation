@@ -1,8 +1,8 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.DateActions;
-import de.jollyday.HolidayCalendar;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import de.jollyday.HolidayCalendar;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
