@@ -4,7 +4,13 @@ import com.taf.automation.ui.support.FilloUtils;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.GroupRow;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
+@Listeners(AllureTestNGListener.class)
 public class PageLevelSummariesTest {
     private static final String PASS = "PASS";
     private static final String FAIL = "FAIL";
@@ -35,6 +42,9 @@ public class PageLevelSummariesTest {
         }
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Empty")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void emptyTest() {
         List<CsvOutputRecord> records = new ArrayList<>();
@@ -44,6 +54,9 @@ public class PageLevelSummariesTest {
         assertThat("Group Rows", groupRows.isEmpty());
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Single Record Pass")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void singleRecordPassTest() {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
@@ -57,6 +70,9 @@ public class PageLevelSummariesTest {
         runAndValidate(records, groupRows, PASS);
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Single Record Fail")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void singleRecordFailTest() {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
@@ -70,6 +86,9 @@ public class PageLevelSummariesTest {
         runAndValidate(records, groupRows, FAIL);
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Multiple Record Pass")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void multipleRecordPassTest() {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
@@ -88,6 +107,9 @@ public class PageLevelSummariesTest {
         runAndValidate(records, groupRows, PASS);
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Multiple Record Fail")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void multipleRecordFailTest() {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
@@ -111,6 +133,9 @@ public class PageLevelSummariesTest {
         runAndValidate(records, groupRows, FAIL);
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Multiple Summary Pass")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void multipleSummaryPassTest() {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
@@ -161,6 +186,9 @@ public class PageLevelSummariesTest {
         runAndValidate(records, groupRows, PASS, PASS, PASS);
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Multiple Summary Fail")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void multipleSummaryFailTest() {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
@@ -211,6 +239,9 @@ public class PageLevelSummariesTest {
         runAndValidate(records, groupRows, FAIL, FAIL, FAIL);
     }
 
+    @Features("ExtractedDataOutputRecord")
+    @Stories("Multiple Summary Mix")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void multipleSummaryMixTest() {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
