@@ -3,10 +3,16 @@ package com.automation.common.ui.app.tests;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.LocatorUtils;
 import com.taf.automation.ui.support.RegExUtils;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.pagefactory.ByAll;
 import org.openqa.selenium.support.pagefactory.ByChained;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +21,7 @@ import static com.taf.automation.ui.support.AssertsUtil.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+@Listeners(AllureTestNGListener.class)
 public class LocatorUtilsTest {
     private static final String DOUBLE_QUOTE = "\"";
     private static final String ESCAPE_DOUBLE_QUOTE = "\\" + DOUBLE_QUOTE;
@@ -30,6 +37,9 @@ public class LocatorUtilsTest {
     private static final String KEY = "row";
     private static final String ROW_SUBSTITUTION = "${" + KEY + "}";
 
+    @Features("LocatorUtils")
+    @Stories("Null")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performNullTest() {
         Map<String, String> substitutions = null;
@@ -39,6 +49,9 @@ public class LocatorUtilsTest {
         assertThat("performNullTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Empty")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performEmptyTest() {
         Map<String, String> substitutions = new HashMap<>();
@@ -48,6 +61,9 @@ public class LocatorUtilsTest {
         assertThat("performEmptyTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.id")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performIdTest() {
         String value = "myID12345";
@@ -58,6 +74,9 @@ public class LocatorUtilsTest {
         assertThat("performIdTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.cssSelector")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performCssTest() {
         String value = "999";
@@ -70,6 +89,9 @@ public class LocatorUtilsTest {
         assertThat("performCssTest - locator", test.toString(), matchesRegex(expected));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.xpath")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performXpathTest() {
         String value = "333";
@@ -82,6 +104,9 @@ public class LocatorUtilsTest {
         assertThat("performXpathTest - locator", test.toString(), matchesRegex(expected));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.name")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performNameTest() {
         String value = "abc";
@@ -92,6 +117,9 @@ public class LocatorUtilsTest {
         assertThat("performNameTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.linkText")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performLinkTextTest() {
         String value = "complete";
@@ -102,6 +130,9 @@ public class LocatorUtilsTest {
         assertThat("performLinkTextTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.partialLinkText")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performPartialLinkTextTest() {
         String value = "partial";
@@ -112,6 +143,9 @@ public class LocatorUtilsTest {
         assertThat("performPartialLinkTextTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.tagName")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performTagNameTest() {
         String value = "tag";
@@ -122,6 +156,9 @@ public class LocatorUtilsTest {
         assertThat("performTagNameTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("By.className")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performClassNameTest() {
         String value = "class";
@@ -132,6 +169,9 @@ public class LocatorUtilsTest {
         assertThat("performClassNameTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
     }
 
+    @Features("LocatorUtils")
+    @Stories("ByChained")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performByChainedTest() {
         Map<String, String> substitutions = new HashMap<>();
@@ -143,6 +183,9 @@ public class LocatorUtilsTest {
         assertThat("performByChainedTest - locator", test.toString(), equalTo("By.chained({By.cssSelector: .test [id='auto-22'],By.xpath: //*[@id='auto-11']})"));
     }
 
+    @Features("LocatorUtils")
+    @Stories("ByAll")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performByAllTest() {
         Map<String, String> substitutions = new HashMap<>();
@@ -154,8 +197,11 @@ public class LocatorUtilsTest {
         assertThat("performByAllTest - locator", test.toString(), equalTo("By.all({By.id: auto-44,By.name: auto-33})"));
     }
 
-    @SuppressWarnings("squid:S1192")
+    @Features("LocatorUtils")
+    @Stories("ByChained Recursive")
+    @Severity(SeverityLevel.NORMAL)
     @Test
+    @SuppressWarnings("squid:S1192")
     public void performByChainedRecursiveTest() {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("xpath1", "auto-1");
@@ -186,8 +232,11 @@ public class LocatorUtilsTest {
         assertThat("performByChainedRecursiveTest- locator", test.toString(), equalTo(expected));
     }
 
-    @SuppressWarnings("squid:S1192")
+    @Features("LocatorUtils")
+    @Stories("ByAll Recursive")
+    @Severity(SeverityLevel.NORMAL)
     @Test
+    @SuppressWarnings("squid:S1192")
     public void performByAllRecursiveTest() {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("xpath1", "auto-1");
@@ -218,6 +267,9 @@ public class LocatorUtilsTest {
         assertThat("performByAllRecursiveTest- locator", test.toString(), equalTo(expected));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Mixed Recursive")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMixedRecursive1Test() {
         Map<String, String> substitutions = new HashMap<>();
@@ -249,6 +301,9 @@ public class LocatorUtilsTest {
         assertThat("performMixedRecursive1Test- locator", test.toString(), equalTo(expected));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Mixed Recursive")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMixedRecursive2Test() {
         Map<String, String> substitutions = new HashMap<>();
@@ -294,6 +349,9 @@ public class LocatorUtilsTest {
         Helper.log(console, true);
     }
 
+    @Features("LocatorUtils")
+    @Stories("No Quotes")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performNoQuotesTest() {
         String unsafeValue = VALUE;
@@ -310,6 +368,9 @@ public class LocatorUtilsTest {
         assertThat("performNoQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Matching Single Quotes")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMatchingSingleQuotesTest() {
         String unsafeValue = VALUE + SINGLE_QUOTE + PART + SINGLE_QUOTE + ANOTHER;
@@ -332,6 +393,9 @@ public class LocatorUtilsTest {
         assertThat("performMatchingSingleQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Matching Double Quotes")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMatchingDoubleQuotesTest() {
         String unsafeValue = VALUE + DOUBLE_QUOTE + PART + DOUBLE_QUOTE + ANOTHER;
@@ -354,6 +418,9 @@ public class LocatorUtilsTest {
         assertThat("performMatchingDoubleQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Mix Quotes Sequential")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMatchingMixQuotesSequentialTest() {
         String unsafeValue = VALUE + SINGLE_QUOTE + PART + SINGLE_QUOTE + ANOTHER + DOUBLE_QUOTE + SOMETHING + DOUBLE_QUOTE + CAPS;
@@ -384,6 +451,9 @@ public class LocatorUtilsTest {
         assertThat("performMatchingMixQuotesSequentialTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Matching Mix Quotes Alternating")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMatchingMixQuotesAlternatingTest() {
         String unsafeValue = VALUE + SINGLE_QUOTE + PART + DOUBLE_QUOTE + ANOTHER + SINGLE_QUOTE + SOMETHING + DOUBLE_QUOTE + CAPS;
@@ -414,6 +484,9 @@ public class LocatorUtilsTest {
         assertThat("performMatchingMixQuotesAlternatingTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Single Quote")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performSingleQuoteTest() {
         String unsafeValue = VALUE + SINGLE_QUOTE + PART;
@@ -432,6 +505,9 @@ public class LocatorUtilsTest {
         assertThat("performSingleQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Double Quote")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performDoubleQuoteTest() {
         String unsafeValue = VALUE + DOUBLE_QUOTE + PART;
@@ -450,6 +526,9 @@ public class LocatorUtilsTest {
         assertThat("performDoubleQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Single Quote Start")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performSingleQuoteStartTest() {
         String unsafeValue = SINGLE_QUOTE + VALUE;
@@ -468,6 +547,9 @@ public class LocatorUtilsTest {
         assertThat("performSingleQuoteStartTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Double Quote Start")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performDoubleQuoteStartTest() {
         String unsafeValue = DOUBLE_QUOTE + VALUE;
@@ -486,6 +568,9 @@ public class LocatorUtilsTest {
         assertThat("performDoubleQuoteStartTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Single Quote End")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performSingleQuoteEndTest() {
         String unsafeValue = VALUE + SINGLE_QUOTE;
@@ -504,6 +589,9 @@ public class LocatorUtilsTest {
         assertThat("performSingleQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Double Quote End")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performDoubleQuoteEndTest() {
         String unsafeValue = VALUE + DOUBLE_QUOTE;
@@ -522,6 +610,9 @@ public class LocatorUtilsTest {
         assertThat("performDoubleQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Mix Quote")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMixQuoteTest() {
         String unsafeValue = VALUE + SINGLE_QUOTE + PART + DOUBLE_QUOTE + ANOTHER;
@@ -544,6 +635,9 @@ public class LocatorUtilsTest {
         assertThat("performMixQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Mix Quote Sequential")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMixQuoteSequentialTest() {
         String unsafeValue = VALUE + SINGLE_QUOTE + DOUBLE_QUOTE + PART;
@@ -566,6 +660,9 @@ public class LocatorUtilsTest {
         assertThat("performMixQuoteSequentialTest", actualSafeValue, equalTo(expectedSafeValue));
     }
 
+    @Features("LocatorUtils")
+    @Stories("Mix Quote End")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void performMixQuoteEndTest() {
         String unsafeValue = SINGLE_QUOTE + VALUE + DOUBLE_QUOTE;
