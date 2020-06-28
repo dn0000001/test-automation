@@ -14,6 +14,7 @@ import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
 import net.lightbody.bmp.proxy.CaptureType;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.Capabilities;
@@ -398,6 +399,19 @@ public class TestProperties {
         } else {
             return field;
         }
+    }
+
+    public boolean isCustom(String key) {
+        return BooleanUtils.toBoolean(getEnvironmentCustom(key, false));
+    }
+
+    public String getCustom(String key, String defaultValue) {
+        return getCustom(key, defaultValue, false);
+    }
+
+    public String getCustom(String key, String defaultValue, boolean decode) {
+        String value = getEnvironmentCustom(key, decode);
+        return (value == null) ? defaultValue : value;
     }
 
     private String getEnvironmentCustom(String key, boolean decode) {
