@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.domainObjects;
 
 import com.taf.automation.ui.support.AliasedString;
+import com.taf.automation.ui.support.BigDecimalUtils;
 import com.taf.automation.ui.support.DateActions;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.Lookup;
@@ -32,6 +33,8 @@ public class JexlExpressionDO extends DomainObject {
     private AliasedString userField1;
     private AliasedString userField2;
     private AliasedString userField3;
+    private AliasedString bdField1;
+    private AliasedString bdField2;
 
     public JexlExpressionDO() {
         super();
@@ -50,6 +53,7 @@ public class JexlExpressionDO extends DomainObject {
         jexlContext.set("dateActions", new DateActions());
         jexlContext.set("dateUtils", new DateUtils());
         jexlContext.set("today", TODAY);
+        jexlContext.set("bdUtils", BigDecimalUtils.getInstance());
     }
 
     public String getSomeField() {
@@ -146,6 +150,22 @@ public class JexlExpressionDO extends DomainObject {
 
     public String getUserField3Expected() {
         return userField3.getData(DataTypes.Expected, true);
+    }
+
+    public String getBdField1() {
+        return bdField1.getData();
+    }
+
+    public String getBdField1Expected() {
+        return bdField1.getData(DataTypes.Expected, true);
+    }
+
+    public String getBdField2() {
+        return bdField2.getData();
+    }
+
+    public String getBdField2Expected() {
+        return bdField2.getData(DataTypes.Expected, true);
     }
 
     @Step("Validate Current System Date Before Load")
