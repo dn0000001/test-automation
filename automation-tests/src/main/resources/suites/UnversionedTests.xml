@@ -272,6 +272,12 @@
         </classes>
     </test>
 
+    <test name="License Provider Tests">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.LicenseProviderTest"/>
+        </classes>
+    </test>
+
     <!--
     <test name="Open Report Test">
         <parameter name="allure-report" value="/target/allure-report"/>
