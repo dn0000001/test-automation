@@ -27,6 +27,9 @@ import static org.hamcrest.Matchers.lessThan;
  * This class provides some actions on dates that may be useful
  */
 public class DateActions {
+    private static final String NEW_YEARS_DAY = "NEW_YEAR";
+    private static final String BOXING_DAY = "BOXING_DAY";
+
     private HolidayCalendar holidayCalendar;
     private HolidayManager holidayManager;
     private HolidayType holidayType;
@@ -142,10 +145,50 @@ public class DateActions {
         return shiftedHolidays;
     }
 
+    /**
+     * Get Canadian Holidays That Land On Weekend Which Are Shifted
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>
+     * This is based on information from
+     * <A HREF="https://www.timeanddate.com/holidays/canada">https://www.timeanddate.com/holidays/canada</A>
+     * </LI>
+     * </OL>
+     *
+     * @param holidays - Holidays to check if they need to be shifted
+     * @return Holidays that were shifted
+     */
     private Set<Holiday> getCanadianHolidaysThatLandOnWeekendWhichAreShifted(Set<Holiday> holidays) {
         Set<Holiday> shiftedHolidays = new HashSet<>();
 
-        // TODO Determine what the rules are and implement
+        List<Holiday> problemHolidays = holidays.stream().filter(this::isWeekEndHolidayToShift).collect(Collectors.toList());
+        for (Holiday holiday : problemHolidays) {
+            Date date = toDate(holiday.getDate());
+            if (StringUtils.equals(holiday.getPropertiesKey(), BOXING_DAY)) {
+                // Boxing day does not seem to move in general
+                // However, in 2016 it landed on a Monday and shifted to Tuesday by Christmas.
+                // So, at this point I will do nothing
+            } else if (holiday.getDate().getDayOfWeek() == DayOfWeek.SATURDAY
+                    && StringUtils.equals(holiday.getPropertiesKey(), NEW_YEARS_DAY)
+            ) {
+                // Only New Years Day shifts if it lands on a Saturday where as other Holidays are not shifted
+                // In 2000, New Years Day landed on Saturday and shifted to Monday.
+                // However, all other holidays in 2000 that landed on Saturday were not shifted
+                LocalDate shiftedDate = toLocalDate(DateUtils.addDays(date, 2));
+                Holiday shiftedHoliday = new Holiday(shiftedDate, holiday.getPropertiesKey(), holiday.getType());
+                shiftedHolidays.add(shiftedHoliday);
+            } else if (holiday.getDate().getDayOfWeek() == DayOfWeek.SUNDAY) {
+                // Most holidays that land on Sunday are shifted to Monday
+                // In 2017, New Years Day landed on Sunday and shifted to Monday
+                // In 2001, Saint Jean Baptiste Day landed on Sunday and shifted to Monday
+                // In 2001, Canada Day landed on Sunday and shifted to Monday
+                // In 2001, Remembrance Day landed on Sunday and shifted to Monday
+                // In 2005, Christmas Day landed on Sunday and shifted to Monday
+                LocalDate shiftedDate = toLocalDate(DateUtils.addDays(date, 1));
+                Holiday shiftedHoliday = new Holiday(shiftedDate, holiday.getPropertiesKey(), holiday.getType());
+                shiftedHolidays.add(shiftedHoliday);
+            }
+        }
 
         return shiftedHolidays;
     }
@@ -157,17 +200,17 @@ public class DateActions {
     private boolean isProblemHoliday(Holiday holiday) {
         if (holidayCalendar == HolidayCalendar.UNITED_STATES) {
             // Note:  I have only put federal holidays
-            return StringUtils.equals(holiday.getPropertiesKey(), "NEW_YEAR")
+            return StringUtils.equals(holiday.getPropertiesKey(), NEW_YEARS_DAY)
                     || StringUtils.equals(holiday.getPropertiesKey(), "INDEPENDENCE_DAY")
                     || StringUtils.equals(holiday.getPropertiesKey(), "CHRISTMAS")
                     ;
         }
 
         if (holidayCalendar == HolidayCalendar.CANADA) {
-            return StringUtils.equals(holiday.getPropertiesKey(), "NEW_YEAR")
+            return StringUtils.equals(holiday.getPropertiesKey(), NEW_YEARS_DAY)
                     || StringUtils.equals(holiday.getPropertiesKey(), "NATIONAL_DAY")
                     || StringUtils.equals(holiday.getPropertiesKey(), "CHRISTMAS")
-                    || StringUtils.equals(holiday.getPropertiesKey(), "BOXING_DAY")
+                    || StringUtils.equals(holiday.getPropertiesKey(), BOXING_DAY)
                     || StringUtils.equals(holiday.getPropertiesKey(), "REMEMBRANCE")
                     || StringUtils.equals(holiday.getPropertiesKey(), "SAINT_JEAN_BAPTISTE_DAY")
                     ;
