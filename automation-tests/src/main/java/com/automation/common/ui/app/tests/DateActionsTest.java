@@ -319,4 +319,78 @@ public class DateActionsTest {
         assertThat("Independence Day - Only Business Days Before - 1 Day Before", actual, equalTo(july2));
     }
 
+    @Features("DateActions")
+    @Stories("Canada - Result Date Is New Years Day Shifted to Monday when it lands on Saturday")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsNewYearsShiftedToMondayFromSaturdayTest() {
+        DateActions dateActions = new DateActions();
+        // New Years Day in this case is January 3 because January 1 is a Saturday
+        Date jan3 = DateActions.parseDateStrictly("01/03/2000", DATE_FORMAT);
+
+        Date dec31 = DateActions.parseDateStrictly("12/31/1999", DATE_FORMAT);
+        Date jan4 = DateActions.parseDateStrictly("01/04/2000", DATE_FORMAT);
+
+        Date actual = dateActions.nextBusinessDay(jan3, 0);
+        assertThat("New Years Day - Next Business Day - No Days Added", actual, equalTo(jan4));
+
+        actual = dateActions.previousBusinessDay(jan3, 0);
+        assertThat("New Years Day - Previous Business Day - No Days Added", actual, equalTo(dec31));
+
+        actual = dateActions.nextBusinessDay(dec31, 1);
+        assertThat("New Years Day - Next Business Day - 1 Day After", actual, equalTo(jan4));
+
+        actual = dateActions.previousBusinessDay(jan4, -1);
+        assertThat("New Years Day - Previous Business Day - 1 Day Before", actual, equalTo(dec31));
+
+        actual = dateActions.onlyBusinessDaysAfter(jan3, 0);
+        assertThat("New Years Day - Only Business Days After - No Days Added", actual, equalTo(jan4));
+
+        actual = dateActions.onlyBusinessDaysBefore(jan3, 0);
+        assertThat("New Years Day - Only Business Days Before - No Days Added", actual, equalTo(dec31));
+
+        actual = dateActions.onlyBusinessDaysAfter(dec31, 1);
+        assertThat("New Years Day - Only Business Days After - 1 Day After", actual, equalTo(jan4));
+
+        actual = dateActions.onlyBusinessDaysBefore(jan4, -1);
+        assertThat("New Years Day - Only Business Days Before - 1 Day Before", actual, equalTo(dec31));
+    }
+
+    @Features("DateActions")
+    @Stories("Canada - Result Date Is New Years Day Shifted to Monday when it lands on Sunday")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsNewYearsShiftedToMondayFromSundayTest() {
+        DateActions dateActions = new DateActions();
+        // New Years Day in this case is January 2 because January 1 is a Sunday
+        Date jan2 = DateActions.parseDateStrictly("01/02/2017", DATE_FORMAT);
+
+        Date dec30 = DateActions.parseDateStrictly("12/30/2016", DATE_FORMAT);
+        Date jan3 = DateActions.parseDateStrictly("01/03/2017", DATE_FORMAT);
+
+        Date actual = dateActions.nextBusinessDay(jan2, 0);
+        assertThat("New Years Day - Next Business Day - No Days Added", actual, equalTo(jan3));
+
+        actual = dateActions.previousBusinessDay(jan2, 0);
+        assertThat("New Years Day - Previous Business Day - No Days Added", actual, equalTo(dec30));
+
+        actual = dateActions.nextBusinessDay(dec30, 1);
+        assertThat("New Years Day - Next Business Day - 1 Day After", actual, equalTo(jan3));
+
+        actual = dateActions.previousBusinessDay(jan3, -1);
+        assertThat("New Years Day - Previous Business Day - 1 Day Before", actual, equalTo(dec30));
+
+        actual = dateActions.onlyBusinessDaysAfter(jan2, 0);
+        assertThat("New Years Day - Only Business Days After - No Days Added", actual, equalTo(jan3));
+
+        actual = dateActions.onlyBusinessDaysBefore(jan2, 0);
+        assertThat("New Years Day - Only Business Days Before - No Days Added", actual, equalTo(dec30));
+
+        actual = dateActions.onlyBusinessDaysAfter(dec30, 1);
+        assertThat("New Years Day - Only Business Days After - 1 Day After", actual, equalTo(jan3));
+
+        actual = dateActions.onlyBusinessDaysBefore(jan3, -1);
+        assertThat("New Years Day - Only Business Days Before - 1 Day Before", actual, equalTo(dec30));
+    }
+
 }
