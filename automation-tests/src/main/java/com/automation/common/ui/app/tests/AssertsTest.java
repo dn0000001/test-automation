@@ -2,13 +2,12 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.components.CardExpirationDateFields;
 import com.automation.common.ui.app.components.TextBox;
-import com.automation.common.ui.app.domainObjects.TNHC_DO;
+import com.automation.common.ui.app.components.UnitTestComponent;
+import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
-import com.automation.common.ui.app.pageObjects.TNHC_LandingPage;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.AssertsUtil;
 import com.taf.automation.ui.support.Helper;
-import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import net.jodah.failsafe.Failsafe;
@@ -18,13 +17,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
+import ui.auto.core.pagecomponent.PageComponent;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,7 +45,7 @@ import static org.hamcrest.Matchers.not;
  */
 @SuppressWarnings({"squid:S1192", "squid:S00112", "squid:S00100", "squid:S1481", "squid:S00117"})
 public class AssertsTest extends TestNGBase {
-    private static final boolean RUN = false;
+    private static final boolean RUN = true;
 
     @SuppressWarnings("squid:S1068")
     private static class TestObj {
@@ -440,25 +438,24 @@ public class AssertsTest extends TestNGBase {
     @Features("AssertsUtil")
     @Stories("WebElement is displayed assert with null element")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = RUN)
+    @Test
     public void assertIsDisplayedWithElementDoesNotExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        WebElement actual = null;
-        assertThat(actual, AssertsUtil.isElementDisplayed());
+        try {
+            WebElement actual = null;
+            assertThat(actual, AssertsUtil.isElementDisplayed());
+            throw new RuntimeException("Assertion did not fail:  assertIsDisplayedWithElementDoesNotExistTest");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected (assertIsDisplayedWithElementDoesNotExistTest)", true);
+        }
     }
 
     @Features("AssertsUtil")
     @Stories("WebElement is displayed assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = RUN)
+    @Test
     public void assertIsDisplayedWithElementExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        WebElement actual = driver.findElement(By.id("player"));
-        assertThat(actual, AssertsUtil.isElementDisplayed());
+        UnitTestWebElement element = new UnitTestWebElement().withDisplayed(true);
+        assertThat(element, AssertsUtil.isElementDisplayed());
     }
 
     @Features("AssertsUtil")
@@ -469,31 +466,25 @@ public class AssertsTest extends TestNGBase {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
 
-        assertThat(By.id("player"), AssertsUtil.isElementDisplayed(driver));
+        assertThat(By.id("headersearch"), AssertsUtil.isElementDisplayed(driver));
     }
 
     @Features("AssertsUtil")
     @Stories("WebElement is disabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = RUN)
+    @Test
     public void assertIsDisabledWithElementExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        WebElement actual = driver.findElement(By.id("player"));
-        assertThat(actual, AssertsUtil.isElementDisabled());
+        UnitTestWebElement element = new UnitTestWebElement().withEnabled(false);
+        assertThat(element, AssertsUtil.isElementDisabled());
     }
 
     @Features("AssertsUtil")
     @Stories("WebElement is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = RUN)
+    @Test
     public void assertIsEnabledWithElementExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        WebElement actual = driver.findElement(By.id("player"));
-        assertThat(actual, AssertsUtil.isElementEnabled());
+        UnitTestWebElement element = new UnitTestWebElement().withEnabled(true);
+        assertThat(element, AssertsUtil.isElementEnabled());
     }
 
     @Features("AssertsUtil")
@@ -504,31 +495,68 @@ public class AssertsTest extends TestNGBase {
         WebDriver driver = getContext().getDriver();
         driver.get("http://www.truenorthhockey.com/");
 
-        assertThat(By.id("player"), AssertsUtil.isElementEnabled(driver));
+        assertThat(By.id("headersearch"), AssertsUtil.isElementEnabled(driver));
     }
 
     @Features("AssertsUtil")
     @Stories("WebComponent is enabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = RUN)
+    @Test
     public void assertIsEnabledWithComponentExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        TNHC_LandingPage landing = new TNHC_LandingPage(getContext());
-        assertThat(landing.getPlayer(), AssertsUtil.isComponentEnabled());
+        UnitTestComponent component = new UnitTestComponent().withEnabled(true);
+        assertThat(component, AssertsUtil.isComponentEnabled());
     }
 
     @Features("AssertsUtil")
     @Stories("WebComponent is disabled assert with element that exists")
     @Severity(SeverityLevel.CRITICAL)
-    @Test(enabled = RUN)
+    @Test
     public void assertIsDisabledWithComponentExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
+        UnitTestComponent component = new UnitTestComponent().withEnabled(false);
+        assertThat(component, AssertsUtil.isComponentDisabled());
+    }
 
-        TNHC_LandingPage landing = new TNHC_LandingPage(getContext());
-        assertThat(landing.getPlayer(), AssertsUtil.isComponentDisabled());
+    @Features("AssertsUtil")
+    @Stories("WebComponent is displayed assert with element that exists")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertIsDisplayedWithComponentExistTest() {
+        UnitTestComponent component = new UnitTestComponent().withDisplayed(true);
+        assertThat(component, AssertsUtil.isComponentDisplayed());
+    }
+
+    @Features("AssertsUtil")
+    @Stories("WebComponent is removed assert with element that exists")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertIsRemovedWithComponentExistTest() {
+        UnitTestComponent component = new UnitTestComponent().withDisplayed(false);
+        assertThat(component, AssertsUtil.isComponentRemoved());
+    }
+
+    @Features("AssertsUtil")
+    @Stories("WebComponent is ready assert with element that exists")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertIsReadyWithComponentExistTest() {
+        UnitTestComponent component = new UnitTestComponent().withEnabled(true).withDisplayed(true);
+        assertThat(component, AssertsUtil.isComponentReady());
+    }
+
+    @Features("AssertsUtil")
+    @Stories("WebComponent is not ready assert with element that exists")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertIsNotReadyWithComponentExistTest() {
+        String reason = "Enabled (%s), Displayed (%s)";
+        UnitTestComponent component = new UnitTestComponent().withEnabled(false).withDisplayed(false);
+        assertThat(String.format(reason, false, false), component, not(AssertsUtil.isComponentReady()));
+
+        component = new UnitTestComponent().withEnabled(true).withDisplayed(false);
+        assertThat(String.format(reason, true, false), component, not(AssertsUtil.isComponentReady()));
+
+        component = new UnitTestComponent().withEnabled(false).withDisplayed(true);
+        assertThat(String.format(reason, false, true), component, not(AssertsUtil.isComponentReady()));
     }
 
     @Features("AssertsUtil")
@@ -561,20 +589,363 @@ public class AssertsTest extends TestNGBase {
         assertThat(fakeComponentsPage.getTextBoxComponent(), not(AssertsUtil.isComponentEnabled(wait)));
     }
 
-    @Features("Framework")
-    @Stories("General Framework unit testing")
+    @Features("AssertsUtil")
+    @Stories("Assert that all components are enabled")
     @Severity(SeverityLevel.CRITICAL)
-    @Parameters("data-set")
-    @Test(enabled = RUN)
-    public void generalUnitTest(@Optional("data/ui/TNHC_TestData.xml") String dataSet) {
-        TNHC_DO hnhc = new TNHC_DO(getContext()).fromResource(dataSet);
-        getContext().getDriver().get(TestProperties.getInstance().getURL());
+    @Test
+    public void assertAllEnabledTest() {
+        UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(true);
+        UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(true);
+        UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(true);
+        List<PageComponent> components = new ArrayList<>();
+        components.add(item1);
+        components.add(item2);
+        components.add(item3);
+        assertThat(components, AssertsUtil.isComponent(true));
 
-        TNHC_LandingPage landing = hnhc.getLanding();
-        landing.setPlayerJS();
-        landing.setTeam();
+        // All Disabled
+        item1.withText("t4").withValue("v4").withEnabled(false);
+        item2.withText("t5").withValue("v5").withEnabled(false);
+        item3.withText("t6").withValue("v6").withEnabled(false);
+        assertThat(components, not(AssertsUtil.isComponent(true)));
+
+        // One Disabled
+        item1.withText("t7").withValue("v7").withEnabled(true);
+        item2.withText("t8").withValue("v8").withEnabled(false);
+        item3.withText("t9").withValue("v9").withEnabled(true);
+        assertThat(components, not(AssertsUtil.isComponent(true)));
+
+        // Multiple Disabled
+        item1.withText("t10").withValue("v10").withEnabled(false);
+        item2.withText("t11").withValue("v11").withEnabled(true);
+        item3.withText("t12").withValue("v12").withEnabled(false);
+        assertThat(components, not(AssertsUtil.isComponent(true)));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Assert that all components are disabled")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertAllDisabledTest() {
+        UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(false);
+        UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(false);
+        UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(false);
+        List<PageComponent> components = new ArrayList<>();
+        components.add(item1);
+        components.add(item2);
+        components.add(item3);
+        assertThat(components, AssertsUtil.isComponent(false));
+
+        // All Enabled
+        item1.withText("t4").withValue("v4").withEnabled(true);
+        item2.withText("t5").withValue("v5").withEnabled(true);
+        item3.withText("t6").withValue("v6").withEnabled(true);
+        assertThat(components, not(AssertsUtil.isComponent(false)));
+
+        // One Enabled
+        item1.withText("t7").withValue("v7").withEnabled(true);
+        item2.withText("t8").withValue("v8").withEnabled(false);
+        item3.withText("t9").withValue("v9").withEnabled(true);
+        assertThat(components, not(AssertsUtil.isComponent(false)));
+
+        // Multiple Enabled
+        item1.withText("t10").withValue("v10").withEnabled(false);
+        item2.withText("t11").withValue("v11").withEnabled(true);
+        item3.withText("t12").withValue("v12").withEnabled(false);
+        assertThat(components, not(AssertsUtil.isComponent(false)));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("Assert that all components are enabled taking into account the exclusions using get text")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertAllEnabledWithExclusionsUsingGetTextTest() {
+        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
+        UnitTestComponent exclusionMatchOnText = new UnitTestComponent().withText("t2").withValue("nv2");
+
+        UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(true);
+        UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(true);
+        UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(true);
+        List<PageComponent> components = new ArrayList<>();
+        components.add(item1);
+        components.add(item2);
+        components.add(item3);
+
+        List<PageComponent> exclude = new ArrayList<>();
+        exclude.add(exclusionNeverMatch);
+        assertThat("All enabled", components, AssertsUtil.isComponent(true, exclude));
+
+        item1.withEnabled(false);
+        item2.withEnabled(false);
+        item3.withEnabled(false);
+        assertThat("All Disabled with no matches in excluded", components, not(AssertsUtil.isComponent(true, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(exclusionMatchOnText);
+        assertThat("All enabled with one in excluded", components, AssertsUtil.isComponent(true, exclude));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("t3"));
+        exclude.add(new UnitTestComponent().withText("t1"));
+        assertThat("All enabled with multiple in excluded", components, AssertsUtil.isComponent(true, exclude));
+
+        item1.withEnabled(true);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
+        assertThat("One disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
+        exclude.add(new UnitTestComponent().withText("nv100"));
+        assertThat("Multiple disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("t1"));
+        exclude.add(new UnitTestComponent().withText("nv100"));
+        assertThat("Multiple disabled with some matches in excluded", components, not(AssertsUtil.isComponent(true, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("t3"));
+        exclude.add(new UnitTestComponent().withText("t1"));
+        assertThat("Multiple disabled with all matches in excluded", components, AssertsUtil.isComponent(true, exclude));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("Assert that all components are enabled taking into account the exclusions using get value")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertAllEnabledWithExclusionsUsingGetValueTest() {
+        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
+        UnitTestComponent exclusionMatchOnValue = new UnitTestComponent().withText("nt2").withValue("v2");
+
+        UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(true);
+        UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(true);
+        UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(true);
+        List<PageComponent> components = new ArrayList<>();
+        components.add(item1);
+        components.add(item2);
+        components.add(item3);
+
+        List<PageComponent> exclude = new ArrayList<>();
+        exclude.add(exclusionNeverMatch);
+        assertThat("All enabled", components, AssertsUtil.isComponent(true, true, exclude));
+
+        item1.withEnabled(false);
+        item2.withEnabled(false);
+        item3.withEnabled(false);
+        assertThat("All Disabled with no matches in excluded", components, not(AssertsUtil.isComponent(true, true, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(exclusionMatchOnValue);
+        assertThat("All enabled with one in excluded", components, AssertsUtil.isComponent(true, true, exclude));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withValue("v3"));
+        exclude.add(new UnitTestComponent().withValue("v1"));
+        assertThat("All enabled with multiple in excluded", components, AssertsUtil.isComponent(true, true, exclude));
+
+        item1.withEnabled(true);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
+        assertThat("One disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, true, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
+        exclude.add(new UnitTestComponent().withValue("nv100"));
+        assertThat("Multiple disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, true, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withValue("v1"));
+        exclude.add(new UnitTestComponent().withValue("nv100"));
+        assertThat("Multiple disabled with some matches in excluded", components, not(AssertsUtil.isComponent(true, true, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withValue("v3"));
+        exclude.add(new UnitTestComponent().withValue("v1"));
+        assertThat("Multiple disabled with all matches in excluded", components, AssertsUtil.isComponent(true, true, exclude));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("Assert that all components are disabled taking into account the exclusions using get text")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertAllDisabledWithExclusionsUsingGetTextTest() {
+        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
+        UnitTestComponent exclusionMatchOnText = new UnitTestComponent().withText("t2").withValue("nv2");
+
+        UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(false);
+        UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(false);
+        UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(false);
+        List<PageComponent> components = new ArrayList<>();
+        components.add(item1);
+        components.add(item2);
+        components.add(item3);
+
+        List<PageComponent> exclude = new ArrayList<>();
+        exclude.add(exclusionNeverMatch);
+        assertThat("All disabled", components, AssertsUtil.isComponent(false, exclude));
+
+        item1.withEnabled(true);
+        item2.withEnabled(true);
+        item3.withEnabled(true);
+        assertThat("All Enabled with no matches in excluded", components, not(AssertsUtil.isComponent(false, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(exclusionMatchOnText);
+        assertThat("All disabled with one in excluded", components, AssertsUtil.isComponent(false, exclude));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("t3"));
+        exclude.add(new UnitTestComponent().withText("t1"));
+        assertThat("All disabled with multiple in excluded", components, AssertsUtil.isComponent(false, exclude));
+
+        item1.withEnabled(false);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
+        assertThat("One enabled with no match in excluded", components, not(AssertsUtil.isComponent(false, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
+        exclude.add(new UnitTestComponent().withText("nv100"));
+        assertThat("Multiple enabled with no match in excluded", components, not(AssertsUtil.isComponent(false, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("t1"));
+        exclude.add(new UnitTestComponent().withText("nv100"));
+        assertThat("Multiple enabled with some matches in excluded", components, not(AssertsUtil.isComponent(false, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("t3"));
+        exclude.add(new UnitTestComponent().withText("t1"));
+        assertThat("Multiple enabled with all matches in excluded", components, AssertsUtil.isComponent(false, exclude));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("Assert that all components are disabled taking into account the exclusions using get value")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertAllDisabledWithExclusionsUsingGetValueTest() {
+        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
+        UnitTestComponent exclusionMatchOnValue = new UnitTestComponent().withText("nt2").withValue("v2");
+
+        UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(false);
+        UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(false);
+        UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(false);
+        List<PageComponent> components = new ArrayList<>();
+        components.add(item1);
+        components.add(item2);
+        components.add(item3);
+
+        List<PageComponent> exclude = new ArrayList<>();
+        exclude.add(exclusionNeverMatch);
+        assertThat("All disabled", components, AssertsUtil.isComponent(true, false, exclude));
+
+        item1.withEnabled(true);
+        item2.withEnabled(true);
+        item3.withEnabled(true);
+        assertThat("All Enabled with no matches in excluded", components, not(AssertsUtil.isComponent(true, false, exclude)));
+
+        item1.withEnabled(false);
+        item2.withEnabled(true);
+        item3.withEnabled(false);
+        exclude = new ArrayList<>();
+        exclude.add(exclusionMatchOnValue);
+        assertThat("All disabled with one in excluded", components, AssertsUtil.isComponent(true, false, exclude));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withValue("v3"));
+        exclude.add(new UnitTestComponent().withValue("v1"));
+        assertThat("All disabled with multiple in excluded", components, AssertsUtil.isComponent(true, false, exclude));
+
+        item1.withEnabled(false);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
+        assertThat("One enabled with no match in excluded", components, not(AssertsUtil.isComponent(true, false, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
+        exclude.add(new UnitTestComponent().withValue("nv100"));
+        assertThat("Multiple enabled with no match in excluded", components, not(AssertsUtil.isComponent(true, false, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withValue("v1"));
+        exclude.add(new UnitTestComponent().withValue("nv100"));
+        assertThat("Multiple enabled with some matches in excluded", components, not(AssertsUtil.isComponent(true, false, exclude)));
+
+        item1.withEnabled(true);
+        item2.withEnabled(false);
+        item3.withEnabled(true);
+        exclude = new ArrayList<>();
+        exclude.add(new UnitTestComponent().withValue("v3"));
+        exclude.add(new UnitTestComponent().withValue("v1"));
+        assertThat("Multiple enabled with all matches in excluded", components, AssertsUtil.isComponent(true, false, exclude));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("BigDecimal Assertions")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalAssertions() {
         assertThat("All Infinite", null, AssertsUtil.range(null, null));
@@ -585,6 +956,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Lower bound equal test #2", new BigDecimal("20"), AssertsUtil.range(new BigDecimal("0"), null));
     }
 
+    @Features("AssertsUtil")
+    @Stories("BigDecimal Assertion Failures")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalAssertionFailures_InfiniteGreaterThanAnyNumber() {
         try {
@@ -595,6 +969,9 @@ public class AssertsTest extends TestNGBase {
         }
     }
 
+    @Features("AssertsUtil")
+    @Stories("BigDecimal Assertion Failures")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalAssertionFailures_AnyNumberNotInRangeOfInfinity() {
         try {
@@ -605,6 +982,9 @@ public class AssertsTest extends TestNGBase {
         }
     }
 
+    @Features("AssertsUtil")
+    @Stories("BigDecimal Assertion Failures")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalAssertionFailures_InfiniteNotInNumberRange() {
         try {
@@ -615,6 +995,9 @@ public class AssertsTest extends TestNGBase {
         }
     }
 
+    @Features("AssertsUtil")
+    @Stories("BigDecimal Assertion Failures")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalAssertionFailures_InfiniteAsLowerBoundAndNumberUpperBound() {
         try {
@@ -625,6 +1008,9 @@ public class AssertsTest extends TestNGBase {
         }
     }
 
+    @Features("AssertsUtil")
+    @Stories("BigDecimal Assertion Failures")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalAssertionFailures_InfiniteAsLowerBoundAndNumberUpperBoundWithInfinite() {
         try {
@@ -635,6 +1021,9 @@ public class AssertsTest extends TestNGBase {
         }
     }
 
+    @Features("AssertAggregator")
+    @Stories("All Success")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testAggregator_AllSuccess() {
         AssertAggregator aa = new AssertAggregator();
@@ -645,6 +1034,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aa);
     }
 
+    @Features("AssertAggregator")
+    @Stories("All Failures")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testAggregator_AllFailures() {
         AssertAggregator aa = new AssertAggregator();
@@ -663,6 +1055,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aa.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Some Failures")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testAggregator_SomeFailures() {
         AssertAggregator aa = new AssertAggregator();
@@ -684,6 +1079,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aa.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Aggregator With FailSafe")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testAggregatorWithFailSafe() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -722,6 +1120,9 @@ public class AssertsTest extends TestNGBase {
         }
     }
 
+    @Features("AssertsUtil")
+    @Stories("Range Primitive")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testRangePrimitive() {
         assertThat("Start", 0, AssertsUtil.range(0, 2));
@@ -739,6 +1140,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Less Than Range did not fail", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Range BigDecimal")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testRangeBigDecimal() {
         final BigDecimal TWO = Utils.parse("2", Locale.CANADA);
@@ -769,6 +1173,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Invalid Infinite range did not fail", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Range Primitives")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyPrimitivesTest() {
         final boolean actualBool = true;
@@ -891,6 +1298,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Objects")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyObjectsTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1095,6 +1505,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Objects With Excluded Fields")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyObjectsWithExcludedFieldsTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1178,6 +1591,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Objects With Null")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyObjectsWithNullTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1209,6 +1625,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Objects With Empty List")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyEmptyListTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1221,6 +1640,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @Features("AssertAggregator")
+    @Stories("One List Pass")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyOneListPassTest() {
         TestObj a1 = new TestObj();
@@ -1259,6 +1681,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @Features("AssertAggregator")
+    @Stories("One List Fail")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyOneListFailTest() {
         TestObj a1 = new TestObj();
@@ -1306,6 +1731,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Multi List Pass")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyMultiListPassTest() {
         TestObj a1 = new TestObj();
@@ -1370,6 +1798,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @Features("AssertAggregator")
+    @Stories("Multi List Pass With Sort")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyMultiListPassWithSortTest() {
         TestObj a1 = new TestObj();
@@ -1486,6 +1917,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @Features("AssertAggregator")
+    @Stories("Multi List Fail")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyMultiListFailTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1611,6 +2045,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Multi List Fail With Sort")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyMultiListFailWithSortTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1736,6 +2173,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Different List Fail More Actual")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyDifferentListFailMoreActualTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1848,6 +2288,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Different List Fail More Expected")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyDifferentListFailMoreExpectedTest() {
         AssertAggregator aggregator = new AssertAggregator();
@@ -1960,6 +2403,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Null Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyNullExpectedSubsetTest() {
         List<TestObj> actual = getActualForSubsetTests();
@@ -1972,6 +2418,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @Features("AssertAggregator")
+    @Stories("Empty Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyEmptyExpectedSubsetTest() {
         List<TestObj> actual = getActualForSubsetTests();
@@ -1984,6 +2433,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @Features("AssertAggregator")
+    @Stories("Single Pass")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifySinglePassTest() {
         List<TestObj> actual = getActualForSubsetTests();
@@ -1996,6 +2448,9 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @Features("AssertAggregator")
+    @Stories("Single Fail")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifySingleFailTest() {
         List<TestObj> actual = getActualForSubsetTests();
@@ -2015,6 +2470,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Single No Match")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifySingleNoMatchTest() {
         List<TestObj> actual = getActualForSubsetTests();
@@ -2034,8 +2492,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P1F1N0() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2056,8 +2517,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P2F0N0() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = getTwoPassExpectedSubset();
@@ -2068,8 +2532,11 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P1F0N1() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2090,8 +2557,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P0F0N2() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = getTwoNoMatchExpectedSubset();
@@ -2109,8 +2579,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P0F1N1() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2131,8 +2604,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P0F2N0() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = getTwoFailExpectedSubset();
@@ -2150,8 +2626,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P1F1N1() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2173,8 +2652,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P2F1N0() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2195,8 +2677,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P1F2N0() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2217,8 +2702,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P2F0N1() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2239,8 +2727,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P1F0N2() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2261,8 +2752,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P0F2N1() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2283,8 +2777,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P0F1N2() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = new ArrayList<>();
@@ -2305,8 +2802,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P3F0N0() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = getThreePassExpectedSubset();
@@ -2317,8 +2817,11 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P0F3N0() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = getThreeFailExpectedSubset();
@@ -2336,8 +2839,11 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
-    @SuppressWarnings("squid:S00100")
+    @Features("AssertAggregator")
+    @Stories("Multi Expected Subset")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
+    @SuppressWarnings("squid:S00100")
     public void verifyMultiExpectedSubsetTest_P0F0N3() {
         List<TestObj> actual = getActualForSubsetTests();
         List<TestObj> expected = getThreeNoMatchExpectedSubset();
@@ -2355,6 +2861,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Fail When Expected Subset Greater Than Actual Items")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyFailWhenExpectedSubsetGreaterThanActualItemsTest() {
         List<TestObj> actual = getActualForSubsetTests();
@@ -2375,6 +2884,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Fail When Null Actual Items")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyFailWhenNullActualItemsTest() {
         List<TestObj> actual = null;
@@ -2394,6 +2906,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Fail When Empty Actual Items")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void verifyFailWhenEmptyActualItemsTest() {
         List<TestObj> actual = new ArrayList<>();
@@ -2413,6 +2928,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Date Greater Than")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testDateGreaterThan() {
         String actual = "12/31/2018";
@@ -2421,6 +2939,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testDateGreaterThan", actual, AssertsUtil.dateGreaterThan(expected, pattern));
     }
 
+    @Features("Matchers")
+    @Stories("BigDecimal Greater Than")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalGreaterThan() {
         BigDecimal actual = new BigDecimal("5.01");
@@ -2428,6 +2949,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testBigDecimalGreaterThan", actual, greaterThan(expected));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Date Greater Than Or Equal To")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testDateGreaterThanOrEqualTo() {
         String actual = "12/31/2018";
@@ -2436,6 +2960,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testDateGreaterThanOrEqualTo", actual, AssertsUtil.dateGreaterThanOrEqualTo(expected, pattern));
     }
 
+    @Features("Matchers")
+    @Stories("BigDecimal Greater Than Or Equal To")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalGreaterThanOrEqualTo() {
         BigDecimal actual = new BigDecimal("5.01");
@@ -2443,6 +2970,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testBigDecimalGreaterThanOrEqualTo", actual, greaterThanOrEqualTo(expected));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Date Less Than")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testDateLessThan() {
         String actual = "12/30/2018";
@@ -2451,6 +2981,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testDateLessThan", actual, AssertsUtil.dateLessThan(expected, pattern));
     }
 
+    @Features("Matchers")
+    @Stories("BigDecimal Less Than")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalLessThan() {
         BigDecimal actual = new BigDecimal("5");
@@ -2458,6 +2991,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testBigDecimalLessThan", actual, lessThan(expected));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Date Less Than Or Equal To")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testDateLessThanOrEqualTo() {
         String actual = "12/30/2018";
@@ -2466,6 +3002,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testDateLessThanOrEqualTo", actual, AssertsUtil.dateLessThanOrEqualTo(expected, pattern));
     }
 
+    @Features("Matchers")
+    @Stories("BigDecimal Less Than Or Equal To")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalLessThanOrEqualTo() {
         BigDecimal actual = new BigDecimal("5");
@@ -2473,6 +3012,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testBigDecimalLessThanOrEqualTo", actual, lessThanOrEqualTo(expected));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Date Equal To")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testDateEqualTo() {
         String actual = "12/31/2018";
@@ -2481,6 +3023,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testDateEqualTo", actual, AssertsUtil.dateEqualTo(expected, pattern));
     }
 
+    @Features("Matchers")
+    @Stories("BigDecimal Equal To")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testBigDecimalEqualTo() {
         BigDecimal actual = new BigDecimal("5");
@@ -2488,6 +3033,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("testBigDecimalEqualTo", actual, comparesEqualTo(expected));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Null/Empty Expected Contains List")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testNullEmptyExpectedContainsList() {
         List<String> actual = Arrays.asList("100", "102", "102");
@@ -2498,6 +3046,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("empty expected", actual, AssertsUtil.contains(expected));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Null Empty Actual Contains List")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testNullEmptyActualContainsList() {
         List<String> actual = null;
@@ -2508,6 +3059,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("empty actual", actual, not(AssertsUtil.contains(expected)));
     }
 
+    @Features("AssertsUtil")
+    @Stories("Contains List")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testContainsList() {
         List<String> actual = Arrays.asList("100", "102", "102");
@@ -2537,6 +3091,9 @@ public class AssertsTest extends TestNGBase {
         assertThat("expected unmodified", expected.size(), equalTo(2));
     }
 
+    @Features("AssertAggregator")
+    @Stories("Validation Action Run Based On Field")
+    @Severity(SeverityLevel.CRITICAL)
     @Test(enabled = RUN)
     public void testValidationActionRunBasedOnField() {
         String skipMessage = "Validation Action was run for:  ";
