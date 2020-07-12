@@ -410,6 +410,16 @@ public class PageObjectV2 extends PageObjectModel {
     }
 
     /**
+     * Get Text
+     *
+     * @param component - Component
+     * @return empty if component is not displayed (height=0) else the text of the component
+     */
+    protected String getText(PageComponent component) {
+        return isDisplayed(component) ? component.getText() : "";
+    }
+
+    /**
      * Check if the page object can handle the current page<BR>
      * <B>Notes: </B>
      * <OL>
