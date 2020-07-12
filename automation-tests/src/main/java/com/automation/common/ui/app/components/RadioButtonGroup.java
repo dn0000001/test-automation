@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,6 +170,18 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
         } else {
             assertThat(error, actual, equalTo(expected));
         }
+    }
+
+    public List<T> getAllOptions() {
+        List<T> all = new ArrayList<>();
+
+        List<WebElement> options = getOptions();
+        for (WebElement option : options) {
+            T component = getInstanceOfT(option);
+            all.add(component);
+        }
+
+        return all;
     }
 
 }

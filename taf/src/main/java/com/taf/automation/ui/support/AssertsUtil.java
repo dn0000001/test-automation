@@ -13,6 +13,7 @@ import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -373,6 +374,95 @@ public class AssertsUtil {
                     return component.isEnabled();
                 } catch (Exception ex) {
                     return false;
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for list of components that are expected to be enabled/disabled
+     *
+     * @param enabled - true to verify that all components are enabled, false to verify that all components are disabled
+     * @return Matcher&lt;List&lt;PageComponent&gt;&gt;
+     */
+    public static Matcher<List<PageComponent>> isComponent(boolean enabled) {
+        return isComponent(enabled, new ArrayList<>());
+    }
+
+    /**
+     * Matcher for list of components that are expected to be enabled/disabled<BR>
+     * <B>Note: </B> Uses get text when checking the excluded option
+     *
+     * @param enabled  - true to verify that all components are enabled, false to verify that all components are disabled
+     * @param excluded - List of components that are to be excluded from comparison
+     * @return Matcher&lt;List&lt;PageComponent&gt;&gt;
+     */
+    public static Matcher<List<PageComponent>> isComponent(boolean enabled, List<PageComponent> excluded) {
+        return isComponent(false, enabled, excluded);
+    }
+
+    /**
+     * Matcher for list of components that are expected to be enabled/disabled
+     *
+     * @param byValue  - true to use get value, false to use get text when checking the excluded option
+     * @param enabled  - true to verify that all components are enabled, false to verify that all components are disabled
+     * @param excluded - List of components that are to be excluded from comparison
+     * @return Matcher&lt;List&lt;PageComponent&gt;&gt;
+     */
+    public static Matcher<List<PageComponent>> isComponent(boolean byValue, boolean enabled, List<PageComponent> excluded) {
+        final String state = enabled ? "enabled" : "disabled";
+        final String wasState = enabled ? " was disabled" : " was enabled";
+        return new TypeSafeMatcher<List<PageComponent>>() {
+            private List<String> excludedOptions;
+            private String firstProblemOption;
+
+            private String getExcludedOption(PageComponent excludeOption) {
+                return byValue ? excludeOption.getValue() : excludeOption.getText();
+            }
+
+            private List<String> getExcludedOptions() {
+                if (excludedOptions != null) {
+                    return excludedOptions;
+                }
+
+                excludedOptions = new ArrayList<>();
+                for (PageComponent excludeOption : excluded) {
+                    excludedOptions.add(getExcludedOption(excludeOption));
+                }
+
+                return excludedOptions;
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("all components were " + state + " as expected");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final List<PageComponent> components, final Description mismatchDescription) {
+                mismatchDescription.appendText(" " + firstProblemOption + wasState);
+            }
+
+            @Override
+            protected boolean matchesSafely(final List<PageComponent> components) {
+                try {
+                    for (PageComponent component : components) {
+                        validateOption(component);
+                    }
+
+                    return true;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+
+            @SuppressWarnings("java:S112")
+            private void validateOption(PageComponent component) {
+                boolean theState = enabled == component.isEnabled();
+                if (!theState && !getExcludedOptions().contains(getExcludedOption(component))) {
+                    firstProblemOption = component.getText();
+                    // Note:  To keep the complexity under the sonar violation it is necessary to throw an exception
+                    throw new RuntimeException("Found option with incorrect state");
                 }
             }
         };
