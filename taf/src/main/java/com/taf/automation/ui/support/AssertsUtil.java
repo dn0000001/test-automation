@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -383,9 +384,10 @@ public class AssertsUtil {
      * Matcher for list of components that are expected to be enabled/disabled
      *
      * @param enabled - true to verify that all components are enabled, false to verify that all components are disabled
+     * @param <T>     Extends PageComponent
      * @return Matcher&lt;List&lt;PageComponent&gt;&gt;
      */
-    public static Matcher<List<PageComponent>> isComponent(boolean enabled) {
+    public static <T extends PageComponent> Matcher<List<T>> isComponent(boolean enabled) {
         return isComponent(enabled, new ArrayList<>());
     }
 
@@ -394,10 +396,11 @@ public class AssertsUtil {
      * <B>Note: </B> Uses get text when checking the excluded option
      *
      * @param enabled  - true to verify that all components are enabled, false to verify that all components are disabled
-     * @param excluded - List of components that are to be excluded from comparison
+     * @param excluded - List of regular expressions that are to be excluded from comparison
+     * @param <T>      Extends PageComponent
      * @return Matcher&lt;List&lt;PageComponent&gt;&gt;
      */
-    public static Matcher<List<PageComponent>> isComponent(boolean enabled, List<PageComponent> excluded) {
+    public static <T extends PageComponent> Matcher<List<T>> isComponent(boolean enabled, List<String> excluded) {
         return isComponent(false, enabled, excluded);
     }
 
@@ -406,31 +409,22 @@ public class AssertsUtil {
      *
      * @param byValue  - true to use get value, false to use get text when checking the excluded option
      * @param enabled  - true to verify that all components are enabled, false to verify that all components are disabled
-     * @param excluded - List of components that are to be excluded from comparison
+     * @param excluded - List of regular expressions that are to be excluded from comparison
+     * @param <T>      Extends PageComponent
      * @return Matcher&lt;List&lt;PageComponent&gt;&gt;
      */
-    public static Matcher<List<PageComponent>> isComponent(boolean byValue, boolean enabled, List<PageComponent> excluded) {
+    public static <T extends PageComponent> Matcher<List<T>> isComponent(boolean byValue, boolean enabled, List<String> excluded) {
         final String state = enabled ? "enabled" : "disabled";
         final String wasState = enabled ? " was disabled" : " was enabled";
-        return new TypeSafeMatcher<List<PageComponent>>() {
-            private List<String> excludedOptions;
+        return new TypeSafeMatcher<List<T>>() {
             private String firstProblemOption;
 
             private String getExcludedOption(PageComponent excludeOption) {
                 return byValue ? excludeOption.getValue() : excludeOption.getText();
             }
 
-            private List<String> getExcludedOptions() {
-                if (excludedOptions != null) {
-                    return excludedOptions;
-                }
-
-                excludedOptions = new ArrayList<>();
-                for (PageComponent excludeOption : excluded) {
-                    excludedOptions.add(getExcludedOption(excludeOption));
-                }
-
-                return excludedOptions;
+            private boolean isExcludedOption(String option) {
+                return ObjectUtils.clone(excluded).removeIf(option::matches);
             }
 
             @Override
@@ -439,12 +433,12 @@ public class AssertsUtil {
             }
 
             @Override
-            protected void describeMismatchSafely(final List<PageComponent> components, final Description mismatchDescription) {
+            protected void describeMismatchSafely(final List<T> components, final Description mismatchDescription) {
                 mismatchDescription.appendText(" " + firstProblemOption + wasState);
             }
 
             @Override
-            protected boolean matchesSafely(final List<PageComponent> components) {
+            protected boolean matchesSafely(final List<T> components) {
                 try {
                     for (PageComponent component : components) {
                         validateOption(component);
@@ -459,7 +453,7 @@ public class AssertsUtil {
             @SuppressWarnings("java:S112")
             private void validateOption(PageComponent component) {
                 boolean theState = enabled == component.isEnabled();
-                if (!theState && !getExcludedOptions().contains(getExcludedOption(component))) {
+                if (!theState && !isExcludedOption(getExcludedOption(component))) {
                     firstProblemOption = component.getText();
                     // Note:  To keep the complexity under the sonar violation it is necessary to throw an exception
                     throw new RuntimeException("Found option with incorrect state");

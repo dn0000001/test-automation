@@ -660,9 +660,6 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void assertAllEnabledWithExclusionsUsingGetTextTest() {
-        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
-        UnitTestComponent exclusionMatchOnText = new UnitTestComponent().withText("t2").withValue("nv2");
-
         UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(true);
         UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(true);
         UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(true);
@@ -671,8 +668,8 @@ public class AssertsTest extends TestNGBase {
         components.add(item2);
         components.add(item3);
 
-        List<PageComponent> exclude = new ArrayList<>();
-        exclude.add(exclusionNeverMatch);
+        List<String> exclude = new ArrayList<>();
+        exclude.add("no match");
         assertThat("All enabled", components, AssertsUtil.isComponent(true, exclude));
 
         item1.withEnabled(false);
@@ -684,46 +681,46 @@ public class AssertsTest extends TestNGBase {
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(exclusionMatchOnText);
+        exclude.add("t2");
         assertThat("All enabled with one in excluded", components, AssertsUtil.isComponent(true, exclude));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("t3"));
-        exclude.add(new UnitTestComponent().withText("t1"));
+        exclude.add("t3");
+        exclude.add("t1");
         assertThat("All enabled with multiple in excluded", components, AssertsUtil.isComponent(true, exclude));
 
         item1.withEnabled(true);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
+        exclude.add("");
         assertThat("One disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, exclude)));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
-        exclude.add(new UnitTestComponent().withText("nv100"));
+        exclude.add("");
+        exclude.add("nv100");
         assertThat("Multiple disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, exclude)));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("t1"));
-        exclude.add(new UnitTestComponent().withText("nv100"));
+        exclude.add("t1");
+        exclude.add("nv100");
         assertThat("Multiple disabled with some matches in excluded", components, not(AssertsUtil.isComponent(true, exclude)));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("t3"));
-        exclude.add(new UnitTestComponent().withText("t1"));
+        exclude.add("t3");
+        exclude.add("t1");
         assertThat("Multiple disabled with all matches in excluded", components, AssertsUtil.isComponent(true, exclude));
     }
 
@@ -732,9 +729,6 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void assertAllEnabledWithExclusionsUsingGetValueTest() {
-        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
-        UnitTestComponent exclusionMatchOnValue = new UnitTestComponent().withText("nt2").withValue("v2");
-
         UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(true);
         UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(true);
         UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(true);
@@ -743,8 +737,8 @@ public class AssertsTest extends TestNGBase {
         components.add(item2);
         components.add(item3);
 
-        List<PageComponent> exclude = new ArrayList<>();
-        exclude.add(exclusionNeverMatch);
+        List<String> exclude = new ArrayList<>();
+        exclude.add("no match");
         assertThat("All enabled", components, AssertsUtil.isComponent(true, true, exclude));
 
         item1.withEnabled(false);
@@ -756,46 +750,46 @@ public class AssertsTest extends TestNGBase {
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(exclusionMatchOnValue);
+        exclude.add("v2");
         assertThat("All enabled with one in excluded", components, AssertsUtil.isComponent(true, true, exclude));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withValue("v3"));
-        exclude.add(new UnitTestComponent().withValue("v1"));
+        exclude.add("v3");
+        exclude.add("v1");
         assertThat("All enabled with multiple in excluded", components, AssertsUtil.isComponent(true, true, exclude));
 
         item1.withEnabled(true);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
+        exclude.add("");
         assertThat("One disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, true, exclude)));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
-        exclude.add(new UnitTestComponent().withValue("nv100"));
+        exclude.add("");
+        exclude.add("nv100");
         assertThat("Multiple disabled with no match in excluded", components, not(AssertsUtil.isComponent(true, true, exclude)));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withValue("v1"));
-        exclude.add(new UnitTestComponent().withValue("nv100"));
+        exclude.add("v1");
+        exclude.add("nv100");
         assertThat("Multiple disabled with some matches in excluded", components, not(AssertsUtil.isComponent(true, true, exclude)));
 
         item1.withEnabled(false);
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withValue("v3"));
-        exclude.add(new UnitTestComponent().withValue("v1"));
+        exclude.add("v3");
+        exclude.add("v1");
         assertThat("Multiple disabled with all matches in excluded", components, AssertsUtil.isComponent(true, true, exclude));
     }
 
@@ -804,9 +798,6 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void assertAllDisabledWithExclusionsUsingGetTextTest() {
-        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
-        UnitTestComponent exclusionMatchOnText = new UnitTestComponent().withText("t2").withValue("nv2");
-
         UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(false);
         UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(false);
         UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(false);
@@ -815,8 +806,8 @@ public class AssertsTest extends TestNGBase {
         components.add(item2);
         components.add(item3);
 
-        List<PageComponent> exclude = new ArrayList<>();
-        exclude.add(exclusionNeverMatch);
+        List<String> exclude = new ArrayList<>();
+        exclude.add("no match");
         assertThat("All disabled", components, AssertsUtil.isComponent(false, exclude));
 
         item1.withEnabled(true);
@@ -828,46 +819,46 @@ public class AssertsTest extends TestNGBase {
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(exclusionMatchOnText);
+        exclude.add("t2");
         assertThat("All disabled with one in excluded", components, AssertsUtil.isComponent(false, exclude));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("t3"));
-        exclude.add(new UnitTestComponent().withText("t1"));
+        exclude.add("t3");
+        exclude.add("t1");
         assertThat("All disabled with multiple in excluded", components, AssertsUtil.isComponent(false, exclude));
 
         item1.withEnabled(false);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
+        exclude.add("");
         assertThat("One enabled with no match in excluded", components, not(AssertsUtil.isComponent(false, exclude)));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("").withValue("v3"));
-        exclude.add(new UnitTestComponent().withText("nv100"));
+        exclude.add("");
+        exclude.add("nv100");
         assertThat("Multiple enabled with no match in excluded", components, not(AssertsUtil.isComponent(false, exclude)));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("t1"));
-        exclude.add(new UnitTestComponent().withText("nv100"));
+        exclude.add("t1");
+        exclude.add("nv100");
         assertThat("Multiple enabled with some matches in excluded", components, not(AssertsUtil.isComponent(false, exclude)));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("t3"));
-        exclude.add(new UnitTestComponent().withText("t1"));
+        exclude.add("t3");
+        exclude.add("t1");
         assertThat("Multiple enabled with all matches in excluded", components, AssertsUtil.isComponent(false, exclude));
     }
 
@@ -876,9 +867,6 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void assertAllDisabledWithExclusionsUsingGetValueTest() {
-        UnitTestComponent exclusionNeverMatch = new UnitTestComponent().withText("nt1").withValue("nv1");
-        UnitTestComponent exclusionMatchOnValue = new UnitTestComponent().withText("nt2").withValue("v2");
-
         UnitTestComponent item1 = new UnitTestComponent().withText("t1").withValue("v1").withEnabled(false);
         UnitTestComponent item2 = new UnitTestComponent().withText("t2").withValue("v2").withEnabled(false);
         UnitTestComponent item3 = new UnitTestComponent().withText("t3").withValue("v3").withEnabled(false);
@@ -887,8 +875,8 @@ public class AssertsTest extends TestNGBase {
         components.add(item2);
         components.add(item3);
 
-        List<PageComponent> exclude = new ArrayList<>();
-        exclude.add(exclusionNeverMatch);
+        List<String> exclude = new ArrayList<>();
+        exclude.add("no match");
         assertThat("All disabled", components, AssertsUtil.isComponent(true, false, exclude));
 
         item1.withEnabled(true);
@@ -900,46 +888,46 @@ public class AssertsTest extends TestNGBase {
         item2.withEnabled(true);
         item3.withEnabled(false);
         exclude = new ArrayList<>();
-        exclude.add(exclusionMatchOnValue);
+        exclude.add("v2");
         assertThat("All disabled with one in excluded", components, AssertsUtil.isComponent(true, false, exclude));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withValue("v3"));
-        exclude.add(new UnitTestComponent().withValue("v1"));
+        exclude.add("v3");
+        exclude.add("v1");
         assertThat("All disabled with multiple in excluded", components, AssertsUtil.isComponent(true, false, exclude));
 
         item1.withEnabled(false);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
+        exclude.add("");
         assertThat("One enabled with no match in excluded", components, not(AssertsUtil.isComponent(true, false, exclude)));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withText("v3").withValue(""));
-        exclude.add(new UnitTestComponent().withValue("nv100"));
+        exclude.add("");
+        exclude.add("nv100");
         assertThat("Multiple enabled with no match in excluded", components, not(AssertsUtil.isComponent(true, false, exclude)));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withValue("v1"));
-        exclude.add(new UnitTestComponent().withValue("nv100"));
+        exclude.add("v1");
+        exclude.add("nv100");
         assertThat("Multiple enabled with some matches in excluded", components, not(AssertsUtil.isComponent(true, false, exclude)));
 
         item1.withEnabled(true);
         item2.withEnabled(false);
         item3.withEnabled(true);
         exclude = new ArrayList<>();
-        exclude.add(new UnitTestComponent().withValue("v3"));
-        exclude.add(new UnitTestComponent().withValue("v1"));
+        exclude.add("v3");
+        exclude.add("v1");
         assertThat("Multiple enabled with all matches in excluded", components, AssertsUtil.isComponent(true, false, exclude));
     }
 
