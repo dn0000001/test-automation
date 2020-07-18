@@ -80,6 +80,13 @@
         </classes>
     </test>
 
+    <test name="Asserts Test">
+        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.AssertsTest"/>
+        </classes>
+    </test>
+
     <test name="Same Thread Test">
         <classes>
             <class name="com.automation.common.ui.app.tests.SameThreadTest"/>
@@ -221,13 +228,6 @@
         <parameter name="scenario" value="AFTER_CLASS_FAILURE"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
-        </classes>
-    </test>
-
-    <test name="Asserts Test">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.AssertsTest"/>
         </classes>
     </test>
 
