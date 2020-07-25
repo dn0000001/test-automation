@@ -48,4 +48,8 @@ public class JexlUtils {
         }
     }
 
+    public static String getCustom(String key, String defaultValue, boolean decode) {
+        return TestProperties.getInstance().getCustom(key, defaultValue, decode);
+    }
+
 }
