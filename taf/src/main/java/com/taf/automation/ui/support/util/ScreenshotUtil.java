@@ -1,5 +1,6 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
+import com.taf.automation.ui.support.Utils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.util.ByteArrayBuffer;
 import org.openqa.selenium.JavascriptExecutor;

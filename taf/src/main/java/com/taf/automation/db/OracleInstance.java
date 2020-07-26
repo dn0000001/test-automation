@@ -1,6 +1,6 @@
 package com.taf.automation.db;
 
-import com.taf.automation.ui.support.CryptoUtils;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.TestProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;

@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.CryptoUtils;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import org.apache.commons.lang3.math.NumberUtils;

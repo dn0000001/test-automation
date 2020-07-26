@@ -3,6 +3,7 @@ package com.taf.automation.ui.support;
 import com.taf.automation.mobile.AppConfigBuilder;
 import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.thoughtworks.xstream.XStream;
 import datainstiller.data.DataPersistence;
 import net.jodah.failsafe.Failsafe;

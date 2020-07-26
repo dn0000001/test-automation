@@ -1,4 +1,4 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
 import com.taf.automation.api.ApiUtils;
 import org.apache.commons.lang3.StringUtils;

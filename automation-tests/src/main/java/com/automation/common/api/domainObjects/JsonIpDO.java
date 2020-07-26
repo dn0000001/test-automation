@@ -7,7 +7,7 @@ import com.taf.automation.api.ReturnType;
 import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.ui.support.Helper;
-import com.taf.automation.ui.support.WsUtils;
+import com.taf.automation.ui.support.util.WsUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.http.message.BasicStatusLine;

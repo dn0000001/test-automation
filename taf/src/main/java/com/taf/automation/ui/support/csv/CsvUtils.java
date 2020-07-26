@@ -1,11 +1,11 @@
 package com.taf.automation.ui.support.csv;
 
 import com.taf.automation.api.ApiDomainObject;
-import com.taf.automation.ui.support.DataInstillerUtils;
+import com.taf.automation.ui.support.util.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
-import com.taf.automation.ui.support.FilloUtils;
+import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.Helper;
-import com.taf.automation.ui.support.RegExUtils;
+import com.taf.automation.ui.support.util.RegExUtils;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;

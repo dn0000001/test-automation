@@ -2,7 +2,7 @@ package com.taf.automation.ui.support.testng;
 
 import com.taf.automation.api.html.HtmlUtils;
 import com.taf.automation.ui.support.DomainObject;
-import com.taf.automation.ui.support.ExpectedConditionsUtil;
+import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;
