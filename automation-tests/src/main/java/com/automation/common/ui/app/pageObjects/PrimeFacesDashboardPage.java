@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
 
-import static com.taf.automation.ui.support.AssertsUtil.isComponentDisplayed;
+import static com.taf.automation.ui.support.util.AssertsUtil.isComponentDisplayed;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;

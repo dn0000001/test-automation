@@ -1,13 +1,19 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.Utils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Component purely for unit testing purposes
@@ -21,6 +27,16 @@ public class UnitTestComponent extends PageComponent {
     private String value;
 
     public UnitTestComponent() {
+        attributes = new HashMap<>();
+        selected = false;
+        displayed = true;
+        enabled = true;
+        text = "";
+        value = "";
+    }
+
+    public UnitTestComponent(WebElement element) {
+        super(element);
         attributes = new HashMap<>();
         selected = false;
         displayed = true;
@@ -59,6 +75,16 @@ public class UnitTestComponent extends PageComponent {
         return this;
     }
 
+    public UnitTestComponent withLocator(By locator) {
+        try {
+            FieldUtils.writeField(this, "selector", locator, true);
+        } catch (Exception ex) {
+            Helper.log("Could not set locator in UnitTestComponent to:  " + locator, true);
+        }
+
+        return this;
+    }
+
     @Override
     protected void init() {
         //
@@ -66,7 +92,8 @@ public class UnitTestComponent extends PageComponent {
 
     @Override
     public void setValue() {
-        //
+        assertThat("UnitTestComponent value could not be set as it is not displayed", displayed);
+        assertThat("UnitTestComponent value could not be set as it is not enabled", enabled);
     }
 
     @Override

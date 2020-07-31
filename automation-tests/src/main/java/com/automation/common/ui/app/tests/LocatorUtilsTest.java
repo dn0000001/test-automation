@@ -17,7 +17,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.taf.automation.ui.support.AssertsUtil.matchesRegex;
+import static com.taf.automation.ui.support.util.AssertsUtil.matchesRegex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 

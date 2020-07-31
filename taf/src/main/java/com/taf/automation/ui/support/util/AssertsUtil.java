@@ -1,6 +1,8 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
-import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
+import com.taf.automation.ui.support.ComponentPO;
+import com.taf.automation.ui.support.DateActions;
+import com.taf.automation.ui.support.Utils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -1342,6 +1344,7 @@ public class AssertsUtil {
                 mismatchDescription.appendText(" able to set using value:  " + valueToUse);
             }
 
+            @SuppressWarnings("java:S110")
             @Override
             protected boolean matchesSafely(final PageComponent component) {
                 String restoreData;
@@ -1361,8 +1364,26 @@ public class AssertsUtil {
                     // Initialize component data for the test
                     component.initializeData(valueToUse, null, null);
 
+                    // This is a workaround to access to a page object with implementing or using an existing one
+                    ComponentPO page = new ComponentPO() {
+                        @Override
+                        public boolean hasData() {
+                            return false;
+                        }
+
+                        @Override
+                        public void fill() {
+                            setElementValueV2(component, null, 0);
+                        }
+
+                        @Override
+                        public void validate() {
+                            //
+                        }
+                    };
+
                     // This should fail as component cannot be set
-                    new PageObjectV2().setElementValueV2(component, null, 0);
+                    page.fill();
 
                     // If we reach here, then component could be set and this is a failure
                     return false;

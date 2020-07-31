@@ -6,10 +6,11 @@ import com.automation.common.ui.app.components.UnitTestComponent;
 import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.AssertsUtil;
+import com.taf.automation.ui.support.util.AssertsUtil;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -557,6 +559,27 @@ public class AssertsTest extends TestNGBase {
 
         component = new UnitTestComponent().withEnabled(false).withDisplayed(true);
         assertThat(String.format(reason, false, true), component, not(AssertsUtil.isComponentReady()));
+    }
+
+    @Features("AssertsUtil")
+    @Stories("Validate Component Cannot Be Set Assertion")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertComponentCannotBeSetTest() {
+        String valueToUse = "Does not matter";
+        getContext().getDriver().get("https://duckduckgo.com/");
+        WebElement element = Utils.getWebDriverWait().until(ExpectedConditionsUtil.ready(By.name("q")));
+        UnitTestComponent component = new UnitTestComponent(element)
+                .withEnabled(true)
+                .withDisplayed(true);
+        Helper.log("UnitTestComponent (ready) - start:  " + new Date(), true);
+        assertThat("UnitTestComponent (ready)", component, not(AssertsUtil.componentCannotBeSet(valueToUse)));
+        Helper.log("UnitTestComponent (ready) - complete:  " + new Date(), true);
+
+        // This will always take timeout as it constantly tries to set the value until timeout occurs
+        component.withEnabled(false).withDisplayed(false);
+        assertThat("UnitTestComponent (not ready)", component, AssertsUtil.componentCannotBeSet(valueToUse));
+        Helper.log("UnitTestComponent (not ready) - complete:  " + new Date(), true);
     }
 
     @Features("AssertsUtil")
