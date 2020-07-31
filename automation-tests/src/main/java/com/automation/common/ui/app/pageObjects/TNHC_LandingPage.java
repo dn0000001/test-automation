@@ -3,7 +3,7 @@ package com.automation.common.ui.app.pageObjects;
 import com.automation.common.ui.app.components.Search;
 import com.automation.common.ui.app.domainObjects.CsvColumnMapping;
 import com.taf.automation.ui.support.AliasedString;
-import com.taf.automation.ui.support.JsUtils;
+import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.csv.CsvTestData;

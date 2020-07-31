@@ -5,7 +5,7 @@ import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.HealthService;
 import com.taf.automation.api.network.MultiSshSession;
-import com.taf.automation.ui.support.CryptoUtils;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.TestProperties;
 import org.apache.http.client.utils.URIBuilder;
 

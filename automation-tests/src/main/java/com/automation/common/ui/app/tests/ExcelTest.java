@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.ExcelUtils;
-import com.taf.automation.ui.support.FilloUtils;
+import com.taf.automation.ui.support.util.ExcelUtils;
+import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.Helper;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;

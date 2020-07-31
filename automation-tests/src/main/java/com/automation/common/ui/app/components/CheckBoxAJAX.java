@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.components;
 
-import com.taf.automation.ui.support.LocatorUtils;
+import com.taf.automation.ui.support.util.LocatorUtils;
 import com.taf.automation.ui.support.Utils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

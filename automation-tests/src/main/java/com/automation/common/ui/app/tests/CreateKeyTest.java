@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.CryptoUtils;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.Rand;
 import org.apache.commons.codec.binary.Hex;

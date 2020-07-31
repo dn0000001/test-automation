@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.components;
 
-import com.taf.automation.ui.support.LocatorUtils;
+import com.taf.automation.ui.support.util.LocatorUtils;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;

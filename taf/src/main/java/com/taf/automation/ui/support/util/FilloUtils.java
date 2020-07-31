@@ -1,7 +1,8 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
 import com.codoid.products.fillo.Connection;
 import com.codoid.products.fillo.Recordset;
+import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.GroupRow;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;

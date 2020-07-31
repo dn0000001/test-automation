@@ -1,5 +1,10 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
+import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.MouseEvent;
+import com.taf.automation.ui.support.MouseEventType;
+import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.exceptions.JavaScriptException;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import net.jodah.failsafe.Failsafe;

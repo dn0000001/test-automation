@@ -1,4 +1,4 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;

@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.GenericTable;
-import com.taf.automation.ui.support.JsUtils;
+import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.Utils;

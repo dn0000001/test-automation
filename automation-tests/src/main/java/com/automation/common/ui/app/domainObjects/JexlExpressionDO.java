@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.domainObjects;
 
 import com.taf.automation.ui.support.AliasedString;
-import com.taf.automation.ui.support.BigDecimalUtils;
+import com.taf.automation.ui.support.util.BigDecimalUtils;
 import com.taf.automation.ui.support.DateActions;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.Lookup;

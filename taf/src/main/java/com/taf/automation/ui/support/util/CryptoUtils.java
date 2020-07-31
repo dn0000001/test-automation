@@ -1,5 +1,6 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
+import com.taf.automation.ui.support.TestProperties;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

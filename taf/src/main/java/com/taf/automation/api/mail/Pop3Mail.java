@@ -2,7 +2,7 @@ package com.taf.automation.api.mail;
 
 import com.sun.mail.pop3.POP3Store;
 import com.taf.automation.api.network.SSHSession;
-import com.taf.automation.ui.support.CryptoUtils;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.Environment;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.Utils;

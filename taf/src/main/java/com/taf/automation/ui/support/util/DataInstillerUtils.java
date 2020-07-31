@@ -1,7 +1,10 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
 import com.taf.automation.api.converters.BasicHeaderConverter;
 import com.taf.automation.api.converters.EnumConverter;
+import com.taf.automation.ui.support.DataAliasesConverterV2;
+import com.taf.automation.ui.support.Environment;
+import com.taf.automation.ui.support.EnvironmentType;
 import com.taf.automation.ui.support.generators.RandomDateGenerator;
 import com.taf.automation.ui.support.generators.RandomRealUSAddressGenerator;
 import com.thoughtworks.xstream.XStream;

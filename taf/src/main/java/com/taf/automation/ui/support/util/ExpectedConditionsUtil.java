@@ -1,5 +1,7 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
+import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.Utils;
 import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
