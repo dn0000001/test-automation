@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static com.taf.automation.ui.support.AssertsUtil.isComponentDisplayed;
+import static com.taf.automation.ui.support.util.AssertsUtil.isComponentDisplayed;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;

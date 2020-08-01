@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
 import java.util.List;
 import java.util.Map;
 
-import static com.taf.automation.ui.support.AssertsUtil.range;
+import static com.taf.automation.ui.support.util.AssertsUtil.range;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**

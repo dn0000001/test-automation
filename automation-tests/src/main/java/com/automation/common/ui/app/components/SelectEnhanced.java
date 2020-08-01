@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.taf.automation.ui.support.AssertsUtil.matchesRegex;
-import static com.taf.automation.ui.support.AssertsUtil.range;
+import static com.taf.automation.ui.support.util.AssertsUtil.matchesRegex;
+import static com.taf.automation.ui.support.util.AssertsUtil.range;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
