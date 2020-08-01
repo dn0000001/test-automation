@@ -5,7 +5,7 @@ import com.taf.automation.api.network.SSHSession;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.Environment;
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

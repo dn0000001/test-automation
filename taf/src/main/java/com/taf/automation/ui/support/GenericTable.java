@@ -3,6 +3,7 @@ package com.taf.automation.ui.support;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
 import com.taf.automation.ui.support.util.JsUtils;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;

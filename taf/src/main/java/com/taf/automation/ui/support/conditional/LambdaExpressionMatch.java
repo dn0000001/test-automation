@@ -1,6 +1,6 @@
 package com.taf.automation.ui.support.conditional;
 
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import net.jodah.failsafe.Failsafe;
 import org.openqa.selenium.WebDriver;
 

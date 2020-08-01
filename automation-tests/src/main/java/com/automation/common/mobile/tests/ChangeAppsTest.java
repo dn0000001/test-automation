@@ -6,7 +6,7 @@ import com.automation.common.mobile.pageObjects.ClockApp;
 import com.taf.automation.mobile.AppConfigBuilder;
 import com.taf.automation.mobile.AppUnderTest;
 import com.taf.automation.mobile.MobileDevice;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.WebDriverTypeEnum;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.annotations.Test;

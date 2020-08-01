@@ -4,7 +4,7 @@ import com.taf.automation.ui.support.GenericTable;
 import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.TestContext;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;

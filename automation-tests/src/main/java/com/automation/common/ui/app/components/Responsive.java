@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.components;
 
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import ru.yandex.qatools.allure.annotations.Step;

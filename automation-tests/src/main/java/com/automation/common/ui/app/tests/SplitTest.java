@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.components.SelectEnhanced;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.testng.annotations.Test;
 

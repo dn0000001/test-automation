@@ -3,7 +3,7 @@ package com.automation.common.ui.app.tests;
 import com.taf.automation.ui.support.Environment;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

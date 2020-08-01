@@ -1,5 +1,7 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.Utils;
+
 /**
  * The purpose of this class is to store various accents sets
  */

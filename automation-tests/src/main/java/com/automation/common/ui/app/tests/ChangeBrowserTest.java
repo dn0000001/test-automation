@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.WebDriverTypeEnum;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.annotations.Test;

@@ -2,7 +2,7 @@ package com.taf.automation.ui.support.pageScraping;
 
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.DataPersistenceV2;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.thoughtworks.xstream.XStream;

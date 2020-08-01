@@ -6,7 +6,7 @@ import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.util.RegExUtils;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;

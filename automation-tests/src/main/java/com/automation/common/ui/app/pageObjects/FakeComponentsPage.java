@@ -16,7 +16,7 @@ import com.automation.common.ui.app.components.TextBoxBackspace;
 import com.taf.automation.ui.support.AliasedString;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.support.FindBy;
 import ui.auto.core.components.WebComponent;
 import ui.auto.core.data.DataTypes;

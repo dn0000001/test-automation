@@ -2,7 +2,7 @@ package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.ComponentPO;
 import com.taf.automation.ui.support.TestContext;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;

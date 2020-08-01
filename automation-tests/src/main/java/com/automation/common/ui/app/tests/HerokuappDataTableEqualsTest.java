@@ -5,7 +5,7 @@ import com.automation.common.ui.app.pageObjects.HerokuappDataTablesPage;
 import com.automation.common.ui.app.pageObjects.HerokuappRow;
 import com.automation.common.ui.app.pageObjects.HerokuappRowTable1;
 import com.taf.automation.api.JsonUtils;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;

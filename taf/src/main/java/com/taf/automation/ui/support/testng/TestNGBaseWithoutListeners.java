@@ -5,7 +5,7 @@ import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import datainstiller.data.DataPersistence;
 import io.appium.java_client.AppiumDriver;
 import org.apache.commons.io.FileUtils;

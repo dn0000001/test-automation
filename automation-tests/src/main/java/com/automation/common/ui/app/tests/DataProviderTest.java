@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.LinksDO;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.mutable.MutableInt;
