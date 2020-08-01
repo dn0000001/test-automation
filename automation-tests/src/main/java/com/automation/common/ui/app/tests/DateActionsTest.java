@@ -1,19 +1,26 @@
 package com.automation.common.ui.app.tests;
 
+import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.DateActions;
+import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import de.jollyday.HolidayCalendar;
+import de.jollyday.HolidayType;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
+import java.time.DayOfWeek;
 import java.util.Date;
+import java.util.HashSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 @Listeners(AllureTestNGListener.class)
 public class DateActionsTest {
@@ -391,6 +398,76 @@ public class DateActionsTest {
 
         actual = dateActions.onlyBusinessDaysBefore(jan3, -1);
         assertThat("New Years Day - Only Business Days Before - 1 Day Before", actual, equalTo(dec30));
+    }
+
+    @Features("DateActions")
+    @Stories("Validate methods used by Jexl")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performJexlTest() {
+        DateActions original = new DateActions()
+                .withHolidayCalendar(HolidayCalendar.UNITED_STATES.toString())
+                .withHolidayType(HolidayType.OFFICIAL_HOLIDAY.toString())
+                .withRegion("ca")
+                .withZone("US/Pacific")
+                .withNonBusinessDay(DayOfWeek.MONDAY.toString());
+        DateActions deepCopy = original.copy();
+        validateCopy("Validate Deep Copy Equals Original", deepCopy, original);
+
+        DateActions modifiedOriginal = new DateActions()
+                .withHolidayCalendar(HolidayCalendar.CANADA.toString())
+                .withHolidayType(HolidayType.UNOFFICIAL_HOLIDAY.toString())
+                .withRegion("bc")
+                .withZone("Canada/Pacific")
+                .withNonBusinessDay(DayOfWeek.TUESDAY.toString());
+
+        // Change original to be equal to modifiedOriginal
+        original.withHolidayCalendar(HolidayCalendar.CANADA.toString())
+                .withHolidayType(HolidayType.UNOFFICIAL_HOLIDAY.toString())
+                .withRegions(new String[0])
+                .withRegion("bc")
+                .withZone("Canada/Pacific")
+                .withNonBusinessDays(new HashSet<>())
+                .withNonBusinessDay(DayOfWeek.SATURDAY.toString())
+                .withNonBusinessDay(DayOfWeek.SUNDAY.toString())
+                .withNonBusinessDay(DayOfWeek.TUESDAY.toString());
+        validateCopy("Validate Original Equals Modified", modifiedOriginal, original);
+        validateDifferent("Validate Deep Copy is different than original #1", deepCopy, original);
+
+        DateActions modifiedDeepCopy = new DateActions()
+                .withHolidayCalendar(HolidayCalendar.IRELAND.toString())
+                .withHolidayType(HolidayType.UNOFFICIAL_HOLIDAY.toString())
+                .withRegions(null)
+                .withZone("Europe/Dublin")
+                .withNonBusinessDay(DayOfWeek.FRIDAY.toString());
+
+        // Change deepCopy to be equal to modifiedDeepCopy
+        deepCopy.withHolidayCalendar(HolidayCalendar.IRELAND.toString())
+                .withHolidayType(HolidayType.UNOFFICIAL_HOLIDAY.toString())
+                .withRegions(null)
+                .withZone("Europe/Dublin")
+                .withNonBusinessDays(new HashSet<>())
+                .withNonBusinessDay(DayOfWeek.SATURDAY.toString())
+                .withNonBusinessDay(DayOfWeek.SUNDAY.toString())
+                .withNonBusinessDay(DayOfWeek.FRIDAY.toString());
+        validateCopy("Validate Deep Copy Equals Modified", modifiedDeepCopy, deepCopy);
+        validateDifferent("Validate Deep Copy is different than original #2", deepCopy, original);
+    }
+
+    @Step("{0}")
+    private void validateCopy(String log, DateActions actual, DateActions expected) {
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+        Helper.assertThat(aggregator, actual, expected);
+        Helper.assertThat(aggregator);
+    }
+
+    @Step("{0}")
+    private void validateDifferent(String log, DateActions actual, DateActions expected) {
+        AssertAggregator aggregator = new AssertAggregator();
+        aggregator.setConsole(true);
+        Helper.assertThat(aggregator, actual, expected);
+        assertThat("There were no differences", aggregator.getFailureCount(), greaterThan(0));
     }
 
 }

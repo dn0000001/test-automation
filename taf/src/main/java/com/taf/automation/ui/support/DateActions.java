@@ -6,6 +6,8 @@ import de.jollyday.HolidayManager;
 import de.jollyday.HolidayType;
 import de.jollyday.ManagerParameters;
 import de.jollyday.util.CalendarUtil;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -46,6 +48,28 @@ public class DateActions {
         nonBusinessDays = getStandardNonBusinessDays();
     }
 
+    public DateActions copy() {
+        DateActions cp = new DateActions();
+
+        cp.holidayCalendar = holidayCalendar;
+        cp.holidayManager = null; // Will be initialized properly on first use
+        cp.holidayType = holidayType;
+        cp.regions = ArrayUtils.clone(regions);
+        cp.zone = ObjectUtils.cloneIfPossible(zone);
+        cp.nonBusinessDays = ObjectUtils.cloneIfPossible(nonBusinessDays);
+
+        return cp;
+    }
+
+    public DateActions withHolidayCalendar(String value) {
+        try {
+            HolidayCalendar calendar = HolidayCalendar.valueOf(value.toUpperCase());
+            return withHolidayCalendar(calendar);
+        } catch (Exception ex) {
+            return this;
+        }
+    }
+
     public DateActions withHolidayCalendar(HolidayCalendar holidayCalendar) {
         this.holidayCalendar = holidayCalendar;
 
@@ -53,6 +77,15 @@ public class DateActions {
         holidayManager = null;
 
         return this;
+    }
+
+    public DateActions withZone(String value) {
+        try {
+            ZoneId zoneId = ZoneId.of(value);
+            return withZone(zoneId);
+        } catch (Exception ex) {
+            return this;
+        }
     }
 
     public DateActions withZone(ZoneId zone) {
@@ -65,6 +98,29 @@ public class DateActions {
         return this;
     }
 
+    public DateActions withNonBusinessDay(String value) {
+        try {
+            DayOfWeek dayOfWeek = DayOfWeek.valueOf(value.toUpperCase());
+            return withNonBusinessDay(dayOfWeek);
+        } catch (Exception ex) {
+            return this;
+        }
+    }
+
+    public DateActions withNonBusinessDay(DayOfWeek dayOfWeek) {
+        nonBusinessDays.add(dayOfWeek);
+        return this;
+    }
+
+    public DateActions withHolidayType(String value) {
+        try {
+            HolidayType type = HolidayType.valueOf(value.toUpperCase());
+            return withHolidayType(type);
+        } catch (Exception ex) {
+            return this;
+        }
+    }
+
     public DateActions withHolidayType(HolidayType holidayType) {
         this.holidayType = holidayType;
         return this;
@@ -72,6 +128,14 @@ public class DateActions {
 
     public DateActions withRegions(String[] regions) {
         this.regions = regions;
+        return this;
+    }
+
+    public DateActions withRegion(String region) {
+        if (region != null) {
+            regions = ArrayUtils.add(regions, region);
+        }
+
         return this;
     }
 
