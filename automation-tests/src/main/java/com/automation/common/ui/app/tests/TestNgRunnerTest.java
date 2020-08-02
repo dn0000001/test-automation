@@ -20,8 +20,8 @@ public class TestNgRunnerTest extends TestNGBase {
     private TestScenario scenarioUnderTest;
 
     private enum TestScenario implements ColumnMapper {
-        NO_FAILURE("NO_FAILURE", "https://www.google.ca/"),
-        STANDARD_FAILURE("STANDARD_FAILURE", "https://yandex.com/"),
+        NO_FAILURE("NO_FAILURE", "https://yandex.com/"),
+        STANDARD_FAILURE("STANDARD_FAILURE", "https://www.google.ca/"),
         BEFORE_CLASS_FAILURE("BEFORE_CLASS_FAILURE", "https://www.baidu.com/"),
         BEFORE_TEST_FAILURE("BEFORE_TEST_FAILURE", "https://www.bing.com/"),
         AFTER_TEST_FAILURE("AFTER_TEST_FAILURE", "https://ca.search.yahoo.com/"),

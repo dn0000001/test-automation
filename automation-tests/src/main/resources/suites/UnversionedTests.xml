@@ -204,34 +204,6 @@
         </classes>
     </test>
 
-    <test name="Before Class Failure Test">
-        <parameter name="scenario" value="BEFORE_CLASS_FAILURE"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
-        </classes>
-    </test>
-
-    <test name="Before Test Failure Test">
-        <parameter name="scenario" value="BEFORE_TEST_FAILURE"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
-        </classes>
-    </test>
-
-    <test name="After Test Failure Test">
-        <parameter name="scenario" value="AFTER_TEST_FAILURE"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
-        </classes>
-    </test>
-
-    <test name="After Class Failure Test">
-        <parameter name="scenario" value="AFTER_CLASS_FAILURE"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
-        </classes>
-    </test>
-
     <test name="Address Provider Test - AL">
         <parameter name="data-set" value="data/ui/GenericAddress_TestData.xml"/>
         <parameter name="state" value="AL"/>
@@ -256,6 +228,13 @@
         </classes>
     </test>
 
+    <test name="Before Class Failure Test">
+        <parameter name="scenario" value="BEFORE_CLASS_FAILURE"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
+        </classes>
+    </test>
+
     <test name="Date Actions Tests">
         <classes>
             <class name="com.automation.common.ui.app.tests.DateActionsTest"/>
@@ -265,6 +244,13 @@
     <test name="LocatorUtils Tests">
         <classes>
             <class name="com.automation.common.ui.app.tests.LocatorUtilsTest"/>
+        </classes>
+    </test>
+
+    <test name="Before Test Failure Test">
+        <parameter name="scenario" value="BEFORE_TEST_FAILURE"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
         </classes>
     </test>
 
@@ -280,9 +266,41 @@
         </classes>
     </test>
 
+    <test name="After Test Failure Test">
+        <parameter name="scenario" value="AFTER_TEST_FAILURE"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
+        </classes>
+    </test>
+
     <test name="License Provider Tests">
         <classes>
             <class name="com.automation.common.ui.app.tests.LicenseProviderTest"/>
+        </classes>
+    </test>
+
+    <test name="Extracted Workflow Data Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ExtractedWorkflowDataTest"/>
+        </classes>
+    </test>
+
+    <test name="Cache Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.CacheTest"/>
+        </classes>
+    </test>
+
+    <test name="Guava Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.GuavaTest"/>
+        </classes>
+    </test>
+
+    <test name="After Class Failure Test">
+        <parameter name="scenario" value="AFTER_CLASS_FAILURE"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.TestNgRunnerTest"/>
         </classes>
     </test>
 

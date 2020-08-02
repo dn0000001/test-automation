@@ -2,15 +2,17 @@ package com.taf.automation.ui.support.pageScraping;
 
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.DataPersistenceV2;
-import com.taf.automation.ui.support.util.Utils;
+import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import datainstiller.data.DataPersistence;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.File;
 import java.net.URL;
@@ -230,8 +232,21 @@ public class ExtractedWorkflowData extends DataPersistenceV2 {
 
     @Override
     public String toString() {
-        ReflectionToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
+        ToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
         return ReflectionToStringBuilder.toStringExclude(this);
+    }
+
+    @Override
+    public <T extends DataPersistence> T fromResource(String resourceFilePath, boolean resolveAliases) {
+        //
+        // The default constructor sets some values to non-null which will cause them to be retained.
+        // So, It is necessary to set fields that should be overridden from the file to null
+        // to prevent fields from being retained
+        //
+        pages = null;
+        setFlowName(null);
+
+        return super.fromResource(Helper.getEnvironmentBasedFile(resourceFilePath), resolveAliases);
     }
 
     @Override
