@@ -54,6 +54,7 @@
     </test>
 
     <test name="Retry with Pass Test">
+        <parameter name="url" value="https://duckduckgo.com/"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.RetryTest"/>
         </classes>
