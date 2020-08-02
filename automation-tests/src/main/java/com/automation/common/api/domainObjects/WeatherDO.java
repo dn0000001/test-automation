@@ -5,7 +5,7 @@ import com.automation.common.data.Weather;
 import com.taf.automation.api.ApiDomainObject;
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.rest.GenericHttpResponse;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.VTD_XML;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;

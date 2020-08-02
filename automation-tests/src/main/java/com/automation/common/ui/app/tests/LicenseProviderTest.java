@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.providers.LicenseContact;
 import com.taf.automation.ui.support.providers.LicenseProvider;
 import com.taf.automation.ui.support.providers.State;

@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.util.Utils;

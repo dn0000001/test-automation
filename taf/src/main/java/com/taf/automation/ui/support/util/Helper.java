@@ -1,11 +1,15 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.util;
 
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.ConsulInstance;
 import com.taf.automation.api.network.MultiSshSession;
+import com.taf.automation.ui.support.AssertAggregator;
+import com.taf.automation.ui.support.ComponentPO;
+import com.taf.automation.ui.support.DomainObject;
+import com.taf.automation.ui.support.Logging;
+import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
-import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.io.FileUtils;
@@ -940,8 +944,8 @@ public class Helper {
         } finally {
             if (error) {
                 String handles = driver.getWindowHandles().toString();
-                Helper.log("Existing handles:  " + handles, true);
-                Helper.log("Could not find handle:  " + handle, true);
+                log("Existing handles:  " + handles, true);
+                log("Could not find handle:  " + handle, true);
             }
         }
     }
@@ -1036,7 +1040,7 @@ public class Helper {
      * @param retries  - Number of times to retry if entering the field fails (either during input or validation)
      * @param all      - true to get all fields (including inherited fields), false to get only declared fields
      */
-    @SuppressWarnings({"java:S3776", "java:S112"})
+    @SuppressWarnings({"java:S3776", "java:S112", "java:S3011"})
     public static void autoFillPage(PageObject page, boolean validate, int retries, boolean all) {
         Field[] fields;
         if (all) {

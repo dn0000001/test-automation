@@ -3,7 +3,7 @@ package com.automation.common.ui.app.tests;
 import com.automation.common.ui.app.domainObjects.ComponentsDO;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;

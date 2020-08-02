@@ -2,7 +2,7 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.AddressProviderDO;
 import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.providers.AddressProvider;
 import com.taf.automation.ui.support.testng.TestNGBase;

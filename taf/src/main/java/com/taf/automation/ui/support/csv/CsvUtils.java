@@ -4,7 +4,7 @@ import com.taf.automation.api.ApiDomainObject;
 import com.taf.automation.ui.support.util.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.util.FilloUtils;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.RegExUtils;
 import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.Attachment;
