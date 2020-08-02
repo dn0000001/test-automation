@@ -2,7 +2,7 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.FakeDateManager;
 import com.taf.automation.ui.support.DateActions;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.testng.annotations.Optional;

@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.components;
 
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.openqa.selenium.By;

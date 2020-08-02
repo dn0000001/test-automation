@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.components;
 
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;

@@ -1,7 +1,7 @@
 package com.taf.automation.mobile;
 
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.WebDriverTypeEnum;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.MobileCapabilityType;

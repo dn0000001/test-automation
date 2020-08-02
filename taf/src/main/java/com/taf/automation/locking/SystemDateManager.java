@@ -3,7 +3,7 @@ package com.taf.automation.locking;
 import com.taf.automation.ui.support.BasicClock;
 import com.taf.automation.ui.support.DateActions;
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.Date;

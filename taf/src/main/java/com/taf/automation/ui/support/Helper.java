@@ -5,6 +5,7 @@ import com.taf.automation.api.ConsulInstance;
 import com.taf.automation.api.network.MultiSshSession;
 import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.io.FileUtils;

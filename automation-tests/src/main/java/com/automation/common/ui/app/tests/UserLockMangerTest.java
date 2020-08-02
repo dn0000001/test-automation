@@ -3,7 +3,7 @@ package com.automation.common.ui.app.tests;
 import com.automation.common.ui.app.domainObjects.JexlExpressionDO;
 import com.taf.automation.locking.UserLockManager;
 import com.taf.automation.ui.support.Helper;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.testng.annotations.AfterTest;

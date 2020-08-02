@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import com.taf.automation.api.ApiUtils;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;

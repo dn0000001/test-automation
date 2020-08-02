@@ -2,6 +2,7 @@ package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
+import com.taf.automation.ui.support.util.Utils;
 import io.appium.java_client.AppiumDriver;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;

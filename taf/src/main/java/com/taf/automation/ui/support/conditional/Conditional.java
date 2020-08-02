@@ -1,7 +1,7 @@
 package com.taf.automation.ui.support.conditional;
 
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Arrays;

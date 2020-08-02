@@ -1,6 +1,6 @@
 package com.taf.automation.ui.support.generators;
 
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import datainstiller.generators.GeneratorInterface;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;

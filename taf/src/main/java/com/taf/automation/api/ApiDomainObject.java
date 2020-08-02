@@ -11,7 +11,7 @@ import com.taf.automation.ui.support.util.DomainObjectUtils;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.converters.Credentials;
 import com.taf.automation.ui.support.converters.CreditCard;
 import com.taf.automation.ui.support.converters.DynamicCredentials;

@@ -11,7 +11,7 @@ import com.taf.automation.expressions.ZipCodeEqualsFromList;
 import com.taf.automation.expressions.ZipCodeNotEquals;
 import com.taf.automation.expressions.ZipCodeSizeEquals5;
 import com.taf.automation.expressions.ZipCodeSizeEquals9;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import datainstiller.generators.File2ListReader;
 import datainstiller.generators.GeneratorInterface;
 import org.apache.commons.lang3.StringUtils;

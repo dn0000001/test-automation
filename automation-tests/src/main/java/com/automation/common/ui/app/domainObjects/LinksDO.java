@@ -2,7 +2,7 @@ package com.automation.common.ui.app.domainObjects;
 
 import com.taf.automation.api.html.HtmlUtils;
 import com.taf.automation.ui.support.DomainObject;
-import com.taf.automation.ui.support.Utils;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.http.HttpStatus;
 import org.jsoup.Connection;
