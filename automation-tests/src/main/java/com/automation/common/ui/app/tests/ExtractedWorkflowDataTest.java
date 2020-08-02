@@ -10,9 +10,12 @@ import com.taf.automation.ui.support.pageScraping.ExtractedRowData;
 import com.taf.automation.ui.support.pageScraping.ExtractedTableData;
 import com.taf.automation.ui.support.pageScraping.ExtractedWorkflowData;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import org.apache.commons.io.FileUtils;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 @Listeners(AllureTestNGListener.class)
 public class ExtractedWorkflowDataTest {
+    private static final String HOME = System.getProperty("user.home");
+    private static final String SEPARATOR = System.getProperty("file.separator");
     private static final String OUTPUT_FILE = "test.xml";
     private static final String EMPTY_WORKFLOW = "data/ui/scraping/empty-workflow.xml";
     private static final String EMPTY_PAGE = "data/ui/scraping/single-empty-page.xml";
@@ -34,6 +39,12 @@ public class ExtractedWorkflowDataTest {
     private static final String COMPLEX_SINGLE_PAGE_WORKFLOW = "data/ui/scraping/complex-single-page-workflow.xml";
     private static final String COMPLEX_MULTI_PAGE_WORKFLOW = "data/ui/scraping/complex-multi-page-workflow.xml";
     private static final String COMPLEX_SINGLE_PAGE_WORKFLOW_2 = "data/ui/scraping/complex-single-page-workflow-2.xml";
+    private static final String CELL1 = "cell1";
+    private static final String CELL2 = "cell2";
+    private static final String EXPECTED = "Expected";
+    private static final String ACTUAL = "Actual";
+    private static final String OUTPUT_RECORDS = "Output Records";
+    private static final String MISMATCH = "Data from read XML did not match expected data";
 
     public enum WorkflowKeys implements ColumnMapper {
         P1("p1"),
@@ -172,20 +183,20 @@ public class ExtractedWorkflowDataTest {
 
     private ExtractedWorkflowData getWorkflowData() {
         ExtractedRowData t1r1 = new ExtractedRowData();
-        t1r1.addField("cell1", "a1");
-        t1r1.addField("cell2", "b1");
+        t1r1.addField(CELL1, "a1");
+        t1r1.addField(CELL2, "b1");
 
         ExtractedRowData t1r2 = new ExtractedRowData();
-        t1r2.addField("cell1", "a2");
-        t1r2.addField("cell2", "b2");
+        t1r2.addField(CELL1, "a2");
+        t1r2.addField(CELL2, "b2");
 
         ExtractedRowData t2r1 = new ExtractedRowData();
-        t2r1.addField("cell1", "a1");
-        t2r1.addField("cell2", "b1");
+        t2r1.addField(CELL1, "a1");
+        t2r1.addField(CELL2, "b1");
 
         ExtractedRowData t2r2 = new ExtractedRowData();
-        t2r2.addField("cell1", "a2");
-        t2r2.addField("cell2", "b2");
+        t2r2.addField(CELL1, "a2");
+        t2r2.addField(CELL2, "b2");
 
         ExtractedTableData tableData1 = new ExtractedTableData();
         tableData1.setTableNameKey("table1");
@@ -216,7 +227,7 @@ public class ExtractedWorkflowDataTest {
     }
 
     private void validateOutputRecords(AssertAggregator aggregator, List<CsvOutputRecord> outputRecords, int fieldCount) {
-        aggregator.assertThat("Output Records", outputRecords.size(), equalTo(fieldCount));
+        aggregator.assertThat(OUTPUT_RECORDS, outputRecords.size(), equalTo(fieldCount));
         for (int i = 0; i < outputRecords.size(); i++) {
             CsvOutputRecord item = outputRecords.get(i);
             if (item instanceof ExtractedDataOutputRecord) {
@@ -284,6 +295,7 @@ public class ExtractedWorkflowDataTest {
         return w1;
     }
 
+    @SuppressWarnings("java:S107")
     private ExtractedWorkflowData getWorkflow(
             String flowname,
             ColumnMapper t1Key,
@@ -320,6 +332,7 @@ public class ExtractedWorkflowDataTest {
         return w1;
     }
 
+    @SuppressWarnings("java:S107")
     private ExtractedWorkflowData getWorkflow(
             String flowname,
             ColumnMapper t1Key,
@@ -333,7 +346,6 @@ public class ExtractedWorkflowDataTest {
     ) {
         ExtractedRowData r1 = new ExtractedRowData();
         r1.addField(r1f1Key, r1f1Value);
-
 
         ExtractedRowData r2 = new ExtractedRowData();
         r2.addField(r2f1Key, r2f1Value);
@@ -360,6 +372,288 @@ public class ExtractedWorkflowDataTest {
         return w1;
     }
 
+    private ExtractedWorkflowData getComplexSinglePageWorkFlow() {
+        ExtractedRowData p10t1r1 = new ExtractedRowData();
+        p10t1r1.addField(WorkflowKeys.P10_T1_R1_C1, "bb");
+        p10t1r1.addField(WorkflowKeys.P10_T1_R1_C2, "cc");
+        p10t1r1.addField(WorkflowKeys.P10_T1_R1_C3, "dd");
+
+        ExtractedRowData p10t1r2 = new ExtractedRowData();
+        p10t1r2.addField(WorkflowKeys.P10_T1_R2_C1, "ee");
+        p10t1r2.addField(WorkflowKeys.P10_T1_R2_C2, "ff");
+        p10t1r2.addField(WorkflowKeys.P10_T1_R2_C3, "gg");
+
+        ExtractedRowData p10t1r3 = new ExtractedRowData();
+        p10t1r3.addField(WorkflowKeys.P10_T1_R3_C1, "hh");
+        p10t1r3.addField(WorkflowKeys.P10_T1_R3_C2, "ii");
+        p10t1r3.addField(WorkflowKeys.P10_T1_R3_C3, "jj");
+
+        ExtractedTableData p10t1 = new ExtractedTableData();
+        p10t1.setTableNameKey(WorkflowKeys.P10_T1);
+        p10t1.addRow(p10t1r1);
+        p10t1.addRow(p10t1r2);
+        p10t1.addRow(p10t1r3);
+
+        ExtractedRowData p10t2r1 = new ExtractedRowData();
+        p10t2r1.addField(WorkflowKeys.P10_T2_R1_C1, "ll");
+        p10t2r1.addField(WorkflowKeys.P10_T2_R1_C2, "mm");
+
+        ExtractedRowData p10t2r2 = new ExtractedRowData();
+        p10t2r2.addField(WorkflowKeys.P10_T2_R2_C1, "nn");
+        p10t2r2.addField(WorkflowKeys.P10_T2_R2_C2, "oo");
+
+        ExtractedRowData p10t2r3 = new ExtractedRowData();
+        p10t2r3.addField(WorkflowKeys.P10_T2_R3_C1, "pp");
+        p10t2r3.addField(WorkflowKeys.P10_T2_R3_C2, "qq");
+
+        ExtractedRowData p10t2r4 = new ExtractedRowData();
+        p10t2r4.addField(WorkflowKeys.P10_T2_R4_C1, "rr");
+        p10t2r4.addField(WorkflowKeys.P10_T2_R4_C2, "ss");
+
+        ExtractedTableData p10t2 = new ExtractedTableData();
+        p10t2.setTableNameKey(WorkflowKeys.P10_T2);
+        p10t2.addRow(p10t2r1);
+        p10t2.addRow(p10t2r2);
+        p10t2.addRow(p10t2r3);
+        p10t2.addRow(p10t2r4);
+
+        ExtractedPageData p10 = new ExtractedPageData();
+        p10.setPageNameKey(WorkflowKeys.P10);
+        p10.addField(WorkflowKeys.P10_F1, "aa");
+        p10.addTable(p10t1);
+        p10.addField(WorkflowKeys.P10_F2, "kk");
+        p10.addTable(p10t2);
+
+        ExtractedWorkflowData expected = new ExtractedWorkflowData();
+        expected.setFlowName("Complex Single Page WorkFlow");
+        expected.addPage(p10);
+
+        return expected;
+    }
+
+    private ExtractedWorkflowData getComplexMultiPageWorkFlow() {
+        ExtractedPageData p1 = new ExtractedPageData();
+        p1.setPageNameKey(WorkflowKeys.P1);
+        p1.addField(WorkflowKeys.P1_F1, "aa");
+        p1.addField(WorkflowKeys.P1_F2, "bb");
+
+        ExtractedTableData p2t1 = new ExtractedTableData();
+        p2t1.setTableNameKey(WorkflowKeys.P2_T1);
+
+        ExtractedRowData p2t2r1 = new ExtractedRowData();
+        p2t2r1.addField(WorkflowKeys.P2_T2_R1_C1, "cc");
+
+        ExtractedTableData p2t2 = new ExtractedTableData();
+        p2t2.setTableNameKey(WorkflowKeys.P2_T2);
+        p2t2.addRow(p2t2r1);
+
+        ExtractedRowData p2t3r1 = new ExtractedRowData();
+        p2t3r1.addField(WorkflowKeys.P2_T3_R1_C1, "dd");
+
+        ExtractedRowData p2t3r2 = new ExtractedRowData();
+        p2t3r2.addField(WorkflowKeys.P2_T3_R2_C1, "ee");
+
+        ExtractedTableData p2t3 = new ExtractedTableData();
+        p2t3.setTableNameKey(WorkflowKeys.P2_T3);
+        p2t3.addRow(p2t3r1);
+        p2t3.addRow(p2t3r2);
+
+        ExtractedPageData p2 = new ExtractedPageData();
+        p2.setPageNameKey(WorkflowKeys.P2);
+        p2.addTable(p2t1);
+        p2.addTable(p2t2);
+        p2.addTable(p2t3);
+
+        ExtractedRowData p3t1r1 = new ExtractedRowData();
+        p3t1r1.addField(WorkflowKeys.P3_T1_R1_C1, "gg");
+        p3t1r1.addField(WorkflowKeys.P3_T1_R1_C2, "hh");
+
+        ExtractedTableData p3t1 = new ExtractedTableData();
+        p3t1.setTableNameKey(WorkflowKeys.P3_T1);
+        p3t1.addRow(p3t1r1);
+
+        ExtractedPageData p3 = new ExtractedPageData();
+        p3.setPageNameKey(WorkflowKeys.P3);
+        p3.addField(WorkflowKeys.P3_F1, "ff");
+        p3.addTable(p3t1);
+
+        ExtractedPageData p4 = new ExtractedPageData();
+        p4.setPageNameKey(WorkflowKeys.P4);
+        p4.addField(WorkflowKeys.P4_F1, "ii");
+
+        ExtractedTableData p5t1 = new ExtractedTableData();
+        p5t1.setTableNameKey(WorkflowKeys.P5_T1);
+
+        ExtractedPageData p5 = new ExtractedPageData();
+        p5.setPageNameKey(WorkflowKeys.P5);
+        p5.addTable(p5t1);
+
+        ExtractedRowData p6t1r1 = new ExtractedRowData();
+        p6t1r1.addField(WorkflowKeys.P6_T1_R1_C1, "jj");
+
+        ExtractedRowData p6t1r2 = new ExtractedRowData();
+        p6t1r2.addField(WorkflowKeys.P6_T1_R2_C1, "kk");
+
+        ExtractedRowData p6t1r3 = new ExtractedRowData();
+        p6t1r3.addField(WorkflowKeys.P6_T1_R3_C1, "ll");
+
+        ExtractedTableData p6t1 = new ExtractedTableData();
+        p6t1.setTableNameKey(WorkflowKeys.P6_T1);
+        p6t1.addRow(p6t1r1);
+        p6t1.addRow(p6t1r2);
+        p6t1.addRow(p6t1r3);
+
+        ExtractedPageData p6 = new ExtractedPageData();
+        p6.setPageNameKey(WorkflowKeys.P6);
+        p6.addTable(p6t1);
+
+        ExtractedRowData p7t1r1 = new ExtractedRowData();
+        p7t1r1.addField(WorkflowKeys.P7_T1_R1_C1, "mm");
+        p7t1r1.addField(WorkflowKeys.P7_T1_R1_C2, "nn");
+
+        ExtractedRowData p7t1r2 = new ExtractedRowData();
+        p7t1r2.addField(WorkflowKeys.P7_T1_R2_C1, "oo");
+        p7t1r2.addField(WorkflowKeys.P7_T1_R2_C2, "pp");
+
+        ExtractedRowData p7t2r1 = new ExtractedRowData();
+        p7t2r1.addField(WorkflowKeys.P7_T2_R1_C1, "qq");
+        p7t2r1.addField(WorkflowKeys.P7_T2_R1_C2, "rr");
+
+        ExtractedRowData p7t2r2 = new ExtractedRowData();
+        p7t2r2.addField(WorkflowKeys.P7_T2_R2_C1, "ss");
+        p7t2r2.addField(WorkflowKeys.P7_T2_R2_C2, "tt");
+
+        ExtractedRowData p7t2r3 = new ExtractedRowData();
+        p7t2r3.addField(WorkflowKeys.P7_T2_R3_C1, "uu");
+        p7t2r3.addField(WorkflowKeys.P7_T2_R3_C2, "ww");
+
+        ExtractedRowData p7t3r1 = new ExtractedRowData();
+        p7t3r1.addField(WorkflowKeys.P6_T1_R3_C1, "xx");
+
+        ExtractedTableData p7t1 = new ExtractedTableData();
+        p7t1.setTableNameKey(WorkflowKeys.P7_T1);
+        p7t1.addRow(p7t1r1);
+        p7t1.addRow(p7t1r2);
+
+        ExtractedTableData p7t2 = new ExtractedTableData();
+        p7t2.setTableNameKey(WorkflowKeys.P7_T2);
+        p7t2.addRow(p7t2r1);
+        p7t2.addRow(p7t2r2);
+        p7t2.addRow(p7t2r3);
+
+        ExtractedTableData p7t3 = new ExtractedTableData();
+        p7t3.setTableNameKey(WorkflowKeys.P7_T3);
+        p7t3.addRow(p7t3r1);
+
+        ExtractedPageData p7 = new ExtractedPageData();
+        p7.setPageNameKey(WorkflowKeys.P7);
+        p7.addTable(p7t1);
+        p7.addTable(p7t2);
+        p7.addTable(p7t3);
+
+        ExtractedRowData p8t1r1 = new ExtractedRowData();
+        p8t1r1.addField(WorkflowKeys.P8_T1_R1_C1, "yy");
+        p8t1r1.addField(WorkflowKeys.P8_T1_R1_C2, "zz");
+        p8t1r1.addField(WorkflowKeys.P8_T1_R1_C3, "aaa");
+
+        ExtractedTableData p8t1 = new ExtractedTableData();
+        p8t1.setTableNameKey(WorkflowKeys.P8_T1);
+        p8t1.addRow(p8t1r1);
+
+        ExtractedPageData p8 = new ExtractedPageData();
+        p8.setPageNameKey(WorkflowKeys.P8);
+        p8.addTable(p8t1);
+
+        ExtractedRowData p9t1r1 = new ExtractedRowData();
+        p9t1r1.addField(WorkflowKeys.P9_T1_R1_C1, "ccc");
+        p9t1r1.addField(WorkflowKeys.P9_T1_R1_C2, "ddd");
+
+        ExtractedTableData p9t1 = new ExtractedTableData();
+        p9t1.setTableNameKey(WorkflowKeys.P9_T1);
+        p9t1.addRow(p9t1r1);
+
+        ExtractedRowData p9t2r1 = new ExtractedRowData();
+        p9t2r1.addField(WorkflowKeys.P9_T2_R1_C1, "fff");
+        p9t2r1.addField(WorkflowKeys.P9_T2_R1_C2, "ggg");
+
+        ExtractedTableData p9t2 = new ExtractedTableData();
+        p9t2.setTableNameKey(WorkflowKeys.P9_T2);
+        p9t2.addRow(p9t2r1);
+
+        ExtractedPageData p9 = new ExtractedPageData();
+        p9.setPageNameKey(WorkflowKeys.P9);
+        p9.addField(WorkflowKeys.P9_F1, "bbb");
+        p9.addTable(p9t1);
+        p9.addField(WorkflowKeys.P9_F2, "eee");
+        p9.addTable(p9t2);
+
+        ExtractedRowData p10t1r1 = new ExtractedRowData();
+        p10t1r1.addField(WorkflowKeys.P10_T1_R1_C1, "iii");
+        p10t1r1.addField(WorkflowKeys.P10_T1_R1_C2, "jjj");
+        p10t1r1.addField(WorkflowKeys.P10_T1_R1_C3, "aaaa");
+
+        ExtractedRowData p10t1r2 = new ExtractedRowData();
+        p10t1r2.addField(WorkflowKeys.P10_T1_R2_C1, "bbbb");
+        p10t1r2.addField(WorkflowKeys.P10_T1_R2_C2, "cccc");
+        p10t1r2.addField(WorkflowKeys.P10_T1_R2_C3, "dddd");
+
+        ExtractedRowData p10t1r3 = new ExtractedRowData();
+        p10t1r3.addField(WorkflowKeys.P10_T1_R3_C1, "eeee");
+        p10t1r3.addField(WorkflowKeys.P10_T1_R3_C2, "ffff");
+        p10t1r3.addField(WorkflowKeys.P10_T1_R3_C3, "gggg");
+
+        ExtractedTableData p10t1 = new ExtractedTableData();
+        p10t1.setTableNameKey(WorkflowKeys.P10_T1);
+        p10t1.addRow(p10t1r1);
+        p10t1.addRow(p10t1r2);
+        p10t1.addRow(p10t1r3);
+
+        ExtractedRowData p10t2r1 = new ExtractedRowData();
+        p10t2r1.addField(WorkflowKeys.P10_T2_R1_C1, "hhhh");
+        p10t2r1.addField(WorkflowKeys.P10_T2_R1_C2, "iiii");
+
+        ExtractedRowData p10t2r2 = new ExtractedRowData();
+        p10t2r2.addField(WorkflowKeys.P10_T2_R2_C1, "jjjj");
+        p10t2r2.addField(WorkflowKeys.P10_T2_R2_C2, "kkkk");
+
+        ExtractedRowData p10t2r3 = new ExtractedRowData();
+        p10t2r3.addField(WorkflowKeys.P10_T2_R3_C1, "llll");
+        p10t2r3.addField(WorkflowKeys.P10_T2_R3_C2, "mmmm");
+
+        ExtractedRowData p10t2r4 = new ExtractedRowData();
+        p10t2r4.addField(WorkflowKeys.P10_T2_R4_C1, "nnnn");
+        p10t2r4.addField(WorkflowKeys.P10_T2_R4_C2, "oooo");
+
+        ExtractedTableData p10t2 = new ExtractedTableData();
+        p10t2.setTableNameKey(WorkflowKeys.P10_T2);
+        p10t2.addRow(p10t2r1);
+        p10t2.addRow(p10t2r2);
+        p10t2.addRow(p10t2r3);
+        p10t2.addRow(p10t2r4);
+
+        ExtractedPageData p10 = new ExtractedPageData();
+        p10.setPageNameKey(WorkflowKeys.P10);
+        p10.addField(WorkflowKeys.P10_F1, "hhh");
+        p10.addTable(p10t1);
+        p10.addField(WorkflowKeys.P10_F2, "pppp");
+        p10.addTable(p10t2);
+
+        ExtractedWorkflowData expected = new ExtractedWorkflowData();
+        expected.setFlowName("Complex Multi-Page WorkFlow");
+        expected.addPage(p1);
+        expected.addPage(p2);
+        expected.addPage(p3);
+        expected.addPage(p4);
+        expected.addPage(p5);
+        expected.addPage(p6);
+        expected.addPage(p7);
+        expected.addPage(p8);
+        expected.addPage(p9);
+        expected.addPage(p10);
+
+        return expected;
+    }
+
     @Test
     public void writeToFileTest() {
         ExtractedWorkflowData workflowData = getWorkflowData();
@@ -367,14 +661,20 @@ public class ExtractedWorkflowDataTest {
         String xml = workflowData.toXML();
         Helper.log(xml, true);
 
-        workflowData.writeToFile(OUTPUT_FILE);
+        workflowData.writeToFile(HOME + SEPARATOR + OUTPUT_FILE);
     }
 
     @Test(dependsOnMethods = "writeToFileTest")
     public void readFromFileTest() {
         ExtractedWorkflowData expected = getWorkflowData();
-        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(OUTPUT_FILE);
-        assertThat("Data from read XML did not match expected data", actual, equalTo(expected));
+        ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(HOME + SEPARATOR + OUTPUT_FILE);
+        assertThat(MISMATCH, actual, equalTo(expected));
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void deleteFileTest() {
+        File file = new File(HOME + SEPARATOR + OUTPUT_FILE);
+        FileUtils.deleteQuietly(file);
     }
 
     @Test
@@ -388,7 +688,7 @@ public class ExtractedWorkflowDataTest {
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
         expected.compare(actual, aggregator, outputRecords);
 
-        assertThat("Output Records", outputRecords.isEmpty());
+        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
         Helper.assertThat(aggregator);
     }
 
@@ -408,7 +708,7 @@ public class ExtractedWorkflowDataTest {
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
         expected.compare(actual, aggregator, outputRecords);
 
-        assertThat("Output Records", outputRecords.isEmpty());
+        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
         Helper.assertThat(aggregator);
     }
 
@@ -431,7 +731,7 @@ public class ExtractedWorkflowDataTest {
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
         expected.compare(actual, aggregator, outputRecords);
 
-        assertThat("Output Records", outputRecords.isEmpty());
+        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
         Helper.assertThat(aggregator);
     }
 
@@ -457,7 +757,7 @@ public class ExtractedWorkflowDataTest {
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
         expected.compare(actual, aggregator, outputRecords);
 
-        assertThat("Output Records", outputRecords.isEmpty());
+        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
         Helper.assertThat(aggregator);
     }
 
@@ -528,7 +828,7 @@ public class ExtractedWorkflowDataTest {
         expected.addPage(p10);
 
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
-        assertThat("Data from read XML did not match expected data", actual, equalTo(expected));
+        assertThat(MISMATCH, actual, equalTo(expected));
 
         AssertAggregator aggregator = new AssertAggregator();
         aggregator.setConsole(true);
@@ -791,7 +1091,7 @@ public class ExtractedWorkflowDataTest {
         expected.addPage(p10);
 
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
-        assertThat("Data from read XML did not match expected data", actual, equalTo(expected));
+        assertThat(MISMATCH, actual, equalTo(expected));
 
         AssertAggregator aggregator = new AssertAggregator();
         aggregator.setConsole(true);
@@ -803,6 +1103,7 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @SuppressWarnings("java:S112")
     @Test
     public void duplicatesTest() {
         ExtractedPageData p1 = new ExtractedPageData();
@@ -871,20 +1172,20 @@ public class ExtractedWorkflowDataTest {
 
     @Test
     public void failureWithEqualPagesTest() {
-        ExtractedWorkflowData expected = getWorkflow("Expected", "aa");
-        ExtractedWorkflowData actual = getWorkflow("Actual", "bb");
+        ExtractedWorkflowData expected = getWorkflow(EXPECTED, "aa");
+        ExtractedWorkflowData actual = getWorkflow(ACTUAL, "bb");
         validateWorkflow(expected, actual);
     }
 
     @Test
     public void failureWithEqualTablesRowsCellsTest() {
-        ExtractedWorkflowData expected = getWorkflow("Expected",
+        ExtractedWorkflowData expected = getWorkflow(EXPECTED,
                 WorkflowKeys.P10_T1,
                 WorkflowKeys.P10_T1_R1_C1, "aa",
                 WorkflowKeys.P10_T1_R1_C2, "bb",
                 WorkflowKeys.P10_T1_R2_C1, "cc",
                 WorkflowKeys.P10_T1_R2_C2, "dd");
-        ExtractedWorkflowData actual = getWorkflow("Actual",
+        ExtractedWorkflowData actual = getWorkflow(ACTUAL,
                 WorkflowKeys.P10_T1,
                 WorkflowKeys.P10_T1_R1_C1, "dd",
                 WorkflowKeys.P10_T1_R1_C2, "cc",
@@ -895,14 +1196,14 @@ public class ExtractedWorkflowDataTest {
 
     @Test
     public void failureWithDifferentSizeCellsTest() {
-        ExtractedWorkflowData expected = getWorkflow("Expected",
+        ExtractedWorkflowData expected = getWorkflow(EXPECTED,
                 WorkflowKeys.P10_T1,
                 WorkflowKeys.P10_T1_R1_C1, "aa",
                 WorkflowKeys.P10_T1_R2_C2, "bb",
                 true,
                 WorkflowKeys.P10_T2_R1_C1, "cc"
         );
-        ExtractedWorkflowData actual = getWorkflow("Actual",
+        ExtractedWorkflowData actual = getWorkflow(ACTUAL,
                 WorkflowKeys.P10_T1,
                 WorkflowKeys.P10_T1_R1_C1, "aa",
                 WorkflowKeys.P10_T1_R2_C2, "bb",
@@ -1146,6 +1447,42 @@ public class ExtractedWorkflowDataTest {
         assertThat(WorkflowKeys.LEVEL1_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_FIELD1), equalTo(level1field1));
         assertThat(WorkflowKeys.LEVEL1_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_TABLE1), equalTo(level1table1));
         assertThat(WorkflowKeys.LEVEL1.getColumnName(), data.remove(WorkflowKeys.LEVEL1), equalTo(level1page1));
+    }
+
+    @Test
+    public void performComplexAssertThatTest() {
+        ExtractedWorkflowData expectedItem1 = getComplexSinglePageWorkFlow();
+        ExtractedWorkflowData expectedItem2 = getComplexMultiPageWorkFlow();
+        List<ExtractedWorkflowData> expected = new ArrayList<>();
+        expected.add(expectedItem1);
+        expected.add(expectedItem2);
+
+        ExtractedWorkflowData actualItem1 = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
+        ExtractedWorkflowData actualItem2 = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
+        List<ExtractedWorkflowData> actual = new ArrayList<>();
+        actual.add(actualItem1);
+        actual.add(actualItem2);
+
+        Helper.assertThat(actual, expected);
+    }
+
+    @Test
+    public void performComplexAssertThatSubsetTest() {
+        ExtractedWorkflowData actualItem1 = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
+        ExtractedWorkflowData actualItem2 = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
+        List<ExtractedWorkflowData> actual = new ArrayList<>();
+        actual.add(actualItem1);
+        actual.add(actualItem2);
+
+        ExtractedWorkflowData subsetItem1 = getComplexSinglePageWorkFlow();
+        ExtractedWorkflowData subsetItem2 = getComplexMultiPageWorkFlow();
+        List<ExtractedWorkflowData> subset = new ArrayList<>();
+        subset.add(subsetItem1);
+
+        Helper.assertThatSubset(actual, subset);
+
+        subset.add(subsetItem2);
+        Helper.assertThatSubset(actual, subset);
     }
 
 }

@@ -7,9 +7,10 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.Rand;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import com.taf.automation.ui.support.testng.Retry;
-import com.taf.automation.ui.support.testng.TestNGBase;
 import org.apache.commons.io.FilenameUtils;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -28,7 +29,8 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * Unit testing things using Guava
  */
-public class GuavaTest extends TestNGBase {
+@Listeners(AllureTestNGListener.class)
+public class GuavaTest {
     private Function<Weather, Weather> convertFunction() {
         return input -> {
             Weather converted = new Weather();
@@ -69,6 +71,7 @@ public class GuavaTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     @Retry
+    @SuppressWarnings("java:S112")
     public void transformObjectTest() {
         int id = Rand.randomRange(0, 1000);
         String description = Rand.alphanumeric(10, 20);
@@ -77,8 +80,13 @@ public class GuavaTest extends TestNGBase {
         Weather expected = getRandom(id, description, temperature);
         Helper.assertThat(convertFunction().apply(actual), convertFunction().apply(expected));
 
-        // This should fail without transformation
-        // Helper.assertThat(actual, expected);
+        try {
+            // This should fail without transformation
+            Helper.assertThat(actual, expected);
+            throw new RuntimeException("Transformation did NOT fail as expected");
+        } catch (AssertionError ae) {
+            Helper.log("Transformation failed as expected", true);
+        }
     }
 
     @Features("Guava")
@@ -86,6 +94,7 @@ public class GuavaTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     @Retry
+    @SuppressWarnings("java:S112")
     public void transformListTest() {
         //
         // Generate some data for the test
@@ -104,8 +113,13 @@ public class GuavaTest extends TestNGBase {
             expected.add(getRandom(i, description, temperature));
         }
 
-        // This should fail without transformation
-        // Helper.assertThat(actual, expected);
+        try {
+            // This should fail without transformation
+            Helper.assertThat(actual, expected);
+            throw new RuntimeException("Transformation did NOT fail as expected");
+        } catch (AssertionError ae) {
+            Helper.log("Transformation failed as expected", true);
+        }
 
         //
         // Transform both lists to be the same format (and equal based on this format)
@@ -113,6 +127,11 @@ public class GuavaTest extends TestNGBase {
         List<Weather> transformedActual = Lists.transform(actual, convertFunction());
         List<Weather> transformedExpected = Lists.transform(expected, convertFunction());
         Helper.assertThat(transformedActual, transformedExpected);
+
+        //
+        // Print a few objects to the console just to check that method does not throw an exception
+        //
+        Helper.print(transformedActual.get(0), transformedExpected.get(0));
     }
 
     @Features("Guava")

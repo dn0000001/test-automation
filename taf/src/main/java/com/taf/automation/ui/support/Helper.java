@@ -651,8 +651,8 @@ public class Helper {
                 EqualsBuilder resultsItems = new EqualsBuilder();
 
                 // Verify each line is equal for the specific item
-                String[] actualLines = new DomainObject().getXstream().toXML(actual.get(item)).split("\n");
-                String[] expectedLines = new DomainObject().getXstream().toXML(expected.get(item)).split("\n");
+                String[] actualLines = new DomainObject(null).getXstream().toXML(actual.get(item)).split("\n");
+                String[] expectedLines = new DomainObject(null).getXstream().toXML(expected.get(item)).split("\n");
 
                 // Verify that the number of lines is equal for the specified item
                 resultsItems.append(actualLines.length, expectedLines.length);
@@ -741,13 +741,13 @@ public class Helper {
             boolean found = false;
 
             // First check if item already exists in the cache
-            String key = new DomainObject().getXstream().toXML(item);
+            String key = new DomainObject(null).getXstream().toXML(item);
             Integer value = cache.get(key);
             if (value == null) {
                 // Not in cache, continue to build cache as we check the actual items
                 for (int i = createCacheIndex; i < actual.size(); i++) {
                     // Put new actual item into the cache
-                    String cacheKey = new DomainObject().getXstream().toXML(actual.get(i));
+                    String cacheKey = new DomainObject(null).getXstream().toXML(actual.get(i));
                     cache.put(cacheKey, i);
 
                     // Increment index for actual items added to cache such that no additional processing
@@ -810,7 +810,7 @@ public class Helper {
         EqualsBuilder results = new EqualsBuilder();
         Map<String, Integer> cache = getCache(actual);
         for (T item : excluded) {
-            String key = new DomainObject().getXstream().toXML(item);
+            String key = new DomainObject(null).getXstream().toXML(item);
             boolean notFound = cache.get(key) == null;
             if (!notFound) {
                 log("Found item:  " + key);
@@ -900,8 +900,8 @@ public class Helper {
 
         if (items != null) {
             // Go in reverse order such that cache contains the 1st index for duplicates when complete
-            for (int i = items.size() - 1; i > 0; i--) {
-                String key = new DomainObject().getXstream().toXML(items.get(i));
+            for (int i = items.size() - 1; i >= 0; i--) {
+                String key = new DomainObject(null).getXstream().toXML(items.get(i));
                 cache.put(key, i);
             }
         }
@@ -925,7 +925,7 @@ public class Helper {
             if (item == null) {
                 LOG.info("null object");
             } else {
-                String key = new DomainObject().getXstream().toXML(item);
+                String key = new DomainObject(null).getXstream().toXML(item);
                 LOG.info(key);
             }
         }
