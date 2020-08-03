@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.util.FilloUtils;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.GroupRow;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;

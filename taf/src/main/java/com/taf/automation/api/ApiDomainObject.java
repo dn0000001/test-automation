@@ -8,7 +8,7 @@ import com.taf.automation.locking.UserLockManager;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.DataPersistenceV2;
 import com.taf.automation.ui.support.util.DomainObjectUtils;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.util.Utils;

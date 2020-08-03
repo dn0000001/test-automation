@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;

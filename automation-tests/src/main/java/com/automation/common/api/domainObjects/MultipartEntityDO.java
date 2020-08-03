@@ -2,7 +2,7 @@ package com.automation.common.api.domainObjects;
 
 import com.taf.automation.api.MicroServiceDomainObject;
 import com.taf.automation.api.clients.MicroServiceResponse;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.commons.io.FileUtils;

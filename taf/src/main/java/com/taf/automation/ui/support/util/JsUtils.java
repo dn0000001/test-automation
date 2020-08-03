@@ -1,6 +1,5 @@
 package com.taf.automation.ui.support.util;
 
-import com.taf.automation.ui.support.Helper;
 import com.taf.automation.ui.support.MouseEvent;
 import com.taf.automation.ui.support.MouseEventType;
 import com.taf.automation.ui.support.TestProperties;

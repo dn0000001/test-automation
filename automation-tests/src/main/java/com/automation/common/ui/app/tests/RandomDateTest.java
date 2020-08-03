@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.RandomDateUtil;
-import com.taf.automation.ui.support.Helper;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.TestContext;
 import org.testng.annotations.Test;
 
