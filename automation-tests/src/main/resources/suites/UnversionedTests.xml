@@ -297,6 +297,12 @@
         </classes>
     </test>
 
+    <test name="StringMod Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.StringModTest"/>
+        </classes>
+    </test>
+
     <test name="After Class Failure Test">
         <parameter name="scenario" value="AFTER_CLASS_FAILURE"/>
         <classes>

@@ -1,6 +1,5 @@
 package com.taf.automation.ui.support;
 
-import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -36,9 +35,17 @@ public class StringMod {
         working = StringUtils.defaultString(value);
     }
 
+    @Override
     public boolean equals(Object obj) {
-        List<String> excludeFields = new ArrayList<>();
-        return Utils.equals(this, obj, excludeFields);
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        return StringUtils.equals(working, obj.toString());
     }
 
     /**
@@ -59,38 +66,16 @@ public class StringMod {
             return false;
         }
 
-        // Put in temporary variables as not to modify
-        StringMod tempStored = new StringMod(working);
-        StringMod tempObj = Utils.deepCopy((StringMod) obj);
-
-        // First test if objects are equal without any modifications
-        if (tempStored.equals(tempObj)) {
-            return true;
-        }
-
-        // Second test if objects are equal in lower case
-        tempObj.toLowerCase();
-        tempStored.toLowerCase();
-        if (tempStored.equals(tempObj)) {
-            return true;
-        }
-
-        // Third test if objects are equal in upper case
-        tempObj.toUpperCase();
-        tempStored.toUpperCase();
-        if (tempStored.equals(tempObj)) {
-            return true;
-        }
-
-        // Objects are not equal regardless of case
-        return false;
+        return StringUtils.equalsIgnoreCase(working, obj.toString());
     }
 
+    @Override
     public int hashCode() {
         List<String> excludeFields = new ArrayList<>();
         return HashCodeBuilder.reflectionHashCode(this, excludeFields);
     }
 
+    @Override
     public String toString() {
         return working;
     }
@@ -139,11 +124,11 @@ public class StringMod {
      * @return StringMod
      */
     public StringMod removeAll(String regex) {
-        return removeAll(regex, "");
+        return replaceAll(regex, "");
     }
 
     /**
-     * Remove all characters matching the regular expression<BR>
+     * Replace all characters matching the regular expression<BR>
      * <BR>
      * <B>Notes:</B><BR>
      * 1) If regular expression is invalid, then nothing will be removed<BR>
@@ -152,11 +137,11 @@ public class StringMod {
      * @param replacement - the string to be substituted for each match
      * @return StringMod
      */
-    public StringMod removeAll(String regex, String replacement) {
+    public StringMod replaceAll(String regex, String replacement) {
         try {
             working = working.replaceAll(regex, replacement);
         } catch (Exception ex) {
-
+            //
         }
 
         return this;
@@ -207,7 +192,7 @@ public class StringMod {
         try {
             sb.insert(offset, value);
         } catch (Exception ex) {
-
+            //
         }
 
         working = sb.toString();
@@ -252,7 +237,7 @@ public class StringMod {
         try {
             working = working.replaceFirst(regex, replacement);
         } catch (Exception ex) {
-
+            //
         }
 
         return this;
@@ -310,7 +295,7 @@ public class StringMod {
             if (working.length() == first.length()) {
                 working = replacement;
             } else {
-                working = replacement + working.substring(first.length(), working.length());
+                working = replacement + working.substring(first.length());
             }
         } else if (firstIndex > 0) {
             // The part of the string before the first occurrence
@@ -320,7 +305,7 @@ public class StringMod {
             if (firstIndex + first.length() >= working.length()) {
                 working = part1 + replacement;
             } else {
-                working = part1 + replacement + working.substring(firstIndex + first.length(), working.length());
+                working = part1 + replacement + working.substring(firstIndex + first.length());
             }
         }
 
@@ -347,53 +332,6 @@ public class StringMod {
     public StringMod removeFirst(String first, boolean caseInsensitive) {
         return replaceFirst(first, "", caseInsensitive);
     }
-
-    /**
-     * Replaces the last occurrence of the specified string
-     *
-     * @param text            - Text to search and replace in
-     * @param last            - Last occurrence of string to replace
-     * @param replacement     - Replacement string
-     * @param caseInsensitive - true to ignore case in the operation, else operation is case sensitive
-     * @return String
-     */
-    private String replaceLast(String text, String last, String replacement, boolean caseInsensitive) {
-        if (last == null || last.equals("")) {
-            return text;
-        }
-
-        StringMod tempStored = new StringMod(text);
-        if (caseInsensitive) {
-            tempStored.toLowerCase();
-        }
-
-        StringMod tempLast = new StringMod(last);
-        if (caseInsensitive) {
-            tempLast.toLowerCase();
-        }
-
-        int lastIndex = tempStored.get().lastIndexOf(tempLast.get());
-        if (lastIndex == 0) {
-            if (text.length() == last.length()) {
-                return StringUtils.defaultString(replacement);
-            } else {
-                return StringUtils.defaultString(replacement) + text.substring(last.length(), text.length());
-            }
-        } else if (lastIndex > 0) {
-            // The part of the string before the last occurrence
-            String part1 = text.substring(0, lastIndex);
-
-            // Does the string end with the last occurrence?
-            if (lastIndex + last.length() >= text.length()) {
-                return part1 + StringUtils.defaultString(replacement);
-            } else {
-                return part1 + StringUtils.defaultString(replacement) + text.substring(lastIndex + last.length(), text.length());
-            }
-        }
-
-        return text;
-    }
-
 
     /**
      * Replaces the last occurrence of the specified string
@@ -434,7 +372,7 @@ public class StringMod {
             if (working.length() == last.length()) {
                 working = StringUtils.defaultString(replacement);
             } else {
-                working = StringUtils.defaultString(replacement) + working.substring(last.length(), working.length());
+                working = StringUtils.defaultString(replacement) + working.substring(last.length());
             }
         } else if (lastIndex > 0) {
             // The part of the string before the last occurrence
@@ -444,7 +382,7 @@ public class StringMod {
             if (lastIndex + last.length() >= working.length()) {
                 working = part1 + StringUtils.defaultString(replacement);
             } else {
-                working = part1 + StringUtils.defaultString(replacement) + working.substring(lastIndex + last.length(), working.length());
+                working = part1 + StringUtils.defaultString(replacement) + working.substring(lastIndex + last.length());
             }
         }
 
@@ -584,7 +522,7 @@ public class StringMod {
             try {
                 working = StringUtils.defaultString(replacement) + working.substring(starting.length());
             } catch (Exception ex) {
-
+                //
             }
         }
 
@@ -626,7 +564,7 @@ public class StringMod {
         try {
             working = working.substring(beginIndex);
         } catch (Exception ex) {
-
+            //
         }
 
         return this;
@@ -648,7 +586,7 @@ public class StringMod {
         try {
             working = working.substring(beginIndex, endIndex);
         } catch (Exception ex) {
-
+            //
         }
 
         return this;
@@ -698,7 +636,7 @@ public class StringMod {
      * @return StringMod
      */
     public StringMod replaceInvisibleControl(String replacement) {
-        return removeAll("\\p{C}", replacement);
+        return replaceAll("\\p{C}", replacement);
     }
 
     /**
@@ -737,7 +675,7 @@ public class StringMod {
             String[] pieces = working.split(regex);
             working = pieces[index];
         } catch (Exception ex) {
-
+            //
         }
 
         return this;
