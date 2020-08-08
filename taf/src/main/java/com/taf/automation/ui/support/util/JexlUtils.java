@@ -1,6 +1,5 @@
 package com.taf.automation.ui.support.util;
 
-import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.TestProperties;
 import ui.auto.core.support.EnvironmentsSetup;
 
@@ -21,7 +20,7 @@ public class JexlUtils {
 
     public static String getFirstExists(String... roles) {
         for (String role : roles) {
-            if (getUserAndStore(role) != null) {
+            if (getUser(role) != null) {
                 return role;
             }
         }
@@ -29,11 +28,9 @@ public class JexlUtils {
         return null;
     }
 
-    public static EnvironmentsSetup.User getUserAndStore(String role) {
+    public static EnvironmentsSetup.User getUser(String role) {
         try {
-            EnvironmentsSetup.User user = TestProperties.getInstance().getTestEnvironment().getUser(role);
-            Lookup.getInstance().put(role, user);
-            return user;
+            return TestProperties.getInstance().getUser(role);
         } catch (Exception ex) {
             return null;
         }
@@ -41,8 +38,7 @@ public class JexlUtils {
 
     public static String getCustom(String role, String property) {
         try {
-            EnvironmentsSetup.User user = (EnvironmentsSetup.User) Lookup.getInstance().get(role);
-            return user.getCustom(property);
+            return TestProperties.getInstance().getUser(role).getCustom(property);
         } catch (Exception ex) {
             return "";
         }

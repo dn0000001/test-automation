@@ -5,16 +5,26 @@
         <prop name="apiUrl" value="http://www.holidaywebservice.com"/>
         <prop name="dbPassword" value="feuGPPZDZlkVmHXJwOISwQ=="/>
         <prop name="user-count" value="2"/>
+        <prop name="feature-x" value="false"/>
+        <prop name="feature-y" value="true"/>
+        <prop name="feature-duplicate" value="fd1"/>
+        <prop name="feature-duplicate" value="fd2"/>
+        <prop name="feature-duplicate" value="fd3"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
         <user role="user" userName="u1" password="feuGPPZDZlkVmHXJwOISwQ=="/>
         <user role="admin" userName="a1" password="xzRZ75G077/YqCsRSAHGMw=="/>
+        <user role="duplicate" userName="d1" password="feuGPPZDZlkVmHXJwOISwQ=="/>
+        <user role="duplicate" userName="d2" password="xzRZ75G077/YqCsRSAHGMw=="/>
+        <user role="duplicate" userName="d3" password="Q27p7DXgP2AzDxxBDw/E0g=="/>
     </environment>
     <environment environmentName="DEV" url="https://www.google.ca">
         <prop name="apiUrl" value="https://jsonip.com"/>
         <prop name="dbPassword" value="Q27p7DXgP2AzDxxBDw/E0g=="/>
         <prop name="user-count" value="3"/>
         <prop name="address-provider-config" value="data/ui/sample-addresses.xml"/>
+        <prop name="feature-x" value="true"/>
+        <prop name="feature-y" value="false"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
         <user role="user" userName="u2" password="xzRZ75G077/YqCsRSAHGMw=="/>

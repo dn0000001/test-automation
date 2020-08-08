@@ -19,6 +19,7 @@ import net.lightbody.bmp.proxy.CaptureType;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.Proxy;
@@ -34,9 +35,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The class holds all the test properties
@@ -310,6 +313,16 @@ public class TestProperties {
     private Map<Long, BrowserMobProxy> browserMobProxies = new Hashtable<>();
 
     /**
+     * For better performance, cache the users.  Only use the getter to access
+     */
+    private Map<String, EnvironmentsSetup.User> cachedUsers;
+
+    /**
+     * For better performance, cache the custom properties.  Only use the getter to access
+     */
+    private Map<String, EnvironmentsSetup.Property> cachedCustomProps;
+
+    /**
      * Constructor
      */
     private TestProperties() {
@@ -419,7 +432,7 @@ public class TestProperties {
     private String getEnvironmentCustom(String key, boolean decode) {
         if (getTestEnvironment() != null) {
             try {
-                String value = getTestEnvironment().getCustom(key);
+                String value = getCachedCustomProps().get(key).getValue();
                 return (decode) ? new CryptoUtils().decrypt(value) : value;
             } catch (Exception ex) {
                 return null;
@@ -427,6 +440,50 @@ public class TestProperties {
         }
 
         return null;
+    }
+
+    @SuppressWarnings("java:S2168")
+    private Map<String, EnvironmentsSetup.Property> getCachedCustomProps() {
+        if (cachedCustomProps == null) {
+            synchronized (this) {
+                if (cachedCustomProps == null) {
+                    try {
+                        Field fieldCustom = FieldUtils.getField(EnvironmentsSetup.Environment.class, "custom", true);
+                        cachedCustomProps = ((List<EnvironmentsSetup.Property>) FieldUtils.readField(fieldCustom, getTestEnvironment(), true))
+                                .stream()
+                                .collect(Collectors.toMap(EnvironmentsSetup.Property::getName, item -> item, (lhs, rhs) -> lhs));
+                    } catch (Exception ex) {
+                        cachedCustomProps = new HashMap<>();
+                    }
+                }
+            }
+        }
+
+        return cachedCustomProps;
+    }
+
+    public EnvironmentsSetup.User getUser(String role) {
+        return getCachedUsers().get(role.toLowerCase());
+    }
+
+    @SuppressWarnings("java:S2168")
+    private Map<String, EnvironmentsSetup.User> getCachedUsers() {
+        if (cachedUsers == null) {
+            synchronized (this) {
+                if (cachedUsers == null) {
+                    try {
+                        cachedUsers = getTestEnvironment()
+                                .getUsers()
+                                .stream()
+                                .collect(Collectors.toMap(EnvironmentsSetup.User::getRole, item -> item, (lhs, rhs) -> lhs));
+                    } catch (Exception ex) {
+                        cachedUsers = new HashMap<>();
+                    }
+                }
+            }
+        }
+
+        return cachedUsers;
     }
 
     public boolean isAlwaysInstallDrivers() {
