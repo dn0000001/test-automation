@@ -1,13 +1,23 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.util.FilloUtils;
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.GroupRow;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.FilloUtils;
+import com.taf.automation.ui.support.util.Helper;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Step;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +26,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
+@Listeners(AllureTestNGListener.class)
 public class GroupRowsTest {
+    private static final String HOME = System.getProperty("user.home");
+    private static final String SEPARATOR = System.getProperty("file.separator");
     private static final String PASS = "PASS";
     private static final String FAIL = "FAIL";
     private static final String PAGE1 = "p1";
@@ -43,6 +56,7 @@ public class GroupRowsTest {
         }
     }
 
+    @Step("Create Excel:  {0}")
     private void createExcel(String filename, String worksheet, List<CsvOutputRecord> records, List<GroupRow> groupRows) {
         ExtractedDataOutputRecord result1 = new ExtractedDataOutputRecord();
         result1.setPageName(PAGE1);
@@ -112,43 +126,63 @@ public class GroupRowsTest {
         Helper.log(test + ":  " + StringUtils.removeEnd(sb.toString(), ", "), true);
     }
 
+    @Features("FilloUtils")
+    @Stories("Group Rows Expanded")
+    @Severity(SeverityLevel.MINOR)
     @Test
     public void performGroupRowsExpandedTest() {
         List<CsvOutputRecord> records = new ArrayList<>();
         List<GroupRow> groupRows = new ArrayList<>();
-        createExcel(EXPANDED, WORKSHEET, records, groupRows);
-        FilloUtils.groupRows(EXPANDED, WORKSHEET, groupRows, true);
+        createExcel(HOME + SEPARATOR + EXPANDED, WORKSHEET, records, groupRows);
+        FilloUtils.groupRows(HOME + SEPARATOR + EXPANDED, WORKSHEET, groupRows, true);
         logGroupRowInfo("Expanded Test", groupRows);
-
     }
 
+    @Features("FilloUtils")
+    @Stories("Group Rows Collapsed")
+    @Severity(SeverityLevel.MINOR)
     @Test
     public void performGroupRowsCollapsedTest() {
         List<CsvOutputRecord> records = new ArrayList<>();
         List<GroupRow> groupRows = new ArrayList<>();
-        createExcel(COLLAPSED, WORKSHEET, records, groupRows);
+        createExcel(HOME + SEPARATOR + COLLAPSED, WORKSHEET, records, groupRows);
 
         // Set all the rows to be collapsed
         for (GroupRow item : groupRows) {
             item.withCollapsed(true);
         }
 
-        FilloUtils.groupRows(COLLAPSED, WORKSHEET, groupRows, true);
+        FilloUtils.groupRows(HOME + SEPARATOR + COLLAPSED, WORKSHEET, groupRows, true);
         logGroupRowInfo("Collapsed Test", groupRows);
     }
 
+    @Features("FilloUtils")
+    @Stories("Group Rows Mixed")
+    @Severity(SeverityLevel.MINOR)
     @Test
     public void performGroupRowsMixedTest() {
         List<CsvOutputRecord> records = new ArrayList<>();
         List<GroupRow> groupRows = new ArrayList<>();
-        createExcel(MIXED, WORKSHEET, records, groupRows);
+        createExcel(HOME + SEPARATOR + MIXED, WORKSHEET, records, groupRows);
 
         // Set a random row to be collapsed
         Collections.shuffle(groupRows);
         groupRows.get(0).withCollapsed(true);
 
-        FilloUtils.groupRows(MIXED, WORKSHEET, groupRows, true);
+        FilloUtils.groupRows(HOME + SEPARATOR + MIXED, WORKSHEET, groupRows, true);
         logGroupRowInfo("Mixed Test", groupRows);
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void deleteFileTest() {
+        File fileEXPANDED = new File(HOME + SEPARATOR + EXPANDED);
+        FileUtils.deleteQuietly(fileEXPANDED);
+
+        File fileCOLLAPSED = new File(HOME + SEPARATOR + COLLAPSED);
+        FileUtils.deleteQuietly(fileCOLLAPSED);
+
+        File fileMIXED = new File(HOME + SEPARATOR + MIXED);
+        FileUtils.deleteQuietly(fileMIXED);
     }
 
 }

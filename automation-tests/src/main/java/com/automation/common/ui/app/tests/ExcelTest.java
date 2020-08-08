@@ -1,11 +1,17 @@
 package com.automation.common.ui.app.tests;
 
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import com.taf.automation.ui.support.util.ExcelUtils;
 import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.util.Helper;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -16,6 +22,7 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Testing the Excel Utils class
  */
+@Listeners(AllureTestNGListener.class)
 public class ExcelTest {
     private static final String EXCEL_FILE = "data/ui/testingExcel.xls";
     private static final String EXCEL_2013_FILE = "data/ui/testingExcel2013.xlsx";
@@ -24,6 +31,7 @@ public class ExcelTest {
     private static final String[] ROWS = new String[]{"A", "B", "C", "D", "E"};
     private static final String[] COLUMNS = new String[]{"1", "2", "3", "4", "5"};
     private static final String SHEET_2_PREFIX = "2-";
+    private static final String INCORRECT_DATA = "Incorrect Data";
 
     private String[][] getExpectedSheet1Data() {
         String[][] data = new String[ROWS.length][COLUMNS.length];
@@ -65,35 +73,50 @@ public class ExcelTest {
         }
     }
 
-    @Parameters({"data-set", "worksheet"})
+    @Features("ExcelUtils")
+    @Stories("Print Data")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xls", "worksheet-sheet1"})
     @Test
     public void printDataSheet1(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_1) String worksheet) {
         String[][] data = ExcelUtils.getAllData(dataSet, worksheet);
         logData(data);
     }
 
-    @Parameters({"data-set", "worksheet"})
+    @Features("ExcelUtils")
+    @Stories("Print Data")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xls", "worksheet-sheet2"})
     @Test
     public void printDataSheet2(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_2) String worksheet) {
         String[][] data = ExcelUtils.getAllData(dataSet, worksheet);
         logData(data);
     }
 
-    @Parameters({"data-set", "worksheet"})
+    @Features("ExcelUtils")
+    @Stories("Print Data")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xlsx", "worksheet-sheet1"})
     @Test
     public void printDataSheet3(@Optional(EXCEL_2013_FILE) String dataSet, @Optional(SHEET_1) String worksheet) {
         String[][] data = FilloUtils.getAllData(dataSet, worksheet);
         logData(data);
     }
 
-    @Parameters({"data-set", "worksheet"})
+    @Features("ExcelUtils")
+    @Stories("Print Data")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xlsx", "worksheet-sheet2"})
     @Test
     public void printDataSheet4(@Optional(EXCEL_2013_FILE) String dataSet, @Optional(SHEET_2) String worksheet) {
         String[][] data = FilloUtils.getAllData(dataSet, worksheet);
         logData(data);
     }
 
-    @Parameters({"data-set", "worksheet"})
+    @Features("ExcelUtils")
+    @Stories("Validate Methods Get Same Data")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xls", "worksheet-sheet1"})
     @Test
     public void validateMethodsGetSameData(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_1) String worksheet) {
         String[][] resourceData = ExcelUtils.getAllData(dataSet, worksheet);
@@ -102,36 +125,52 @@ public class ExcelTest {
         assertThat("Methods did not load data the same", resourceData, equalTo(fileData));
     }
 
-    @Parameters({"data-set", "worksheet"})
+    private void validateUsingExcelUtils(String dataSet, String worksheet, boolean sheet2) {
+        String[][] actualData = ExcelUtils.getAllData(dataSet, worksheet);
+        String[][] expectedData = sheet2 ? getExpectedSheet2Data() : getExpectedSheet1Data();
+        assertThat(INCORRECT_DATA, actualData, equalTo(expectedData));
+    }
+
+    @Features("ExcelUtils")
+    @Stories("Validate Correct Data For Sheet")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xls", "worksheet-sheet1"})
     @Test
     public void validateCorrectDataForSheet1(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_1) String worksheet) {
-        String[][] actualData = ExcelUtils.getAllData(dataSet, worksheet);
-        String[][] expectedData = getExpectedSheet1Data();
-        assertThat("Incorrect Data", actualData, equalTo(expectedData));
+        validateUsingExcelUtils(dataSet, worksheet, false);
     }
 
-    @Parameters({"data-set", "worksheet"})
+    @Features("ExcelUtils")
+    @Stories("Validate Correct Data For Sheet")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xls", "worksheet-sheet2"})
     @Test
     public void validateCorrectDataForSheet2(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_2) String worksheet) {
-        String[][] actualData = ExcelUtils.getAllData(dataSet, worksheet);
-        String[][] expectedData = getExpectedSheet2Data();
-        assertThat("Incorrect Data", actualData, equalTo(expectedData));
+        validateUsingExcelUtils(dataSet, worksheet, true);
     }
 
-    @Parameters({"data-set", "worksheet"})
+    private void validateUsingFilloUtils(String dataSet, String worksheet, boolean sheet2) {
+        String[][] actualData = FilloUtils.getAllData(dataSet, worksheet);
+        String[][] expectedData = sheet2 ? getExpectedSheet2Data() : getExpectedSheet1Data();
+        assertThat(INCORRECT_DATA, actualData, equalTo(expectedData));
+    }
+
+    @Features("ExcelUtils")
+    @Stories("Validate Correct Data For Sheet")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xlsx", "worksheet-sheet1"})
     @Test
     public void validateCorrectDataForSheet3(@Optional(EXCEL_2013_FILE) String dataSet, @Optional(SHEET_1) String worksheet) {
-        String[][] actualData = FilloUtils.getAllData(dataSet, worksheet);
-        String[][] expectedData = getExpectedSheet1Data();
-        assertThat("Incorrect Data", actualData, equalTo(expectedData));
+        validateUsingFilloUtils(dataSet, worksheet, false);
     }
 
-    @Parameters({"data-set", "worksheet"})
+    @Features("ExcelUtils")
+    @Stories("Validate Correct Data For Sheet")
+    @Severity(SeverityLevel.MINOR)
+    @Parameters({"data-set-xlsx", "worksheet-sheet2"})
     @Test
     public void validateCorrectDataForSheet4(@Optional(EXCEL_2013_FILE) String dataSet, @Optional(SHEET_2) String worksheet) {
-        String[][] actualData = FilloUtils.getAllData(dataSet, worksheet);
-        String[][] expectedData = getExpectedSheet2Data();
-        assertThat("Incorrect Data", actualData, equalTo(expectedData));
+        validateUsingFilloUtils(dataSet, worksheet, true);
     }
 
 }
