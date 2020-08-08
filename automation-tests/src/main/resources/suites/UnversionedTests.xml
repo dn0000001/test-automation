@@ -273,6 +273,12 @@
         </classes>
     </test>
 
+    <test name="Split &amp; Sorting Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.SplitTest"/>
+        </classes>
+    </test>
+
     <test name="License Provider Tests">
         <classes>
             <class name="com.automation.common.ui.app.tests.LicenseProviderTest"/>
