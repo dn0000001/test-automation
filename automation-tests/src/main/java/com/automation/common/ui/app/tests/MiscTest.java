@@ -1,14 +1,18 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.util.Helper;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.Utils;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -16,81 +20,81 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Misc tests/experiments
  */
+@Listeners(AllureTestNGListener.class)
 public class MiscTest {
-    public static BigDecimal parse(String amount, Locale... locales) {
-        for (Locale locale : locales) {
-            try {
-                return parse(amount, locale);
-            } catch (Exception ignore) {
-
-            }
-        }
-
-        throw new RuntimeException("Could not parse (" + amount + ") using any of the specified locales");
-    }
-
-    public static BigDecimal parse(String amount, Locale locale) throws ParseException {
-        final NumberFormat format = NumberFormat.getNumberInstance(locale);
-        if (format instanceof DecimalFormat) {
-            ((DecimalFormat) format).setParseBigDecimal(true);
-        }
-
-        return (BigDecimal) format.parse(amount.replaceAll("[^\\d.,]", ""));
-    }
-
+    @Features("Misc")
+    @Stories("Experiment - Parsing to double value")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_EN() throws Exception {
+    public void testEN() throws ParseException {
         DecimalFormat df = new DecimalFormat("$#,###.00");
         Number num = df.parse("$7,999.58");
-        Helper.log(String.valueOf(num.doubleValue()), true);
+        assertThat("Double Value EN", num.doubleValue(), equalTo(7999.58));
     }
 
+    @Features("Misc")
+    @Stories("Experiment - Parsing to double value")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_EN2() throws Exception {
+    public void testEN2() throws ParseException {
         DecimalFormat df = new DecimalFormat("$#,###.00");
         Number num = df.parse("$7,999");
-        Helper.log(String.valueOf(num.doubleValue()), true);
+        assertThat("Double Value EN2", num.doubleValue(), equalTo(7999.0));
     }
 
+    @Features("Misc")
+    @Stories("Experiment - Parsing using Utils.parse")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_variousEN() throws Exception {
-        List<String> valuesEN = new ArrayList<>();
-        valuesEN.add("$7,999.58");
-        valuesEN.add("$7,999");
+    public void testVariousEN() {
+        BigDecimal actualEN1 = Utils.parse("$7,999.58", Locale.CANADA);
+        BigDecimal expectedEN1 = new BigDecimal("7999.58");
+        assertThat("EN1", actualEN1, comparesEqualTo(expectedEN1));
 
-        for (String item : valuesEN) {
-            Helper.log(parse(item, Locale.CANADA).toString(), true);
-        }
+        BigDecimal actualEN2 = Utils.parse("$7,999", Locale.CANADA);
+        BigDecimal expectedEN2 = new BigDecimal("7999");
+        assertThat("EN2", actualEN2, comparesEqualTo(expectedEN2));
     }
 
+    @Features("Misc")
+    @Stories("Experiment - Parsing using Utils.parse")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_variousFR() throws Exception {
-        List<String> valuesFR = new ArrayList<>();
-        valuesFR.add("7 999,58 $");
-        valuesFR.add("7 999$");
+    public void testVariousFR() {
+        BigDecimal actualFR1 = Utils.parse("7 999,58 $", Locale.CANADA_FRENCH);
+        BigDecimal expectedFR1 = new BigDecimal("7999.58");
+        assertThat("FR1", actualFR1, comparesEqualTo(expectedFR1));
 
-        for (String item : valuesFR) {
-            Helper.log(parse(item, Locale.CANADA_FRENCH).toString(), true);
-        }
+        BigDecimal actualFR2 = Utils.parse("7 999$", Locale.CANADA_FRENCH);
+        BigDecimal expectedFR2 = new BigDecimal("7999");
+        assertThat("FR2", actualFR2, comparesEqualTo(expectedFR2));
     }
 
+    @Features("Misc")
+    @Stories("Experiment - Parsing to double value")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_FR() throws Exception {
+    public void testFR() throws ParseException {
         DecimalFormat df = new DecimalFormat("####,00");
         DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.CANADA_FRENCH);
         dfs.setDecimalSeparator(',');
         df.setDecimalFormatSymbols(dfs);
         Number num = df.parse("7 999,58 $".replaceAll("\\s", ""));
-        Helper.log(String.valueOf(num.doubleValue()), true);
+        assertThat("Double Value FR", num.doubleValue(), equalTo(7999.58));
     }
 
+    @Features("Misc")
+    @Stories("Experiment - Stack Functionality")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_StackFunctionality() {
+    @SuppressWarnings("java:S1149")
+    public void testStackFunctionality() {
         Stack<String> stack = new Stack<>();
         assertThat("Empty Stack", stack.empty());
 
@@ -120,8 +124,11 @@ public class MiscTest {
         assertThat("Empty Stack #3", stack.empty());
     }
 
+    @Features("Misc")
+    @Stories("Experiment - Array to List Primitive")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_array2ListPrimitive() {
+    public void testArray2ListPrimitive() {
         int[] arrayOfInt = new int[]{1, 2, 8, 10, 5};
         List<Integer> listOfInt = Arrays.stream(arrayOfInt).boxed().collect(Collectors.toList());
         assertThat("Size", listOfInt.size(), equalTo(arrayOfInt.length));
@@ -130,8 +137,11 @@ public class MiscTest {
         }
     }
 
+    @Features("Misc")
+    @Stories("Experiment - Array to List Object")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public void test_array2ListObject() {
+    public void testArray2ListObject() {
         Integer[] arrayOfObjects = new Integer[]{1, 2, 8, 10, 5};
         List<Integer> listOfObjects = Arrays.stream(arrayOfObjects).collect(Collectors.toList());
         assertThat("Size", listOfObjects.size(), equalTo(arrayOfObjects.length));

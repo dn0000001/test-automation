@@ -247,6 +247,12 @@
         </classes>
     </test>
 
+    <test name="Misc/Experiment Tests">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.MiscTest"/>
+        </classes>
+    </test>
+
     <test name="Before Test Failure Test">
         <parameter name="scenario" value="BEFORE_TEST_FAILURE"/>
         <classes>
