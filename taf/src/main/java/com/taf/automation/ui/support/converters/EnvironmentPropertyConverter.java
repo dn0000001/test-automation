@@ -1,10 +1,10 @@
 package com.taf.automation.ui.support.converters;
 
 import org.apache.commons.beanutils.Converter;
+import org.apache.commons.lang3.StringUtils;
 import ui.auto.core.support.EnvironmentsSetup;
 
 public class EnvironmentPropertyConverter implements Converter {
-
     @SuppressWarnings("java:S112")
     @Override
     public Object convert(Class aClass, Object obj) {
@@ -20,7 +20,7 @@ public class EnvironmentPropertyConverter implements Converter {
         }
 
         String config = envConfig[0].trim();
-        String env = envConfig[1].trim();
+        String env = StringUtils.lowerCase(envConfig[1].trim());
         EnvironmentsSetup envSetup = new EnvironmentsSetup().fromResource(config);
         return envSetup.getEnvironment(env);
     }
