@@ -1,7 +1,6 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;
@@ -10,10 +9,15 @@ import com.taf.automation.ui.support.pageScraping.ExtractedRowData;
 import com.taf.automation.ui.support.pageScraping.ExtractedTableData;
 import com.taf.automation.ui.support.pageScraping.ExtractedWorkflowData;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.Helper;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +50,7 @@ public class ExtractedWorkflowDataTest {
     private static final String OUTPUT_RECORDS = "Output Records";
     private static final String MISMATCH = "Data from read XML did not match expected data";
 
-    public enum WorkflowKeys implements ColumnMapper {
+    private enum WorkflowKeys implements ColumnMapper {
         P1("p1"),
         P1_F1("p1-f1"),
         P1_F2("p1-f2"),
@@ -654,6 +658,9 @@ public class ExtractedWorkflowDataTest {
         return expected;
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Write To File")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void writeToFileTest() {
         ExtractedWorkflowData workflowData = getWorkflowData();
@@ -664,6 +671,9 @@ public class ExtractedWorkflowDataTest {
         workflowData.writeToFile(HOME + SEPARATOR + OUTPUT_FILE);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Read From File")
+    @Severity(SeverityLevel.NORMAL)
     @Test(dependsOnMethods = "writeToFileTest")
     public void readFromFileTest() {
         ExtractedWorkflowData expected = getWorkflowData();
@@ -677,6 +687,9 @@ public class ExtractedWorkflowDataTest {
         FileUtils.deleteQuietly(file);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Empty Workflow")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void emptyTest() {
         ExtractedWorkflowData expected = new ExtractedWorkflowData();
@@ -692,6 +705,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Single Empty Page")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void singleEmptyPageTest() {
         ExtractedPageData pageData = new ExtractedPageData();
@@ -712,6 +728,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Single Empty Table")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void singleEmptyTableTest() {
         ExtractedTableData tableData = new ExtractedTableData();
@@ -735,6 +754,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Single Empty Row")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void singleEmptyRowTest() {
         ExtractedRowData rowData = new ExtractedRowData();
@@ -761,6 +783,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Complex Single Page")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void complexSinglePageTest() {
         int fieldCount = 0;
@@ -840,6 +865,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Complex Multi-Page")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void complexMultiPageTest() {
         int fieldCount = 0;
@@ -1103,6 +1131,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Duplicate field keys")
+    @Severity(SeverityLevel.NORMAL)
     @SuppressWarnings("java:S112")
     @Test
     public void duplicatesTest() {
@@ -1156,6 +1187,9 @@ public class ExtractedWorkflowDataTest {
         }
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Failure With Different Sizes")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void failureWithDifferentSizesTest() {
         ExtractedWorkflowData expected = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
@@ -1163,6 +1197,9 @@ public class ExtractedWorkflowDataTest {
         validateWorkflow(expected, actual);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Failure With Equal Sizes")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void failureWithEqualSizesTest() {
         ExtractedWorkflowData expected = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
@@ -1170,6 +1207,9 @@ public class ExtractedWorkflowDataTest {
         validateWorkflow(expected, actual);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Failure With Equal Pages")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void failureWithEqualPagesTest() {
         ExtractedWorkflowData expected = getWorkflow(EXPECTED, "aa");
@@ -1177,6 +1217,9 @@ public class ExtractedWorkflowDataTest {
         validateWorkflow(expected, actual);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Failure With Equal Tables/Rows/Cells")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void failureWithEqualTablesRowsCellsTest() {
         ExtractedWorkflowData expected = getWorkflow(EXPECTED,
@@ -1194,6 +1237,9 @@ public class ExtractedWorkflowDataTest {
         validateWorkflow(expected, actual);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Failure With Different Size Cells")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void failureWithDifferentSizeCellsTest() {
         ExtractedWorkflowData expected = getWorkflow(EXPECTED,
@@ -1243,6 +1289,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(aggregator);
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Get Data")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void getDataTest() {
         ExtractedTableData p2t1 = new ExtractedTableData();
@@ -1292,6 +1341,9 @@ public class ExtractedWorkflowDataTest {
         assertThat("p3f1", actualP3F1, equalTo(p3.get(WorkflowKeys.P3_F1)));
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Remove Data")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void removeDataTest() {
         ExtractedWorkflowData data = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
@@ -1340,6 +1392,9 @@ public class ExtractedWorkflowDataTest {
         assertThat("Remove Again p10", data.remove(WorkflowKeys.P10), nullValue());
     }
 
+    @Features("ExtractedWorkflowData")
+    @Stories("Get Data Recursive")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void getDataRecursiveTest() {
         final String level1field1 = "a";
@@ -1449,6 +1504,9 @@ public class ExtractedWorkflowDataTest {
         assertThat(WorkflowKeys.LEVEL1.getColumnName(), data.remove(WorkflowKeys.LEVEL1), equalTo(level1page1));
     }
 
+    @Features("Helper")
+    @Stories("Validate Complex Lists assertThat functions properly")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void performComplexAssertThatTest() {
         ExtractedWorkflowData expectedItem1 = getComplexSinglePageWorkFlow();
@@ -1466,6 +1524,9 @@ public class ExtractedWorkflowDataTest {
         Helper.assertThat(actual, expected);
     }
 
+    @Features("Helper")
+    @Stories("Validate Complex Lists assertThatSubset functions properly")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void performComplexAssertThatSubsetTest() {
         ExtractedWorkflowData actualItem1 = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
