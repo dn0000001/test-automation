@@ -2,18 +2,29 @@ package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.StringMod;
+import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * This class is for unit testing the StringMod class
  */
+@Listeners(AllureTestNGListener.class)
 public class StringModTest {
+    private static final String ELEPHANT = "elePHant";
+    private static final String SPACES = "      ";
 
-
+    @Features("StringMod")
+    @Stories("Append")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runAppendTest() {
+    public void runAppendTest() {
         boolean assertion;
         String reason;
 
@@ -51,8 +62,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Prepend")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runPrependTest() {
+    public void runPrependTest() {
         boolean assertion;
         String reason;
 
@@ -90,8 +104,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove Non-Digits")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveNonDigitsTest() {
+    public void runRemoveNonDigitsTest() {
         boolean assertion;
         String reason;
 
@@ -145,8 +162,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove Non-Letters")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveNonLettersTest() {
+    public void runRemoveNonLettersTest() {
         boolean assertion;
         String reason;
 
@@ -200,8 +220,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove Non-Alphanumeric")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveNonAlphanumericTest() {
+    public void runRemoveNonAlphanumericTest() {
         boolean assertion;
         String reason;
 
@@ -255,8 +278,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Equal")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runEqualTest() {
+    public void runEqualTest() {
         boolean assertion;
         String reason;
 
@@ -320,8 +346,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Not Equal")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runNotEqualTest() {
+    public void runNotEqualTest() {
         boolean assertion;
         String reason;
 
@@ -355,15 +384,18 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Insert")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runInsertTest() {
+    public void runInsertTest() {
         boolean assertion;
         String reason;
 
         String one = "oNe";
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
 
         String phrase = cat + dogs;
         StringMod mod = new StringMod(phrase);
@@ -394,8 +426,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Replace")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runReplaceTest() {
+    public void runReplaceTest() {
         boolean assertion;
         String reason;
 
@@ -403,7 +438,7 @@ public class StringModTest {
         String test = "Test";
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
         String two = "two";
 
         // No matches
@@ -470,8 +505,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveTest() {
+    public void runRemoveTest() {
         boolean assertion;
         String reason;
 
@@ -512,8 +550,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Replace First RegEx")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runReplaceFirstRegExTest() {
+    public void runReplaceFirstRegExTest() {
         boolean assertion;
         String reason;
 
@@ -521,7 +562,7 @@ public class StringModTest {
         String test = "Test";
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
         String two = "two";
 
         // Replacement at end
@@ -666,8 +707,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove First RegEx")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveFirstRegExTest() {
+    public void runRemoveFirstRegExTest() {
         boolean assertion;
         String reason;
 
@@ -818,8 +862,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Replace First")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runReplaceFirstTest() {
+    public void runReplaceFirstTest() {
         boolean assertion;
         String reason;
 
@@ -827,7 +874,7 @@ public class StringModTest {
         String test = "Test";
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
         String two = "two";
 
         // Replacement at end
@@ -1182,8 +1229,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove First")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveFirstTest() {
+    public void runRemoveFirstTest() {
         boolean assertion;
         String reason;
 
@@ -1544,8 +1594,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Replace Last")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runReplaceLastTest() {
+    public void runReplaceLastTest() {
         boolean assertion;
         String reason;
 
@@ -1553,7 +1606,7 @@ public class StringModTest {
         String test = "Test";
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
         String two = "two";
 
         // Replacement at end
@@ -1908,8 +1961,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove Last")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveLastTest() {
+    public void runRemoveLastTest() {
         boolean assertion;
         String reason;
 
@@ -2270,8 +2326,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Replace Ends With")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runReplaceEndsWithTest() {
+    public void runReplaceEndsWithTest() {
         boolean assertion;
         String reason;
 
@@ -2279,7 +2338,7 @@ public class StringModTest {
         String test = "Test";
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
         String two = "two";
 
         // Replacement
@@ -2450,8 +2509,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove Ends With")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveEndsWithTest() {
+    public void runRemoveEndsWithTest() {
         boolean assertion;
         String reason;
 
@@ -2537,8 +2599,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Replace Starts With")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runReplaceStartsWithTest() {
+    public void runReplaceStartsWithTest() {
         boolean assertion;
         String reason;
 
@@ -2546,7 +2611,7 @@ public class StringModTest {
         String test = "Test";
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
         String two = "two";
 
         // Replacement at beginning
@@ -2717,8 +2782,11 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Remove Starts With")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runRemoveStartsWithTest() {
+    public void runRemoveStartsWithTest() {
         boolean assertion;
         String reason;
 
@@ -2804,14 +2872,17 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Substring")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runSubstringTest() {
+    public void runSubstringTest() {
         boolean assertion;
         String reason;
 
         String cat = "caT";
         String dogs = "dOGs";
-        String elephant = "elePHant";
+        String elephant = ELEPHANT;
 
         String phrase = cat + dogs + elephant;
         StringMod mod = new StringMod(phrase);
@@ -2859,12 +2930,15 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Trim")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runTrimTest() {
+    public void runTrimTest() {
         boolean assertion;
         String reason;
 
-        String spaces = "      ";
+        String spaces = SPACES;
         String random = Rand.alphanumeric(5, 10);
 
         StringMod mod = new StringMod(random);
@@ -2900,12 +2974,15 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Trim Non-Visible")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runTrimNonVisibleTest() {
+    public void runTrimNonVisibleTest() {
         boolean assertion;
         String reason;
 
-        String spaces = "      ";
+        String spaces = SPACES;
         String random = Rand.alphanumeric(5, 10);
 
         StringMod mod = new StringMod(random);
@@ -2941,12 +3018,15 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Trim All")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runTrimAllTest() {
+    public void runTrimAllTest() {
         boolean assertion;
         String reason;
 
-        String spaces = "      ";
+        String spaces = SPACES;
         String random = Rand.alphanumeric(5, 10);
 
         StringMod mod = new StringMod(random);
@@ -2982,21 +3062,24 @@ public class StringModTest {
         assertThat(reason, assertion);
     }
 
+    @Features("StringMod")
+    @Stories("Split")
+    @Severity(SeverityLevel.MINOR)
     @Test
-    public static void runSplitTest() {
+    public void runSplitTest() {
         boolean assertion;
         String reason;
 
         // test suite : positions; test suite : positions
-        String test1_name = "test1";
-        String test1_positions = "1-3";
-        String test1 = test1_name + ":" + test1_positions;
-        String test2_name = "test2";
-        String test2_positions = "2-8";
-        String test2 = test2_name + ":" + test2_positions;
-        String test3_name = "test3";
-        String test3_positions = "8,15-20";
-        String test3 = test3_name + ":" + test3_positions;
+        String test1Name = "test1";
+        String test1Positions = "1-3";
+        String test1 = test1Name + ":" + test1Positions;
+        String test2Name = "test2";
+        String test2Positions = "2-8";
+        String test2 = test2Name + ":" + test2Positions;
+        String test3Name = "test3";
+        String test3Positions = "8,15-20";
+        String test3 = test3Name + ":" + test3Positions;
         String example = test1 + ";" + test2 + ";" + test3;
 
         StringMod mod = new StringMod(example);
@@ -3006,7 +3089,7 @@ public class StringModTest {
         assertThat(reason, assertion);
 
         mod.split(":", 1);
-        assertion = mod.get().equals(test1_positions);
+        assertion = mod.get().equals(test1Positions);
         reason = "Split #2 failed";
         assertThat(reason, assertion);
 
@@ -3017,7 +3100,7 @@ public class StringModTest {
         assertThat(reason, assertion);
 
         mod.split(":", 0);
-        assertion = mod.get().equals(test2_name);
+        assertion = mod.get().equals(test2Name);
         reason = "Split #4 failed";
         assertThat(reason, assertion);
 
@@ -3028,7 +3111,7 @@ public class StringModTest {
         assertThat(reason, assertion);
 
         mod.split(":", 0);
-        assertion = mod.get().equals(test3_name);
+        assertion = mod.get().equals(test3Name);
         reason = "Split #6 failed";
         assertThat(reason, assertion);
 
