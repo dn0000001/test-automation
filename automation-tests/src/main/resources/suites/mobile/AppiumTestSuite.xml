@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Appium Test Suite" verbose="1" parallel="tests" thread-count="5" data-provider-thread-count="5">
+
+    <test name="Calculator App Test">
+        <parameter name="data-set" value="data/mobile/Calculator_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.mobile.tests.CalculatorAppTest"/>
+        </classes>
+    </test>
+
+</suite>

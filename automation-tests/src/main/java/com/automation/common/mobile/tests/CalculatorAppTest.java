@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class CalculatorAppTest extends TestNGBase {
     @Features("Appium")
-    @Stories("Verify that framework work with the Andriod Calculator App")
+    @Stories("Verify that framework work with the Android Calculator App")
     @Severity(SeverityLevel.CRITICAL)
     @Parameters("data-set")
     @Test
