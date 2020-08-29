@@ -2,9 +2,9 @@ package com.taf.automation.ui.support.testng;
 
 import com.taf.automation.api.html.HtmlUtils;
 import com.taf.automation.ui.support.DomainObject;
-import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Utils;
 import datainstiller.data.DataPersistence;
 import io.appium.java_client.AppiumDriver;
@@ -46,9 +46,7 @@ public class TestNGBaseWithoutListeners {
     public static void takeScreenshot(String title) {
         if (context() != null && context().getDriver() != null) {
             try {
-                Utils.getWebDriverWait()
-                        .until(ExpectedConditionsUtil.takeScreenshot(title))
-                        .forEach(Attachment::build);
+                Utils.until(ExpectedConditionsUtil.takeScreenshot(title)).forEach(Attachment::build);
             } catch (Exception ex) {
                 String shortMessage = "Could not take screenshot for " + title;
                 StringWriter sw = new StringWriter();

@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support.util;
 
+import com.taf.automation.api.ApiUtils;
 import com.taf.automation.mobile.AppConfigBuilder;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
@@ -9,9 +10,11 @@ import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.thoughtworks.xstream.XStream;
 import datainstiller.data.DataPersistence;
+import net.jodah.failsafe.ExecutionContext;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.StandardToStringStyle;
@@ -24,11 +27,14 @@ import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
@@ -47,6 +53,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -387,7 +394,7 @@ public class Utils {
      * @param select - Drop Down component
      */
     public static WebElement waitForSelectOption(final PageComponent select) {
-        return getWebDriverWait().until(driver -> {
+        return until(driver -> {
                     WebElement optionEl = null;
                     try {
                         List<WebElement> options = select.findElements(By.tagName("option"));
@@ -497,7 +504,7 @@ public class Utils {
      * @return true if element is hidden before timeout else false
      */
     public static boolean waitForElementToHide(By locator) {
-        return getWebDriverWait().until(ExpectedConditions.invisibilityOfElementLocated(locator));
+        return until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
 
     /**
@@ -507,7 +514,7 @@ public class Utils {
      * @return true if element is shown before timeout else false
      */
     public static WebElement waitForElementToShow(By locator) {
-        return getWebDriverWait().until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
     /**
@@ -517,7 +524,7 @@ public class Utils {
      * @return true if element is in the DOM before timeout else false
      */
     public static WebElement waitForElementToBeInDOM(By locator) {
-        return getWebDriverWait().until(ExpectedConditions.presenceOfElementLocated(locator));
+        return until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
     /**
@@ -528,7 +535,7 @@ public class Utils {
      * @return true if element has expected text before timeout else false
      */
     public static boolean waitForElementToHaveText(WebElement element, String text) {
-        return getWebDriverWait().until(ExpectedConditions.textToBePresentInElement(element, text));
+        return until(ExpectedConditions.textToBePresentInElement(element, text));
     }
 
     /**
@@ -541,8 +548,8 @@ public class Utils {
      */
     public static boolean waitForNumberOfWindowsToBe(int expectedNumberOfWindows) {
         try {
-            return getWebDriverWait().until(ExpectedConditions.numberOfWindowsToBe(expectedNumberOfWindows));
-        } catch (Exception ex) {
+            return until(ExpectedConditions.numberOfWindowsToBe(expectedNumberOfWindows));
+        } catch (Exception | AssertionError ex) {
             return false;
         }
     }
@@ -900,7 +907,7 @@ public class Utils {
     public static WebElement clickWhenReady(WebElement element) {
         return Failsafe.with(getClickRetryPolicy())
                 .get(() -> {
-                    getWebDriverWait().until(ExpectedConditionsUtil.ready(element));
+                    until(ExpectedConditionsUtil.ready(element));
                     element.click();
                     return element;
                 });
@@ -915,7 +922,7 @@ public class Utils {
     public static WebElement clickWhenReady(By locator) {
         return Failsafe.with(getClickRetryPolicy())
                 .get(() -> {
-                    WebElement element = getWebDriverWait().until(ExpectedConditionsUtil.ready(locator));
+                    WebElement element = until(ExpectedConditionsUtil.ready(locator));
                     element.click();
                     return element;
                 });
@@ -931,7 +938,7 @@ public class Utils {
     public static WebElement clickWhenReady(WebElement anchor, By relative) {
         return Failsafe.with(getClickRetryPolicy())
                 .get(() -> {
-                    WebElement element = getWebDriverWait().until(ExpectedConditionsUtil.ready(anchor, relative));
+                    WebElement element = until(ExpectedConditionsUtil.ready(anchor, relative));
                     element.click();
                     return element;
                 });
@@ -968,7 +975,7 @@ public class Utils {
      * @param locator - Locator to find element to click and wait for it to become stale
      */
     public static void clickAndWaitForStale(By locator) {
-        WebElement element = getWebDriverWait().until(ExpectedConditions.elementToBeClickable(locator));
+        WebElement element = until(ExpectedConditions.elementToBeClickable(locator));
         clickAndWaitForStale(element);
     }
 
@@ -979,7 +986,7 @@ public class Utils {
      */
     public static void clickAndWaitForStale(WebElement element) {
         Failsafe.with(getClickRetryPolicy()).run(element::click);
-        getWebDriverWait().until(ExpectedConditions.stalenessOf(element));
+        until(ExpectedConditions.stalenessOf(element));
     }
 
     /**
@@ -998,9 +1005,10 @@ public class Utils {
      *
      * @param locator - Locator to find element to click and wait for it to become invisible
      */
+    @SuppressWarnings("java:S2259")
     public static void clickAndWaitForInvisible(By locator) {
-        Failsafe.with(getClickRetryPolicy()).run(getWebDriverWait().until(ExpectedConditionsUtil.ready(locator))::click);
-        getWebDriverWait().until(ExpectedConditions.invisibilityOfElementLocated(locator));
+        until(ExpectedConditionsUtil.ready(locator), getWebDriverWait(), getClickRetryPolicy()).click();
+        until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
 
     /**
@@ -1015,7 +1023,7 @@ public class Utils {
      * @return WebElement that can become stale
      */
     public static WebElement getUnProxiedElement(WebElement element) {
-        return getWebDriverWait().until(ExpectedConditions.presenceOfNestedElementLocatedBy(element, By.xpath(".")));
+        return until(ExpectedConditions.presenceOfNestedElementLocatedBy(element, By.xpath(".")));
     }
 
     /**
@@ -1227,9 +1235,9 @@ public class Utils {
         boolean expectedJavaScriptAttached;
 
         try {
-            Utils.getWebDriverWait().until(ExpectedConditionsUtil.jsReturnsResult(javascript));
+            until(ExpectedConditionsUtil.jsReturnsResult(javascript));
             expectedJavaScriptAttached = true;
-        } catch (Exception ex) {
+        } catch (Exception | AssertionError ex) {
             expectedJavaScriptAttached = false;
         }
 
@@ -1246,8 +1254,9 @@ public class Utils {
      * @param component - Component to be initialized
      * @return true if component initialized successfully else false
      */
+    @SuppressWarnings("java:S3011")
     public static boolean initComponent(PageComponent component) {
-        WebElement core = Utils.getWebDriverWait().until(ExpectedConditions.visibilityOfElementLocated(component.getLocator()));
+        WebElement core = until(ExpectedConditions.visibilityOfElementLocated(component.getLocator()));
         try {
             Method m = PageComponent.class.getDeclaredMethod("initComponent", WebElement.class);
             m.setAccessible(true);
@@ -1398,6 +1407,97 @@ public class Utils {
         } else {
             return StringUtils.defaultString(Failsafe.with(getRetryPolicy(0)).get(actionToScrapeData::call));
         }
+    }
+
+    /**
+     * Repeatedly applies this instance's input value to the given function until one of the following occurs:
+     * <ol>
+     * <li>the function returns neither null nor false</li>
+     * <li>the function throws an unignored exception</li>
+     * <li>the timeout expires</li>
+     * </ol>
+     * <b>Note: </b>  This is a wrapper of wait.until(isTrue) for convenience and
+     * to retry due to certain intermittent issues in Selenium 4 - Alpha 6 with this action
+     *
+     * @param isTrue      the parameter to pass to the {@link ExpectedCondition}
+     * @param wait        WebDriverWait to be used
+     * @param retryPolicy Retry Policy to be used
+     * @param <T>         The function's expected return type
+     * @return The function's return value if the function returned something different
+     * from null or false before the timeout expired
+     */
+    public static <T> T until(Function<WebDriver, T> isTrue, WebDriverWait wait, RetryPolicy<Object> retryPolicy) {
+        try {
+            return Failsafe.with(retryPolicy).get((ExecutionContext t) -> wait.until(isTrue));
+        } catch (TimeoutException te) {
+            Duration timeout = (Duration) ApiUtils.readField(FieldUtils.getField(FluentWait.class, "timeout", true), wait);
+            Duration interval = (Duration) ApiUtils.readField(FieldUtils.getField(FluentWait.class, "interval", true), wait);
+            String timeoutMessage = String.format(
+                    "Expected condition failed: waiting for %s (tried for %d second(s) with %d milliseconds interval)",
+                    isTrue,
+                    ObjectUtils.defaultIfNull(timeout, Duration.ofSeconds(getElementTimeout())).getSeconds(),
+                    ObjectUtils.defaultIfNull(interval, Duration.ofMillis(100L)).toMillis()
+            );
+            assertThat(timeoutMessage, false);
+            return null;
+        } catch (Exception | AssertionError ex) {
+            String errorMessage = String.format(
+                    "Expected condition failed: waiting for %s %n%nDue to Exception: %n%n%s",
+                    isTrue,
+                    ex.getMessage()
+            );
+            assertThat(errorMessage, false);
+            return null;
+        }
+    }
+
+    /**
+     * Repeatedly applies this instance's input value to the given function until one of the following occurs:
+     * <ol>
+     * <li>the function returns neither null nor false</li>
+     * <li>the function throws an unignored exception</li>
+     * <li>the timeout expires</li>
+     * </ol>
+     * <b>Note: </b>  This is a wrapper of wait.until(isTrue) for convenience and
+     * to retry due to certain intermittent issues in Selenium 4 - Alpha 6 with this action
+     *
+     * @param isTrue   the parameter to pass to the {@link ExpectedCondition}
+     * @param negative true to use the negative WebDriverWait, else use the default WebDriverWait
+     * @param <T>      The function's expected return type
+     * @return The function's return value if the function returned something different
+     * from null or false before the timeout expired
+     */
+    public static <T> T until(Function<WebDriver, T> isTrue, boolean negative) {
+        WebDriverWait wait;
+        int timeout;
+        if (negative) {
+            wait = getNegativeWebDriverWait();
+            timeout = TestProperties.getInstance().getNegativeTimeout();
+        } else {
+            wait = getWebDriverWait();
+            timeout = TestProperties.getInstance().getElementTimeout();
+        }
+
+        return until(isTrue, wait, getPollingRetryPolicy(timeout));
+    }
+
+    /**
+     * Repeatedly applies this instance's input value to the given function until one of the following occurs:
+     * <ol>
+     * <li>the function returns neither null nor false</li>
+     * <li>the function throws an unignored exception</li>
+     * <li>the timeout expires</li>
+     * </ol>
+     * <b>Note: </b>  This is a wrapper of wait.until(isTrue) for convenience and
+     * to retry due to certain intermittent issues in Selenium 4 - Alpha 6 with this action
+     *
+     * @param isTrue the parameter to pass to the {@link ExpectedCondition}
+     * @param <T>    The function's expected return type
+     * @return The function's return value if the function returned something different
+     * from null or false before the timeout expired
+     */
+    public static <T> T until(Function<WebDriver, T> isTrue) {
+        return until(isTrue, false);
     }
 
 }

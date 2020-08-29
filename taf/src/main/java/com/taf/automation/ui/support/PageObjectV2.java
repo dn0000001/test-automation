@@ -510,7 +510,7 @@ public class PageObjectV2 extends PageObjectModel {
         assertThat("Click Component", component, notNullValue());
         assertThat("Click Component's Locator", component.getLocator(), notNullValue());
         return Failsafe.with(Utils.getClickRetryPolicy()).get(() -> {
-            WebElement element = Utils.getWebDriverWait().until(ExpectedConditionsUtil.ready(component));
+            WebElement element = Utils.until(ExpectedConditionsUtil.ready(component));
             component.click();
             return element;
         });

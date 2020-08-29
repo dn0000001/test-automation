@@ -430,9 +430,7 @@ public class JsUtils {
      * @return window handle of 1st new window that appears
      */
     public static String openNewWindow(String url) {
-        return Utils.getWebDriverWait().until(ExpectedConditionsUtil.handle(
-                () -> execute(getWebDriver(), OPEN_NEW_WINDOW, url)
-        ));
+        return Utils.until(ExpectedConditionsUtil.handle(() -> execute(getWebDriver(), OPEN_NEW_WINDOW, url)));
     }
 
     /**

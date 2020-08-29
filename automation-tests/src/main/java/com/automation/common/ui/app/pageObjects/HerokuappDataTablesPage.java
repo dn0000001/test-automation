@@ -1,9 +1,9 @@
 package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.GenericTable;
-import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -75,7 +75,7 @@ public class HerokuappDataTablesPage extends GenericTable<HerokuappRow> {
         // This is just for testing purposes.  Normally, you would just use getTableRows().get(index) as we already
         // have all the rows if this type of method was really necessary.
         //
-        List<WebElement> rows = Utils.getWebDriverWait().until(ExpectedConditions.numberOfElementsToBeMoreThan(TABLE2_ROWS, index));
+        List<WebElement> rows = Utils.until(ExpectedConditions.numberOfElementsToBeMoreThan(TABLE2_ROWS, index));
         String randomIdValue = Rand.letters(10) + index;
         JsUtils.addAttributeId(rows.get(index), randomIdValue);
 
