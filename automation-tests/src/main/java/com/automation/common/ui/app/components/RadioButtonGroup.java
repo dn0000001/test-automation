@@ -106,7 +106,7 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
     }
 
     private List<WebElement> getOptions() {
-        return Utils.getWebDriverWait().until(ExpectedConditions.numberOfElementsToBeMoreThan(getStaticLocator(), 0));
+        return Utils.until(ExpectedConditions.numberOfElementsToBeMoreThan(getStaticLocator(), 0));
     }
 
     private boolean isMatchedOption(String displayedText, String matchToData) {

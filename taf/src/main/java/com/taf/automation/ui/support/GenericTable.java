@@ -61,7 +61,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
 
         String randomBaseValue = getRandomBaseValue();
         Map<String, String> substitutions = getSubstitutions();
-        List<WebElement> all = Utils.getWebDriverWait().until(ExpectedConditions.numberOfElementsToBeMoreThan(getAllRowsLocator(), 0));
+        List<WebElement> all = Utils.until(ExpectedConditions.numberOfElementsToBeMoreThan(getAllRowsLocator(), 0));
         for (int i = 0; i < all.size(); i++) {
             // If necessary, we will make the row unique
             String randomIdValue = randomBaseValue + i;

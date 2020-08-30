@@ -109,7 +109,7 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         WebElement element = (ajax) ? getDriver().findElement(getStaticLocator()) : null;
         super.setValue();
         if (ajax) {
-            Utils.getWebDriverWait().until(ExpectedConditions.stalenessOf(element));
+            Utils.until(ExpectedConditions.stalenessOf(element));
         }
     }
 

@@ -1,12 +1,12 @@
 package com.automation.common.ui.app.pageObjects;
 
-import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
-import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
+import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
+import com.taf.automation.ui.support.util.Helper;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -46,7 +46,7 @@ public class AddRemoveElementsPage extends PageObjectV2 {
     @Step("Click Delete Button")
     public void clickDeleteButton() {
         WebElement element = click(deleteButton);
-        Utils.getWebDriverWait().until(ExpectedConditions.invisibilityOf(element));
+        Utils.until(ExpectedConditions.invisibilityOf(element));
     }
 
     @Step("Wait For Add Element Using Lambda Expression")

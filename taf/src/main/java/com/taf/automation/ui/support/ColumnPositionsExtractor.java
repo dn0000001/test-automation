@@ -60,7 +60,7 @@ public interface ColumnPositionsExtractor {
         Map<String, String> columnPositions = new HashMap<>();
 
         int position = 1;
-        List<WebElement> headers = Utils.getWebDriverWait().until(ExpectedConditions.numberOfElementsToBeMoreThan(getColumnHeadersLocator(), 0));
+        List<WebElement> headers = Utils.until(ExpectedConditions.numberOfElementsToBeMoreThan(getColumnHeadersLocator(), 0));
         for (WebElement header : headers) {
             String key = extractHeaderAsKey(header, position);
             if (key != null) {

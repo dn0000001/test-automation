@@ -6,11 +6,11 @@ import com.automation.common.ui.app.components.UnitTestComponent;
 import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.taf.automation.ui.support.AssertAggregator;
+import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertsUtil;
+import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.Utils;
-import com.taf.automation.ui.support.testng.TestNGBase;
-import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -568,7 +568,7 @@ public class AssertsTest extends TestNGBase {
     public void assertComponentCannotBeSetTest() {
         String valueToUse = "Does not matter";
         getContext().getDriver().get("https://duckduckgo.com/");
-        WebElement element = Utils.getWebDriverWait().until(ExpectedConditionsUtil.ready(By.name("q")));
+        WebElement element = Utils.until(ExpectedConditionsUtil.ready(By.name("q")));
         UnitTestComponent component = new UnitTestComponent(element)
                 .withEnabled(true)
                 .withDisplayed(true);
