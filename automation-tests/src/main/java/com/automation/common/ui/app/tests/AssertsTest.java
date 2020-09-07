@@ -1,10 +1,12 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.components.CardExpirationDateFields;
+import com.automation.common.ui.app.components.CreditCardFields;
 import com.automation.common.ui.app.components.TextBox;
 import com.automation.common.ui.app.components.UnitTestComponent;
 import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
+import com.automation.common.ui.app.pageObjects.RoboFormLoginPage;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertsUtil;
@@ -580,6 +582,50 @@ public class AssertsTest extends TestNGBase {
         component.withEnabled(false).withDisplayed(false);
         assertThat("UnitTestComponent (not ready)", component, AssertsUtil.componentCannotBeSet(valueToUse));
         Helper.log("UnitTestComponent (not ready) - complete:  " + new Date(), true);
+    }
+
+    @Features("AssertsUtil")
+    @Stories("Validate Component Cannot Be Set Assertion")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void assertComponentCannotBeSetFastTest() {
+        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        CreditCardFields creditCardFields = new CreditCardFields(getContext());
+        creditCardFields.disableFieldsAndValidateCannotSet();
+
+        getContext().getDriver().get("https://online.roboform.com/login");
+        RoboFormLoginPage roboFormLoginPage = new RoboFormLoginPage(getContext());
+        roboFormLoginPage.disableFieldsAndValidateCannotSet();
+    }
+
+    @Features("SelectEnhanced")
+    @Stories("SelectEnhanced.setValue method functions properly")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void validateCreditCardTypeSelectEnhancedSetValue() {
+        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        CreditCardFields creditCardFields = new CreditCardFields(getContext());
+        creditCardFields.validateCreditCardTypeSelectEnhancedSetValue();
+    }
+
+    @Features("SelectEnhanced")
+    @Stories("SelectEnhanced.setValue method functions properly")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void validateYearSelectEnhancedSetValue() {
+        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        CreditCardFields creditCardFields = new CreditCardFields(getContext());
+        creditCardFields.validateYearSelectEnhancedSetValue();
+    }
+
+    @Features("SelectEnhanced")
+    @Stories("SelectEnhanced.setValue method functions properly")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void validateNegativeSelectEnhancedSetValue() {
+        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        CreditCardFields creditCardFields = new CreditCardFields(getContext());
+        creditCardFields.validateNegativeSelectEnhancedSetValue();
     }
 
     @Features("AssertsUtil")
