@@ -2,6 +2,7 @@ package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.util.LocatorUtils;
 import com.taf.automation.ui.support.util.Utils;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.By;
@@ -9,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import ui.auto.core.data.DataTypes;
 
 import java.util.HashMap;
@@ -46,6 +48,9 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
     private WebDriver driver;
     private Map<String, String> substitutions;
     private By staticLocator;
+
+    @XStreamOmitField
+    private WebDriverWait wait;
 
     public SelectEnhancedAJAX() {
         super();
@@ -96,6 +101,22 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         this.staticLocator = null;
     }
 
+    private WebDriverWait getWebDriverWait() {
+        if (wait == null) {
+            return Utils.getWebDriverWait();
+        }
+
+        return wait;
+    }
+
+    public void useNegativeWebDriverWait() {
+        setWebDriverWait(Utils.getNegativeWebDriverWait());
+    }
+
+    public void setWebDriverWait(WebDriverWait wait) {
+        this.wait = wait;
+    }
+
     @Override
     public String getValue() {
         initSelect();
@@ -109,7 +130,7 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         WebElement element = (ajax) ? getDriver().findElement(getStaticLocator()) : null;
         super.setValue();
         if (ajax) {
-            Utils.until(ExpectedConditions.stalenessOf(element));
+            Utils.until(ExpectedConditions.stalenessOf(element), getWebDriverWait(), getRetryPolicy());
         }
     }
 

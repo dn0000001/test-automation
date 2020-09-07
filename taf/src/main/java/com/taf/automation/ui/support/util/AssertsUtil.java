@@ -3,6 +3,7 @@ package com.taf.automation.ui.support.util;
 import com.taf.automation.ui.support.ComponentPO;
 import com.taf.automation.ui.support.DateActions;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -15,6 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * This class holds useful Matcher methods for assertions
@@ -1390,6 +1396,148 @@ public class AssertsUtil {
                     return true;
                 } finally {
                     component.initializeData(restoreData, restoreInitialData, restoreExpectedData);
+                }
+            }
+        };
+    }
+
+    /**
+     * Matcher for component that cannot be set with specified value<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>This method does not consider validation.
+     * So, as long as the value can be set this is a failure even if the validation would fail.</LI>
+     * <LI>This method creates a temp component of the same type and uses the setValue method</LI>
+     * <LI>This method should only be used to valid that an option cannot be set because it is not valid
+     * and not that it is disabled</LI>
+     * <LI>No actions are taken before setting value</LI>
+     * <LI>The number of attempts is set to 3</LI>
+     * </OL>
+     *
+     * @param valueToUse - Value to use when attempting to set the component
+     * @return Matcher&lt;PageComponent&gt;
+     */
+    public static Matcher<PageComponent> componentCannotBeSetFast(String valueToUse) {
+        return componentCannotBeSet(valueToUse, doNothing -> { });
+    }
+
+    /**
+     * Matcher for component that cannot be set with specified value<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>This method does not consider validation.
+     * So, as long as the value can be set this is a failure even if the validation would fail.</LI>
+     * <LI>This method creates a temp component of the same type, applies actions/configurations and
+     * uses the setValue method</LI>
+     * <LI>This method should only be used to valid that an option cannot be set because it is not valid
+     * and not that it is disabled</LI>
+     * <LI>The number of attempts is set to 3</LI>
+     * </OL>
+     *
+     * @param valueToUse           - Value to use when attempting to set the component
+     * @param actionBeforeSetValue - Action(s) to take before setting value.  (This action should make
+     *                             the component fail faster and/or
+     *                             configuration required to make component work properly.)
+     * @return Matcher&lt;PageComponent&gt;
+     */
+    public static Matcher<PageComponent> componentCannotBeSet(
+            String valueToUse,
+            Consumer<PageComponent> actionBeforeSetValue
+    ) {
+        return componentCannotBeSet(valueToUse, actionBeforeSetValue, 3);
+    }
+
+    /**
+     * Matcher for component that cannot be set with specified value<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>This method does not consider validation.
+     * So, as long as the value can be set this is a failure even if the validation would fail.</LI>
+     * <LI>This method creates a temp component of the same type, applies actions/configurations and
+     * uses the setValue method</LI>
+     * <LI>This method should only be used to valid that an option cannot be set because it is not valid
+     * and not that it is disabled</LI>
+     * </OL>
+     *
+     * @param valueToUse           - Value to use when attempting to set the component
+     * @param actionBeforeSetValue - Action(s) to take before setting value.  (This action should make
+     *                             the component fail faster and/or
+     *                             configuration required to make component work properly.)
+     * @param attempts             - Number of attempts to try and set the value to ensure it cannot be set.
+     *                             (At least 1 attempt occurs even if less than 1)
+     * @return Matcher&lt;PageComponent&gt;
+     */
+    public static Matcher<PageComponent> componentCannotBeSet(
+            String valueToUse,
+            Consumer<PageComponent> actionBeforeSetValue,
+            int attempts
+    ) {
+        return new TypeSafeMatcher<PageComponent>() {
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("component cannot be set");
+            }
+
+            @Override
+            protected void describeMismatchSafely(final PageComponent component, final Description mismatchDescription) {
+                mismatchDescription.appendText(" able to set using value:  " + valueToUse);
+            }
+
+            @Override
+            protected boolean matchesSafely(final PageComponent component) {
+                int max = Math.max(1, attempts);
+                for (int i = 0; i < max; i++) {
+                    if (canSetComponent(component)) {
+                        // Able to set component which should not have been possible
+                        return false;
+                    }
+                }
+
+                // Component could not be set as expected after a number of attempts
+                return true;
+            }
+
+            @SuppressWarnings({"java:S2259", "java:S3011"})
+            private PageComponent getTempComponent(final PageComponent component) {
+                PageComponent temp;
+                try {
+                    WebElement core = Utils.until(
+                            ExpectedConditions.visibilityOfElementLocated(component.getLocator()),
+                            true
+                    );
+                    temp = ConstructorUtils.invokeConstructor(component.getClass());
+                    Method m = PageComponent.class.getDeclaredMethod("initComponent", WebElement.class);
+                    m.setAccessible(true);
+                    m.invoke(temp, core);
+                } catch (Exception ex) {
+                    temp = null;
+                }
+
+                assertThat("Unable to create temp component & initialize", temp, notNullValue());
+                return temp;
+            }
+
+            @SuppressWarnings("java:S2259")
+            private boolean canSetComponent(final PageComponent component) {
+                PageComponent temp = getTempComponent(component);
+                try {
+                    // Initialize component data for the test
+                    temp.initializeData(valueToUse, null, null);
+
+                    // Set Locator for AJAX components
+                    LocatorUtils.setLocator(temp, component.getLocator());
+
+                    // Execute Custom configuration of the component
+                    actionBeforeSetValue.accept(temp);
+
+                    // This should fail as component cannot be set
+                    temp.setValue();
+
+                    // If we reach here, then component could be set
+                    return true;
+                } catch (Exception | AssertionError ex) {
+                    // Component could not be set
+                    return false;
                 }
             }
         };

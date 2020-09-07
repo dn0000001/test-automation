@@ -3,8 +3,15 @@ package com.automation.common.ui.app.components;
 import com.taf.automation.ui.support.ComponentPO;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.util.Utils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThan;
 
 /**
  * A page object that acts as a component
@@ -56,6 +63,135 @@ public class CardExpirationDateFields extends ComponentPO {
 
     public void updateMonthTestData(String value) {
         month.initializeData(value, null, null);
+    }
+
+    @Step("Validate Year - SelectEnhanced.setValue")
+    public void validateYearSelectEnhancedSetValue() {
+        final String YEAR_VISUAL_TEXT_VALUE = "2021";
+        final String YEAR_HTML_VALUE = "2021";
+        final String YEAR_INDEX_VALUE = "2";
+        final String YEAR_REGEX_VISUAL_TEXT_VALUE = ".*21";
+        final String YEAR_REGEX_HTML_VALUE = ".*21";
+
+        final String VISIBLE_TEXT = "VISIBLE_TEXT >>> ";
+        final String VALUE_HTML = "VALUE_HTML >>> ";
+        final String INDEX = "INDEX >>> ";
+        final String VISIBLE_TEXT_REGEX = "VISIBLE_TEXT_REGEX >>> ";
+        final String VALUE_HTML_REGEX = "VALUE_HTML_REGEX >>> ";
+        final String RANDOM_INDEX = "RANDOM_INDEX >>> ";
+        final String RANDOM_INDEX_VALUES = "RANDOM_INDEX_VALUES >>> ";
+        final String RANDOM_INDEX_RANGE = "RANDOM_INDEX_RANGE >>> ";
+
+        //
+        // Basic common ways to select the value
+        //
+
+        String reason = "Year - Visible Text (default)";
+        String value = YEAR_VISUAL_TEXT_VALUE;
+        String expectedValue = YEAR_VISUAL_TEXT_VALUE;
+        validateSetValue(reason, value, expectedValue);
+        resetYear();
+
+        reason = "Year - Visible Text (Explicit)";
+        value = VISIBLE_TEXT + YEAR_VISUAL_TEXT_VALUE;
+        validateSetValue(reason, value, expectedValue);
+        resetYear();
+
+        reason = "Year - Value";
+        value = VALUE_HTML + YEAR_HTML_VALUE;
+        validateSetValue(reason, value, expectedValue);
+        resetYear();
+
+        reason = "Year - Index";
+        value = INDEX + YEAR_INDEX_VALUE;
+        validateSetValue(reason, value, expectedValue);
+        resetYear();
+
+        reason = "Year - RegEx Visible Text";
+        value = VISIBLE_TEXT_REGEX + YEAR_REGEX_VISUAL_TEXT_VALUE;
+        validateSetValue(reason, value, expectedValue);
+        resetYear();
+
+        reason = "Year - RegEx Value";
+        value = VALUE_HTML_REGEX + YEAR_REGEX_HTML_VALUE;
+        validateSetValue(reason, value, expectedValue);
+        resetYear();
+
+        //
+        // Random ways to select the value
+        //
+
+        reason = "Year - Random Index";
+        value = RANDOM_INDEX + "7";
+        int actualYear = NumberUtils.toInt(setYear(value));
+        assertThat(reason, actualYear, greaterThanOrEqualTo(2026));
+        resetYear();
+
+        reason = "Year - Random Index Values";
+        value = RANDOM_INDEX_VALUES + "7,8";
+        assertThat(
+                reason,
+                setYear(value),
+                anyOf(equalTo("2026"), equalTo("2027"))
+        );
+        resetYear();
+
+        reason = "Year - Random Index Range";
+        value = RANDOM_INDEX_RANGE + "7:12";
+        actualYear = NumberUtils.toInt(setYear(value));
+        assertThat(reason, actualYear, greaterThanOrEqualTo(2026));
+        assertThat(reason, actualYear, lessThan(2031));
+        resetYear();
+
+        //
+        // Value already selected tests
+        //
+        resetYear();
+        resetYear();
+
+        // Set the value for the tests that follow
+        setYear(YEAR_VISUAL_TEXT_VALUE);
+
+        reason = "Year - Already Selected - Visible Text (default)";
+        value = YEAR_VISUAL_TEXT_VALUE;
+        validateSetValue(reason, value, expectedValue);
+
+        reason = "Year - Already Selected - Visible Text (Explicit)";
+        value = VISIBLE_TEXT + YEAR_VISUAL_TEXT_VALUE;
+        validateSetValue(reason, value, expectedValue);
+
+        reason = "Year - Already Selected - Value";
+        value = VALUE_HTML + YEAR_HTML_VALUE;
+        validateSetValue(reason, value, expectedValue);
+
+        reason = "Year - Already Selected - Index";
+        value = INDEX + YEAR_INDEX_VALUE;
+        validateSetValue(reason, value, expectedValue);
+
+        reason = "Year - Already Selected - RegEx Visible Text";
+        value = VISIBLE_TEXT_REGEX + YEAR_REGEX_VISUAL_TEXT_VALUE;
+        validateSetValue(reason, value, expectedValue);
+
+        reason = "Year - Already Selected - RegEx Value";
+        value = VALUE_HTML_REGEX + YEAR_HTML_VALUE;
+        validateSetValue(reason, value, expectedValue);
+    }
+
+    @Step("Validate SetValue:  {0}")
+    private void validateSetValue(String reason, String value, String expectedValue) {
+        assertThat(reason, setYear(value), equalTo(expectedValue));
+    }
+
+    @Step("Set Year:  {0}")
+    private String setYear(String value) {
+        setElementValueV2(value, year);
+        return year.getValue();
+    }
+
+    @Step("Reset Year")
+    private void resetYear() {
+        String value = "2025";
+        assertThat("Year - 2025", setYear(value), equalTo(value));
     }
 
 }

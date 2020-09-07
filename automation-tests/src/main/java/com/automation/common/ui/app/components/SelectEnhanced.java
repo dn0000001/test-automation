@@ -1,9 +1,11 @@
 package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.Rand;
+import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.RetryPolicy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.WebElement;
@@ -50,6 +52,7 @@ public class SelectEnhanced extends PageComponent {
     private static final String SPLIT_ON = ">>>";
     private static final String SPLIT_ON_RANGE = ":";
     private static final String SPLIT_ON_LIST = ",";
+    private static final String VALUE = "value";
 
     /**
      * Drop Down selection options
@@ -107,6 +110,9 @@ public class SelectEnhanced extends PageComponent {
 
     @XStreamOmitField
     private int selectedIndex;  // If applicable, the index of the selected drop down option
+
+    @XStreamOmitField
+    private RetryPolicy<Object> retryPolicy;
 
     /**
      * Get how to select the drop down option.  Also, initializes the fields that will be used to select the drop down
@@ -186,6 +192,22 @@ public class SelectEnhanced extends PageComponent {
         super(element);
     }
 
+    protected RetryPolicy<Object> getRetryPolicy() {
+        if (retryPolicy == null) {
+            return Utils.getPollingRetryPolicy();
+        }
+
+        return retryPolicy;
+    }
+
+    public void setRetryPolicy(RetryPolicy<Object> retryPolicy) {
+        this.retryPolicy = retryPolicy;
+    }
+
+    public void useNegativeRetryPolicy() {
+        setRetryPolicy(Utils.getPollingRetryPolicy(TestProperties.getInstance().getNegativeTimeout()));
+    }
+
     @Override
     protected void init() {
         select = new Select(coreElement);
@@ -199,23 +221,30 @@ public class SelectEnhanced extends PageComponent {
 
     @Override
     public void setValue() {
-        Failsafe.with(Utils.getPollingRetryPolicy()).run(this::setValueAttempt);
+        Failsafe.with(getRetryPolicy()).run(this::setValueAttempt);
     }
 
     private void setValueAttempt() {
+        // Selenium allows disabled drop downs to still be set.
+        // So, to prevent this we will assert that it is enabled before setting the value
+        assertThat("Select was disabled", isEnabled());
+
         if (getSelection() == Selection.VISIBLE_TEXT) {
-            select.selectByVisibleText(rawSelectionData);
+            setValueUsingVisibleText();
             return;
         }
 
         if (getSelection() == Selection.VALUE_HTML) {
-            select.selectByValue(rawSelectionData);
+            setValueUsingValue();
             return;
         }
 
-        if (getSelection() == Selection.INDEX) {
-            selectedIndex = Integer.parseInt(rawSelectionData);
-            select.selectByIndex(selectedIndex);
+        if (getSelection() == Selection.INDEX
+                || getSelection() == Selection.RANDOM_INDEX
+                || getSelection() == Selection.RANDOM_INDEX_RANGE
+                || getSelection() == Selection.RANDOM_INDEX_VALUES
+        ) {
+            setValueUsingIndex();
             return;
         }
 
@@ -229,57 +258,108 @@ public class SelectEnhanced extends PageComponent {
             return;
         }
 
-        if (getSelection() == Selection.RANDOM_INDEX || getSelection() == Selection.RANDOM_INDEX_RANGE) {
-            List<WebElement> all = select.getOptions();
-            int max = (maxRandomIndex > 0) ? maxRandomIndex : all.size();
-            selectedIndex = Rand.randomRange(minRandomIndex, max - 1);
-            assertThat("Invalid Index", selectedIndex, range(0, all.size() - 1));
-            select.selectByIndex(selectedIndex);
-            return;
-        }
-
-        if (getSelection() == Selection.RANDOM_INDEX_VALUES) {
-            assertThat("No Random Index Values Specified", randomIndexValues.size(), greaterThan(0));
-            Collections.shuffle(randomIndexValues);
-            selectedIndex = randomIndexValues.get(0);
-
-            List<WebElement> all = select.getOptions();
-            assertThat("Invalid Index", selectedIndex, range(0, all.size() - 1));
-            select.selectByIndex(selectedIndex);
-            return;
-        }
-
         assertThat("Unsupported Selection:  " + getSelection(), false);
     }
 
-    private void setValueUsingTextRegEx() {
+    private boolean isMatch(WebElement option, String value) {
+        if (getSelection() == Selection.VISIBLE_TEXT) {
+            String optionText = option.getText();
+            return StringUtils.equals(optionText, value)
+                    || StringUtils.equals(StringUtils.normalizeSpace(optionText), value);
+        }
+
+        if (getSelection() == Selection.INDEX
+                || getSelection() == Selection.RANDOM_INDEX
+                || getSelection() == Selection.RANDOM_INDEX_RANGE
+                || getSelection() == Selection.RANDOM_INDEX_VALUES
+        ) {
+            return value.equals(option.getAttribute("index"));
+        }
+
+        if (getSelection() == Selection.VALUE_HTML) {
+            return StringUtils.equals(option.getAttribute(VALUE), value);
+        }
+
+        if (getSelection() == Selection.VISIBLE_TEXT_REGEX) {
+            return option.getText().matches(value);
+        }
+
+        if (getSelection() == Selection.VALUE_HTML_REGEX) {
+            return StringUtils.defaultString(option.getAttribute(VALUE)).matches(value);
+        }
+
+        return false;
+    }
+
+    private void makeOptionSelected(WebElement option, String reason) {
+        if (!option.isSelected()) {
+            assertThat(reason, option.isEnabled());
+            option.click();
+        }
+    }
+
+    private void genericSetValueUsing(String disabledReason, String notFoundReason, String compareAgainst) {
         int index = -1;
         List<WebElement> all = select.getOptions();
         for (int i = 0; i < all.size(); i++) {
-            if (all.get(i).getText().matches(rawSelectionData)) {
+            WebElement option = all.get(i);
+            if (isMatch(option, compareAgainst)) {
+                makeOptionSelected(option, disabledReason);
                 index = i;
                 break;
             }
         }
 
-        assertThat("Could not find match using regex on visible text:  " + rawSelectionData, index, greaterThanOrEqualTo(0));
+        assertThat(notFoundReason, index, greaterThanOrEqualTo(0));
         selectedIndex = index;
-        select.selectByIndex(index);
+    }
+
+    private void setValueUsingVisibleText() {
+        String disabledReason = "Disabled Option found using visible text:  " + rawSelectionData;
+        String notFoundReason = "Cannot locate element with text:  " + rawSelectionData;
+        genericSetValueUsing(disabledReason, notFoundReason, rawSelectionData);
+    }
+
+    private void setValueUsingValue() {
+        String disabledReason = "Disabled Option found using value:  " + rawSelectionData;
+        String notFoundReason = "Cannot locate element with value:  " + rawSelectionData;
+        genericSetValueUsing(disabledReason, notFoundReason, rawSelectionData);
+    }
+
+    private void setValueUsingIndex() {
+        int index = -1;
+        List<WebElement> all = select.getOptions();
+
+        if (getSelection() == Selection.INDEX) {
+            index = NumberUtils.toInt(rawSelectionData, -1);
+            assertThat("Invalid Index:  " + rawSelectionData, index, greaterThanOrEqualTo(0));
+        } else if (getSelection() == Selection.RANDOM_INDEX || getSelection() == Selection.RANDOM_INDEX_RANGE) {
+            int max = (maxRandomIndex > 0) ? maxRandomIndex : all.size();
+            index = Rand.randomRange(minRandomIndex, max - 1);
+        } else if (getSelection() == Selection.RANDOM_INDEX_VALUES) {
+            assertThat("No Random Index Values Specified", randomIndexValues.size(), greaterThan(0));
+            Collections.shuffle(randomIndexValues);
+            index = randomIndexValues.get(0);
+        } else {
+            assertThat("Unsupported Index Selection Option:  " + getSelection(), false);
+        }
+
+        assertThat("Invalid Index", index, range(0, all.size() - 1));
+        String disabledReason = "Disabled Option found index:  " + index;
+        String notFoundReason = "Cannot locate option with index:  " + index;
+        genericSetValueUsing(disabledReason, notFoundReason, "" + index);
+    }
+
+    private void setValueUsingTextRegEx() {
+        String disabledReason = "Disabled Option found using regex on visible text:  " + rawSelectionData;
+        String notFoundReason = "Could not find match using regex on visible text:  " + rawSelectionData;
+        genericSetValueUsing(disabledReason, notFoundReason, rawSelectionData);
     }
 
     private void setValueUsingHtmlRegEx() {
-        int index = -1;
-        List<WebElement> all = select.getOptions();
-        for (int i = 0; i < all.size(); i++) {
-            if (StringUtils.defaultString(all.get(i).getAttribute("value")).matches(rawSelectionData)) {
-                index = i;
-                break;
-            }
-        }
-
-        assertThat("Could not find match using regex on html value:  " + rawSelectionData, index, greaterThanOrEqualTo(0));
-        selectedIndex = index;
-        select.selectByIndex(index);
+        String disabledReason = "Disabled Option found using regex on html value:  " + rawSelectionData;
+        String notFoundReason = "Could not find match using regex on html value:  " + rawSelectionData;
+        genericSetValueUsing(disabledReason, notFoundReason, rawSelectionData);
     }
 
     @Override
@@ -301,7 +381,7 @@ public class SelectEnhanced extends PageComponent {
         for (int i = 0; i < all.size(); i++) {
             if (all.get(i).isSelected()) {
                 actualVisibleText = all.get(i).getText();
-                actualHtmlValue = all.get(i).getAttribute("value");
+                actualHtmlValue = all.get(i).getAttribute(VALUE);
                 actualIndex = i;
                 break;
             }
@@ -344,6 +424,21 @@ public class SelectEnhanced extends PageComponent {
         } else {
             assertThat("Unsupported Selection:  " + getSelection(), false);
         }
+    }
+
+    /**
+     * @return Get all currently available options that are enabled
+     */
+    public List<String> getAllOptions() {
+        List<String> all = new ArrayList<>();
+
+        for (WebElement option : select.getOptions()) {
+            if (option.isEnabled()) {
+                all.add(StringUtils.trimToEmpty(option.getText()));
+            }
+        }
+
+        return all;
     }
 
 }

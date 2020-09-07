@@ -12,6 +12,8 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 /**
  * Check Box component that works with AJAX
  */
@@ -81,12 +83,14 @@ public class CheckBoxAJAX extends PageComponent {
 
     public void check() {
         if (!isSelected()) {
+            assertThat("CheckBoxAJAX was disabled", isEnabled());
             Utils.clickAndWaitForStale(getCheckBox());
         }
     }
 
     public void uncheck() {
         if (isSelected()) {
+            assertThat("CheckBoxAJAX was disabled", isEnabled());
             Utils.clickAndWaitForStale(getCheckBox());
         }
     }
