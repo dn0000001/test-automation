@@ -35,6 +35,11 @@ public class RadioOption extends PageComponent {
     }
 
     @Override
+    public boolean isEnabled() {
+        return input.isEnabled();
+    }
+
+    @Override
     public void click() {
         setValue();
     }
