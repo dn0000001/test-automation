@@ -3,6 +3,7 @@
 <components-do>
     <aliases>
         <CHECK_BOX_AJAX>a1</CHECK_BOX_AJAX>
+        <CHECK_BOX_BASIC>p16</CHECK_BOX_BASIC>
         <CHECK_BOX_LABEL>b2</CHECK_BOX_LABEL>
         <IMAGE_UPLOAD>c3</IMAGE_UPLOAD>
         <PRIME_FACES_RADIO_BUTTON_GROUP>d4</PRIME_FACES_RADIO_BUTTON_GROUP>
@@ -20,6 +21,7 @@
     </aliases>
     <fakeComponentsPage>
         <checkBoxAJAX>${CHECK_BOX_AJAX}</checkBoxAJAX>
+        <checkBoxBasic>${CHECK_BOX_BASIC}</checkBoxBasic>
         <checkBoxLabel>${CHECK_BOX_LABEL}</checkBoxLabel>
         <imageUpload>${IMAGE_UPLOAD}</imageUpload>
         <primeFacesRadioButtonGroup>${PRIME_FACES_RADIO_BUTTON_GROUP}</primeFacesRadioButtonGroup>

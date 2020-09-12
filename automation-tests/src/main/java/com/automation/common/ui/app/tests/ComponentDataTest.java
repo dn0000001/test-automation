@@ -79,9 +79,14 @@ public class ComponentDataTest extends TestNGBase {
         Helper.assertThat(aggregator);
     }
 
+    @SuppressWarnings("java:S3776")
     private String getExpectedTestData(FakeComponentsPage.Type component) {
         if (component == FakeComponentsPage.Type.CHECK_BOX_AJAX) {
             return "a1";
+        }
+
+        if (component == FakeComponentsPage.Type.CHECK_BOX_BASIC) {
+            return "p16";
         }
 
         if (component == FakeComponentsPage.Type.CHECK_BOX_LABEL) {
