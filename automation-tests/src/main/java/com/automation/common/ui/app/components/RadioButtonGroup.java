@@ -134,10 +134,17 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
         for (WebElement option : options) {
             T component = getInstanceOfT(option);
             if (isMatchedOption(component.getText(), theData)) {
+                if (component.isSelected()) {
+                    return;
+                }
+
+                assertThat("Radio Option was disabled", component.isEnabled());
                 component.setValue();
                 return;
             }
         }
+
+        assertThat("Could not find radio option:  " + theData, false);
     }
 
     @SuppressWarnings("squid:S2259")
