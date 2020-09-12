@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.pageObjects;
 
 import com.automation.common.ui.app.components.CheckBoxAJAX;
+import com.automation.common.ui.app.components.CheckBoxBasic;
 import com.automation.common.ui.app.components.CheckBoxLabel;
 import com.automation.common.ui.app.components.TextBox;
 import com.taf.automation.ui.support.PageObjectV2;
@@ -30,6 +31,9 @@ public class RoboFormLoginPage extends PageObjectV2 {
     @FindBy(xpath = "//*[@id='safe_device']/..")
     private CheckBoxLabel rememberLabel;
 
+    @FindBy(id = "safe_device")
+    private CheckBoxBasic rememberBasic;
+
     public RoboFormLoginPage() {
         super();
     }
@@ -44,6 +48,7 @@ public class RoboFormLoginPage extends PageObjectV2 {
         disableFieldAndValidatePassword();
         disableFieldAndValidateRememberLabel();
         disableFieldAndValidateRememberAJAX();
+        disableFieldAndValidateRememberBasic();
     }
 
     private void disableField(PageComponent component) {
@@ -83,6 +88,14 @@ public class RoboFormLoginPage extends PageObjectV2 {
         makeCheckBoxVisible(rememberAJAX.getLocator());
         disableField(rememberAJAX);
         assertThat("Remember (AJAX)", rememberAJAX, componentCannotBeSetFast(VALUE_TO_BE_SET));
+    }
+
+    @Step("Disable And Validate:  Remember (Basic)")
+    private void disableFieldAndValidateRememberBasic() {
+        // On this page the element is considered hidden, it is necessary to make it displayed for the test
+        makeCheckBoxVisible(rememberBasic.getLocator());
+        disableField(rememberBasic);
+        assertThat("Remember (Basic)", rememberBasic, componentCannotBeSetFast(VALUE_TO_BE_SET));
     }
 
 }

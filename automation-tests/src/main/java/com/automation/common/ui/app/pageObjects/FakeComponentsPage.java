@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.pageObjects;
 
 import com.automation.common.ui.app.components.CheckBoxAJAX;
+import com.automation.common.ui.app.components.CheckBoxBasic;
 import com.automation.common.ui.app.components.CheckBoxLabel;
 import com.automation.common.ui.app.components.ImageUpload;
 import com.automation.common.ui.app.components.PrimeFacesRadioButtonGroup;
@@ -29,6 +30,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class FakeComponentsPage extends PageObjectV2 {
     @FindBy(id = "does not exist")
     private CheckBoxAJAX checkBoxAJAX;
+
+    @FindBy(id = "does not exist")
+    private CheckBoxBasic checkBoxBasic;
 
     @FindBy(id = "does not exist")
     private CheckBoxLabel checkBoxLabel;
@@ -75,6 +79,7 @@ public class FakeComponentsPage extends PageObjectV2 {
 
     public enum Type {
         CHECK_BOX_AJAX,
+        CHECK_BOX_BASIC,
         CHECK_BOX_LABEL,
         IMAGE_UPLOAD,
         PRIME_FACES_RADIO_BUTTON_GROUP,
@@ -108,6 +113,7 @@ public class FakeComponentsPage extends PageObjectV2 {
      */
     public boolean hasData() {
         return Utils.isNotBlank(checkBoxAJAX)
+                || Utils.isNotBlank(checkBoxBasic)
                 || Utils.isNotBlank(checkBoxLabel)
                 || Utils.isNotBlank(imageUpload)
                 || Utils.isNotBlank(primeFacesRadioButtonGroup)
@@ -125,9 +131,14 @@ public class FakeComponentsPage extends PageObjectV2 {
                 ;
     }
 
+    @SuppressWarnings("java:S3776")
     public String getTestData(Type component, boolean resolveAliases) {
         if (component == Type.CHECK_BOX_AJAX) {
             return checkBoxAJAX.getData(DataTypes.Data, resolveAliases);
+        }
+
+        if (component == Type.CHECK_BOX_BASIC) {
+            return checkBoxBasic.getData(DataTypes.Data, resolveAliases);
         }
 
         if (component == Type.CHECK_BOX_LABEL) {
