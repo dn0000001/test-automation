@@ -1,7 +1,9 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.RoboFormDO;
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -15,13 +17,10 @@ public class RoboFormTest extends TestNGBase {
     @Features("Framework")
     @Stories("Using setElementValueV2 with ComponentPO")
     @Severity(SeverityLevel.CRITICAL)
-    @Parameters({"url", "data-set"})
+    @Parameters({"data-set"})
     @Test
-    public void testSetElementValueV2WithComponentPO(
-            @Optional("https://www.roboform.com/filling-test-all-fields") String url,
-            @Optional("data/ui/RoboForm_TestData.xml") String dataSet
-    ) {
-        getContext().getDriver().get(url);
+    public void testSetElementValueV2WithComponentPO(@Optional("data/ui/RoboForm_TestData.xml") String dataSet) {
+        new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());
         RoboFormDO roboFormDO = new RoboFormDO(getContext()).fromResource(dataSet);
         if (roboFormDO.isUseDynamicPage()) {
             fillUsingDynamicComponentPO(roboFormDO);

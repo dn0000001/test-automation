@@ -49,21 +49,18 @@
     </test>
 
     <test name="Herokuapp Data Table Test">
-        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.HerokuappDataTableTest"/>
         </classes>
     </test>
 
     <test name="Herokuapp Data Table Equals Test">
-        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.HerokuappDataTableEqualsTest"/>
         </classes>
     </test>
 
     <test name="Row Matching Test">
-        <parameter name="url" value="https://the-internet.herokuapp.com/tables"/>
         <parameter name="data-set" value="data/ui/RowMatching_TestData.xml"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.RowMatchingTest"/>
@@ -100,7 +97,6 @@
     </test>
 
     <test name="Retry with Pass Test">
-        <parameter name="url" value="https://duckduckgo.com/"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.RetryTest"/>
         </classes>
@@ -114,14 +110,12 @@
     </test>
 
     <test name="Lambda Expression Matcher Test">
-        <parameter name="url" value="https://the-internet.herokuapp.com/add_remove_elements/"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.LambdaExpressionMatcherTest"/>
         </classes>
     </test>
 
     <test name="Expected Conditions Matcher Test">
-        <parameter name="url" value="https://the-internet.herokuapp.com/add_remove_elements/"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.ExpectedConditionsMatcherTest"/>
         </classes>
@@ -179,7 +173,6 @@
     </test>
 
     <test name="PrimeFaces Dashboard Test">
-        <parameter name="url" value="https://www.primefaces.org/showcase/ui/panel/dashboard.xhtml"/>
         <parameter name="data-set" value="data/ui/PrimeFacesDashboard_TestData.xml"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.PrimeFacesDashboardTest"/>
@@ -187,7 +180,6 @@
     </test>
 
     <test name="RoboForm Test">
-        <parameter name="url" value="https://www.roboform.com/filling-test-all-fields"/>
         <parameter name="data-set" value="data/ui/RoboForm_TestData.xml"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.RoboFormTest"/>
@@ -195,7 +187,6 @@
     </test>
 
     <test name="RoboFormDynamic Test">
-        <parameter name="url" value="https://www.roboform.com/filling-test-all-fields"/>
         <parameter name="data-set" value="data/ui/RoboFormDynamic_TestData.xml"/>
         <classes>
             <class name="com.automation.common.ui.app.tests.RoboFormTest"/>

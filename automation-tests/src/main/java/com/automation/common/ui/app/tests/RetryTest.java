@@ -1,11 +1,11 @@
 package com.automation.common.ui.app.tests;
 
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.testng.Retry;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -23,19 +23,13 @@ public class RetryTest extends TestNGBase {
     @Features("Framework")
     @Stories("Validate the retry functionality")
     @Severity(SeverityLevel.CRITICAL)
-    @Parameters("url")
     @Test
     @Retry
-    public void testThatPassesOnRetry(@Optional("https://duckduckgo.com/") String url) {
+    public void testThatPassesOnRetry() {
         assertThat("test.default.retry", TestProperties.getInstance().getTestDefaultRetry(), greaterThan(0));
-        goToUrl(url);
+        new Navigation(getContext()).toDuckDuckGo(Utils.isCleanCookiesSupported());
         performActionThatFailsIntermittently();
         performOtherActionsOfTest();
-    }
-
-    @Step("Go to URL:  {0}")
-    private void goToUrl(String url) {
-        getContext().getDriver().get(url);
     }
 
     @Step("Perform Action That Fails Intermittently")

@@ -1,7 +1,9 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.PrimeFacesDashboardDO;
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -14,13 +16,10 @@ public class PrimeFacesDashboardTest extends TestNGBase {
     @Features("Framework")
     @Stories("Page Object with Locators (like a component)")
     @Severity(SeverityLevel.CRITICAL)
-    @Parameters({"url", "data-set"})
+    @Parameters({"data-set"})
     @Test
-    public void testPageObjectWithLocator(
-            @Optional("https://www.primefaces.org/showcase/ui/panel/dashboard.xhtml") String url,
-            @Optional("data/ui/PrimeFacesDashboard_TestData.xml") String dataSet
-    ) {
-        getContext().getDriver().get(url);
+    public void testPageObjectWithLocator(@Optional("data/ui/PrimeFacesDashboard_TestData.xml") String dataSet) {
+        new Navigation(getContext()).toPrimefacesDashboard(Utils.isCleanCookiesSupported());
         PrimeFacesDashboardDO primeFacesDashboardDO = new PrimeFacesDashboardDO(getContext()).fromResource(dataSet);
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validateLocatorsNotNull();
         primeFacesDashboardDO.getPrimeFacesDashboardPage().validateFakePanelLocatorIsNull();
