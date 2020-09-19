@@ -4,11 +4,10 @@ import com.automation.common.ui.app.pageObjects.HerokuappDataTable1Page;
 import com.automation.common.ui.app.pageObjects.HerokuappDataTablesPage;
 import com.automation.common.ui.app.pageObjects.HerokuappRow;
 import com.automation.common.ui.app.pageObjects.HerokuappRowTable1;
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.api.JsonUtils;
-import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
+import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -49,10 +48,9 @@ public class HerokuappDataTableEqualsTest extends TestNGBase {
     @Features("Framework")
     @Stories("Page Object with Dynamic Locators used to represent a row in a table")
     @Severity(SeverityLevel.CRITICAL)
-    @Parameters("url")
     @Test
-    public void verifyTable1EqualsTable2Test(@Optional("https://the-internet.herokuapp.com/tables") String url) {
-        getContext().getDriver().get(url);
+    public void verifyTable1EqualsTable2Test() {
+        new Navigation(getContext()).toHerokuappTables(Utils.isCleanCookiesSupported());
 
         List<Table> table2Rows = new ArrayList<>();
         HerokuappDataTablesPage table2 = new HerokuappDataTablesPage(getContext());

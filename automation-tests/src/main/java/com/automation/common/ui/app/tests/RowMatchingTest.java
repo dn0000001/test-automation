@@ -3,7 +3,9 @@ package com.automation.common.ui.app.tests;
 import com.automation.common.ui.app.domainObjects.RowMatchingDO;
 import com.automation.common.ui.app.pageObjects.HerokuappDataTablesPage;
 import com.automation.common.ui.app.pageObjects.HerokuappRow;
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -23,13 +25,10 @@ public class RowMatchingTest extends TestNGBase {
     @Features("Framework")
     @Stories("Matching rows in tables")
     @Severity(SeverityLevel.CRITICAL)
-    @Parameters({"url", "data-set"})
+    @Parameters({"data-set"})
     @Test
-    public void performRowMatching(
-            @Optional("https://the-internet.herokuapp.com/tables") String url,
-            @Optional("data/ui/RowMatching_TestData.xml") String dataSet
-    ) {
-        getContext().getDriver().get(url);
+    public void performRowMatching(@Optional("data/ui/RowMatching_TestData.xml") String dataSet) {
+        new Navigation(getContext()).toHerokuappTables(Utils.isCleanCookiesSupported());
         rowMatchingDO = new RowMatchingDO(getContext()).fromResource(dataSet);
         tablesPage = new HerokuappDataTablesPage(getContext());
 

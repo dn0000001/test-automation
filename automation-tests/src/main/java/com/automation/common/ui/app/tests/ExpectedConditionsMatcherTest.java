@@ -1,9 +1,9 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.pageObjects.AddRemoveElementsPage;
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.testng.TestNGBase;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
+import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -17,10 +17,9 @@ public class ExpectedConditionsMatcherTest extends TestNGBase {
     @Features("Framework")
     @Stories("Conditional - ExpectedConditionsMatch")
     @Severity(SeverityLevel.CRITICAL)
-    @Parameters("url")
     @Test
-    public void performTest(@Optional("https://the-internet.herokuapp.com/add_remove_elements/") String url) {
-        getContext().getDriver().get(url);
+    public void performTest() {
+        new Navigation(getContext()).toHerokuappElements(Utils.isCleanCookiesSupported());
         AddRemoveElementsPage addRemoveElementsPage = new AddRemoveElementsPage();
         addRemoveElementsPage.initPage(getContext());
         addRemoveElementsPage.waitForAddElementUsingExpectedCondition();

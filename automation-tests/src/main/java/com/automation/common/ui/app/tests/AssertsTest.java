@@ -6,6 +6,7 @@ import com.automation.common.ui.app.components.TextBox;
 import com.automation.common.ui.app.components.UnitTestComponent;
 import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.automation.common.ui.app.pageObjects.RoboFormLoginPage;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.testng.TestNGBase;
@@ -17,7 +18,6 @@ import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
@@ -467,10 +467,8 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test(enabled = RUN)
     public void assertIsDisplayedWithByExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        assertThat(By.id("headersearch"), AssertsUtil.isElementDisplayed(driver));
+        new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
+        assertThat(By.id("headersearch"), AssertsUtil.isElementDisplayed(getContext().getDriver()));
     }
 
     @Features("AssertsUtil")
@@ -496,10 +494,8 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test(enabled = RUN)
     public void assertIsEnabledWithByExistTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        assertThat(By.id("headersearch"), AssertsUtil.isElementEnabled(driver));
+        new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
+        assertThat(By.id("headersearch"), AssertsUtil.isElementEnabled(getContext().getDriver()));
     }
 
     @Features("AssertsUtil")
@@ -568,8 +564,8 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void assertComponentCannotBeSetTest() {
+        new Navigation(getContext()).toDuckDuckGo(Utils.isCleanCookiesSupported());
         String valueToUse = "Does not matter";
-        getContext().getDriver().get("https://duckduckgo.com/");
         WebElement element = Utils.until(ExpectedConditionsUtil.ready(By.name("q")));
         UnitTestComponent component = new UnitTestComponent(element)
                 .withEnabled(true)
@@ -589,11 +585,11 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void assertComponentCannotBeSetFastTest() {
-        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());
         CreditCardFields creditCardFields = new CreditCardFields(getContext());
         creditCardFields.disableFieldsAndValidateCannotSet();
 
-        getContext().getDriver().get("https://online.roboform.com/login");
+        new Navigation(getContext()).toRoboFormLogin(Utils.isCleanCookiesSupported());
         RoboFormLoginPage roboFormLoginPage = new RoboFormLoginPage(getContext());
         roboFormLoginPage.disableFieldsAndValidateCannotSet();
     }
@@ -603,7 +599,7 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void validateCreditCardTypeSelectEnhancedSetValue() {
-        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());
         CreditCardFields creditCardFields = new CreditCardFields(getContext());
         creditCardFields.validateCreditCardTypeSelectEnhancedSetValue();
     }
@@ -613,7 +609,7 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void validateYearSelectEnhancedSetValue() {
-        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());
         CreditCardFields creditCardFields = new CreditCardFields(getContext());
         creditCardFields.validateYearSelectEnhancedSetValue();
     }
@@ -623,7 +619,7 @@ public class AssertsTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void validateNegativeSelectEnhancedSetValue() {
-        getContext().getDriver().get("https://www.roboform.com/filling-test-all-fields");
+        new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());
         CreditCardFields creditCardFields = new CreditCardFields(getContext());
         creditCardFields.validateNegativeSelectEnhancedSetValue();
     }
