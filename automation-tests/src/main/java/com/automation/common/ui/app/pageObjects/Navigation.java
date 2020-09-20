@@ -64,4 +64,16 @@ public class Navigation {
         toURL("True North Hockey", props.getCustom("true-north-hockey-url", null), cleanCookies);
     }
 
+    public void toRubyWatirCheckboxes(boolean cleanCookies) {
+        toURL("Ruby Watir - Checkboxes", props.getCustom("rubywatir-checkboxes-url", null), cleanCookies);
+    }
+
+    public void toSeleniumEasyRadioButton(boolean cleanCookies) {
+        toURL("Selenium Easy - Radio Button", props.getCustom("seleniumeasy-radio-button-url", null), cleanCookies);
+    }
+
+    public void toSeleniumEasyBasicCheckbox(boolean cleanCookies) {
+        toURL("Selenium Easy - Basic Checkbox", props.getCustom("seleniumeasy-basic-checkbox-url", null), cleanCookies);
+    }
+
 }

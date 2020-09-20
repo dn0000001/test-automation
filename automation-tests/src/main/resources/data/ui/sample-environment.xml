@@ -34,6 +34,9 @@
         <prop name="roboform-fill-url" value="https://www.roboform.com/filling-test-all-fields"/>
         <prop name="roboform-login-url" value="https://online.roboform.com/login"/>
         <prop name="true-north-hockey-url" value="http://www.truenorthhockey.com/"/>
+        <prop name="rubywatir-checkboxes-url" value="http://test.rubywatir.com/checkboxes.php"/>
+        <prop name="seleniumeasy-radio-button-url" value="https://www.seleniumeasy.com/test/input-form-demo.html"/>
+        <prop name="seleniumeasy-basic-checkbox-url" value="https://www.seleniumeasy.com/test/basic-checkbox-demo.html"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
         <user role="user" userName="u2" password="xzRZ75G077/YqCsRSAHGMw=="/>
