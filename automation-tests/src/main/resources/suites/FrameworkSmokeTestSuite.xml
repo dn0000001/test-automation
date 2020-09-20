@@ -368,6 +368,13 @@
         </classes>
     </test>
 
+    <test name="Component Functionality Test">
+        <parameter name="data-set" value="data/ui/ComponentsFunctionality_TestData.xml"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ComponentFunctionalityTest"/>
+        </classes>
+    </test>
+
     <test name="After Class Failure Test">
         <parameter name="scenario" value="AFTER_CLASS_FAILURE"/>
         <classes>

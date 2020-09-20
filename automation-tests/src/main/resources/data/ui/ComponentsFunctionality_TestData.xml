@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<components-do>
+    <rubyWatirMultipleCheckBoxesPage>
+        <soccer>true</soccer>
+        <football>true</football>
+        <baseball>false</baseball>
+        <basketball>false</basketball>
+    </rubyWatirMultipleCheckBoxesPage>
+    <seleniumEasyCheckBoxDemoPage>
+        <option1>true</option1>
+        <option2>false</option2>
+        <option3>true</option3>
+        <option4>false</option4>
+    </seleniumEasyCheckBoxDemoPage>
+    <seleniumEasyInputFormDemoPage>
+        <doYouHaveHosting>Yes</doYouHaveHosting>
+    </seleniumEasyInputFormDemoPage>
+</components-do>
