@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.regex.PatternSyntaxException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -46,6 +47,8 @@ public class AssertsUtil {
      */
     public static Matcher<String> matchesRegex(final String regex) {
         return new TypeSafeMatcher<String>() {
+            private boolean invalidRegEx;
+
             @Override
             public void describeTo(final Description description) {
                 description.appendText("value matches regular expression:  " + regex);
@@ -53,14 +56,19 @@ public class AssertsUtil {
 
             @Override
             protected void describeMismatchSafely(final String item, final Description mismatchDescription) {
-                mismatchDescription.appendText(" value ('" + item + "') did not match regex pattern");
+                String text = " value ('%s') did not match%s regex pattern:  %s";
+                mismatchDescription.appendText(String.format(text, item, invalidRegEx ? " INVALID" : "", regex));
             }
 
             @Override
             protected boolean matchesSafely(final String item) {
                 try {
                     return item.matches(regex);
+                } catch (PatternSyntaxException pse) {
+                    invalidRegEx = true;
+                    return false;
                 } catch (Exception ex) {
+                    invalidRegEx = false;
                     return false;
                 }
             }
@@ -75,6 +83,8 @@ public class AssertsUtil {
      */
     public static Matcher<String> doesNotMatchRegex(final String regex) {
         return new TypeSafeMatcher<String>() {
+            private boolean invalidRegEx;
+
             @Override
             public void describeTo(final Description description) {
                 description.appendText("value does NOT match regular expression:  " + regex);
@@ -82,14 +92,23 @@ public class AssertsUtil {
 
             @Override
             protected void describeMismatchSafely(final String item, final Description mismatchDescription) {
-                mismatchDescription.appendText(" value ('" + item + "') matched the regex pattern");
+                if (invalidRegEx) {
+                    String text = " value ('%s') was considered matching the INVALID regex pattern:  %s";
+                    mismatchDescription.appendText(String.format(text, item, regex));
+                } else {
+                    mismatchDescription.appendText(" value ('" + item + "') matched the regex pattern:  " + regex);
+                }
             }
 
             @Override
             protected boolean matchesSafely(final String item) {
                 try {
                     return !item.matches(regex);
+                } catch (PatternSyntaxException pse) {
+                    invalidRegEx = true;
+                    return false;
                 } catch (Exception ex) {
+                    invalidRegEx = false;
                     return false;
                 }
             }
