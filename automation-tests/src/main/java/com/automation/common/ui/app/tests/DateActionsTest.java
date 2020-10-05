@@ -6,6 +6,8 @@ import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import com.taf.automation.ui.support.util.Helper;
 import de.jollyday.HolidayCalendar;
 import de.jollyday.HolidayType;
+import de.jollyday.config.Fixed;
+import de.jollyday.config.Month;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
@@ -39,6 +41,7 @@ public class DateActionsTest {
     private static final Date dec24anchor = DateActions.parseDateStrictly("12/24/2019", DATE_FORMAT);
     private static final Date dec25anchor = DateActions.parseDateStrictly("12/25/2019", DATE_FORMAT);
     private static final Date dec26anchor = DateActions.parseDateStrictly("12/26/2019", DATE_FORMAT);
+    private static final Date may4anchor = DateActions.parseDateStrictly("05/04/2021", DATE_FORMAT);
 
     private static final Date april22 = DateActions.parseDateStrictly("04/22/2019", DATE_FORMAT);
     private static final Date jun28 = DateActions.parseDateStrictly("06/28/2019", DATE_FORMAT);
@@ -52,6 +55,17 @@ public class DateActionsTest {
     private static final Date dec27 = DateActions.parseDateStrictly("12/27/2019", DATE_FORMAT);
     private static final Date sept11 = DateActions.parseDateStrictly("09/11/2019", DATE_FORMAT);
     private static final Date sept25 = DateActions.parseDateStrictly("09/25/2019", DATE_FORMAT);
+    private static final Date may3 = DateActions.parseDateStrictly("05/03/2021", DATE_FORMAT);
+    private static final Date may5 = DateActions.parseDateStrictly("05/05/2021", DATE_FORMAT);
+
+    private static final String INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED = "Independence Day - Next Business Day - No Days Added";
+    private static final String INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED = "Independence Day - Previous Business Day - No Days Added";
+    private static final String INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER = "Independence Day - Next Business Day - 1 Day After";
+    private static final String INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE = "Independence Day - Previous Business Day - 1 Day Before";
+    private static final String INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED = "Independence Day - Only Business Days After - No Days Added";
+    private static final String INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED = "Independence Day - Only Business Days Before - No Days Added";
+    private static final String INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER = "Independence Day - Only Business Days After - 1 Day After";
+    private static final String INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE = "Independence Day - Only Business Days Before - 1 Day Before";
 
     @Features("DateActions")
     @Stories("Result Date Is Business Day")
@@ -265,28 +279,28 @@ public class DateActionsTest {
         Date july6 = DateActions.parseDateStrictly("07/06/2020", DATE_FORMAT);
 
         Date actual = dateActions.nextBusinessDay(july3, 0);
-        assertThat("Independence Day - Next Business Day - No Days Added", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july6));
 
         actual = dateActions.previousBusinessDay(july3, 0);
-        assertThat("Independence Day - Previous Business Day - No Days Added", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july2));
 
         actual = dateActions.nextBusinessDay(july2, 1);
-        assertThat("Independence Day - Next Business Day - 1 Day After", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER, actual, equalTo(july6));
 
         actual = dateActions.previousBusinessDay(july5, -1);
-        assertThat("Independence Day - Previous Business Day - 1 Day Before", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE, actual, equalTo(july2));
 
         actual = dateActions.onlyBusinessDaysAfter(july3, 0);
-        assertThat("Independence Day - Only Business Days After - No Days Added", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED, actual, equalTo(july6));
 
         actual = dateActions.onlyBusinessDaysBefore(july3, 0);
-        assertThat("Independence Day - Only Business Days Before - No Days Added", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED, actual, equalTo(july2));
 
         actual = dateActions.onlyBusinessDaysAfter(july2, 1);
-        assertThat("Independence Day - Only Business Days After - 1 Day After", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER, actual, equalTo(july6));
 
         actual = dateActions.onlyBusinessDaysBefore(july5, -1);
-        assertThat("Independence Day - Only Business Days Before - 1 Day Before", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE, actual, equalTo(july2));
     }
 
     @Features("DateActions")
@@ -302,28 +316,28 @@ public class DateActionsTest {
         Date july6 = DateActions.parseDateStrictly("07/06/2021", DATE_FORMAT);
 
         Date actual = dateActions.nextBusinessDay(july5, 0);
-        assertThat("Independence Day - Next Business Day - No Days Added", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july6));
 
         actual = dateActions.previousBusinessDay(july5, 0);
-        assertThat("Independence Day - Previous Business Day - No Days Added", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july2));
 
         actual = dateActions.nextBusinessDay(july2, 1);
-        assertThat("Independence Day - Next Business Day - 1 Day After", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER, actual, equalTo(july6));
 
         actual = dateActions.previousBusinessDay(july6, -1);
-        assertThat("Independence Day - Previous Business Day - 1 Day Before", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE, actual, equalTo(july2));
 
         actual = dateActions.onlyBusinessDaysAfter(july5, 0);
-        assertThat("Independence Day - Only Business Days After - No Days Added", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED, actual, equalTo(july6));
 
         actual = dateActions.onlyBusinessDaysBefore(july5, 0);
-        assertThat("Independence Day - Only Business Days Before - No Days Added", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED, actual, equalTo(july2));
 
         actual = dateActions.onlyBusinessDaysAfter(july2, 1);
-        assertThat("Independence Day - Only Business Days After - 1 Day After", actual, equalTo(july6));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER, actual, equalTo(july6));
 
         actual = dateActions.onlyBusinessDaysBefore(july6, -1);
-        assertThat("Independence Day - Only Business Days Before - 1 Day Before", actual, equalTo(july2));
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE, actual, equalTo(july2));
     }
 
     @Features("DateActions")
@@ -401,16 +415,218 @@ public class DateActionsTest {
     }
 
     @Features("DateActions")
+    @Stories("Result Date Is Excluded Holiday")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsExcludedHolidayTest() {
+        DateActions dateActions = new DateActions()
+                .withHolidayCalendar(HolidayCalendar.UNITED_STATES)
+                .withExcludedHoliday("FLAG_DAY");
+
+        Date june14 = DateActions.parseDateStrictly("06/14/2022", DATE_FORMAT);
+        Date june13 = DateActions.parseDateStrictly("06/13/2022", DATE_FORMAT);
+        Date june15 = DateActions.parseDateStrictly("06/15/2022", DATE_FORMAT);
+
+        Date actual = dateActions.nextBusinessDay(june14, 0);
+        assertThat("Flag Day - Next Business Day - No Days Added", actual, equalTo(june14));
+
+        actual = dateActions.previousBusinessDay(june14, 0);
+        assertThat("Flag Day - Previous Business Day - No Days Added", actual, equalTo(june14));
+
+        actual = dateActions.nextBusinessDay(june13, 1);
+        assertThat("Flag Day - Next Business Day - 1 Day After", actual, equalTo(june14));
+
+        actual = dateActions.previousBusinessDay(june15, -1);
+        assertThat("Flag Day - Previous Business Day - 1 Day Before", actual, equalTo(june14));
+
+        actual = dateActions.onlyBusinessDaysAfter(june14, 0);
+        assertThat("Flag Day - Only Business Days After - No Days Added", actual, equalTo(june14));
+
+        actual = dateActions.onlyBusinessDaysBefore(june14, 0);
+        assertThat("Flag Day - Only Business Days Before - No Days Added", actual, equalTo(june14));
+
+        actual = dateActions.onlyBusinessDaysAfter(june13, 1);
+        assertThat("Flag Day - Only Business Days After - 1 Day After", actual, equalTo(june14));
+
+        actual = dateActions.onlyBusinessDaysBefore(june15, -1);
+        assertThat("Flag Day - Only Business Days Before - 1 Day Before", actual, equalTo(june14));
+    }
+
+    @Features("DateActions")
+    @Stories("Result Date Is Holiday in an additional holiday manager that is loaded")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsHolidayInAdditionalHolidayManagerTest() {
+        DateActions dateActions = new DateActions()
+                .withRegion("on")
+                .withAdditionalHolidayManager(HolidayCalendar.UNITED_STATES.getId())
+                .withAdditionalHolidayManager("fake");
+
+        //
+        // The default holiday manager of CA
+        //
+        Date actual = dateActions.nextBusinessDay(jul1anchor, 0);
+        assertThat("Canada Day - Next Business Day - No Days Added", actual, equalTo(jul2anchor));
+
+        actual = dateActions.previousBusinessDay(jul1anchor, 0);
+        assertThat("Canada Day - Previous Business Day - No Days Added", actual, equalTo(jun28));
+
+        actual = dateActions.nextBusinessDay(jun30anchor, 1);
+        assertThat("Canada Day - Next Business Day - 1 Day After", actual, equalTo(jul2anchor));
+
+        actual = dateActions.previousBusinessDay(jul2anchor, -1);
+        assertThat("Canada Day - Previous Business Day - 1 Day Before", actual, equalTo(jun28));
+
+        actual = dateActions.onlyBusinessDaysAfter(jul1anchor, 0);
+        assertThat("Canada Day - Only Business Days After - No Days Added", actual, equalTo(jul2anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(jul1anchor, 0);
+        assertThat("Canada Day - Only Business Days Before - No Days Added", actual, equalTo(jun28));
+
+        actual = dateActions.onlyBusinessDaysAfter(jun30anchor, 1);
+        assertThat("Canada Day - Only Business Days After - 1 Day After", actual, equalTo(jul2anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(jul2anchor, -1);
+        assertThat("Canada Day - Only Business Days Before - 1 Day Before", actual, equalTo(jun28));
+
+        //
+        // The additional holiday manager of US
+        //
+        // Independence Day in this case is July 3 because July 4th is a Saturday
+        Date july3 = DateActions.parseDateStrictly("07/03/2020", DATE_FORMAT);
+
+        Date july2 = DateActions.parseDateStrictly("07/02/2020", DATE_FORMAT);
+        Date july5 = DateActions.parseDateStrictly("07/05/2020", DATE_FORMAT);
+        Date july6 = DateActions.parseDateStrictly("07/06/2020", DATE_FORMAT);
+
+        actual = dateActions.nextBusinessDay(july3, 0);
+        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july6));
+
+        actual = dateActions.previousBusinessDay(july3, 0);
+        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july2));
+
+        actual = dateActions.nextBusinessDay(july2, 1);
+        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER, actual, equalTo(july6));
+
+        actual = dateActions.previousBusinessDay(july5, -1);
+        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE, actual, equalTo(july2));
+
+        actual = dateActions.onlyBusinessDaysAfter(july3, 0);
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED, actual, equalTo(july6));
+
+        actual = dateActions.onlyBusinessDaysBefore(july3, 0);
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED, actual, equalTo(july2));
+
+        actual = dateActions.onlyBusinessDaysAfter(july2, 1);
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER, actual, equalTo(july6));
+
+        actual = dateActions.onlyBusinessDaysBefore(july5, -1);
+        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE, actual, equalTo(july2));
+
+        //
+        // The additional holiday manager of "fake" (which is not in the library but in the local resources)
+        //
+        actual = dateActions.nextBusinessDay(may4anchor, 0);
+        assertThat("Star Wars Day - Next Business Day - No Days Added", actual, equalTo(may5));
+
+        actual = dateActions.previousBusinessDay(may4anchor, 0);
+        assertThat("Star Wars Day - Previous Business Day - No Days Added", actual, equalTo(may3));
+
+        actual = dateActions.nextBusinessDay(may3, 1);
+        assertThat("Star Wars Day - Next Business Day - 1 Day After", actual, equalTo(may5));
+
+        actual = dateActions.previousBusinessDay(may5, -1);
+        assertThat("Star Wars Day - Previous Business Day - 1 Day Before", actual, equalTo(may3));
+
+        actual = dateActions.onlyBusinessDaysAfter(may4anchor, 0);
+        assertThat("Star Wars Day - Only Business Days After - No Days Added", actual, equalTo(may5));
+
+        actual = dateActions.onlyBusinessDaysBefore(may4anchor, 0);
+        assertThat("Star Wars Day - Only Business Days Before - No Days Added", actual, equalTo(may3));
+
+        actual = dateActions.onlyBusinessDaysAfter(may3, 1);
+        assertThat("Star Wars Day - Only Business Days After - 1 Day After", actual, equalTo(may5));
+
+        actual = dateActions.onlyBusinessDaysBefore(may5, -1);
+        assertThat("Star Wars Day - Only Business Days Before - 1 Day Before", actual, equalTo(may3));
+    }
+
+    @Features("DateActions")
+    @Stories("Result Date Is an excluded holiday from an additional holiday manager")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsExcludedHolidayFromAdditionalHolidayManagerTest() {
+        DateActions dateActions = new DateActions()
+                .withRegion("on")
+                .withAdditionalHolidayManager("fake")
+                .withExcludedHoliday("STAR_WARS_DAY");
+
+        Date actual = dateActions.nextBusinessDay(may4anchor, 0);
+        assertThat("Star Wars Day - Excluded - Next Business Day", actual, equalTo(may4anchor));
+
+        actual = dateActions.previousBusinessDay(may4anchor, 0);
+        assertThat("Star Wars Day - Excluded - Previous Business Day", actual, equalTo(may4anchor));
+
+        actual = dateActions.onlyBusinessDaysAfter(may4anchor, 0);
+        assertThat("Star Wars Day - Excluded - Only Business Days After", actual, equalTo(may4anchor));
+
+        actual = dateActions.onlyBusinessDaysBefore(may4anchor, 0);
+        assertThat("Star Wars Day - Excluded - Only Business Days Before", actual, equalTo(may4anchor));
+    }
+
+    @Features("DateActions")
+    @Stories("Result Date Is An Ad Hoc Holiday")
+    @Severity(SeverityLevel.NORMAL)
+    @Test
+    public void performResultDateIsAdHocHolidayTest() {
+        Fixed starWarsDay = new Fixed();
+        starWarsDay.setDay(4);
+        starWarsDay.setMonth(Month.MAY);
+
+        DateActions dateActions = new DateActions()
+                .withRegion("on")
+                .withHoliday(starWarsDay);
+
+        Date actual = dateActions.nextBusinessDay(may4anchor, 0);
+        assertThat("Star Wars Day - Next Business Day - No Days Added", actual, equalTo(may5));
+
+        actual = dateActions.previousBusinessDay(may4anchor, 0);
+        assertThat("Star Wars Day - Previous Business Day - No Days Added", actual, equalTo(may3));
+
+        actual = dateActions.nextBusinessDay(may3, 1);
+        assertThat("Star Wars Day - Next Business Day - 1 Day After", actual, equalTo(may5));
+
+        actual = dateActions.previousBusinessDay(may5, -1);
+        assertThat("Star Wars Day - Previous Business Day - 1 Day Before", actual, equalTo(may3));
+
+        actual = dateActions.onlyBusinessDaysAfter(may4anchor, 0);
+        assertThat("Star Wars Day - Only Business Days After - No Days Added", actual, equalTo(may5));
+
+        actual = dateActions.onlyBusinessDaysBefore(may4anchor, 0);
+        assertThat("Star Wars Day - Only Business Days Before - No Days Added", actual, equalTo(may3));
+
+        actual = dateActions.onlyBusinessDaysAfter(may3, 1);
+        assertThat("Star Wars Day - Only Business Days After - 1 Day After", actual, equalTo(may5));
+
+        actual = dateActions.onlyBusinessDaysBefore(may5, -1);
+        assertThat("Star Wars Day - Only Business Days Before - 1 Day Before", actual, equalTo(may3));
+    }
+
+    @Features("DateActions")
     @Stories("Validate methods used by Jexl")
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void performJexlTest() {
+        final String fakeExcludedHoliday1 = "fake-excluded-holiday-1";
+        final String fakeExcludedHoliday2 = "fake-excluded-holiday-2";
+
         DateActions original = new DateActions()
                 .withHolidayCalendar(HolidayCalendar.UNITED_STATES.toString())
                 .withHolidayType(HolidayType.OFFICIAL_HOLIDAY.toString())
                 .withRegion("ca")
                 .withZone("US/Pacific")
-                .withNonBusinessDay(DayOfWeek.MONDAY.toString());
+                .withNonBusinessDay(DayOfWeek.MONDAY.toString())
+                .withExcludedHoliday(fakeExcludedHoliday1);
         DateActions deepCopy = original.copy();
         validateCopy("Validate Deep Copy Equals Original", deepCopy, original);
 
@@ -419,7 +635,9 @@ public class DateActionsTest {
                 .withHolidayType(HolidayType.UNOFFICIAL_HOLIDAY.toString())
                 .withRegion("bc")
                 .withZone("Canada/Pacific")
-                .withNonBusinessDay(DayOfWeek.TUESDAY.toString());
+                .withNonBusinessDay(DayOfWeek.TUESDAY.toString())
+                .withExcludedHoliday(fakeExcludedHoliday1)
+                .withExcludedHoliday(fakeExcludedHoliday2);
 
         // Change original to be equal to modifiedOriginal
         original.withHolidayCalendar(HolidayCalendar.CANADA.toString())
@@ -430,7 +648,8 @@ public class DateActionsTest {
                 .withNonBusinessDays(new HashSet<>())
                 .withNonBusinessDay(DayOfWeek.SATURDAY.toString())
                 .withNonBusinessDay(DayOfWeek.SUNDAY.toString())
-                .withNonBusinessDay(DayOfWeek.TUESDAY.toString());
+                .withNonBusinessDay(DayOfWeek.TUESDAY.toString())
+                .withExcludedHoliday(fakeExcludedHoliday2);
         validateCopy("Validate Original Equals Modified", modifiedOriginal, original);
         validateDifferent("Validate Deep Copy is different than original #1", deepCopy, original);
 
@@ -439,7 +658,8 @@ public class DateActionsTest {
                 .withHolidayType(HolidayType.UNOFFICIAL_HOLIDAY.toString())
                 .withRegions(null)
                 .withZone("Europe/Dublin")
-                .withNonBusinessDay(DayOfWeek.FRIDAY.toString());
+                .withNonBusinessDay(DayOfWeek.FRIDAY.toString())
+                .withExcludedHoliday(fakeExcludedHoliday1);
 
         // Change deepCopy to be equal to modifiedDeepCopy
         deepCopy.withHolidayCalendar(HolidayCalendar.IRELAND.toString())
