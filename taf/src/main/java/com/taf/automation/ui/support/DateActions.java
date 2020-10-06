@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.Utils;
 import de.jollyday.Holiday;
 import de.jollyday.HolidayCalendar;
 import de.jollyday.HolidayManager;
@@ -38,6 +39,23 @@ public class DateActions {
     private String[] regions;
     private ZoneId zone;
     private Set<DayOfWeek> nonBusinessDays;
+    private Set<String> excludedHolidays;
+
+    /**
+     * Store the country of additional holiday managers to be able to clone.
+     */
+    private Set<String> additionalHolidayManagersList;
+
+    /**
+     * Store the actual additional holiday managers.<BR>
+     * <B>Note:  </B> This should only be accessed via the getter
+     */
+    private Set<HolidayManager> additionalHolidayManagersObj;
+
+    /**
+     * Store the Ad Hoc Holidays added by the user
+     */
+    private AdHocHolidayManager adHocHolidayManager;
 
     public DateActions() {
         holidayCalendar = HolidayCalendar.CANADA;
@@ -46,6 +64,9 @@ public class DateActions {
         regions = null; // Only common holidays across regions
         zone = ZoneId.systemDefault();
         nonBusinessDays = getStandardNonBusinessDays();
+        excludedHolidays = new HashSet<>();
+        additionalHolidayManagersList = new HashSet<>();
+        adHocHolidayManager = new AdHocHolidayManager();
     }
 
     public DateActions copy() {
@@ -57,6 +78,10 @@ public class DateActions {
         cp.regions = ArrayUtils.clone(regions);
         cp.zone = ObjectUtils.cloneIfPossible(zone);
         cp.nonBusinessDays = ObjectUtils.cloneIfPossible(nonBusinessDays);
+        cp.excludedHolidays = ObjectUtils.cloneIfPossible(excludedHolidays);
+        cp.additionalHolidayManagersList = ObjectUtils.cloneIfPossible(additionalHolidayManagersList);
+        cp.additionalHolidayManagersObj = null; // Will be initialized properly on first use
+        cp.adHocHolidayManager = Utils.deepCopy(adHocHolidayManager);
 
         return cp;
     }
@@ -139,6 +164,93 @@ public class DateActions {
         return this;
     }
 
+    /**
+     * Add an excluded holiday to the list<BR>
+     * <B>Note: </B> Due to the library being used to remove a holiday it is necessary to sue the
+     * Description Properties Key which comes from the holidays xml file such as Holidays_us.xml in the library JAR file.
+     *
+     * @param descriptionPropertiesKey - The Description Properties Key that maps to the holiday to exclude
+     * @return DateActions
+     */
+    public DateActions withExcludedHoliday(String descriptionPropertiesKey) {
+        excludedHolidays.add(descriptionPropertiesKey);
+        return this;
+    }
+
+    /**
+     * Add an additional Holiday Manager from a resource<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>The prefix is <B>holidays/Holidays_</B></LI>
+     * <LI>The suffix is <B>.xml</B></LI>
+     * <LI>The resource to be loaded is the <B>prefix</B> + <B>country</B> + <B>suffix</B></LI>
+     * <LI></LI>
+     * <LI></LI>
+     * </OL>
+     * <B>Example: </B> if the country is <B>DE</B>, then the resource <B>holidays/Holidays_de.xml</B> is loaded
+     *
+     * @param country - The XML resource to be loaded is constructed using this value (lowercase)
+     * @return DateActions
+     */
+    public DateActions withAdditionalHolidayManager(String country) {
+        // Note:  We are adding it as lowercase because the ManagerParameters.create will do the lookup using lowercase.
+        // Also, it will be necessary later to lookup as such store it here in lowercase as well.
+        additionalHolidayManagersList.add(country.toLowerCase());
+
+        // If the Additional Holiday Manager Objects have already been initialized, then need to manually add to the
+        // list because it is only initialized once else it will automatically occur on first use of the getter
+        if (additionalHolidayManagersObj != null) {
+            HolidayManager hm = HolidayManager.getInstance(ManagerParameters.create(country.toLowerCase(), null));
+            getAdditionalHolidayManagersObj().add(hm);
+        }
+
+        return this;
+    }
+
+    /**
+     * Add an Ad Hoc Holiday<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>There are 2 different Holiday classes in this library.  This method is using de.jollyday.config.Holiday
+     * &amp; not the de.jollyday.Holiday</LI>
+     * <LI>For convenience the base holiday class is used for the parameter and cast to the concrete holiday by
+     * the method</LI>
+     * </OL>
+     * <B>Supported Holiday Types/Classes:</B>
+     * <OL>
+     * <LI>Fixed</LI>
+     * <LI>RelativeToFixed</LI>
+     * <LI>RelativeToWeekdayInMonth</LI>
+     * <LI>FixedWeekdayInMonth</LI>
+     * <LI>ChristianHoliday</LI>
+     * <LI>IslamicHoliday</LI>
+     * <LI>FixedWeekdayBetweenFixed</LI>
+     * <LI>FixedWeekdayRelativeToFixed</LI>
+     * <LI>HinduHoliday</LI>
+     * <LI>HebrewHoliday</LI>
+     * <LI>EthiopianOrthodoxHoliday</LI>
+     * <LI>RelativeToEasterSunday</LI>
+     * </OL>
+     *
+     * @param holiday - Concrete Holiday to add from supported types
+     * @return DateActions
+     */
+    public DateActions withHoliday(de.jollyday.config.Holiday holiday) {
+        adHocHolidayManager.withHoliday(holiday);
+        return this;
+    }
+
+    private Set<HolidayManager> getAdditionalHolidayManagersObj() {
+        if (additionalHolidayManagersObj == null) {
+            additionalHolidayManagersObj = new HashSet<>();
+            for (String country : additionalHolidayManagersList) {
+                additionalHolidayManagersObj.add(HolidayManager.getInstance(ManagerParameters.create(country, null)));
+            }
+        }
+
+        return additionalHolidayManagersObj;
+    }
+
     private HolidayManager getHolidayManager() {
         if (holidayManager == null) {
             holidayManager = HolidayManager.getInstance(ManagerParameters.create(holidayCalendar, null));
@@ -170,18 +282,47 @@ public class DateActions {
         holidays.addAll(hm.getHolidays(previousYear, regions));
         holidays.addAll(hm.getHolidays(nextYear, regions));
 
+        //
+        // Add the Additional holidays from the other holiday managers to be combined from resource files
+        //
+        // For example, you have a US company with offices in CA and maybe the company also honors CA holidays.
+        // In this case, the primary holiday manager could be US and the secondary/additional holiday could be CA.
+        //
+        // This can also be a holiday manager that has the company specific holidays that are honored.  For example,
+        // a company that gives the day before and after say US Thanksgiving.
+        //
+        for (HolidayManager additionalHolidayManager : getAdditionalHolidayManagersObj()) {
+            holidays.addAll(additionalHolidayManager.getHolidays(currentYear, regions));
+            holidays.addAll(additionalHolidayManager.getHolidays(previousYear, regions));
+            holidays.addAll(additionalHolidayManager.getHolidays(nextYear, regions));
+        }
+
+        // Add the Ad Hoc Holidays
+        holidays.addAll(adHocHolidayManager.getHolidays(currentYear, regions));
+        holidays.addAll(adHocHolidayManager.getHolidays(previousYear, regions));
+        holidays.addAll(adHocHolidayManager.getHolidays(nextYear, regions));
+
+        // Remove the excluded holidays.  (This will be any days the company/application does not consider a holiday)
+        if (!excludedHolidays.isEmpty()) {
+            holidays.removeIf(holiday -> excludedHolidays.contains(holiday.getPropertiesKey()));
+        }
+
         // Certain holidays that land on the weekend should be shifted to when they are observed
         holidays.addAll(getHolidaysThatLandOnWeekendWhichAreShifted(holidays));
 
         return holidays;
     }
 
+    private boolean isHolidayCalendar(HolidayCalendar hc) {
+        return holidayCalendar == hc || additionalHolidayManagersList.contains(hc.getId().toLowerCase());
+    }
+
     private Set<Holiday> getHolidaysThatLandOnWeekendWhichAreShifted(Set<Holiday> holidays) {
         Set<Holiday> shiftedHolidays = new HashSet<>();
 
-        if (holidayCalendar == HolidayCalendar.UNITED_STATES) {
+        if (isHolidayCalendar(HolidayCalendar.UNITED_STATES)) {
             shiftedHolidays.addAll(getUnitedStatesHolidaysThatLandOnWeekendWhichAreShifted(holidays));
-        } else if (holidayCalendar == HolidayCalendar.CANADA) {
+        } else if (isHolidayCalendar(HolidayCalendar.CANADA)) {
             shiftedHolidays.addAll(getCanadianHolidaysThatLandOnWeekendWhichAreShifted(holidays));
         }
 
@@ -262,7 +403,7 @@ public class DateActions {
     }
 
     private boolean isProblemHoliday(Holiday holiday) {
-        if (holidayCalendar == HolidayCalendar.UNITED_STATES) {
+        if (isHolidayCalendar(HolidayCalendar.UNITED_STATES)) {
             // Note:  I have only put federal holidays
             return StringUtils.equals(holiday.getPropertiesKey(), NEW_YEARS_DAY)
                     || StringUtils.equals(holiday.getPropertiesKey(), "INDEPENDENCE_DAY")
@@ -270,7 +411,7 @@ public class DateActions {
                     ;
         }
 
-        if (holidayCalendar == HolidayCalendar.CANADA) {
+        if (isHolidayCalendar(HolidayCalendar.CANADA)) {
             return StringUtils.equals(holiday.getPropertiesKey(), NEW_YEARS_DAY)
                     || StringUtils.equals(holiday.getPropertiesKey(), "NATIONAL_DAY")
                     || StringUtils.equals(holiday.getPropertiesKey(), "CHRISTMAS")
