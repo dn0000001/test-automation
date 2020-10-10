@@ -1426,9 +1426,9 @@ public class Utils {
      * @return The function's return value if the function returned something different
      * from null or false before the timeout expired
      */
-    public static <T> T until(Function<WebDriver, T> isTrue, WebDriverWait wait, RetryPolicy<Object> retryPolicy) {
+    public static <T> T until(ExpectedCondition<T> isTrue, WebDriverWait wait, RetryPolicy<Object> retryPolicy) {
         try {
-            return Failsafe.with(retryPolicy).get((ExecutionContext t) -> wait.until(isTrue));
+            return Failsafe.with(retryPolicy).get((ExecutionContext t) -> wait.until((Function<? super WebDriver, T>) isTrue));
         } catch (TimeoutException te) {
             Duration timeout = (Duration) ApiUtils.readField(FieldUtils.getField(FluentWait.class, "timeout", true), wait);
             Duration interval = (Duration) ApiUtils.readField(FieldUtils.getField(FluentWait.class, "interval", true), wait);
@@ -1467,7 +1467,7 @@ public class Utils {
      * @return The function's return value if the function returned something different
      * from null or false before the timeout expired
      */
-    public static <T> T until(Function<WebDriver, T> isTrue, boolean negative) {
+    public static <T> T until(ExpectedCondition<T> isTrue, boolean negative) {
         WebDriverWait wait;
         int timeout;
         if (negative) {
@@ -1496,7 +1496,7 @@ public class Utils {
      * @return The function's return value if the function returned something different
      * from null or false before the timeout expired
      */
-    public static <T> T until(Function<WebDriver, T> isTrue) {
+    public static <T> T until(ExpectedCondition<T> isTrue) {
         return until(isTrue, false);
     }
 

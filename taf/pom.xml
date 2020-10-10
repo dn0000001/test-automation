@@ -74,6 +74,11 @@
             <version>${allure.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>${selenium.version}</version>
@@ -112,11 +117,6 @@
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>${java.mail.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>${findbugs.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
