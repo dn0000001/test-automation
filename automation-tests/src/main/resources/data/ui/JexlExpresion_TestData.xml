@@ -57,6 +57,17 @@
 
         <addition>${bdUtils.add(subTotal,discount).add(bdUtils.create("1800"))}</addition>
         <subtraction>${bdUtils.subtract(subBillTotal,subTotal).subtract(bdUtils.create("11.34"))}</subtraction>
+
+        <!-- Another way to get a random date in a range -->
+        <earliestDate>${dateActions.parseDateStrictly("01/01/2000","MM/dd/yyyy")}</earliestDate>
+        <latestDate>${dateActions.parseDateStrictly("01/01/2020","MM/dd/yyyy")}</latestDate>
+        <daysBetween>${dateActions.daysBetween(earliestDate,latestDate)}</daysBetween>
+        <randomDaysBetween>${rand.randomRangeIndex(0,daysBetween)}</randomDaysBetween>
+        <randomDateBetweenEarliestAndLatest>${dateUtils.addDays(earliestDate,randomDaysBetween)}</randomDateBetweenEarliestAndLatest>
+
+        <!-- Move date for test -->
+        <randomDatePlus1>${dateUtils.addDays(randomDateBetweenEarliestAndLatest,1)}</randomDatePlus1>
+        <randomDateRestore>${dateUtils.addDays(randomDatePlus1,-1)}</randomDateRestore>
     </aliases>
     <someField initial="${var4} ${RandomDateGenerator} ${RandomRealUSAddressGenerator}" expected="${var1} ${var2}">${var3}</someField>
     <anotherField initial="${encPass}" expected="${decPass}">${orgPass}</anotherField>
@@ -72,4 +83,6 @@
 
     <bdField1 expected="${billTotal}">${total}</bdField1>
     <bdField2 expected="${subtraction}">${addition}</bdField2>
+
+    <dateField1 expected="${randomDateBetweenEarliestAndLatest}">${randomDateRestore}</dateField1>
 </jexl-expression-do>
