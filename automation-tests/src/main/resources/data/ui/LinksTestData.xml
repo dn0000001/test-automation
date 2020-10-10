@@ -9,5 +9,7 @@
         <string>https://yandex.com/</string>
         <string>https://duckduckgo.com/</string>
         <string>https://krebsonsecurity.com/</string>
+        <string>https://self-signed.badssl.com/</string>
+        <string>http://test.rubywatir.com/checkboxes.php</string>
     </links>
 </links-do>
