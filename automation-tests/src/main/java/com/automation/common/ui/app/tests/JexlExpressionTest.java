@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.not;
 
 public class JexlExpressionTest extends TestNGBase {
     private static final List<String> jexlVariables = Arrays.asList(
-            "str1", "str2", "RANDOM_DATE", "RANDOM_US_ADDRESS",
+            "str1", "str2", "RANDOM_DATE", "RANDOM_US_ADDRESS", "rand",
             "ALPHANUMERIC", "crypto", "lookup", "dateActions", "random_date_pattern", "dateUtils"
     );
     private static final String GENERIC = "Variable %s was not evaluated by Jexl for %s";
@@ -54,6 +54,8 @@ public class JexlExpressionTest extends TestNGBase {
 
         validateFieldValue("BigDecimal Field 1", jexlDO.getBdField1(), jexlDO.getBdField1Expected());
         validateFieldValue("BigDecimal Field 2", jexlDO.getBdField2(), jexlDO.getBdField2Expected());
+
+        validateFieldValue("Date Field 1", jexlDO.getDateField1(), jexlDO.getDateField1Expected());
 
         for (String var : jexlVariables) {
             validateField(var, jexlDO.getSomeField(), jexlDO.getSomeFieldExpected(), jexlDO.getSomeFieldInitial());

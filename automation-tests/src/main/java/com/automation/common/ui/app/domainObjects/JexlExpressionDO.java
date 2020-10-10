@@ -35,6 +35,7 @@ public class JexlExpressionDO extends DomainObject {
     private AliasedString userField3;
     private AliasedString bdField1;
     private AliasedString bdField2;
+    private AliasedString dateField1;
 
     public JexlExpressionDO() {
         super();
@@ -54,6 +55,7 @@ public class JexlExpressionDO extends DomainObject {
         jexlContext.set("dateUtils", new DateUtils());
         jexlContext.set("today", TODAY);
         jexlContext.set("bdUtils", BigDecimalUtils.getInstance());
+        jexlContext.set("rand", Rand.getInstance());
     }
 
     public String getSomeField() {
@@ -166,6 +168,14 @@ public class JexlExpressionDO extends DomainObject {
 
     public String getBdField2Expected() {
         return bdField2.getData(DataTypes.Expected, true);
+    }
+
+    public String getDateField1() {
+        return dateField1.getData();
+    }
+
+    public String getDateField1Expected() {
+        return dateField1.getData(DataTypes.Expected, true);
     }
 
     @Step("Validate Current System Date Before Load")
