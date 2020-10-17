@@ -2,6 +2,7 @@ package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
+import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.util.Utils;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -61,7 +63,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
 
         String randomBaseValue = getRandomBaseValue();
         Map<String, String> substitutions = getSubstitutions();
-        List<WebElement> all = Utils.until(ExpectedConditions.numberOfElementsToBeMoreThan(getAllRowsLocator(), 0));
+        List<WebElement> all = Utils.until(ExpectedConditionsUtil.numberOfElementsToBeMoreThan(getAllRowsLocator(), 0, getIncludePredicate()));
         for (int i = 0; i < all.size(); i++) {
             // If necessary, we will make the row unique
             String randomIdValue = randomBaseValue + i;
@@ -300,6 +302,21 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
     protected String getAttributeToExtractRowKey() {
         // Normally, the id attribute will be unique if it exists
         return JsUtils.ID;
+    }
+
+    /**
+     * Get the predicate used to test if a row should be included.<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>The default implementation returns a predicate that includes all rows</LI>
+     * <LI>This should be only used if a locator to find only the rows is not possible and
+     * some additional test is needed to determine if the row should be included</LI>
+     * </OL>
+     *
+     * @return the predicate used to test if a row should be included
+     */
+    protected Predicate<WebElement> getIncludePredicate() {
+        return element -> true;
     }
 
     /**
