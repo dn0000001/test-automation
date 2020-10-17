@@ -83,7 +83,7 @@ public class DataAliasesConverterV2 implements Converter {
                     objValue = expr.evaluate(jexlContext);
                     value = objValue.toString();
                 } catch (Exception e) {
-                    LOG.warn(e.getMessage());
+                    logJexlEvaluationException(e);
                 }
             }
 
@@ -99,6 +99,12 @@ public class DataAliasesConverterV2 implements Converter {
         }
 
         return aliases;
+    }
+
+    private void logJexlEvaluationException(Exception e) {
+        if (TestProperties.getInstance().isJexlDebugLogging()) {
+            LOG.warn(e.getMessage());
+        }
     }
 
 }
