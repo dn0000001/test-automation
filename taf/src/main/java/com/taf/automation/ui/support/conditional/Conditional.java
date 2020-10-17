@@ -135,8 +135,9 @@ public class Conditional {
      * @throws RuntimeException if none of the criteria match the current condition before timeout occurs and
      *                          throw error flag set
      */
+    @SuppressWarnings("java:S112")
     public int waitForMatch(List<Criteria> criteria, boolean throwError) {
-        long maxtime = System.currentTimeMillis() + timeout * 1000;
+        long maxtime = System.currentTimeMillis() + (long) timeout * 1000;
         do {
             int index = match(criteria);
 
@@ -182,8 +183,9 @@ public class Conditional {
      * @throws RuntimeException if all the criteria does not match before timeout occurs and throw error flag
      *                          set
      */
+    @SuppressWarnings("java:S112")
     public boolean waitForAllMatches(List<Criteria> criteria, boolean throwError) {
-        long maxtime = System.currentTimeMillis() + timeout * 1000;
+        long maxtime = System.currentTimeMillis() + (long) timeout * 1000;
         do {
             if (isAllMatched(criteria)) {
                 return true;
