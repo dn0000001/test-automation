@@ -388,6 +388,12 @@
         </classes>
     </test>
 
+    <test name="Failure Grouping Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.FailureGroupingTest"/>
+        </classes>
+    </test>
+
     <!--
     <test name="Open Report Test">
         <parameter name="allure-report" value="/target/allure-report"/>
@@ -443,15 +449,6 @@
     -->
 
     <!--
-    <test name="CSV List Test">
-        <parameter name="csv" value="data/ui/list-testing.csv"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.CsvListTest"/>
-        </classes>
-    </test>
-    -->
-
-    <!--
     <test name="Masking Test">
         <parameter name="file" value="data/ui/testingExcel.xls"/>
         <parameter name="extension" value=".xls"/>
@@ -471,98 +468,10 @@
     -->
 
     <!--
-    <test name="Switch Dynamic Locator Test">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TNHC_Test">
-                <methods>
-                    <include name="dynamicLocatorSwitchingTest"/>
-                </methods>
-            </class>
-        </classes>
-    </test>
-
-    <test name="Dynamic Locator Test">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TNHC_Test">
-                <methods>
-                    <include name="dynamicLocatorTest"/>
-                </methods>
-            </class>
-        </classes>
-    </test>
-    -->
-
-    <!--
     <test name="Soap Get Holiday Date Test">
         <parameter name="data-soap-get-holiday-date" value="data/api/SoapGetHolidayDateTestData.xml"/>
         <classes>
             <class name="com.automation.common.api.tests.SoapHolidayTest"/>
-        </classes>
-    </test>
-    -->
-
-    <!--
-    <test name="Conditional Test">
-        <classes>
-            <class name="com.automation.common.ui.app.tests.ConditionalTest">
-                <methods>
-                    <include name="multipleCriteriaTest"/>
-                </methods>
-            </class>
-        </classes>
-    </test>
-    -->
-
-    <!--
-    <test name="True North Hockey Canada Test 1">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TNHC_Test"/>
-        </classes>
-    </test>
-
-    <test name="True North Hockey Canada Test 2">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TNHC_Test"/>
-        </classes>
-    </test>
-
-    <test name="True North Hockey Canada Test 3">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TNHC_Test">
-                <methods>
-                    <include name="generalUnitTest"/>
-                    <exclude name=".*"/>
-                </methods>
-            </class>
-        </classes>
-    </test>
-
-    <test name="True North Hockey Canada Test 4">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TNHC_Test">
-                <methods>
-                    <include name="generalUnitTest2"/>
-                    <exclude name=".*"/>
-                </methods>
-            </class>
-        </classes>
-    </test>
-
-    <test name="True North Hockey Canada Test 5">
-        <parameter name="data-set" value="data/ui/TNHC_TestData.xml"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.TNHC_Test">
-                <methods>
-                    <include name="generalUnitTest3"/>
-                    <exclude name=".*"/>
-                </methods>
-            </class>
         </classes>
     </test>
     -->

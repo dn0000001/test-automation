@@ -1,6 +1,10 @@
 package com.taf.automation.ui.support.testng;
 
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.RegExUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.openqa.selenium.WebDriverException;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
@@ -14,8 +18,6 @@ import java.lang.reflect.Field;
 import java.util.Set;
 
 public class AllureTestNGListener extends AllureTestListener {
-    private Allure lifecycle = Allure.LIFECYCLE;
-
     @Override
     public void onStart(ITestContext iTestContext) {
         super.onStart(iTestContext);
@@ -40,12 +42,14 @@ public class AllureTestNGListener extends AllureTestListener {
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
+        modifyWebDriverExceptionMessage(iTestResult);
         Allure.LIFECYCLE.fire(new TestCaseFailureEvent().withThrowable(iTestResult.getThrowable()));
-        TestNGBase.takeScreenshot("Failed Test Screenshot");
-        TestNGBase.takeHTML("Failed Test HTML Source");
+        TestNGBaseWithoutListeners.takeScreenshot("Failed Test Screenshot");
+        TestNGBaseWithoutListeners.takeHTML("Failed Test HTML Source");
         Allure.LIFECYCLE.fire(new TestCaseFinishedEvent());
     }
 
+    @SuppressWarnings({"java:S3011", "java:S2259"})
     @Override
     public void onTestSkipped(ITestResult iTestResult) {
         Set<String> startedTestNames = null;
@@ -63,18 +67,19 @@ public class AllureTestNGListener extends AllureTestListener {
 
         if (iTestResult.getMethod().getRetryAnalyzer() != null) {
             iTestResult.getTestContext().getSkippedTests().removeResult(iTestResult.getMethod());
-            TestNGBase.takeScreenshot("Skipped Test Screenshot");
-            TestNGBase.takeHTML("Skipped Test HTML Source");
+            TestNGBaseWithoutListeners.takeScreenshot("Skipped Test Screenshot");
+            TestNGBaseWithoutListeners.takeHTML("Skipped Test HTML Source");
         }
 
         fireTestCaseCancel(iTestResult);
-        lifecycle.fire(new TestCaseFinishedEvent());
+        Allure.LIFECYCLE.fire(new TestCaseFinishedEvent());
     }
 
     @Override
     public void onConfigurationFailure(ITestResult iTestResult) {
-        TestNGBase.takeScreenshot("Configuration Failure Screenshot");
-        TestNGBase.takeHTML("Configuration Failure HTML Source");
+        TestNGBaseWithoutListeners.takeScreenshot("Configuration Failure Screenshot");
+        TestNGBaseWithoutListeners.takeHTML("Configuration Failure HTML Source");
+        modifyWebDriverExceptionMessage(iTestResult);
         super.onConfigurationFailure(iTestResult);
     }
 
@@ -84,6 +89,7 @@ public class AllureTestNGListener extends AllureTestListener {
         // Note:  If this is not the behavior desire and you want the default Allure behavior then remove this method.
     }
 
+    @SuppressWarnings("java:S2177")
     private void fireTestCaseCancel(ITestResult iTestResult) {
         Throwable skipMessage = iTestResult.getThrowable();
         if (skipMessage == null) {
@@ -97,9 +103,10 @@ public class AllureTestNGListener extends AllureTestListener {
             };
         }
 
-        lifecycle.fire(new TestCaseCanceledEvent().withThrowable(skipMessage));
+        Allure.LIFECYCLE.fire(new TestCaseCanceledEvent().withThrowable(skipMessage));
     }
 
+    @SuppressWarnings("java:S2177")
     private String getName(ITestResult iTestResult) {
         String suitePrefix = getCurrentSuiteTitle(iTestResult.getTestContext());
         StringBuilder sb = new StringBuilder(suitePrefix);
@@ -117,6 +124,7 @@ public class AllureTestNGListener extends AllureTestListener {
         return sb.toString();
     }
 
+    @SuppressWarnings("java:S2177")
     private String getCurrentSuiteTitle(ITestContext iTestContext) {
         String suite = iTestContext.getSuite().getName();
         String xmlTest = iTestContext.getCurrentXmlTest().getName();
@@ -135,6 +143,7 @@ public class AllureTestNGListener extends AllureTestListener {
      *
      * @return true if method can could be retried, false if retry should never be attempted
      */
+    @SuppressWarnings("java:S1126")
     private boolean isCandidateForRetry(ITestNGMethod method) {
         // Annotation:  @Test
         if (method.isTest()) {
@@ -162,6 +171,43 @@ public class AllureTestNGListener extends AllureTestListener {
         }
 
         return false;
+    }
+
+    /**
+     * Modify any WebDriverException to remove the dynamic information which prevents allure from grouping properly
+     *
+     * @param iTestResult - Test Result to get throwable to be modified
+     */
+    private void modifyWebDriverExceptionMessage(ITestResult iTestResult) {
+        Class<? extends Throwable> clazz = iTestResult.getThrowable().getClass();
+        if (!WebDriverException.class.isAssignableFrom(clazz)) {
+            return;
+        }
+
+        String cleanedMessage = performCleanExceptionMessage(iTestResult.getThrowable().getMessage());
+        Throwable modifiedException;
+
+        try {
+            // Create the same exception such that it is clear in the report the cause of the failure
+            modifiedException = ConstructorUtils.invokeConstructor(clazz, cleanedMessage, iTestResult.getThrowable());
+        } catch (Exception ex) {
+            // As Fallback use the generic WebDriverException
+            modifiedException = new WebDriverException(cleanedMessage, iTestResult.getThrowable());
+        }
+
+        // We don't want the current stacktrace which is just wrapping as such set to the original stacktrace
+        modifiedException.setStackTrace(iTestResult.getThrowable().getStackTrace());
+        iTestResult.setThrowable(modifiedException);
+    }
+
+    /**
+     * Clean the exception message of the dynamic information which prevents allure from grouping properly
+     *
+     * @param message - message to clean
+     * @return message minus the problematic dynamic information
+     */
+    private String performCleanExceptionMessage(String message) {
+        return StringUtils.defaultString(message).replaceAll("Build info: version:" + RegExUtils.ANYTHING, "");
     }
 
 }
