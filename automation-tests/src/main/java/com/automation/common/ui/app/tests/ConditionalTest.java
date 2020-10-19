@@ -1,21 +1,6 @@
 package com.automation.common.ui.app.tests;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.Test;
-
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Severity;
-import ru.yandex.qatools.allure.annotations.Stories;
-import ru.yandex.qatools.allure.model.SeverityLevel;
-
+import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.conditional.Conditional;
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
@@ -24,6 +9,20 @@ import com.taf.automation.ui.support.conditional.ResultInfo;
 import com.taf.automation.ui.support.conditional.ResultType;
 import com.taf.automation.ui.support.testng.Retry;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.Utils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.model.SeverityLevel;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -32,7 +31,8 @@ import static org.hamcrest.Matchers.equalTo;
  * Unit testing Conditional class
  */
 public class ConditionalTest extends TestNGBase {
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(ConditionalTest.class);
+    private static final By ELEMENT = By.id("headersearch");
 
     @Features("Conditional")
     @Stories("Single Criteria")
@@ -40,22 +40,21 @@ public class ConditionalTest extends TestNGBase {
     @Test
     @Retry
     public void singleCriteriaTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
+        new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
 
         List<Criteria> criteria = new ArrayList<>();
-        criteria.add(CriteriaMaker.forElementReady(By.name("Insurance")));
+        criteria.add(CriteriaMaker.forElementReady(ELEMENT));
 
-        LOG.info("Start Single:  " + new Date());
-        Conditional conditional = new Conditional(driver);
+        LOG.info("Start Single:  {}", new Date());
+        Conditional conditional = new Conditional(getContext().getDriver());
         int index = conditional.waitForMatch(criteria);
         ResultInfo resultInfo = conditional.getResultInfo();
-        LOG.info("Stop Single:  " + new Date());
+        LOG.info("Stop Single:  {}", new Date());
 
         assertThat(index, equalTo(0));
         assertThat(resultInfo.isMatch(), equalTo(true));
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.READY));
-        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(By.name("Insurance")));
+        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(ELEMENT));
     }
 
     @Features("Conditional")
@@ -63,31 +62,28 @@ public class ConditionalTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void multipleCriteriaTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
+        new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
 
         List<Criteria> criteria = new ArrayList<>();
-        criteria.add(CriteriaMaker.forElementReady(By.name("Insurance")));
+        criteria.add(CriteriaMaker.forElementReady(ELEMENT));
         criteria.add(CriteriaMaker.forAlertAccept());
-        criteria.add(CriteriaMaker.forPopup(driver));
+        criteria.add(CriteriaMaker.forPopup(getContext().getDriver()));
 
-        LOG.info("Start Multi:  " + new Date());
-        Conditional conditional = new Conditional(driver);
+        LOG.info("Start Multi:  {}", new Date());
+        Conditional conditional = new Conditional(getContext().getDriver());
         int index = conditional.waitForMatch(criteria);
         ResultInfo resultInfo = conditional.getResultInfo();
-        LOG.info("Stop Multi:  " + new Date());
+        LOG.info("Stop Multi:  {}", new Date());
 
         assertThat(index, equalTo(0));
         assertThat(resultInfo.isMatch(), equalTo(true));
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.READY));
-        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(By.name("Insurance")));
+        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(ELEMENT));
     }
 
     @Test
     public void criteriaMakerConfigUrlsTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
+        new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
         String value = "aaaa";
 
         List<Criteria> criteria = new ArrayList<>();
@@ -98,11 +94,11 @@ public class ConditionalTest extends TestNGBase {
         criteria.add(CriteriaMaker.forUrlRegEx(value));
         criteria.add(CriteriaMaker.forUrlNotEqual(value));
 
-        LOG.info("Start URLS:  " + new Date());
-        Conditional conditional = new Conditional(driver);
+        LOG.info("Start URLS:  {}", new Date());
+        Conditional conditional = new Conditional(getContext().getDriver());
         conditional.waitForMatch(criteria);
         ResultInfo resultInfo = conditional.getResultInfo();
-        LOG.info("Stop URLS:  " + new Date());
+        LOG.info("Stop URLS:  {}", new Date());
 
         assertThat(resultInfo.isMatch(), equalTo(true));
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.URL_NOT_EQUAL));
@@ -110,25 +106,23 @@ public class ConditionalTest extends TestNGBase {
 
     @Test
     public void criteriaMakerConfigDropDownTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        By locator = By.name("season");
-        String value = "aaaa";
+        new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());
+        By locator = By.cssSelector("[name$=__type]"); // Needs to be valid locator to some drop down on the page
+        String value = "aaaa"; // Any value that does not match the currently selected drop down option found by the locator
 
         List<Criteria> criteria = new ArrayList<>();
         criteria.add(CriteriaMaker.forDropDownContains(locator, value));
-        criteria.add(CriteriaMaker.forDropDownDoesNotContain(locator, "Summer"));
+        criteria.add(CriteriaMaker.forDropDownDoesNotContain(locator, "Card")); // Based on currently selected drop down option
         criteria.add(CriteriaMaker.forDropDownEquals(locator, value));
         criteria.add(CriteriaMaker.forDropDownEqualsIgnoreCase(locator, value));
         criteria.add(CriteriaMaker.forDropDownRegEx(locator, value));
-        criteria.add(CriteriaMaker.forDropDownNotEqual(locator, value));
+        criteria.add(CriteriaMaker.forDropDownNotEqual(locator, value)); // Trigger this criteria
 
-        LOG.info("Start DropDown:  " + new Date());
-        Conditional conditional = new Conditional(driver);
+        LOG.info("Start DropDown:  {}", new Date());
+        Conditional conditional = new Conditional(getContext().getDriver());
         conditional.waitForMatch(criteria);
         ResultInfo resultInfo = conditional.getResultInfo();
-        LOG.info("Stop DropDown:  " + new Date());
+        LOG.info("Stop DropDown:  {}", new Date());
 
         assertThat(resultInfo.isMatch(), equalTo(true));
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.DROPDOWN_NOT_EQUAL));
@@ -136,11 +130,9 @@ public class ConditionalTest extends TestNGBase {
 
     @Test
     public void criteriaMakerConfigAttributeTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        By locator = By.id("division");
-        String value = "aaaa";
+        new Navigation(getContext()).toRubyWatirCheckboxes(Utils.isCleanCookiesSupported());
+        By locator = By.xpath("//input[@value='golf']"); // Needs to be valid locator to some input on the page
+        String value = "aaaa"; // Any input value that does not match the element found by the locator
 
         List<Criteria> criteria = new ArrayList<>();
         criteria.add(CriteriaMaker.forInputContains(locator, value));
@@ -148,13 +140,13 @@ public class ConditionalTest extends TestNGBase {
         criteria.add(CriteriaMaker.forInputEquals(locator, value));
         criteria.add(CriteriaMaker.forInputEqualsIgnoreCase(locator, value));
         criteria.add(CriteriaMaker.forInputRegEx(locator, value));
-        criteria.add(CriteriaMaker.forInputNotEqual(locator, value));
+        criteria.add(CriteriaMaker.forInputNotEqual(locator, value)); // Trigger this criteria
 
-        LOG.info("Start Attribute:  " + new Date());
-        Conditional conditional = new Conditional(driver);
+        LOG.info("Start Attribute:  {}", new Date());
+        Conditional conditional = new Conditional(getContext().getDriver());
         conditional.waitForMatch(criteria);
         ResultInfo resultInfo = conditional.getResultInfo();
-        LOG.info("Stop Attribute:  " + new Date());
+        LOG.info("Stop Attribute:  {}", new Date());
 
         assertThat(resultInfo.isMatch(), equalTo(true));
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.ATTRIBUTE_NOT_EQUAL));
@@ -162,25 +154,23 @@ public class ConditionalTest extends TestNGBase {
 
     @Test
     public void criteriaMakerConfigTextTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
-        By locator = By.xpath("//div[@id='TopDiv']//strong");
-        String value = "aaaa";
+        new Navigation(getContext()).toRubyWatirCheckboxes(Utils.isCleanCookiesSupported());
+        By locator = By.xpath("//div[@id='content']//h1"); // Needs to be valid locator to some text on the page
+        String value = "aaaa"; // Any text that does not match the element found by the locator
 
         List<Criteria> criteria = new ArrayList<>();
         criteria.add(CriteriaMaker.forTextContains(locator, value));
-        criteria.add(CriteriaMaker.forTextDoesNotContain(locator, "Hockey"));
+        criteria.add(CriteriaMaker.forTextDoesNotContain(locator, "Multiple")); // Any text from the element found by the locator
         criteria.add(CriteriaMaker.forTextEquals(locator, value));
         criteria.add(CriteriaMaker.forTextEqualsIgnoreCase(locator, value));
         criteria.add(CriteriaMaker.forTextRegEx(locator, value));
-        criteria.add(CriteriaMaker.forTextNotEqual(locator, value));
+        criteria.add(CriteriaMaker.forTextNotEqual(locator, value)); // Trigger this criteria
 
-        LOG.info("Start Text:  " + new Date());
-        Conditional conditional = new Conditional(driver);
+        LOG.info("Start Text:  {}", new Date());
+        Conditional conditional = new Conditional(getContext().getDriver());
         conditional.waitForMatch(criteria);
         ResultInfo resultInfo = conditional.getResultInfo();
-        LOG.info("Stop Text:  " + new Date());
+        LOG.info("Stop Text:  {}", new Date());
 
         assertThat(resultInfo.isMatch(), equalTo(true));
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.TEXT_NOT_EQUAL));
@@ -188,31 +178,29 @@ public class ConditionalTest extends TestNGBase {
 
     @Test
     public void criteriaMakerConfigElementsTest() {
-        WebDriver driver = getContext().getDriver();
-        driver.get("http://www.truenorthhockey.com/");
-
+        new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
         By locator = By.id("unknown");
-        WebElement element = null;
+        WebElement nullElement = null;
 
         List<Criteria> criteria = new ArrayList<>();
         criteria.add(CriteriaMaker.forElementDisplayed(locator));
-        criteria.add(CriteriaMaker.forElementRemoved(By.name("Insurance")));
+        criteria.add(CriteriaMaker.forElementRemoved(ELEMENT));
         criteria.add(CriteriaMaker.forElementEnabled(locator));
         criteria.add(CriteriaMaker.forElementDisabled(locator));
         criteria.add(CriteriaMaker.forElementExists(locator));
         criteria.add(CriteriaMaker.forElementSelected(locator));
         criteria.add(CriteriaMaker.forElementUnselected(locator));
-        criteria.add(CriteriaMaker.forElementStale(element));
-        criteria.add(CriteriaMaker.forElementReady(By.name("Insurance")));
+        criteria.add(CriteriaMaker.forElementStale(nullElement));
+        criteria.add(CriteriaMaker.forElementReady(ELEMENT));
 
-        LOG.info("Start Elements:  " + new Date());
-        Conditional conditional = new Conditional(driver);
+        LOG.info("Start Elements:  {}", new Date());
+        Conditional conditional = new Conditional(getContext().getDriver());
         conditional.waitForMatch(criteria);
         ResultInfo resultInfo = conditional.getResultInfo();
-        LOG.info("Stop Elements:  " + new Date());
+        LOG.info("Stop Elements:  {}", new Date());
 
         assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(By.name("Insurance")));
+        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(ELEMENT));
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.READY));
     }
 

@@ -382,6 +382,12 @@
         </classes>
     </test>
 
+    <test name="Conditional Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.ConditionalTest"/>
+        </classes>
+    </test>
+
     <test name="Generate XML Test">
         <classes>
             <class name="com.automation.common.ui.app.tests.GenerateXmlTest"/>
