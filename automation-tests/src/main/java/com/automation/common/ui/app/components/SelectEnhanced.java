@@ -134,7 +134,7 @@ public class SelectEnhanced extends PageComponent {
 
     @SuppressWarnings({"squid:S3776", "squid:S1871"})
     private void parseDataAndInitializeFields() {
-        String[] pieces = StringUtils.split(getData(), SPLIT_ON, 2);
+        String[] pieces = StringUtils.splitByWholeSeparator(getData(), SPLIT_ON, 2);
         if (pieces == null) {
             selection = Selection.VISIBLE_TEXT;
             rawSelectionData = "";
