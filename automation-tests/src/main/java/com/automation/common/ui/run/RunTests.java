@@ -18,6 +18,7 @@ import java.util.List;
 
 public class RunTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(RunTests.class);
+    private static final String DURATION_FORMAT = "HH:mm:ss";
 
     public static boolean isRunningOnJenkins() {
         return System.getenv("JENKINS_HOME") != null;
@@ -26,6 +27,8 @@ public class RunTests {
     private static String generateSOXReport() throws IOException {
         List<TestSuiteResult> testSuiteResults = AllureFileUtils.unmarshalSuites(AllureResultsUtils.getResultsDirectory());
         StringBuilder report = new StringBuilder("\n******************* REPORT START *******************");
+        Date soxStart = new Date();
+        report.append("\nStart Generating SOX Report at ").append(soxStart);
 
         for (TestSuiteResult suiteResult : testSuiteResults) {
             report.append("\n\nTEST SUITE : ").append(suiteResult.getName());
@@ -40,6 +43,12 @@ public class RunTests {
 
             report.append("\n");
         }
+
+        Date soxComplete = new Date();
+        report.append("\nComplete Generating SOX Report at ").append(soxComplete);
+
+        String duration = DurationFormatUtils.formatPeriod(soxStart.getTime(), soxComplete.getTime(), DURATION_FORMAT);
+        report.append("\nSOX Report Generation Duration:  ").append(duration);
 
         report.append("\n******************* REPORT END *******************");
         return report.toString();
@@ -66,13 +75,19 @@ public class RunTests {
         logInfo(String.format(msgTemplate, "Status:  " + status));
 
         logInfo(String.format(msgTemplate, "...SUITE EXECUTION IS FINISHED, GENERATING ALLURE REPORT...\n" + generateSOXReport()));
+        Date allureStart = new Date();
+        logInfo(String.format(msgTemplate, "Start Generating Allure Report At:  " + allureStart));
         runner.generateReport();
+        Date allureComplete = new Date();
+        logInfo(String.format(msgTemplate, "Completed Generating Allure Report At:  " + allureComplete));
+        String duration = DurationFormatUtils.formatPeriod(allureStart.getTime(), allureComplete.getTime(), DURATION_FORMAT);
+        logInfo(String.format(msgTemplate, "Allure Report Generation Duration:  " + duration));
         logInfo(String.format(msgTemplate, "...ALLURE REPORT IS GENERATED..."));
 
         Date endTime = new Date();
         logInfo(String.format(msgTemplate, "Completed At:  " + endTime));
 
-        String duration = DurationFormatUtils.formatPeriod(startTime.getTime(), endTime.getTime(), "HH:mm:ss");
+        duration = DurationFormatUtils.formatPeriod(startTime.getTime(), endTime.getTime(), DURATION_FORMAT);
         logInfo(String.format(msgTemplate, "Duration:  " + duration));
 
         if (props.isShowReport() && !isRunningOnJenkins()) {
