@@ -17,13 +17,38 @@ public class Navigation {
         this.context = context;
     }
 
+    public void toURL(String page, String url, boolean cleanCookies) {
+        toURL(page, url, cleanCookies, false);
+    }
+
+    /**
+     * Go to specified URL<BR>
+     * <B>Notes: </B> Selenium only deletes cookies from the current domain.  This could be an issue if you are
+     * testing against multiple sites at the same time in the test and you want to have the cookies deleted.  Normally,
+     * you want all cookies deleted for all sites but probably most important is for the site you are navigating to.
+     * The different site flag combined with the clean cookies flag will ensure the site you are navigating to has the
+     * cookies deleted.  This should ensure that login page is displayed as the cookies for the site were deleted
+     * prior to landing there.
+     *
+     * @param page          - Page name for logging purposes
+     * @param url           - URL to navigate to
+     * @param cleanCookies  - true to clean cookies
+     * @param differentSite - true if coming from a different site
+     */
     @Step("Go to {0} Page")
-    private void toURL(String page, String url, boolean cleanCookies) {
+    public void toURL(String page, String url, boolean cleanCookies, boolean differentSite) {
+        assertThat("URL", url, not(isEmptyOrNullString()));
+
+        if (differentSite && cleanCookies) {
+            // Go to URL first to ensure we delete cookies for that domain
+            context.getDriver().get(url);
+        }
+
         if (cleanCookies) {
+            // This deletes the cookies for the current domain
             context.getDriver().manage().deleteAllCookies();
         }
 
-        assertThat("URL", url, not(isEmptyOrNullString()));
         context.getDriver().get(url);
     }
 
