@@ -2,6 +2,7 @@ package com.taf.automation.ui.support.util;
 
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.mobile.AppConfigBuilder;
+import com.taf.automation.ui.support.StringMod;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.TextFileReader;
@@ -1434,7 +1435,7 @@ public class Utils {
             Duration interval = (Duration) ApiUtils.readField(FieldUtils.getField(FluentWait.class, "interval", true), wait);
             String timeoutMessage = String.format(
                     "Expected condition failed: waiting for %s (tried for %d second(s) with %d milliseconds interval)",
-                    isTrue,
+                    new StringMod(isTrue.toString()).removeAll("Build info: version:" + RegExUtils.ANYTHING).get(),
                     ObjectUtils.defaultIfNull(timeout, Duration.ofSeconds(getElementTimeout())).getSeconds(),
                     ObjectUtils.defaultIfNull(interval, Duration.ofMillis(100L)).toMillis()
             );
@@ -1444,7 +1445,7 @@ public class Utils {
             String errorMessage = String.format(
                     "Expected condition failed: waiting for %s %n%nDue to Exception: %n%n%s",
                     isTrue,
-                    ex.getMessage()
+                    new StringMod(ex.getMessage()).removeAll("Build info: version:" + RegExUtils.ANYTHING).get()
             );
             assertThat(errorMessage, false);
             return null;
