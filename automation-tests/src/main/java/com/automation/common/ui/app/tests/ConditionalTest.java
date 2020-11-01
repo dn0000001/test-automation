@@ -81,6 +81,9 @@ public class ConditionalTest extends TestNGBase {
         assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(ELEMENT));
     }
 
+    @Features("Conditional")
+    @Stories("Multiple Criteria - URLs")
+    @Severity(SeverityLevel.MINOR)
     @Test
     public void criteriaMakerConfigUrlsTest() {
         new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
@@ -104,6 +107,9 @@ public class ConditionalTest extends TestNGBase {
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.URL_NOT_EQUAL));
     }
 
+    @Features("Conditional")
+    @Stories("Multiple Criteria - DropDowns")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void criteriaMakerConfigDropDownTest() {
         new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());
@@ -128,6 +134,9 @@ public class ConditionalTest extends TestNGBase {
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.DROPDOWN_NOT_EQUAL));
     }
 
+    @Features("Conditional")
+    @Stories("Multiple Criteria - Inputs")
+    @Severity(SeverityLevel.MINOR)
     @Test
     public void criteriaMakerConfigAttributeTest() {
         new Navigation(getContext()).toRubyWatirCheckboxes(Utils.isCleanCookiesSupported());
@@ -152,6 +161,9 @@ public class ConditionalTest extends TestNGBase {
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.ATTRIBUTE_NOT_EQUAL));
     }
 
+    @Features("Conditional")
+    @Stories("Multiple Criteria - Text")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void criteriaMakerConfigTextTest() {
         new Navigation(getContext()).toRubyWatirCheckboxes(Utils.isCleanCookiesSupported());
@@ -176,6 +188,9 @@ public class ConditionalTest extends TestNGBase {
         assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.TEXT_NOT_EQUAL));
     }
 
+    @Features("Conditional")
+    @Stories("Multiple Criteria - Elements")
+    @Severity(SeverityLevel.BLOCKER)
     @Test
     public void criteriaMakerConfigElementsTest() {
         new Navigation(getContext()).toTrueNorthHockey(Utils.isCleanCookiesSupported());
