@@ -121,9 +121,9 @@ public class WsUtils {
         String sWorking = sTemplate;
         for (Parameter p : subst) {
             if (bReplaceAll) {
-                sWorking = sWorking.replace(p.param, p.value);
+                sWorking = sWorking.replace(p.getParam(), p.getValue());
             } else {
-                sWorking = sWorking.replaceFirst(p.param, p.value);
+                sWorking = sWorking.replaceFirst(p.getParam(), p.getValue());
             }
         }
 
@@ -721,7 +721,7 @@ public class WsUtils {
      */
     public static void setRequestProperty(URLConnection connection, List<Parameter> headers) {
         for (Parameter header : headers) {
-            connection.setRequestProperty(header.param, header.value);
+            connection.setRequestProperty(header.getParam(), header.getValue());
         }
     }
 

@@ -559,11 +559,11 @@ public class VTD_XML {
             if (nNodeIndex != -1) {
                 for (Parameter p : attributes) {
                     // If attribute exists, then get value else use default
-                    int nAttrIndex = vn.getAttrVal(p.param);
+                    int nAttrIndex = vn.getAttrVal(p.getParam());
                     if (nAttrIndex != -1) {
-                        data.add(new Parameter(p.param, vn.toString(nAttrIndex)));
+                        data.add(new Parameter(p.getParam(), vn.toString(nAttrIndex)));
                     } else {
-                        data.add(new Parameter(p.param, p.value));
+                        data.add(new Parameter(p.getParam(), p.getValue()));
                     }
                 }
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+NOTE:  The key-values here should be limited to only data that is used in multiple test data files
+and it should be ideally environment independent.
+
+The key-values currently here are just for testing/example purposes
+-->
+<key-value-provider>
+    <item key="robo-form-first" value="Robo"/>
+    <item key="robo-form-last" value="Form"/>
+    <item key="robo-form-credit-card-type" value="Visa (Preferred)"/>
+    <item key="robo-form-credit-card-number" value="1111222233334444"/>
+    <item key="robo-form-credit-card-verification-code" value="999"/>
+    <item key="robo-form-card-expiration-date-month" value="01"/>
+    <item key="robo-form-card-expiration-date-year" value="2025"/>
+</key-value-provider>
