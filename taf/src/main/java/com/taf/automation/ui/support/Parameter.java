@@ -1,24 +1,32 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.Utils;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.taf.automation.ui.support.util.Utils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * This class is for parameters. It could be for SQL queries, HTTP GET/POST requests or something similar
  */
 public class Parameter implements Comparable<Parameter> {
-    public String param;
-    public String value;
+    @XStreamAlias("key")
+    @XStreamAsAttribute
+    private String param;
+
+    @XStreamAsAttribute
+    private String value;
 
     /**
      * Default Constructor - Sets variables to empty String
      */
     public Parameter() {
-        init("", "");
+        withParam("");
+        withValue("");
     }
 
     /**
@@ -31,7 +39,8 @@ public class Parameter implements Comparable<Parameter> {
      * @param value - Value for parameter (null is allowed)
      */
     public Parameter(String param, String value) {
-        init(param, value);
+        withParam(param);
+        withValue(value);
     }
 
     /**
@@ -44,21 +53,29 @@ public class Parameter implements Comparable<Parameter> {
      * @param param - Parameter
      */
     public Parameter(String param) {
-        init(param, "");
+        withParam(param);
+        withValue("");
     }
 
     /**
-     * Initializes all variables<BR>
-     * <BR>
-     * <B>Notes:</B><BR>
-     * 1) value can be set to null<BR>
-     *
-     * @param param - Parameter
-     * @param value - Value for parameter (null is allowed)
+     * @return empty string if param is null otherwise param
      */
-    protected void init(String param, String value) {
-        this.param = StringUtils.defaultString(param);
+    public String getParam() {
+        return StringUtils.defaultString(param);
+    }
+
+    public Parameter withParam(String param) {
+        this.param = param;
+        return this;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public Parameter withValue(String value) {
         this.value = value;
+        return this;
     }
 
     /**
@@ -73,19 +90,9 @@ public class Parameter implements Comparable<Parameter> {
     /**
      * String for logging purposes
      */
+    @Override
     public String toString() {
-        String sParam, sValue;
-        if (param == null)
-            sParam = "null";
-        else
-            sParam = param;
-
-        if (value == null)
-            sValue = "null";
-        else
-            sValue = value;
-
-        return sParam + " = " + sValue;
+        return StringUtils.defaultString(param, "null") + " = " + StringUtils.defaultString(value, "null");
     }
 
     /**
@@ -95,20 +102,20 @@ public class Parameter implements Comparable<Parameter> {
      * 1) This equality is for use with Lists to be able to find/get a Parameter based on param<BR>
      * 2) When not working with lists you need to do an additional check on the value<BR>
      */
+    @Override
     public boolean equals(Object objParameter) {
-        if (!this.getClass().isInstance(objParameter))
+        if (!this.getClass().isInstance(objParameter)) {
             return false;
+        }
 
         Parameter parameter = (Parameter) objParameter;
-        if (this.param.equals(parameter.param))
-            return true;
-        else
-            return false;
+        return StringUtils.equals(param, parameter.param);
     }
 
+    @Override
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder(27, 53);
-        builder.append(param);
+        builder.append(getParam());
         return builder.toHashCode();
     }
 
@@ -125,21 +132,10 @@ public class Parameter implements Comparable<Parameter> {
 
     @Override
     public int compareTo(Parameter arg0) {
-        int nParamCompare = this.param.compareTo(arg0.param);
-        if (nParamCompare < 0) {
-            return -1;
-        } else if (nParamCompare > 0) {
-            return 1;
-        } else {
-            int nValueCompare = StringUtils.defaultString(this.value).compareTo(
-                    StringUtils.defaultString(arg0.value));
-            if (nValueCompare < 0)
-                return -1;
-            else if (nValueCompare > 0)
-                return 1;
-            else
-                return 0;
-        }
+        CompareToBuilder builder = new CompareToBuilder();
+        builder.append(param, arg0.param);
+        builder.append(value, arg0.value);
+        return builder.toComparison();
     }
 
 }

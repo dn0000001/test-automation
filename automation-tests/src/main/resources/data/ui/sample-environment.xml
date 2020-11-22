@@ -26,6 +26,9 @@
         <prop name="feature-x" value="true"/>
         <prop name="feature-y" value="false"/>
 
+        <!-- Key-Value Provider config -->
+        <prop name="key-value-provider-config" value="data/ui/sample-common-test-data-items.xml"/>
+
         <!-- URLs for tests.  We can store here instead of test.properties -->
         <prop name="herokuapp-tables-url" value="https://the-internet.herokuapp.com/tables"/>
         <prop name="herokuapp-elements-url" value="https://the-internet.herokuapp.com/add_remove_elements/"/>

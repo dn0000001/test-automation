@@ -3,19 +3,26 @@
 <robo-form-do>
     <aliases>
         <test-name>RoboForm Test</test-name>
+        <firstName>${keyValues.get("robo-form-first")}</firstName>
+        <lastName>${keyValues.get("robo-form-last")}</lastName>
+        <creditCardType>${keyValues.get("robo-form-credit-card-type")}</creditCardType>
+        <creditCardNumber>${keyValues.get("robo-form-credit-card-number")}</creditCardNumber>
+        <cardVerificationCode>${keyValues.get("robo-form-credit-card-verification-code")}</cardVerificationCode>
+        <month>${keyValues.get("robo-form-card-expiration-date-month")}</month>
+        <year>${keyValues.get("robo-form-card-expiration-date-year")}</year>
     </aliases>
     <roboFormPage>
-        <firstName>Robo</firstName>
-        <lastName>Form</lastName>
+        <firstName>${firstName}</firstName>
+        <lastName>${lastName}</lastName>
         <creditCard>
-            <creditCardType>Visa (Preferred)</creditCardType>
-            <credit-card-number>1111222233334444</credit-card-number>
-            <cardVerificationCode>999</cardVerificationCode>
+            <creditCardType>${creditCardType}</creditCardType>
+            <credit-card-number>${creditCardNumber}</credit-card-number>
+            <cardVerificationCode>${cardVerificationCode}</cardVerificationCode>
             <card-expiration-date>
-                <month>01</month>
-                <year>2025</year>
+                <month>${month}</month>
+                <year>${year}</year>
             </card-expiration-date>
-            <cardUserName>Robo Form</cardUserName>
+            <cardUserName>${firstName} ${lastName}</cardUserName>
         </creditCard>
     </roboFormPage>
 </robo-form-do>
