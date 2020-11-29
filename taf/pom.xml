@@ -94,6 +94,11 @@
             <version>${apache.commons.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${apache.commons.text.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.googlecode.page-component</groupId>
             <artifactId>ui_auto_core</artifactId>
             <version>${ui.auto.core.version}</version>
