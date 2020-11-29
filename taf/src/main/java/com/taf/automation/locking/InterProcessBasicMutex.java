@@ -67,11 +67,6 @@ public class InterProcessBasicMutex {
         return this;
     }
 
-    public InterProcessBasicMutex withExclusiveAccess() {
-        exclusiveAccess = true;
-        return this;
-    }
-
     public InterProcessBasicMutex withTempDirectory() {
         directory = FileUtils.getTempDirectory().getAbsolutePath();
         return this;
