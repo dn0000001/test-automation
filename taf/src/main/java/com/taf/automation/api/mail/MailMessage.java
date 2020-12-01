@@ -1,6 +1,6 @@
 package com.taf.automation.api.mail;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
  * Class to extract information from an e-mail message
  */
 public class MailMessage {
-    private final static Pattern USER_ACTIVATION_PATTERN = Pattern.compile("<a href=\"(.*?)\".*>Click here to confirm your email address.</a>");
-    private final String EMPTY_STRING = "";
+    private static final Pattern USER_ACTIVATION_PATTERN = Pattern.compile("<a href=\"(.*?)\".*>Click here to confirm your email address.</a>");
+    private static final String EMPTY_STRING = "";
 
     private final String to;
     private final String from;
