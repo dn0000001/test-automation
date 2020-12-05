@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.util.CryptoUtils;
+import com.taf.automation.ui.support.util.ExceptionUtils;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Utils;
 import io.appium.java_client.AppiumDriver;
@@ -88,7 +89,7 @@ public class PageObjectV2 extends PageObjectModel {
                 PageFactory.initElements(new ComponentFieldDecoratorV2(defLocFactory, this), this);
             }
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ExceptionUtils.clean(ex));
         }
     }
 
@@ -109,7 +110,7 @@ public class PageObjectV2 extends PageObjectModel {
             ComponentFieldDecoratorV2 componentFieldDecorator = new ComponentFieldDecoratorV2(dynamicFactory, this);
             PageFactory.initElements(componentFieldDecorator, this);
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ExceptionUtils.clean(ex));
         }
     }
 
@@ -282,7 +283,9 @@ public class PageObjectV2 extends PageObjectModel {
         int attempt = 0;
         boolean validated;
         do {
-            Failsafe.with(Utils.getWriteValueRetryPolicy()).run(component::setValue);
+            Failsafe.with(Utils.getWriteValueRetryPolicy())
+                    .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                    .run(component::setValue);
             if (validationMethod != null) {
                 try {
                     // Execute validation using the component specific logic
@@ -294,7 +297,7 @@ public class PageObjectV2 extends PageObjectModel {
                 } catch (Exception | AssertionError ignore) {
                     // Catch any thrown error or assertion error
                     validated = false;
-                    exception = ignore.getMessage();
+                    exception = ExceptionUtils.clean(ignore.getMessage());
                 }
             } else {
                 // No validation is necessary just set flag to be true
@@ -324,24 +327,13 @@ public class PageObjectV2 extends PageObjectModel {
             return;
         }
 
-        String exception = "";
-        boolean successful;
-
-        try {
-            Failsafe.with(Utils.getWriteValueRetryPolicy()).run(() -> {
-                component.fill();
-                component.validate();
-            });
-            successful = true;
-        } catch (Exception | AssertionError ignore) {
-            // Catch any thrown error or assertion error
-            successful = false;
-            exception = ignore.getMessage();
-        }
-
-        String error = "Unable to fill (" + component.getClass().getSimpleName() + ")"
-                + " & validate before timeout:  " + exception;
-        assertThat(error, successful);
+        String error = "Unable to fill (" + component.getClass().getSimpleName() + ") & validate before timeout:  ";
+        Failsafe.with(Utils.getWriteValueRetryPolicy())
+                .onFailure(ex -> assertThat(error + ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .run(() -> {
+                    component.fill();
+                    component.validate();
+                });
     }
 
     /**
@@ -509,11 +501,13 @@ public class PageObjectV2 extends PageObjectModel {
     protected WebElement click(PageComponent component) {
         assertThat("Click Component", component, notNullValue());
         assertThat("Click Component's Locator", component.getLocator(), notNullValue());
-        return Failsafe.with(Utils.getClickRetryPolicy()).get(() -> {
-            WebElement element = Utils.until(ExpectedConditionsUtil.ready(component));
-            component.click();
-            return element;
-        });
+        return Failsafe.with(Utils.getClickRetryPolicy())
+                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .get(() -> {
+                    WebElement element = Utils.until(ExpectedConditionsUtil.ready(component));
+                    component.click();
+                    return element;
+                });
     }
 
 }
