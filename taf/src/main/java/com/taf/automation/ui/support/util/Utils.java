@@ -2,7 +2,6 @@ package com.taf.automation.ui.support.util;
 
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.mobile.AppConfigBuilder;
-import com.taf.automation.ui.support.StringMod;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.TextFileReader;
@@ -907,6 +906,7 @@ public class Utils {
      */
     public static WebElement clickWhenReady(WebElement element) {
         return Failsafe.with(getClickRetryPolicy())
+                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
                 .get(() -> {
                     until(ExpectedConditionsUtil.ready(element));
                     element.click();
@@ -922,6 +922,7 @@ public class Utils {
      */
     public static WebElement clickWhenReady(By locator) {
         return Failsafe.with(getClickRetryPolicy())
+                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
                 .get(() -> {
                     WebElement element = until(ExpectedConditionsUtil.ready(locator));
                     element.click();
@@ -938,6 +939,7 @@ public class Utils {
      */
     public static WebElement clickWhenReady(WebElement anchor, By relative) {
         return Failsafe.with(getClickRetryPolicy())
+                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
                 .get(() -> {
                     WebElement element = until(ExpectedConditionsUtil.ready(anchor, relative));
                     element.click();
@@ -986,7 +988,9 @@ public class Utils {
      * @param element - Element to click and wait for it to become stale
      */
     public static void clickAndWaitForStale(WebElement element) {
-        Failsafe.with(getClickRetryPolicy()).run(element::click);
+        Failsafe.with(getClickRetryPolicy())
+                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .run(element::click);
         until(ExpectedConditions.stalenessOf(element));
     }
 
@@ -1435,7 +1439,7 @@ public class Utils {
             Duration interval = (Duration) ApiUtils.readField(FieldUtils.getField(FluentWait.class, "interval", true), wait);
             String timeoutMessage = String.format(
                     "Expected condition failed: waiting for %s (tried for %d second(s) with %d milliseconds interval)",
-                    new StringMod(isTrue.toString()).removeAll("Build info: version:" + RegExUtils.ANYTHING).get(),
+                    ExceptionUtils.clean(isTrue.toString()),
                     ObjectUtils.defaultIfNull(timeout, Duration.ofSeconds(getElementTimeout())).getSeconds(),
                     ObjectUtils.defaultIfNull(interval, Duration.ofMillis(100L)).toMillis()
             );
@@ -1445,7 +1449,7 @@ public class Utils {
             String errorMessage = String.format(
                     "Expected condition failed: waiting for %s %n%nDue to Exception: %n%n%s",
                     isTrue,
-                    new StringMod(ex.getMessage()).removeAll("Build info: version:" + RegExUtils.ANYTHING).get()
+                    ExceptionUtils.clean(ex.getMessage())
             );
             assertThat(errorMessage, false);
             return null;

@@ -1,10 +1,7 @@
 package com.taf.automation.ui.support.testng;
 
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.util.RegExUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.openqa.selenium.WebDriverException;
+import com.taf.automation.ui.support.util.ExceptionUtils;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
@@ -42,7 +39,7 @@ public class AllureTestNGListener extends AllureTestListener {
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
-        modifyWebDriverExceptionMessage(iTestResult);
+        iTestResult.setThrowable(ExceptionUtils.clean(iTestResult.getThrowable()));
         Allure.LIFECYCLE.fire(new TestCaseFailureEvent().withThrowable(iTestResult.getThrowable()));
         TestNGBaseWithoutListeners.takeScreenshot("Failed Test Screenshot");
         TestNGBaseWithoutListeners.takeHTML("Failed Test HTML Source");
@@ -79,7 +76,7 @@ public class AllureTestNGListener extends AllureTestListener {
     public void onConfigurationFailure(ITestResult iTestResult) {
         TestNGBaseWithoutListeners.takeScreenshot("Configuration Failure Screenshot");
         TestNGBaseWithoutListeners.takeHTML("Configuration Failure HTML Source");
-        modifyWebDriverExceptionMessage(iTestResult);
+        iTestResult.setThrowable(ExceptionUtils.clean(iTestResult.getThrowable()));
         super.onConfigurationFailure(iTestResult);
     }
 
@@ -171,43 +168,6 @@ public class AllureTestNGListener extends AllureTestListener {
         }
 
         return false;
-    }
-
-    /**
-     * Modify any WebDriverException to remove the dynamic information which prevents allure from grouping properly
-     *
-     * @param iTestResult - Test Result to get throwable to be modified
-     */
-    private void modifyWebDriverExceptionMessage(ITestResult iTestResult) {
-        Class<? extends Throwable> clazz = iTestResult.getThrowable().getClass();
-        if (!WebDriverException.class.isAssignableFrom(clazz)) {
-            return;
-        }
-
-        String cleanedMessage = performCleanExceptionMessage(iTestResult.getThrowable().getMessage());
-        Throwable modifiedException;
-
-        try {
-            // Create the same exception such that it is clear in the report the cause of the failure
-            modifiedException = ConstructorUtils.invokeConstructor(clazz, cleanedMessage, iTestResult.getThrowable());
-        } catch (Exception ex) {
-            // As Fallback use the generic WebDriverException
-            modifiedException = new WebDriverException(cleanedMessage, iTestResult.getThrowable());
-        }
-
-        // We don't want the current stacktrace which is just wrapping as such set to the original stacktrace
-        modifiedException.setStackTrace(iTestResult.getThrowable().getStackTrace());
-        iTestResult.setThrowable(modifiedException);
-    }
-
-    /**
-     * Clean the exception message of the dynamic information which prevents allure from grouping properly
-     *
-     * @param message - message to clean
-     * @return message minus the problematic dynamic information
-     */
-    private String performCleanExceptionMessage(String message) {
-        return StringUtils.defaultString(message).replaceAll("Build info: version:" + RegExUtils.ANYTHING, "");
     }
 
 }
