@@ -219,6 +219,10 @@ public class SelectEnhanced extends PageComponent {
         super.initializeData(data, initialData, expectedData);
     }
 
+    protected Select getDropDown() {
+        return select;
+    }
+
     @Override
     public void setValue() {
         Failsafe.with(getRetryPolicy()).run(this::setValueAttempt);
@@ -300,7 +304,7 @@ public class SelectEnhanced extends PageComponent {
 
     private void genericSetValueUsing(String disabledReason, String notFoundReason, String compareAgainst) {
         int index = -1;
-        List<WebElement> all = select.getOptions();
+        List<WebElement> all = getDropDown().getOptions();
         for (int i = 0; i < all.size(); i++) {
             WebElement option = all.get(i);
             if (isMatch(option, compareAgainst)) {
@@ -328,7 +332,7 @@ public class SelectEnhanced extends PageComponent {
 
     private void setValueUsingIndex() {
         int index = -1;
-        List<WebElement> all = select.getOptions();
+        List<WebElement> all = getDropDown().getOptions();
 
         if (getSelection() == Selection.INDEX) {
             index = NumberUtils.toInt(rawSelectionData, -1);
@@ -364,7 +368,7 @@ public class SelectEnhanced extends PageComponent {
 
     @Override
     public String getValue() {
-        return StringUtils.defaultString(select.getFirstSelectedOption().getText()).trim();
+        return StringUtils.defaultString(getDropDown().getFirstSelectedOption().getText()).trim();
     }
 
     @Override
@@ -377,7 +381,7 @@ public class SelectEnhanced extends PageComponent {
         String actualHtmlValue = null;
         int actualIndex = -1;
 
-        List<WebElement> all = select.getOptions();
+        List<WebElement> all = getDropDown().getOptions();
         for (int i = 0; i < all.size(); i++) {
             if (all.get(i).isSelected()) {
                 actualVisibleText = all.get(i).getText();
@@ -432,7 +436,7 @@ public class SelectEnhanced extends PageComponent {
     public List<String> getAllOptions() {
         List<String> all = new ArrayList<>();
 
-        for (WebElement option : select.getOptions()) {
+        for (WebElement option : getDropDown().getOptions()) {
             if (option.isEnabled()) {
                 all.add(StringUtils.trimToEmpty(option.getText()));
             }

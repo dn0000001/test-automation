@@ -124,6 +124,17 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
     }
 
     @Override
+    protected Select getDropDown() {
+        try {
+            select.getWrappedElement().isDisplayed();
+        } catch (Exception ex) {
+            initSelect();
+        }
+
+        return select;
+    }
+
+    @Override
     public void setValue() {
         initSelect();
         boolean ajax = triggersAJAX();
@@ -139,7 +150,7 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         String currentHtmlValue = null;
         int currentIndex = -1;
 
-        List<WebElement> all = select.getOptions();
+        List<WebElement> all = getDropDown().getOptions();
         for (int i = 0; i < all.size(); i++) {
             if (all.get(i).isSelected()) {
                 currentVisibleText = all.get(i).getText();
