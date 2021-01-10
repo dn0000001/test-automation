@@ -1,7 +1,9 @@
 package com.taf.automation.ui.support.util;
 
-import com.taf.automation.ui.support.MouseEvent;
-import com.taf.automation.ui.support.MouseEventType;
+import com.taf.automation.ui.support.events.Event;
+import com.taf.automation.ui.support.events.EventType;
+import com.taf.automation.ui.support.events.MouseEvent;
+import com.taf.automation.ui.support.events.MouseEventType;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.exceptions.JavaScriptException;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
@@ -29,6 +31,7 @@ public class JsUtils {
     private static final String GET_TEXT_ONLY_TOP_LEVEL = Utils.readResource("JS/GetTextOnlyTopLevel.js");
     private static final String EXECUTE_GET_REQUEST = Utils.readResource("JS/ExecuteGetRequest.js");
     private static final String OVERLAPPING = Utils.readResource("JS/Overlapping.js");
+    private static final String EXECUTE_STANDARD_EVENT = Utils.readResource("JS/ExecuteStandardEvent.js");
     private static final String EXECUTE_MOUSE_EVENT = Utils.readResource("JS/ExecuteMouseEvent.js");
     private static final String SCROLL_TO = Utils.readResource("JS/ScrollTo.js");
     private static final String SCROLL_TO_BOTTOM = Utils.readResource("JS/ScrollToBottom.js");
@@ -346,6 +349,31 @@ public class JsUtils {
         }
 
         return BooleanUtils.toBooleanObject(String.valueOf(execute(getWebDriver(), OVERLAPPING, rect1, rect2)));
+    }
+
+    /**
+     * Execute Standard Event
+     *
+     * @param element - Element to event on
+     * @param event   - Standard Event to execute
+     */
+    private static void executeStandardEvent(WebElement element, Event event) {
+        execute(getWebDriver(), EXECUTE_STANDARD_EVENT,
+                element,
+                event.getType().toString(),
+                event.isBubbles(),
+                event.isCancelable(),
+                event.isComposed()
+        );
+    }
+
+    /**
+     * Trigger change event on the element using JavaScript
+     *
+     * @param element - Element to trigger change event
+     */
+    public static void change(WebElement element) {
+        executeStandardEvent(element, new Event(EventType.CHANGE));
     }
 
     /**
