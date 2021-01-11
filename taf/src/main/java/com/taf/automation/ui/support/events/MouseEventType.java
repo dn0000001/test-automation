@@ -1,4 +1,4 @@
-package com.taf.automation.ui.support;
+package com.taf.automation.ui.support.events;
 
 /**
  * Mouse Events that are supported in JavaScript<BR>
@@ -7,11 +7,12 @@ package com.taf.automation.ui.support;
  */
 public enum MouseEventType {
     MOUSE_OVER("mouseover"),
-    MOUSE_OUT("mouseout");
+    MOUSE_OUT("mouseout"),
+    ;
 
-    private String event;
+    private final String event;
 
-    private MouseEventType(String event) {
+    MouseEventType(String event) {
         this.event = event;
     }
 
