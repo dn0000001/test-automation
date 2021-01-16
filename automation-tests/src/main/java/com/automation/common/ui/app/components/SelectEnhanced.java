@@ -8,6 +8,10 @@ import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableObject;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import ui.auto.core.data.DataTypes;
@@ -377,23 +381,14 @@ public class SelectEnhanced extends PageComponent {
         // Find the 1st selected drop down option and store the visible text, html value and index of the option
         // for verification later.
         //
-        String actualVisibleText = null;
-        String actualHtmlValue = null;
-        int actualIndex = -1;
-
         List<WebElement> all = getDropDown().getOptions();
-        for (int i = 0; i < all.size(); i++) {
-            if (all.get(i).isSelected()) {
-                actualVisibleText = all.get(i).getText();
-                actualHtmlValue = all.get(i).getAttribute(VALUE);
-                actualIndex = i;
-                break;
-            }
-        }
-
-        assertThat("Could not find index of a selected drop down option", actualIndex, greaterThanOrEqualTo(0));
-        assertThat("Could not find visible text of a selected drop down option", actualVisibleText, notNullValue());
-        assertThat("Could not find html value of a selected drop down option", actualHtmlValue, notNullValue());
+        Mutable<String> actualVisibleText = new MutableObject<>();
+        Mutable<String> actualHtmlValue = new MutableObject<>();
+        MutableInt actualIndex = new MutableInt(-1);
+        updateCurrentlySelectedOption(all, actualVisibleText, actualHtmlValue, actualIndex);
+        assertThat("Could not find visible text of a selected drop down option", actualVisibleText.getValue(), notNullValue());
+        assertThat("Could not find html value of a selected drop down option", actualHtmlValue.getValue(), notNullValue());
+        assertThat("Could not find index of a selected drop down option", actualIndex.getValue(), greaterThanOrEqualTo(0));
 
         // Assume that expected information is from DataTypes.Data
         String expectedData = rawSelectionData;
@@ -413,20 +408,50 @@ public class SelectEnhanced extends PageComponent {
         // Verify the actual selected drop down option matches the one previously selected
         //
         if (getSelection() == Selection.VISIBLE_TEXT) {
-            assertThat("Visible Text of currently selected drop down option", actualVisibleText, equalTo(expectedData));
+            assertThat("Visible Text of currently selected drop down option", actualVisibleText.getValue(), equalTo(expectedData));
         } else if (getSelection() == Selection.VALUE_HTML) {
-            assertThat("HTML Value of currently selected drop down option", actualHtmlValue, equalTo(expectedData));
+            assertThat("HTML Value of currently selected drop down option", actualHtmlValue.getValue(), equalTo(expectedData));
         } else if (getSelection() == Selection.INDEX
                 || getSelection() == Selection.RANDOM_INDEX
                 || getSelection() == Selection.RANDOM_INDEX_RANGE
                 || getSelection() == Selection.RANDOM_INDEX_VALUES) {
-            assertThat("Index of currently selected drop down option", actualIndex, equalTo(expectedIndex));
+            assertThat("Index of currently selected drop down option", actualIndex.getValue(), equalTo(expectedIndex));
         } else if (getSelection() == Selection.VISIBLE_TEXT_REGEX) {
-            assertThat("Visible Text of currently selected drop down option", actualVisibleText, matchesRegex(expectedData));
+            assertThat("Visible Text of currently selected drop down option", actualVisibleText.getValue(), matchesRegex(expectedData));
         } else if (getSelection() == Selection.VALUE_HTML_REGEX) {
-            assertThat("HTML Value of currently selected drop down option", actualHtmlValue, matchesRegex(expectedData));
+            assertThat("HTML Value of currently selected drop down option", actualHtmlValue.getValue(), matchesRegex(expectedData));
         } else {
             assertThat("Unsupported Selection:  " + getSelection(), false);
+        }
+    }
+
+    /**
+     * Update Currently Selected Option
+     *
+     * @param all         - Drop down options
+     * @param visibleText - Updated with currently selected visible text
+     * @param htmlValue   - Updated with currently selected HTML value
+     * @param indexValue  - Updated with currently selected Index value
+     */
+    protected void updateCurrentlySelectedOption(
+            List<WebElement> all,
+            Mutable<String> visibleText,
+            Mutable<String> htmlValue,
+            MutableInt indexValue
+    ) {
+        try {
+            for (int i = 0; i < all.size(); i++) {
+                if (all.get(i).isSelected()) {
+                    visibleText.setValue(all.get(i).getText());
+                    htmlValue.setValue(all.get(i).getAttribute(VALUE));
+                    indexValue.setValue(i);
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            // We do not want a stale element exception thrown which would prevent retry on setting the value
+            // So, instead we will re-throw as a generic WebDriver Exception
+            throw new WebDriverException(ex);
         }
     }
 
