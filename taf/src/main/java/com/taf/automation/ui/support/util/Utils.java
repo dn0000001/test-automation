@@ -1158,6 +1158,20 @@ public class Utils {
     }
 
     /**
+     * Get Polling RetryPolicy that can be used to poll for a specific condition that occurs within a small timeout<BR>
+     * <B>Notes:</B>
+     * <OL>
+     * <LI>The max duration is from the TestProperties class using the negative timeout</LI>
+     * <LI>The RetryPolicy can then be used with 'Failsafe.with' to poll for a specific condition</LI>
+     * </OL>
+     *
+     * @return RetryPolicy
+     */
+    public static RetryPolicy<Object> getNegativePollingRetryPolicy() {
+        return getPollingRetryPolicy(TestProperties.getInstance().getNegativeTimeout());
+    }
+
+    /**
      * Get Polling RetryPolicy that can be used to poll for a specific condition<BR>
      * <B>Note: </B> <BR>
      * 1)  The RetryPolicy can then be used with 'Failsafe.with' to poll for a specific condition<BR>

@@ -3,8 +3,12 @@ package com.automation.common.ui.app.components;
 import com.taf.automation.ui.support.util.LocatorUtils;
 import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -52,6 +56,9 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
     @XStreamOmitField
     private WebDriverWait wait;
 
+    @XStreamOmitField
+    private boolean recheckTriggersAJAX;
+
     public SelectEnhancedAJAX() {
         super();
     }
@@ -74,7 +81,10 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
     }
 
     private void initSelect() {
-        select = new Select(getDriver().findElement(getStaticLocator()));
+        Failsafe.with(getRetryPolicy()).run(() -> {
+            WebElement element = getDriver().findElement(getStaticLocator());
+            select = new Select(element);
+        });
     }
 
     private By getStaticLocator() {
@@ -117,6 +127,16 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         this.wait = wait;
     }
 
+    public void enableRecheckTriggersAJAX() {
+        recheckTriggersAJAX = true;
+    }
+
+    public void useDefaultConfigForAJAX() {
+        setRetryPolicy(Utils.getNegativePollingRetryPolicy());
+        useNegativeWebDriverWait();
+        enableRecheckTriggersAJAX();
+    }
+
     @Override
     public String getValue() {
         initSelect();
@@ -140,44 +160,39 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         boolean ajax = triggersAJAX();
         WebElement element = (ajax) ? getDriver().findElement(getStaticLocator()) : null;
         super.setValue();
+        if (recheckTriggersAJAX) {
+            ajax = Failsafe.with(getRetryPolicy()).get(this::triggersAJAX);
+        }
+
         if (ajax) {
             Utils.until(ExpectedConditions.stalenessOf(element), getWebDriverWait(), getRetryPolicy());
         }
     }
 
     private boolean triggersAJAX() {
-        String currentVisibleText = null;
-        String currentHtmlValue = null;
-        int currentIndex = -1;
-
         List<WebElement> all = getDropDown().getOptions();
-        for (int i = 0; i < all.size(); i++) {
-            if (all.get(i).isSelected()) {
-                currentVisibleText = all.get(i).getText();
-                currentHtmlValue = all.get(i).getAttribute("value");
-                currentIndex = i;
-                break;
-            }
-        }
-
-        assertThat("Could not find index of a selected drop down option", currentIndex, greaterThanOrEqualTo(0));
-        assertThat("Could not find visible text of a selected drop down option", currentVisibleText, notNullValue());
-        assertThat("Could not find html value of a selected drop down option", currentHtmlValue, notNullValue());
+        Mutable<String> currentVisibleText = new MutableObject<>();
+        Mutable<String> currentHtmlValue = new MutableObject<>();
+        MutableInt currentIndex = new MutableInt(-1);
+        updateCurrentlySelectedOption(all, currentVisibleText, currentHtmlValue, currentIndex);
+        assertThat("Could not find visible text of a selected drop down option", currentVisibleText.getValue(), notNullValue());
+        assertThat("Could not find html value of a selected drop down option", currentHtmlValue.getValue(), notNullValue());
+        assertThat("Could not find index of a selected drop down option", currentIndex.getValue(), greaterThanOrEqualTo(0));
 
         boolean noChange;
         if (getSelection() == Selection.VISIBLE_TEXT) {
-            noChange = StringUtils.equals(currentVisibleText, rawSelectionData);
+            noChange = StringUtils.equals(currentVisibleText.getValue(), rawSelectionData);
         } else if (getSelection() == Selection.VALUE_HTML) {
-            noChange = StringUtils.equals(currentHtmlValue, rawSelectionData);
+            noChange = StringUtils.equals(currentHtmlValue.getValue(), rawSelectionData);
         } else if (getSelection() == Selection.INDEX
                 || getSelection() == Selection.RANDOM_INDEX
                 || getSelection() == Selection.RANDOM_INDEX_RANGE
                 || getSelection() == Selection.RANDOM_INDEX_VALUES) {
-            noChange = currentIndex == NumberUtils.toInt(rawSelectionData, -1);
+            noChange = currentIndex.getValue() == NumberUtils.toInt(rawSelectionData, -1);
         } else if (getSelection() == Selection.VISIBLE_TEXT_REGEX) {
-            noChange = StringUtils.defaultString(currentVisibleText).matches(rawSelectionData);
+            noChange = StringUtils.defaultString(currentVisibleText.getValue()).matches(rawSelectionData);
         } else if (getSelection() == Selection.VALUE_HTML_REGEX) {
-            noChange = StringUtils.defaultString(currentHtmlValue).matches(rawSelectionData);
+            noChange = StringUtils.defaultString(currentHtmlValue.getValue()).matches(rawSelectionData);
         } else {
             noChange = false;
         }
