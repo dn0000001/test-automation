@@ -43,7 +43,7 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
     private PrimeFacesPanel financePanelWithNoData;
 
     @XStreamOmitField
-    @FindBy(css = ".documentation-link")
+    @FindBy(css = ".documentation-link[href*='components']")
     private WebComponent documentation;
 
     public PrimeFacesDashboardPage() {
@@ -207,11 +207,10 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
         assertThat("WeatherPanelWithNoData - Content", getWeatherPanel().getPanelContent(), equalTo(getWeatherPanelWithNoData().getPanelContent()));
     }
 
-    @SuppressWarnings("squid:S1192")
     @Step("Validate Documentation Text")
     public void validateDocumentationText() {
         assertThat("Documentation", documentation, isComponentDisplayed());
-        assertThat("Documentation", documentation.getText(), equalTo("Documentation"));
+        assertThat("Documentation", documentation.getText(), equalTo("SERVER API"));
     }
 
 }
