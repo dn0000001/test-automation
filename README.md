@@ -9,6 +9,8 @@ you want to run against as they are just placeholders (text files)
 
 3)  It is necessary to replace the DLL files if using SQL Server with integrated security as they are just placeholders (text files)
 
+See [GitHub Wiki](https://github.com/dn0000001/test-automation/wiki) for more information.
+
 ## Basic overview of the core classes that are mainly used
 
 ### RunTests
