@@ -289,9 +289,9 @@ public class ApiUtils {
      * This normally requires using XStreamAlias on each of the fields.</LI>
      * </OL>
      *
-     * @param xStream       - xStream to configure the aliases
-     * @param definedIn     - the type that declares the field
-     * @param aliasPrefix   - the prefix to append to the fields (a colon will be added)
+     * @param xStream     - xStream to configure the aliases
+     * @param definedIn   - the type that declares the field
+     * @param aliasPrefix - the prefix to append to the fields (a colon will be added)
      */
     public static void aliasField(XStream xStream, Class definedIn, String aliasPrefix) {
         aliasField(xStream, definedIn, aliasPrefix, new HashSet<>());
@@ -311,6 +311,10 @@ public class ApiUtils {
      * @param excludeFields - fields to exclude in the alias configuration
      */
     public static void aliasField(XStream xStream, Class definedIn, String aliasPrefix, Set<String> excludeFields) {
+        if (excludeFields.isEmpty()) {
+            return;
+        }
+
         for (Field item : FieldUtils.getAllFields(definedIn)) {
             if (!excludeFields.contains(item.getName())) {
                 xStream.aliasField(aliasPrefix + ":" + item.getName(), definedIn, item.getName());
