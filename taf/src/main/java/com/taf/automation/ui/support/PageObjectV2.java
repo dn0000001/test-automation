@@ -510,4 +510,25 @@ public class PageObjectV2 extends PageObjectModel {
                 });
     }
 
+    /**
+     * Click component when it is ready.  Method uses a retry policy to handle
+     * click specific exceptions (ElementClickInterceptedException and ElementNotInteractableException) if they occur
+     *
+     * @param component     - Component to click when ready
+     * @param substitutions - Substitutions map of keys/values
+     * @return the (core) element using component locator which in most cases will have been clicked but the component
+     * is controlling the click logic and sometimes this may not be the case based on the component
+     */
+    protected WebElement click(PageComponent component, Map<String, String> substitutions) {
+        assertThat("Click Component", component, notNullValue());
+        assertThat("Click Component's Locator", component.getLocator(), notNullValue());
+        return Failsafe.with(Utils.getClickRetryPolicy())
+                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .get(() -> {
+                    WebElement element = Utils.until(ExpectedConditionsUtil.ready(component, substitutions));
+                    component.click();
+                    return element;
+                });
+    }
+
 }

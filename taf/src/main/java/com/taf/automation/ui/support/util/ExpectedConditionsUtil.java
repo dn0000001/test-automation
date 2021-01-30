@@ -22,6 +22,7 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -69,9 +70,11 @@ public class ExpectedConditionsUtil {
             @Override
             public WebElement apply(WebDriver driver) {
                 try {
-                    List<WebElement> elements = driver.findElements(component.getLocator());
-                    if (!elements.isEmpty() && component.isDisplayed() && component.isEnabled()) {
-                        return elements.get(0);
+                    // For performance, ensure the core element is displayed, then use the component
+                    // specific method to ensure the component is ready.
+                    WebElement coreElement = driver.findElement(component.getLocator());
+                    if (coreElement.isDisplayed() && component.isDisplayed() && component.isEnabled()) {
+                        return coreElement;
                     }
                 } catch (Exception ex) {
                     //
@@ -83,6 +86,41 @@ public class ExpectedConditionsUtil {
             @Override
             public String toString() {
                 return "component to be ready (enabled & displayed) using locator:  " + component.getLocator();
+            }
+        };
+    }
+
+    /**
+     * An expectation for checking component is ready (enabled &amp; displayed)
+     *
+     * @param component     - Component used to checked ready (enabled &amp; displayed)
+     * @param substitutions - Substitutions map of keys/values
+     * @return non-null WebElement (using component locator which should be the core element in most cases) when
+     * component is ready else null
+     */
+    public static ExpectedCondition<WebElement> ready(PageComponent component, Map<String, String> substitutions) {
+        return new ExpectedCondition<WebElement>() {
+            private final By loc = LocatorUtils.processForSubstitutions(component.getLocator(), substitutions);
+
+            @Override
+            public WebElement apply(WebDriver driver) {
+                try {
+                    // For performance, ensure the core element is displayed, then use the component
+                    // specific method to ensure the component is ready.
+                    WebElement coreElement = driver.findElement(loc);
+                    if (coreElement.isDisplayed() && component.isDisplayed() && component.isEnabled()) {
+                        return coreElement;
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "component to be ready (enabled & displayed) using locator:  " + loc;
             }
         };
     }

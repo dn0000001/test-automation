@@ -16,6 +16,7 @@ import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,7 +46,8 @@ public class AddRemoveElementsPage extends PageObjectV2 {
 
     @Step("Click Delete Button")
     public void clickDeleteButton() {
-        WebElement element = click(deleteButton);
+        // Note:  Only for testing purposes use the click that takes substitutions
+        WebElement element = click(deleteButton, new HashMap<>());
         Utils.until(ExpectedConditions.invisibilityOf(element));
     }
 
