@@ -894,9 +894,11 @@ public class ExpectedConditionsUtil {
             @Override
             public WebElement apply(WebDriver driver) {
                 try {
-                    List<WebElement> elements = driver.findElements(component.getLocator());
-                    if (!elements.isEmpty() && component.isDisplayed()) {
-                        return elements.get(0);
+                    // For performance, ensure the core element is displayed, then use the component
+                    // specific method to ensure the component is displayed.
+                    WebElement coreElement = driver.findElement(component.getLocator());
+                    if (coreElement.isDisplayed() && component.isDisplayed()) {
+                        return coreElement;
                     }
                 } catch (Exception ex) {
                     //
