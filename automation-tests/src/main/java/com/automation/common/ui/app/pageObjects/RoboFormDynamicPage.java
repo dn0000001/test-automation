@@ -6,6 +6,7 @@ import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
+import ui.auto.core.data.DataTypes;
 
 public class RoboFormDynamicPage extends PageObjectV2 {
     @FindBy(css = "[name$='frstname']")
@@ -53,6 +54,14 @@ public class RoboFormDynamicPage extends PageObjectV2 {
         enterFirstName();
         enterLastName();
         setElementValueV2(getCreditCard());
+    }
+
+    public String getTestDataFirstName() {
+        return firstName.getData(DataTypes.Data, true);
+    }
+
+    public String getTestDataLastName() {
+        return lastName.getData(DataTypes.Data, true);
     }
 
 }
