@@ -64,9 +64,10 @@ public class ApiClient implements GenericHttpInterface {
     private ReturnType returnType;
     private String customAcceptHeader;
     private String customContentType;
-    private XStream xstream;
+    private XStream requestXStream;
+    private XStream responseXStream;
 
-    private class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
+    private static class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
         public static final String METHOD_NAME = "DELETE";
 
         @Override
@@ -233,7 +234,7 @@ public class ApiClient implements GenericHttpInterface {
             } else if (returnType == ReturnType.JSON) {
                 apiResponse = new JsonResponse<>(response, responseEntity);
             } else if (returnType == ReturnType.XML) {
-                apiResponse = new XmlResponse<>(response, responseEntity, getXstream());
+                apiResponse = new XmlResponse<>(response, responseEntity, getResponseXStream());
             } else {
                 apiResponse = new GenericResponse<>(response, responseEntity);
             }
@@ -285,7 +286,7 @@ public class ApiClient implements GenericHttpInterface {
         } else {
             switch (parametersType) {
                 case XML:
-                    String xml = ApiUtils.prettifyXML(getXstream().toXML(entity));
+                    String xml = ApiUtils.prettifyXML(getRequestXStream().toXML(entity));
                     try {
                         ApiUtils.attachDataXml(xml, "REQUEST ENTITY");
                         httpEntity = new StringEntity(xml);
@@ -361,16 +362,28 @@ public class ApiClient implements GenericHttpInterface {
         this.customContentType = customContentType;
     }
 
-    public XStream getXstream() {
-        if (xstream == null) {
-            xstream = new XStream();
+    public XStream getRequestXStream() {
+        if (requestXStream == null) {
+            requestXStream = new XStream();
         }
 
-        return xstream;
+        return requestXStream;
     }
 
-    public void setXstream(XStream xstream) {
-        this.xstream = xstream;
+    public void setRequestXStream(XStream xstream) {
+        this.requestXStream = xstream;
+    }
+
+    public XStream getResponseXStream() {
+        if (responseXStream == null) {
+            responseXStream = new XStream();
+        }
+
+        return responseXStream;
+    }
+
+    public void setResponseXStream(XStream xstream) {
+        this.responseXStream = xstream;
     }
 
     public String getBasePath() {

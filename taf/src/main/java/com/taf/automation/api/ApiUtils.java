@@ -3,6 +3,8 @@ package com.taf.automation.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taf.automation.ui.support.testng.Attachment;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.QNameMap;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.HttpEntity;
@@ -53,6 +55,7 @@ public class ApiUtils {
      * @param inXML - XML to be beautified
      * @return String
      */
+    @SuppressWarnings({"java:S2755", "java:S3252"})
     public static String prettifyXML(String inXML) {
         try {
             Transformer trans = SAXTransformerFactory.newInstance().newTransformer();
@@ -289,11 +292,11 @@ public class ApiUtils {
      * This normally requires using XStreamAlias on each of the fields.</LI>
      * </OL>
      *
-     * @param xStream       - xStream to configure the aliases
-     * @param definedIn     - the type that declares the field
-     * @param aliasPrefix   - the prefix to append to the fields (a colon will be added)
+     * @param xStream     - xStream to configure the aliases
+     * @param definedIn   - the type that declares the field
+     * @param aliasPrefix - the prefix to append to the fields (a colon will be added)
      */
-    public static void aliasField(XStream xStream, Class definedIn, String aliasPrefix) {
+    public static void aliasField(XStream xStream, Class<?> definedIn, String aliasPrefix) {
         aliasField(xStream, definedIn, aliasPrefix, new HashSet<>());
     }
 
@@ -310,12 +313,30 @@ public class ApiUtils {
      * @param aliasPrefix   - the prefix to append to the fields (a colon will be added)
      * @param excludeFields - fields to exclude in the alias configuration
      */
-    public static void aliasField(XStream xStream, Class definedIn, String aliasPrefix, Set<String> excludeFields) {
+    public static void aliasField(XStream xStream, Class<?> definedIn, String aliasPrefix, Set<String> excludeFields) {
         for (Field item : FieldUtils.getAllFields(definedIn)) {
             if (!excludeFields.contains(item.getName())) {
                 xStream.aliasField(aliasPrefix + ":" + item.getName(), definedIn, item.getName());
             }
         }
+    }
+
+    /**
+     * Get XStream configured to ignore the namespace when processing<BR>
+     * <B>Note: </B> This should be used this a soap response to be able to map to objects with limited annotations
+     *
+     * @param apiDomainObject - API Domain Object to get class to set process annotations for
+     * @param namespace       - Namespace to be removed
+     * @return XStream
+     */
+    public static XStream getXStream(ApiDomainObject apiDomainObject, String namespace) {
+        QNameMap qmap = new QNameMap();
+        qmap.setDefaultNamespace(namespace);
+        qmap.setDefaultPrefix("");
+        StaxDriver staxDriver = new StaxDriver(qmap);
+        XStream xstream = new XStream(staxDriver);
+        xstream.processAnnotations(apiDomainObject.getClass());
+        return xstream;
     }
 
 }

@@ -102,7 +102,7 @@ public class DataAliasesConverterV2 implements Converter {
     }
 
     private void logJexlEvaluationException(Exception e) {
-        if (TestProperties.getInstance().isJexlDebugLogging()) {
+        if (TestProperties.getInstance().isDebugLogging()) {
             LOG.warn(e.getMessage());
         }
     }

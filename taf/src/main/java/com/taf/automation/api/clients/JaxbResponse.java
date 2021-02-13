@@ -3,10 +3,13 @@ package com.taf.automation.api.clients;
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.api.rest.XmlBaseError;
+import com.taf.automation.ui.support.TestProperties;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -20,6 +23,7 @@ import java.io.StringReader;
  * @param <T>
  */
 public class JaxbResponse<T> implements GenericHttpResponse<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(JaxbResponse.class);
     private StatusLine status;
     private String entityXML;
     private T entity;
@@ -32,6 +36,7 @@ public class JaxbResponse<T> implements GenericHttpResponse<T> {
      * @param response       - Response
      * @param responseEntity - Response Entity
      */
+    @SuppressWarnings("java:S112")
     public JaxbResponse(CloseableHttpResponse response, Class<T> responseEntity) {
         status = response.getStatusLine();
         headers = response.getAllHeaders();
@@ -51,6 +56,10 @@ public class JaxbResponse<T> implements GenericHttpResponse<T> {
                 }
             }
         } catch (Exception e) {
+            if (TestProperties.getInstance().isDebugLogging()) {
+                LOG.warn(e.getMessage());
+            }
+
             throw new RuntimeException(e);
         }
     }

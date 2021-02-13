@@ -51,8 +51,8 @@ public class TestProperties {
     @HideInReport
     private EnvironmentsSetup.Environment testEnvironment;
 
-    @Property("jexl.debug.logging")
-    private boolean jexlDebugLogging = false;
+    @Property("debug.logging")
+    private boolean debugLogging = false;
 
     @Property("always.install.drivers")
     private boolean alwaysInstallDrivers = false;
@@ -489,8 +489,8 @@ public class TestProperties {
         return cachedUsers;
     }
 
-    public boolean isJexlDebugLogging() {
-        return jexlDebugLogging;
+    public boolean isDebugLogging() {
+        return debugLogging;
     }
 
     public boolean isAlwaysInstallDrivers() {

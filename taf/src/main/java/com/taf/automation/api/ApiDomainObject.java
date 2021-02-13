@@ -1,5 +1,8 @@
 package com.taf.automation.api;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.api.clients.ApiLoginSession;
 import com.taf.automation.api.clients.UserLogin;
@@ -32,12 +35,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
  * The API Domain Object from which other API domain objects should be extended from
  */
 public class ApiDomainObject extends DataPersistenceV2 {
+    /**
+     * If tokens are tied to roles, then the role should be used as the key, otherwise pick something to make it unique
+     * Notes:  You may want to change the expire timeout to be specific to the application being tested.
+     */
+    private static final LoadingCache<String, String> tokenCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build(new CacheLoader<String, String>() {
+                public String load(String key) {
+                    return key;
+                }
+            });
+
     @Data(alias = "user-email")
     protected String loginUser;
     protected String loginPassword;
@@ -133,7 +149,8 @@ public class ApiDomainObject extends DataPersistenceV2 {
     protected ApiClient getClient() {
         if (client == null) {
             client = new ApiClient();
-            client.setXstream(getXstream());
+            client.setRequestXStream(getXstream());
+            client.setResponseXStream(getXstream());
         }
 
         return client;
@@ -196,6 +213,28 @@ public class ApiDomainObject extends DataPersistenceV2 {
      */
     public DataAliases getGlobalAliases() {
         return dataAliases;
+    }
+
+    /**
+     * This method will get the token from the cache if it exists otherwise it will use client to get the token
+     *
+     * @param client - Client to get token if necessary and client will be updated with token
+     * @param key    - Key to get token.  If tokens are tied to roles, then the role should be used as the key,
+     *               otherwise pick something to make it unique
+     */
+    protected static void cacheToken(ApiLoginSession client, String key) {
+        String token = tokenCache.getIfPresent(key);
+        if (token == null) {
+            synchronized (ApiDomainObject.class) {
+                token = tokenCache.getIfPresent(key);
+                if (token == null) {
+                    token = client.getToken();
+                    tokenCache.put(key, token);
+                }
+            }
+        }
+
+        client.setToken(token);
     }
 
     @SuppressWarnings("squid:S106")

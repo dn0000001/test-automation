@@ -4,13 +4,17 @@ import com.taf.automation.api.JsonUtils;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.api.rest.JsonBaseError;
 import com.taf.automation.api.rest.JsonError;
+import com.taf.automation.ui.support.TestProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MicroServiceResponse<T> implements GenericHttpResponse<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(MicroServiceResponse.class);
     private StatusLine status;
     private String rawJSON;
     private T entity;
@@ -41,6 +45,10 @@ public class MicroServiceResponse<T> implements GenericHttpResponse<T> {
                 }
             }
         } catch (Exception e) {
+            if (TestProperties.getInstance().isDebugLogging()) {
+                LOG.warn(e.getMessage());
+            }
+
             throw new RuntimeException(e);
         }
     }
