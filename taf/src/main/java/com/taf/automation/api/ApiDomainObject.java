@@ -218,17 +218,20 @@ public class ApiDomainObject extends DataPersistenceV2 {
     /**
      * This method will get the token from the cache if it exists otherwise it will use client to get the token
      *
-     * @param client - Client to get token if necessary and client will be updated with token
-     * @param key    - Key to get token.  If tokens are tied to roles, then the role should be used as the key,
-     *               otherwise pick something to make it unique
+     * @param client    - Client to get token if necessary and client will be updated with token
+     * @param key       - Key to get token.  If tokens are tied to roles, then the role should be used as the key,
+     *                  otherwise pick something to make it unique
+     * @param userEmail - User/Email to get token.  (In a real application, this should be in the client)
+     * @param password  - Password to get token.  (In a real application, this should be in the client)
      */
-    protected static void cacheToken(ApiLoginSession client, String key) {
+    protected static void cacheToken(ApiLoginSession client, String key, String userEmail, String password) {
         String token = tokenCache.getIfPresent(key);
         if (token == null) {
             synchronized (ApiDomainObject.class) {
                 token = tokenCache.getIfPresent(key);
                 if (token == null) {
-                    token = client.getToken();
+                    // Example to request token.  In a real application, this would be customized in a specific method
+                    token = client.login(userEmail, password).getEntity().getToken();
                     tokenCache.put(key, token);
                 }
             }
