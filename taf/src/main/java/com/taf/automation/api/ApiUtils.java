@@ -323,7 +323,7 @@ public class ApiUtils {
 
     /**
      * Get XStream configured to ignore the namespace when processing<BR>
-     * <B>Note: </B> This should be used this a soap response to be able to map to objects with limited annotations
+     * <B>Note: </B> This should be used with a soap response to be able to map to objects with limited annotations
      *
      * @param apiDomainObject - API Domain Object to get class to set process annotations for
      * @param namespace       - Namespace to be removed
