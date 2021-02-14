@@ -4,10 +4,13 @@ import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.rest.GenericBaseError;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.api.rest.TextError;
+import com.taf.automation.ui.support.TestProperties;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic Response
@@ -15,6 +18,7 @@ import org.apache.http.util.EntityUtils;
  * @param <T>
  */
 public class GenericResponse<T> implements GenericHttpResponse<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(GenericResponse.class);
     private StatusLine status;
     private String entityAsString;
     private T entity;
@@ -27,7 +31,7 @@ public class GenericResponse<T> implements GenericHttpResponse<T> {
      * @param response       - Response
      * @param responseEntity - Response Entity
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "java:S112"})
     public GenericResponse(CloseableHttpResponse response, Class<T> responseEntity) {
         status = response.getStatusLine();
         headers = response.getAllHeaders();
@@ -47,6 +51,10 @@ public class GenericResponse<T> implements GenericHttpResponse<T> {
                 }
             }
         } catch (Exception e) {
+            if (TestProperties.getInstance().isDebugLogging()) {
+                LOG.warn(e.getMessage());
+            }
+
             throw new RuntimeException(e);
         }
     }

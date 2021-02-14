@@ -5,10 +5,13 @@ import com.taf.automation.api.JsonUtils;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.api.rest.JsonBaseError;
 import com.taf.automation.api.rest.JsonError;
+import com.taf.automation.ui.support.TestProperties;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JSON Response
@@ -16,6 +19,7 @@ import org.apache.http.util.EntityUtils;
  * @param <T>
  */
 public class JsonResponse<T> implements GenericHttpResponse<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(JsonResponse.class);
     private StatusLine status;
     private String entityJSON;
     private T entity;
@@ -42,6 +46,10 @@ public class JsonResponse<T> implements GenericHttpResponse<T> {
                 }
             }
         } catch (Exception e) {
+            if (TestProperties.getInstance().isDebugLogging()) {
+                LOG.warn(e.getMessage());
+            }
+
             throw new RuntimeException(e);
         }
     }

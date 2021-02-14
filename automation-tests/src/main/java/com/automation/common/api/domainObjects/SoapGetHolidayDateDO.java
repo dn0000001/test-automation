@@ -96,9 +96,10 @@ public class SoapGetHolidayDateDO extends ApiDomainObject {
      *       &lt;GetHolidayDateResult&gt;<font class="value">dateTime</font>&lt;/GetHolidayDateResult&gt;
      *     &lt;/GetHolidayDateResponse&gt;
      *   &lt;/soap:Body&gt;
-     * &lt;/soap:Envelope&gt;</pre>
+     * &lt;/soap:Envelope&gt;
+     * </pre>
      */
-    @XStreamAlias("soap:Envelope")
+    @XStreamAlias("Envelope")
     public static class SOAPEnvelopeResponse {
         @XStreamAlias("xmlns:xsi")
         @XStreamAsAttribute
@@ -112,7 +113,7 @@ public class SoapGetHolidayDateDO extends ApiDomainObject {
         @XStreamAsAttribute
         private String soap;
 
-        @XStreamAlias("soap:Body")
+        @XStreamAlias("Body")
         private SOAPBodyResponse body;
     }
 
@@ -175,11 +176,17 @@ public class SoapGetHolidayDateDO extends ApiDomainObject {
         String resourcePath = "/HolidayService_v2/HolidayService2.asmx";
         Helper.log(resourcePath);
 
-        getClient().getXstream().alias("soap:Envelope", SOAPEnvelopeResponse.class);
+        // This should ignore the namespace "soap:" which are in the xml response
+        // Note:  This cannot be tested as the service is no longer available
+        getClient().setResponseXStream(ApiUtils.getXStream(this, "http://schemas.xmlsoap.org/soap/envelope/"));
+
         getClient().setParametersType(ParametersType.XML);
         getClient().setReturnType(ReturnType.XML);
         getClient().setCustomContentType("text/xml; charset=utf-8");
+
+        // Note:  Technically, this not really needed.  See https://blog.postman.com/postman-makes-soap-requests-too/
         ApiUtils.updateForSoap(this, "http://www.holidaywebservice.com/HolidayService_v2/GetHolidayDate");
+
         getResponse().theResponse = getClient().post(resourcePath, getRequest().envelope, SOAPEnvelopeResponse.class, getHeaders());
     }
 

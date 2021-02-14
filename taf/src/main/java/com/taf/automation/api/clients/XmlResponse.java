@@ -4,11 +4,14 @@ import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.api.rest.XmlBaseError;
 import com.taf.automation.api.rest.XmlError;
+import com.taf.automation.ui.support.TestProperties;
 import com.thoughtworks.xstream.XStream;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * XML Response
@@ -17,6 +20,7 @@ import org.apache.http.util.EntityUtils;
  */
 @SuppressWarnings("squid:S00112")
 public class XmlResponse<T> implements GenericHttpResponse<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(XmlResponse.class);
     private StatusLine status;
     private String entityXML;
     private T entity;
@@ -61,6 +65,10 @@ public class XmlResponse<T> implements GenericHttpResponse<T> {
                 }
             }
         } catch (Exception e) {
+            if (TestProperties.getInstance().isDebugLogging()) {
+                LOG.warn(e.getMessage());
+            }
+
             throw new RuntimeException(e);
         }
     }
