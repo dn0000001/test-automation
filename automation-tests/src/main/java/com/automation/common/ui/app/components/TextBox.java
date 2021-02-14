@@ -1,13 +1,17 @@
 package com.automation.common.ui.app.components;
 
+import com.automation.common.ui.app.components.validator.BasicEqualsValidator;
+import com.automation.common.ui.app.components.validator.Validator;
 import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.components.WebComponent;
+import ui.auto.core.data.DataTypes;
 
 public class TextBox extends WebComponent {
     private boolean sendKeysDelay;
     private int delayInMilliseconds;
     boolean clearUsingBackspace;
+    Validator validator;
 
     public TextBox() {
         super();
@@ -42,6 +46,14 @@ public class TextBox extends WebComponent {
         }
     }
 
+    @Override
+    public void validateData(DataTypes validationMethod) {
+        getValidator()
+                .withActual(getValue())
+                .withExpected(validationMethod.getData(this))
+                .validateData();
+    }
+
     /**
      * Enable or Disable the send keys delay
      *
@@ -63,6 +75,18 @@ public class TextBox extends WebComponent {
 
     public void setClearUsingBackspace(boolean clearUsingBackspace) {
         this.clearUsingBackspace = clearUsingBackspace;
+    }
+
+    protected Validator getValidator() {
+        if (validator == null) {
+            validator = new BasicEqualsValidator().withFailureMessage("TextBox Value");
+        }
+
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
     }
 
 }

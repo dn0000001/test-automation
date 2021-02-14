@@ -1,5 +1,7 @@
 package com.automation.common.ui.app.components;
 
+import com.automation.common.ui.app.components.validator.BasicEqualsValidator;
+import com.automation.common.ui.app.components.validator.Validator;
 import com.taf.automation.ui.support.util.LocatorUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.By;
@@ -12,9 +14,6 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * TextBox that enters value and tabs off to save which may make the element stale
  */
@@ -24,6 +23,7 @@ public class TabOffTextBox extends PageComponent {
     private By staticLocator;
     private boolean sendKeysDelay;
     private int delayInMilliseconds;
+    private Validator validator;
 
     public TabOffTextBox() {
         super();
@@ -117,11 +117,24 @@ public class TabOffTextBox extends PageComponent {
         return value;
     }
 
+    private Validator getValidator() {
+        if (validator == null) {
+            validator = new BasicEqualsValidator().withFailureMessage("TabOffTextBox Value");
+        }
+
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
     @Override
     public void validateData(DataTypes validationMethod) {
-        String actual = getValue();
-        String expected = validationMethod.getData(this);
-        assertThat("TabOffTextBox Value", actual, equalTo(expected));
+        getValidator()
+                .withActual(getValue())
+                .withExpected(validationMethod.getData(this))
+                .validateData();
     }
 
 }
