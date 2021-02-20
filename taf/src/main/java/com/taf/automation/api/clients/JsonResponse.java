@@ -26,7 +26,7 @@ public class JsonResponse<T> implements GenericHttpResponse<T> {
     private Header[] headers;
     private JsonBaseError apiError;
 
-    @SuppressWarnings({"unchecked", "squid:S00112"})
+    @SuppressWarnings("squid:S00112")
     public JsonResponse(CloseableHttpResponse response, Class<T> responseEntity) {
         status = response.getStatusLine();
         headers = response.getAllHeaders();
@@ -42,7 +42,7 @@ public class JsonResponse<T> implements GenericHttpResponse<T> {
                 if (status.getStatusCode() < 400) {
                     entity = getEntityFromJson(responseEntity, entityJSON);
                 } else {
-                    apiError = getEntityFromJson((Class<T>) JsonError.class, entityJSON);
+                    apiError = getEntityFromJson(JsonError.class, entityJSON);
                 }
             }
         } catch (Exception e) {
@@ -54,13 +54,8 @@ public class JsonResponse<T> implements GenericHttpResponse<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <P> P getEntityFromJson(Class<T> responseEntity, String entityJSON) {
-        try {
-            return (P) JsonUtils.getGson().fromJson(entityJSON, responseEntity);
-        } catch (Exception e) {
-            return null;
-        }
+    private <P> P getEntityFromJson(Class<P> responseEntity, String entityJSON) {
+        return JsonUtils.getGson().fromJson(entityJSON, responseEntity);
     }
 
     @Override

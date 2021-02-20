@@ -64,18 +64,11 @@ public class JaxbResponse<T> implements GenericHttpResponse<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <P> P getEntityFromXml(String entityName, String entityXML) {
-        JAXBElement<P> element;
-        try {
-            JAXBContext context = JAXBContext.newInstance(entityName);
-            Unmarshaller u = context.createUnmarshaller();
-            StringReader stringReader = new StringReader(entityXML);
-            element = (JAXBElement<P>) u.unmarshal(stringReader);
-        } catch (JAXBException e) {
-            return null;
-        }
-
+    private <P> P getEntityFromXml(String entityName, String entityXML) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(entityName);
+        Unmarshaller u = context.createUnmarshaller();
+        StringReader stringReader = new StringReader(entityXML);
+        JAXBElement<P> element = (JAXBElement<P>) u.unmarshal(stringReader);
         return element.getValue();
     }
 
