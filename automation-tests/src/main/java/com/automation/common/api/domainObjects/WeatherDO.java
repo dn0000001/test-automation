@@ -73,7 +73,7 @@ public class WeatherDO extends ApiDomainObject {
     @Step("Get City Weather By ZIP")
     public void getCityWeatherByZIP() {
         String resourcePath = "/WeatherWS/Weather.asmx/GetCityWeatherByZIP?ZIP=" + request.zip;
-        Helper.log(resourcePath);
+        Helper.log("GET", resourcePath);
         response.weather = getClient().get(resourcePath, null, null);
     }
 
@@ -81,7 +81,7 @@ public class WeatherDO extends ApiDomainObject {
     @Step("POST City Weather By ZIP")
     public void postCityWeatherByZIP() {
         String resourcePath = "/WeatherWS/Weather.asmx/GetCityWeatherByZIP";
-        Helper.log(resourcePath);
+        Helper.log("POST", resourcePath);
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("ZIP", request.zip));
         HttpEntity entity = ApiUtils.getFormHttpEntity(params);
@@ -92,7 +92,7 @@ public class WeatherDO extends ApiDomainObject {
     @Step("SOAP City Weather By ZIP")
     public void soapCityWeatherByZIP() {
         String resourcePath = "/WeatherWS/Weather.asmx";
-        Helper.log(resourcePath);
+        Helper.log("POST", resourcePath);
 
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");

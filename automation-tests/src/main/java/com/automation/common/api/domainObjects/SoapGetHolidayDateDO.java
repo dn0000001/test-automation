@@ -174,7 +174,7 @@ public class SoapGetHolidayDateDO extends ApiDomainObject {
 
     public void sendRequest() {
         String resourcePath = "/HolidayService_v2/HolidayService2.asmx";
-        Helper.log(resourcePath);
+        Helper.log("POST", resourcePath);
 
         // This should ignore the namespace "soap:" which are in the xml response
         // Note:  This cannot be tested as the service is no longer available

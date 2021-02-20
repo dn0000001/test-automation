@@ -101,7 +101,7 @@ public class MultipartEntityDO extends MicroServiceDomainObject {
      */
     public void sendRequest() {
         String resourcePath = getResourcePath();
-        Helper.log("POST " + resourcePath);
+        Helper.log("POST", resourcePath);
         writePostParametersToReport();
         HttpEntity entity = getRequest().getEntity();
         setCustomContentType(""); // Necessary to ensure Content-Type header is not overwritten
