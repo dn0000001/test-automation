@@ -2,6 +2,7 @@ package com.taf.automation.ui.support.util;
 
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
+import org.testng.ITestContext;
 import ru.yandex.qatools.allure.Allure;
 import ru.yandex.qatools.allure.events.TestCaseEvent;
 import ru.yandex.qatools.allure.model.Description;
@@ -64,6 +65,12 @@ public class DomainObjectUtils {
                 context.setDescription(new Description().withType(DescriptionType.MARKDOWN).withValue(description));
             }
         });
+    }
+
+    public static void overwriteTestName(ITestContext context) {
+        DataAliases aliases = new DataAliases();
+        aliases.put("test-name", context.getCurrentXmlTest().getName());
+        overwriteTestParameters(aliases);
     }
 
 }
