@@ -20,7 +20,7 @@ public class DateValidator extends Validator {
         return patterns;
     }
 
-    public Validator withPattern(String pattern) {
+    public DateValidator withPattern(String pattern) {
         getPatterns().add(pattern);
         return this;
     }
@@ -28,6 +28,24 @@ public class DateValidator extends Validator {
     @Override
     public void validateData() {
         assertThat(getFailureMessage(), getActual(), dateEqualTo(getExpected(), getPatterns().toArray(new String[0])));
+    }
+
+    @Override
+    public DateValidator withFailureMessage(String failureMessage) {
+        super.withFailureMessage(failureMessage);
+        return this;
+    }
+
+    @Override
+    public DateValidator withActual(String actual) {
+        super.withActual(actual);
+        return this;
+    }
+
+    @Override
+    public DateValidator withExpected(String expected) {
+        super.withExpected(expected);
+        return this;
     }
 
 }
