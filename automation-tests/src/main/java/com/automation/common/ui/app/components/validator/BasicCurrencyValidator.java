@@ -28,7 +28,7 @@ public class BasicCurrencyValidator extends Validator {
         return locale;
     }
 
-    public Validator withLocale(Locale locale) {
+    public BasicCurrencyValidator withLocale(Locale locale) {
         this.locale = locale;
         return this;
     }
@@ -44,6 +44,24 @@ public class BasicCurrencyValidator extends Validator {
     @Override
     public void validateData() {
         assertThat(getFailureMessage(), getActualBigDecimal(), comparesEqualTo(getExpectedBigDecimal()));
+    }
+
+    @Override
+    public BasicCurrencyValidator withFailureMessage(String failureMessage) {
+        super.withFailureMessage(failureMessage);
+        return this;
+    }
+
+    @Override
+    public BasicCurrencyValidator withActual(String actual) {
+        super.withActual(actual);
+        return this;
+    }
+
+    @Override
+    public BasicCurrencyValidator withExpected(String expected) {
+        super.withExpected(expected);
+        return this;
     }
 
 }
