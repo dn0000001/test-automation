@@ -21,6 +21,7 @@ public class MicroServiceResponse<T> implements GenericHttpResponse<T> {
     private Header[] headers;
     private JsonBaseError error;
 
+    @SuppressWarnings("squid:S00112")
     public MicroServiceResponse(CloseableHttpResponse response, Class<T> responseEntity) {
         status = response.getStatusLine();
         headers = response.getAllHeaders();
@@ -61,8 +62,8 @@ public class MicroServiceResponse<T> implements GenericHttpResponse<T> {
      * @param <P>            - same as response entity type
      * @return entity
      */
-    private <P> P getEntityFromJSON(Class responseEntity, String rawJSON) {
-        return (P) JsonUtils.getGson().fromJson(rawJSON, responseEntity);
+    private <P> P getEntityFromJSON(Class<P> responseEntity, String rawJSON) {
+        return JsonUtils.getGson().fromJson(rawJSON, responseEntity);
     }
 
     @Override

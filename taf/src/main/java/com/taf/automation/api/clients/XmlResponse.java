@@ -73,9 +73,9 @@ public class XmlResponse<T> implements GenericHttpResponse<T> {
         }
     }
 
-    @SuppressWarnings({"unchecked", "squid:S1172"})
-    private <T> T getEntityFromXml(Class<T> responseEntity, String entityXML) {
-        return (T) getXstream().fromXML(entityXML);
+    @SuppressWarnings("squid:S1172")
+    private <P> P getEntityFromXml(Class<P> responseEntity, String entityXML) {
+        return (P) getXstream().fromXML(entityXML);
     }
 
     @Override
