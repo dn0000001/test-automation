@@ -70,20 +70,33 @@ public class SqlServerInstance extends DBInstance {
         jdbcTemplate.setQueryTimeout(queryTimeout);
     }
 
+    @SuppressWarnings({"java:S3011", "java:S899"})
     private void setupForIntegratedSecurity() {
         lockFile.lock();
         try {
+            LOG.info("Setting up for Integrated Security");
+
             URL source = Thread.currentThread().getContextClassLoader().getResource(getResource());
+            File fileSource = File.createTempFile("sqlDriver", "");
+            FileUtils.copyURLToFile(source, fileSource);
+
             File destination = new File(INSTALL_DLL + SEPARATOR + DLL);
-            FileUtils.copyURLToFile(source, destination);
+            if (!FileUtils.contentEquals(fileSource, destination)) {
+                FileUtils.copyFile(fileSource, destination);
+                destination.setExecutable(true, true);
+                LOG.info("Copied DLL to location:  {}{}{}", INSTALL_DLL, SEPARATOR, DLL);
+            }
 
             String path = INSTALL_DLL + ";" + System.getProperty(JAVA_LIBRARY_PATH);
             System.setProperty(JAVA_LIBRARY_PATH, path);
+            LOG.info("Set {}={}", JAVA_LIBRARY_PATH, path);
 
             // Note:  java.library.path is only read once by the JVM.  This is a workaround to get it read again
+            LOG.info("Making the JVM read the properties again");
             final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
             sysPathsField.setAccessible(true);
             sysPathsField.set(null, null);
+            LOG.info("Successfully setup Integrated Security");
         } catch (Exception ex) {
             String reason = "Could not setup for integrated security due to exception:  " + ex.getMessage();
             LOG.error(reason);
