@@ -288,6 +288,27 @@ public class ValidatorTest {
                 .addActionRemoveNonAlphanumeric()
                 .addActionRemoveNonDigits();
         validateFailure(validator.withActual(actual).withExpected(replacement));
+
+        //
+        // Test Java special characters are escaped properly
+        // Note:  Any method that uses StringEscapeUtils.escapeJava is sufficient here.
+        //
+        final String doubleQuote = "\"";
+        String generic = "some random values, with a quote %s%s%s blah blah";
+        String target = "testing";
+        String replaceWith = "to be or not to be";
+        String problemActual = String.format(generic, doubleQuote, target, doubleQuote);
+        String problemExpected = String.format(generic, doubleQuote, replaceWith, doubleQuote);
+        validator.reset().addActionReplace(target, replaceWith);
+        validateSuccess(validator.withActual(problemActual).withExpected(problemExpected));
+
+        generic = "placing a random double quote here %s and put more words %s";
+        target = "12345";
+        replaceWith = "just because";
+        problemActual = String.format(generic, doubleQuote, target);
+        problemExpected = String.format(generic, doubleQuote, replaceWith);
+        validator.reset().addActionReplace(target, replaceWith);
+        validateSuccess(validator.withActual(problemActual).withExpected(problemExpected));
     }
 
 }
