@@ -95,14 +95,13 @@ public class AssertJCondition {
             @Override
             public boolean matches(String value) {
                 Date actual = DateActions.parseDateStrictly(value, parsePatterns);
-                if (actual == null) {
-                    as("actual date (%s) could not be parsed", value);
-                    return false;
-                }
-
                 Date expected = DateActions.parseDateStrictly(expectedDate, parsePatterns);
-                if (expected == null) {
-                    as("expected date (%s) could not be parsed", expectedDate);
+                if (actual == null || expected == null) {
+                    String actualValue = (value == null) ? null : "\"" + value + "\"";
+                    String expectedValue = (expectedDate == null) ? null : "\"" + expectedDate + "\"";
+                    final String error = "able to parse actual <%s> & expected <%s>"
+                            + " into a date for comparison using parse patterns:  %s";
+                    as(error, actualValue, expectedValue, Arrays.toString(parsePatterns));
                     return false;
                 }
 
