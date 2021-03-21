@@ -6,6 +6,7 @@ import com.automation.common.ui.app.components.CheckBoxLabel;
 import com.automation.common.ui.app.components.TextBox;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.JsUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -96,6 +97,49 @@ public class RoboFormLoginPage extends PageObjectV2 {
         makeCheckBoxVisible(rememberBasic.getLocator());
         disableField(rememberBasic);
         assertThat("Remember (Basic)", rememberBasic, componentCannotBeSetFast(VALUE_TO_BE_SET));
+    }
+
+    @Step("Disable Fields And Validate Cannot Set using AssertJ")
+    public void disableFieldsAndValidateCannotSetAssertJ() {
+        disableFieldAndValidateEmailOrUserIdAssertJ();
+        disableFieldAndValidatePasswordAssertJ();
+        disableFieldAndValidateRememberLabelAssertJ();
+        disableFieldAndValidateRememberAJAXAssertJ();
+        disableFieldAndValidateRememberBasicAssertJ();
+    }
+
+    @Step("Disable And Validate:  Email Or User Id using AssertJ")
+    private void disableFieldAndValidateEmailOrUserIdAssertJ() {
+        disableField(emailOrUserId);
+        AssertJUtil.assertThat(emailOrUserId).as("Email Or User Id").cannotBeSetFast("1235");
+    }
+
+    @Step("Disable And Validate:  Password using AssertJ")
+    private void disableFieldAndValidatePasswordAssertJ() {
+        disableField(password);
+        AssertJUtil.assertThat(password).as("Password").cannotBeSetFast("67890");
+    }
+
+    @Step("Disable And Validate:  Remember (Label) using AssertJ")
+    private void disableFieldAndValidateRememberLabelAssertJ() {
+        disableField(rememberLabel.getInput());
+        AssertJUtil.assertThat(rememberLabel).as("Remember (Label)").cannotBeSetFast(VALUE_TO_BE_SET);
+    }
+
+    @Step("Disable And Validate:  Remember (AJAX) using AssertJ")
+    private void disableFieldAndValidateRememberAJAXAssertJ() {
+        // On this page the element is considered hidden, it is necessary to make it displayed for the test
+        makeCheckBoxVisible(rememberAJAX.getLocator());
+        disableField(rememberAJAX);
+        AssertJUtil.assertThat(rememberAJAX).as("Remember (AJAX)").cannotBeSetFast(VALUE_TO_BE_SET);
+    }
+
+    @Step("Disable And Validate:  Remember (Basic) using AssertJ")
+    private void disableFieldAndValidateRememberBasicAssertJ() {
+        // On this page the element is considered hidden, it is necessary to make it displayed for the test
+        makeCheckBoxVisible(rememberBasic.getLocator());
+        disableField(rememberBasic);
+        AssertJUtil.assertThat(rememberBasic).as("Remember (Basic)").cannotBeSetFast(VALUE_TO_BE_SET);
     }
 
 }

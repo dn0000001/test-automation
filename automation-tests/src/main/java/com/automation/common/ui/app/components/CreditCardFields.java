@@ -2,6 +2,7 @@ package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.ComponentPO;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.util.Utils;
@@ -329,6 +330,31 @@ public class CreditCardFields extends ComponentPO {
     private void disableFieldAndValidateCreditCardTypeFake() {
         disableField(creditCardTypeFake);
         assertThat("Credit Card Type (Fake)", creditCardTypeFake, componentCannotBeSet(DISCOVER, this::configureCreditCardType));
+    }
+
+    @Step("Disable Fields And Validate Cannot Set using AssertJ")
+    public void disableFieldsAndValidateCannotSetAssertJ() {
+        disableFieldAndValidateCreditCardNumberAssertJ();
+        disableFieldAndValidateCreditCardTypeAssertJ();
+        disableFieldAndValidateCreditCardTypeFakeAssertJ();
+    }
+
+    @Step("Disable And Validate:  Credit Card Number using AssertJ")
+    private void disableFieldAndValidateCreditCardNumberAssertJ() {
+        disableField(creditCardNumber);
+        AssertJUtil.assertThat(creditCardNumber).as("Credit Card Number").cannotBeSetFast("1235");
+    }
+
+    @Step("Disable And Validate:  Credit Card Type using AssertJ")
+    private void disableFieldAndValidateCreditCardTypeAssertJ() {
+        disableField(creditCardType);
+        AssertJUtil.assertThat(creditCardType).as("Credit Card Type").cannotBeSet(DISCOVER, this::configureCreditCardType);
+    }
+
+    @Step("Disable And Validate:  Credit Card Type (Fake) using AssertJ")
+    private void disableFieldAndValidateCreditCardTypeFakeAssertJ() {
+        disableField(creditCardTypeFake);
+        AssertJUtil.assertThat(creditCardTypeFake).as("Credit Card Type (Fake)").cannotBeSet(DISCOVER, this::configureCreditCardType);
     }
 
 }

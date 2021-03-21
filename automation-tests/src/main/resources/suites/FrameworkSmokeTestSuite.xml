@@ -48,6 +48,12 @@
         </classes>
     </test>
 
+    <test name="AssertJ Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.AssertJTest"/>
+        </classes>
+    </test>
+
     <test name="Herokuapp Data Table Test">
         <classes>
             <class name="com.automation.common.ui.app.tests.HerokuappDataTableTest"/>
