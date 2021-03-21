@@ -8,6 +8,7 @@ import com.automation.common.ui.app.pageObjects.Navigation;
 import com.automation.common.ui.app.pageObjects.RoboFormLoginPage;
 import com.taf.automation.asserts.AssertJCondition;
 import com.taf.automation.asserts.CustomSoftAssertions;
+import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
@@ -29,6 +30,7 @@ import java.util.Locale;
 public class AssertJTest extends TestNGBase {
     private static final String DEC_12_31_2018 = "12/31/2018";
     private static final String DATE_PATTERN = "MM/dd/yyyy";
+    private static final String FAILURE_COUNT = "Failure Count";
 
     @SuppressWarnings("squid:S1068")
     private static class TestObj {
@@ -51,6 +53,40 @@ public class AssertJTest extends TestNGBase {
             return fieldString2;
         }
 
+    }
+
+    @SuppressWarnings("squid:S1068")
+    private static class ObjA {
+        private String field1A;
+        private Boolean field2A;
+        private Integer field3A;
+        private ObjB nestedBinA;
+        private ObjC nestedCinA;
+        private ObjD nestedDinA;
+    }
+
+    @SuppressWarnings("squid:S1068")
+    private static class ObjB {
+        private String field1B;
+        private Boolean field2B;
+        private Integer field3B;
+        private ObjC nestedCinB;
+        private ObjD nestedDinB;
+    }
+
+    @SuppressWarnings("squid:S1068")
+    private static class ObjC {
+        private String field1C;
+        private Boolean field2C;
+        private Integer field3C;
+        private ObjD nestedDinC;
+    }
+
+    @SuppressWarnings("squid:S1068")
+    private static class ObjD {
+        private String field1D;
+        private Boolean field2D;
+        private Integer field3D;
     }
 
     @SuppressWarnings("java:S112")
@@ -827,6 +863,189 @@ public class AssertJTest extends TestNGBase {
         AssertJUtil.assertThat(actual).isEqualToIgnoringNullFields(expected);
 
         AssertJUtil.assertThat(softly.getFailureCount()).as("Aggregator Failure Count").isEqualTo(failures);
+    }
+
+    private void genericValidateAction(CustomSoftAssertions softly, ObjA objA, final Runnable runIfNonNullChecksPass) {
+        boolean allNonNull = validateNotNullNested(softly, objA);
+        if (allNonNull) {
+            runIfNonNullChecksPass.run();
+        }
+    }
+
+    private boolean validateNotNullNested(CustomSoftAssertions softly, ObjA objA) {
+        try {
+            validateNotNullNestedUnchecked(softly, objA);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private void validateNotNullNestedUnchecked(CustomSoftAssertions softly, ObjA objA) {
+        softly.assertThat(objA).as("objA").isNotNull();
+        softly.assertThat(objA.nestedBinA).as("nestedBinA").isNotNull();
+        softly.assertThat(objA.nestedBinA.nestedCinB).as("nestedCinB").isNotNull();
+        softly.assertThat(objA.nestedBinA.nestedCinB.nestedDinC).as("nestedDinC").isNotNull();
+
+        softly.assertThat(objA.nestedCinA).as("nestedCinA").isNotNull();
+        softly.assertThat(objA.nestedCinA.nestedDinC).as("nestedDinC").isNotNull();
+        softly.assertThat(objA.nestedCinA.nestedDinC.field2D).as("field2D").isNotNull();
+        softly.assertThat(objA.nestedCinA.nestedDinC.field2D.toString()).as("use toString on  field2D").isNotNull();
+
+        softly.assertThat(objA.nestedDinA).as("nestedDinA").isNotNull();
+        softly.assertThat(objA.nestedDinA.field3D).as("field3D").isNotNull();
+        softly.assertThat(objA.nestedDinA.field3D.toString()).as("use toString on field3D").isNotNull();
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("AssertJUtil")
+    @Stories("Perform Root Object Is Null Test")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performRootObjectIsNullTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        genericValidateAction(softly, null, () -> AssertJUtil.fail("Root object was null"));
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(1);
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("AssertJUtil")
+    @Stories("Perform Nested Child Object Is Null Test")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performNestedChildObjectIsNullTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        ObjA objA = new ObjA();
+        genericValidateAction(softly, objA, () -> AssertJUtil.fail("nestedBinA was null"));
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(1);
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("AssertJUtil")
+    @Stories("Perform Nested Child Object (level 2) Is Null Test")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performNestedChildObjectLevel2IsNullTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        ObjA objA = new ObjA();
+        objA.nestedBinA = new ObjB();
+        genericValidateAction(softly, objA, () -> AssertJUtil.fail("nestedCinB was null"));
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(1);
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("AssertJUtil")
+    @Stories("Perform Nested Child Object (level 3) Is Null Test")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performNestedChildObjectLevel3IsNullTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        ObjA objA = new ObjA();
+        objA.nestedBinA = new ObjB();
+        objA.nestedBinA.nestedCinB = new ObjC();
+        genericValidateAction(softly, objA, () -> AssertJUtil.fail("nestedDinC was null"));
+
+        // Note: The extra failure is due objA.nestedCinA being null (this causes the exception in the unchecked method)
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(2);
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("AssertJUtil")
+    @Stories("Perform Nested Field Is Null Test")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performNestedFieldIsNullTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        ObjA objA = new ObjA();
+        objA.nestedBinA = new ObjB();
+        objA.nestedBinA.nestedCinB = new ObjC();
+        objA.nestedBinA.nestedCinB.nestedDinC = new ObjD();
+        objA.nestedCinA = new ObjC();
+        objA.nestedCinA.nestedDinC = new ObjD();
+
+        genericValidateAction(softly, objA, () -> AssertJUtil.fail("field2D was null"));
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(1);
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("AssertJUtil")
+    @Stories("Perform Nested Pass Test")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performNestedPassTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        boolean field2D = Rand.randomBoolean();
+        int field3D = Rand.randomRange(0, 1000);
+        ObjA objA = new ObjA();
+        objA.nestedBinA = new ObjB();
+        objA.nestedBinA.nestedCinB = new ObjC();
+        objA.nestedBinA.nestedCinB.nestedDinC = new ObjD();
+        objA.nestedCinA = new ObjC();
+        objA.nestedCinA.nestedDinC = new ObjD();
+        objA.nestedCinA.nestedDinC.field2D = field2D;
+        objA.nestedDinA = new ObjD();
+        objA.nestedDinA.field3D = field3D;
+
+        genericValidateAction(softly, objA, () -> {
+            AssertJUtil.assertThat(objA.nestedCinA.nestedDinC.field2D).as("field2D").isEqualTo(field2D);
+            AssertJUtil.assertThat(objA.nestedDinA.field3D).as("field3D").isEqualTo(field3D);
+        });
+        softly.assertAll();
+    }
+
+    @SuppressWarnings({"java:S3252", "java:S112"})
+    @Features("AssertJUtil")
+    @Stories("Perform Expected Failure Test")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performExpectedFailureTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        softly.expectFailure().assertThat(5000).as("Assertion is supposed to fail #1").isEqualTo(400);
+        softly.assertExpectedFailure();
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(1);
+
+        // Only last assertion matters in the series
+        softly.expectFailure().assertThat(5000).as("Assertion is supposed to fail #2").isEqualTo(5000);
+        softly.expectFailure().assertThat("eee").as("Assertion is supposed to fail #3").isEqualTo("eee");
+        softly.expectFailure().assertThat(true).as("Assertion is supposed to fail #4").isEqualTo(false);
+        softly.assertExpectedFailure();
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(2);
+
+        // As long as at least 1 assertion failure before the assertExpectedFailure it is fine
+        softly.expectFailure().assertThat(3).as("Assertion is supposed to fail #5").isEqualTo(3);
+        softly.assertThat("ccc").as("Assertion is supposed to fail #6").isEqualTo("ccc");
+        softly.assertThat(false).as("Assertion is supposed to fail #7").isEqualTo(true);
+        softly.assertExpectedFailure();
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(3);
+
+        try {
+            softly.expectFailure().assertThat(2).as("Assertion is supposed to fail #8").isEqualTo(2);
+            softly.assertThat("fff").as("Assertion is supposed to fail #9").isEqualTo("fff");
+            softly.assertThat(true).as("Assertion is supposed to fail #10").isEqualTo(true);
+            softly.assertExpectedFailure();
+            throw new RuntimeException("There were no expected failures");
+        } catch (AssertionError ae) {
+            Helper.log("Detected that there were no expected failures properly", true);
+        }
+
+        // Failure count remains the same as no failures in the try/catch block
+        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(3);
+    }
+
+    @SuppressWarnings({"java:S3252", "java:S112"})
+    @Features("AssertJUtil")
+    @Stories("Perform Expected Failure that stops execution")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performExpectedFailureStopsExecutionTest() {
+        try {
+            CustomSoftAssertions softly = new CustomSoftAssertions();
+            softly.expectFailure().assertThat(25).as("Assertion is supposed to fail").isEqualTo(25);
+            softly.assertExpectedFailure();
+            throw new RuntimeException("assertExpectedFailure did not stop execution");
+        } catch (AssertionError ae) {
+            Helper.log("assertExpectedFailure stopped execution as expected", true);
+        }
     }
 
 }
