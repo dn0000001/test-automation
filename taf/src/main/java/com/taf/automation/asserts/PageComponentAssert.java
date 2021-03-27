@@ -19,9 +19,6 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-
 @SuppressWarnings("java:S5803")
 public class PageComponentAssert extends AbstractAssert<PageComponentAssert, PageComponent> {
     public PageComponentAssert(PageComponent actual) {
