@@ -3,6 +3,7 @@ package com.taf.automation.ui.support.util;
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.ConsulInstance;
 import com.taf.automation.api.network.MultiSshSession;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.ComponentPO;
 import com.taf.automation.ui.support.DomainObject;
@@ -1316,6 +1317,298 @@ public class Helper {
 
         // No specific data file exists for the environment
         return readFrom;
+    }
+
+    /**
+     * Checks that the object is NOT null by performing the appropriate assertion using the assertion aggregator.<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>No null pointer exception will occur</LI>
+     * <LI>This method will not throw any assertion exception such that call can cause any assertion failures when they desire</LI>
+     * </UL>
+     *
+     * @param log    - Logging prefix for failures
+     * @param softly - Assertion Aggregator
+     * @param obj    -  Object to perform null check on
+     * @param <T>    Type
+     * @return true if the object is NOT null, false if the object is null
+     */
+    public static <T> boolean isNotNull(String log, CustomSoftAssertions softly, T obj) {
+        softly.assertThat(obj).as(log).isNotNull();
+        return obj != null;
+    }
+
+    /**
+     * Checks that both objects are NOT null by performing the appropriate assertion using the assertion aggregator.<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>No null pointer exception will occur</LI>
+     * <LI>This method will not throw any assertion exception such that call can cause any assertion failures when they desire</LI>
+     * </UL>
+     *
+     * @param log      - Logging prefix for failures
+     * @param softly   - Assertion Aggregator
+     * @param actual   - Actual object
+     * @param expected - Expected object
+     * @param <T>      Type
+     * @return true if both objects are NOT null, otherwise false (at least one of the objects is null)
+     */
+    public static <T> boolean isNotNull(String log, CustomSoftAssertions softly, T actual, T expected) {
+        boolean actualNotNull = isNotNull(log + " - Actual", softly, actual);
+        boolean expectedNotNull = isNotNull(log + " - Expected", softly, expected);
+        return actualNotNull && expectedNotNull;
+    }
+
+    /**
+     * Checks that the list is the specified size performing the appropriate assertion using the assertion aggregator.<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>NO null pointer exception will occur</LI>
+     * <LI>This method will not throw any assertion exception such that call can cause any assertion failures when they desire</LI>
+     * </UL>
+     *
+     * @param log     - Logging prefix for failures
+     * @param softly  - Assertion Aggregator
+     * @param theList - The list to check the size
+     * @param size    - The expected size of the list
+     * @param <T>     List Type
+     * @return true if the list is the expected size, otherwise false (null list or different size)
+     */
+    public static <T> boolean isEqualSize(String log, CustomSoftAssertions softly, List<T> theList, int size) {
+        if (isNotNull(log, softly, theList)) {
+            softly.assertThat(theList.size()).as(log).isEqualTo(size);
+            return theList.size() == size;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks that both lists are the same size by performing the appropriate assertion using the assertion aggregator.<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>NO null pointer exception will occur</LI>
+     * <LI>This method will not throw any assertion exception such that call can cause any assertion failures when they desire</LI>
+     * </UL>
+     *
+     * @param log      - Logging prefix for failures
+     * @param softly   - Assertion Aggregator
+     * @param actual   - Actual list
+     * @param expected - Expected list
+     * @param <T>      List Type
+     * @return true if both lists are the same size, otherwise false (for any null list or size difference)
+     */
+    public static <T> boolean isEqualSize(String log, CustomSoftAssertions softly, List<T> actual, List<T> expected) {
+        if (isNotNull(log, softly, actual, expected)) {
+            softly.assertThat(actual.size()).as(log).isEqualTo(expected.size());
+            return actual.size() == expected.size();
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks that the list is at least the specified size performing the appropriate assertion using the assertion aggregator.<BR>
+     * <B>Notes:</B>
+     * <UL>
+     * <LI>NO null pointer exception will occur</LI>
+     * <LI>This method will not throw any assertion exception such that call can cause any assertion failures when they desire</LI>
+     * </UL>
+     *
+     * @param log     - Logging prefix for failures
+     * @param softly  - Assertion Aggregator
+     * @param theList - The list to check the size
+     * @param size    - The expected minimum size of the list
+     * @param <T>     List Type
+     * @return true if the list size is greater than or equal to the expected size, otherwise false (null list or less than)
+     */
+    public static <T> boolean isAtLeast(String log, CustomSoftAssertions softly, List<T> theList, int size) {
+        if (isNotNull(log, softly, theList)) {
+            softly.assertThat(theList.size()).as(log).isGreaterThanOrEqualTo(size);
+            return theList.size() >= size;
+        }
+
+        return false;
+    }
+
+    /**
+     * Verifies that the actual list contains all the expected subset list items (excluding the specified fields)
+     *
+     * @param type           - Type for logging
+     * @param softly         - Assertion Aggregator
+     * @param actual         - List of actual items
+     * @param expectedSubset - List of expected subset items
+     * @param matchCriteria  - Lambda expression to match an expected item to an actual item.
+     *                       (If a match is found, then all fields will be verified minus null or excluded
+     *                       based on the expected item)
+     * @param excludeFields  - The fields in each item that will be excluded from the comparison
+     * @param <T>            Type
+     */
+    @SuppressWarnings("java:S4276")
+    @Step("Validate the Actual List of {0} contains the Expected items")
+    public static <T> void assertThatSubset(
+            String type,
+            CustomSoftAssertions softly,
+            List<T> actual,
+            List<T> expectedSubset,
+            List<String> excludeFields,
+            BiFunction<T, T, Boolean> matchCriteria
+    ) {
+        // Ensure that null list will cause failure
+        softly.assertThat(actual).as("Actual List of %s was null", type).isNotNull();
+
+        // Prevent null pointer exceptions
+        List<T> actualItems = ObjectUtils.defaultIfNull(actual, new ArrayList<>());
+        List<T> expectedSubsetItems = ObjectUtils.defaultIfNull(expectedSubset, new ArrayList<>());
+        for (int i = 0; i < expectedSubsetItems.size(); i++) {
+            T expectedItem = expectedSubsetItems.get(i);
+
+            // Try to find a matching actual item using the lambda expression
+            T actualItem = actualItems.stream()
+                    .filter(item -> matchCriteria.apply(item, expectedItem))
+                    .findFirst()
+                    .orElse(null);
+
+            // Cause failure if cannot find a matching actual item
+            softly.assertThat(actualItem)
+                    .as("Could not find Expected %s[%s] in the actual list of items", type, i)
+                    .isNotNull();
+
+            // No comparison is applicable as no matching actual item was found
+            if (actualItem == null) {
+                continue;
+            }
+
+            // Compare the matching actual item to the expected item
+            // Note:  The match can be based on a single field.  The verification will be on all the fields
+            // that are non-null and not excluded
+            List<Field> fields = ApiUtils.getFieldsToValidate(expectedItem);
+            for (Field field : fields) {
+                String name = field.getName();
+                if (excludeFields.contains(field.getName())) {
+                    continue;
+                }
+
+                softly.assertThat(actualItem)
+                        .as("%s[%s] - %s", type, i, name)
+                        .isEqualToComparingOnlyGivenFields(expectedItem, name);
+            }
+        }
+    }
+
+    /**
+     * Verifies that the lists are equal (excluding the expected null fields)
+     *
+     * @param type     - Type for logging
+     * @param softly   - Assertion Aggregator
+     * @param actual   - List of actual items
+     * @param expected - List of expected items
+     * @param sortBy   - Comparator to sort by, null skips sorting the lists
+     * @param <T>      - Type
+     */
+    public static <T> void assertThatList(
+            String type,
+            CustomSoftAssertions softly,
+            List<T> actual,
+            List<T> expected,
+            Comparator<T> sortBy
+    ) {
+        assertThatList(type, softly, actual, expected, sortBy, new ArrayList<>());
+    }
+
+    /**
+     * Verifies that the lists are equal (excluding the specified fields or the expected null fields)
+     *
+     * @param type          - Type for logging
+     * @param softly        - Assertion Aggregator
+     * @param actual        - List of actual items
+     * @param expected      - List of expected items
+     * @param sortBy        - Comparator to sort by, null skips sorting the lists
+     * @param excludeFields - The fields in each item that will be excluded from the comparison
+     * @param <T>           - Type
+     */
+    @Step("Validate List of {0}")
+    public static <T> void assertThatList(
+            String type,
+            CustomSoftAssertions softly,
+            List<T> actual,
+            List<T> expected,
+            Comparator<T> sortBy,
+            List<String> excludeFields
+    ) {
+        // Ensure that null list will cause failure
+        softly.assertThat(actual).as("Actual List of %s was null", type).isNotNull();
+
+        // Prevent null pointer exceptions
+        List<T> actualItems = ObjectUtils.defaultIfNull(actual, new ArrayList<>());
+        List<T> expectedItems = ObjectUtils.defaultIfNull(expected, new ArrayList<>());
+        if (sortBy != null) {
+            actualItems.sort(sortBy);
+            expectedItems.sort(sortBy);
+        }
+
+        int initialFailureCount = softly.getFailureCount();
+        softly.assertThat(actualItems.size()).as(type).isEqualTo(expectedItems.size());
+        int currentFailureCount = softly.getFailureCount();
+        if (initialFailureCount != currentFailureCount) {
+            return;
+        }
+
+        for (int i = 0; i < expectedItems.size(); i++) {
+            T expectedItem = expectedItems.get(i);
+            T actualItem = actualItems.get(i);
+            assertThatObject(type + "[" + i + "]", softly, actualItem, expectedItem, excludeFields);
+        }
+    }
+
+    /**
+     * Verifies that all non-null fields of the expected object equals the corresponding actual object
+     *
+     * @param type          - Type for logging
+     * @param softly        - Assertion Aggregator
+     * @param actual        - Actual Object
+     * @param expected      - Expected Object
+     * @param excludeFields - Fields that are excluded from the comparison
+     * @param <T>           - Type
+     */
+    @Step("Validate {0}")
+    public static <T> void assertThatObject(
+            String type,
+            CustomSoftAssertions softly,
+            T actual,
+            T expected,
+            List<String> excludeFields
+    ) {
+        // Get the non-null fields to validate from the expected object
+        List<Field> fields = ApiUtils.getFieldsToValidate(expected);
+        for (Field field : fields) {
+            String name = field.getName();
+            if (excludeFields.contains(field.getName())) {
+                continue;
+            }
+
+            softly.assertThat(actual)
+                    .as("%s - %s", type, name)
+                    .isEqualToComparingOnlyGivenFields(expected, name);
+        }
+    }
+
+    /**
+     * Verifies that all non-null fields of the expected object equals the corresponding actual object
+     *
+     * @param type     - Type for logging
+     * @param softly   - Assertion Aggregator
+     * @param actual   - Actual Object
+     * @param expected - Expected Object
+     * @param <T>      - Type
+     */
+    public static <T> void assertThatObject(
+            String type,
+            CustomSoftAssertions softly,
+            T actual,
+            T expected
+    ) {
+        assertThatObject(type, softly, actual, expected, new ArrayList<>());
     }
 
 }

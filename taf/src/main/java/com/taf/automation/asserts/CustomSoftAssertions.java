@@ -1,14 +1,11 @@
 package com.taf.automation.asserts;
 
-import com.taf.automation.ui.support.util.AssertJUtil;
 import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.pagecomponent.PageComponent;
 
 public class CustomSoftAssertions extends SoftAssertions {
-    private int storedFailureCount;
-
     public WebElementAssert assertThat(WebElement actual) {
         return proxy(WebElementAssert.class, WebElement.class, actual);
     }
@@ -43,25 +40,23 @@ public class CustomSoftAssertions extends SoftAssertions {
     }
 
     /**
-     * Store the failure count for later with the expectation that a failure will have occurred
+     * Perform an assertion that is expected to fail (or an exception to be thrown) but continue execution
+     * without the need to catch the assertion/exception.<BR>
+     * <B>Note: </B> This is for parity with Hamcrest Matchers.not functionality (when AssertJ does not have
+     * a specific assertion to be the same as using not.)
      *
-     * @return CustomSoftAssertions
+     * @param log                   - If the assertion does not fail, then this message is used to log it
+     * @param runAssertionThatFails - Assertion to be run that is expected to fail
+     * @return true if the assertion failed (or any exception was thrown) as expected, otherwise false
      */
-    public CustomSoftAssertions expectFailure() {
-        storedFailureCount = getFailureCount();
-        return this;
-    }
-
-    /**
-     * Verifies that at least 1 expected failure has occurred since the method expectFailure was called
-     *
-     * @return CustomSoftAssertions
-     * @throws AssertionError if there is not at least 1 expected failure
-     */
-    @SuppressWarnings("java:S3252")
-    public CustomSoftAssertions assertExpectedFailure() {
-        AssertJUtil.assertThat(getFailureCount()).as("Expected Failures").isGreaterThan(storedFailureCount);
-        return this;
+    public boolean assertExpectedFailure(String log, final Runnable runAssertionThatFails) {
+        try {
+            runAssertionThatFails.run();
+            fail(log);
+            return false;
+        } catch (Exception | AssertionError ex) {
+            return true;
+        }
     }
 
 }

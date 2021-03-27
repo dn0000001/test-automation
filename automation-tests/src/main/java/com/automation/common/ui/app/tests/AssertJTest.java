@@ -24,7 +24,9 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import ui.auto.core.components.WebComponent;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class AssertJTest extends TestNGBase {
@@ -1000,36 +1002,28 @@ public class AssertJTest extends TestNGBase {
     @Test
     public void performExpectedFailureTest() {
         CustomSoftAssertions softly = new CustomSoftAssertions();
-        softly.expectFailure().assertThat(5000).as("Assertion is supposed to fail #1").isEqualTo(400);
-        softly.assertExpectedFailure();
+        boolean result;
+        String log;
+
+        log = "Assertion is supposed to fail";
+        result = softly.assertExpectedFailure(log, () -> AssertJUtil.assertThat(5000).isEqualTo(400));
+        AssertJUtil.assertThat(result).as(log).isTrue();
+
+        log = "Exception is thrown";
+        result = softly.assertExpectedFailure(log, () -> { throw new RuntimeException("Testing"); });
+        AssertJUtil.assertThat(result).as(log).isTrue();
+
+        // No errors at this point
+        softly.assertAll();
+
+        log = "Assertion was successful";
+        result = softly.assertExpectedFailure(log, () -> AssertJUtil.assertThat("").isEmpty());
+        AssertJUtil.assertThat(result).as(log).isFalse();
+
+        // There is a failure now
         AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(1);
 
-        // Only last assertion matters in the series
-        softly.expectFailure().assertThat(5000).as("Assertion is supposed to fail #2").isEqualTo(5000);
-        softly.expectFailure().assertThat("eee").as("Assertion is supposed to fail #3").isEqualTo("eee");
-        softly.expectFailure().assertThat(true).as("Assertion is supposed to fail #4").isEqualTo(false);
-        softly.assertExpectedFailure();
-        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(2);
-
-        // As long as at least 1 assertion failure before the assertExpectedFailure it is fine
-        softly.expectFailure().assertThat(3).as("Assertion is supposed to fail #5").isEqualTo(3);
-        softly.assertThat("ccc").as("Assertion is supposed to fail #6").isEqualTo("ccc");
-        softly.assertThat(false).as("Assertion is supposed to fail #7").isEqualTo(true);
-        softly.assertExpectedFailure();
-        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(3);
-
-        try {
-            softly.expectFailure().assertThat(2).as("Assertion is supposed to fail #8").isEqualTo(2);
-            softly.assertThat("fff").as("Assertion is supposed to fail #9").isEqualTo("fff");
-            softly.assertThat(true).as("Assertion is supposed to fail #10").isEqualTo(true);
-            softly.assertExpectedFailure();
-            throw new RuntimeException("There were no expected failures");
-        } catch (AssertionError ae) {
-            Helper.log("Detected that there were no expected failures properly", true);
-        }
-
-        // Failure count remains the same as no failures in the try/catch block
-        AssertJUtil.assertThat(softly.getFailureCount()).as(FAILURE_COUNT).isEqualTo(3);
+        AssertJUtil.assertExpectedFailure("Should not stop execution", () -> AssertJUtil.assertThat(25).isEqualTo(24));
     }
 
     @SuppressWarnings({"java:S3252", "java:S112"})
@@ -1039,13 +1033,119 @@ public class AssertJTest extends TestNGBase {
     @Test
     public void performExpectedFailureStopsExecutionTest() {
         try {
-            CustomSoftAssertions softly = new CustomSoftAssertions();
-            softly.expectFailure().assertThat(25).as("Assertion is supposed to fail").isEqualTo(25);
-            softly.assertExpectedFailure();
+            AssertJUtil.assertExpectedFailure("Assertion is supposed to fail", () -> AssertJUtil.assertThat(25).isEqualTo(25));
             throw new RuntimeException("assertExpectedFailure did not stop execution");
         } catch (AssertionError ae) {
             Helper.log("assertExpectedFailure stopped execution as expected", true);
         }
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("Helper")
+    @Stories("Perform Helper.isEqualSize tests")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performIsEqualSizeTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        List<String> actual;
+        List<String> expected;
+        boolean result;
+
+        actual = null;
+        expected = null;
+        result = Helper.isEqualSize("Both null", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Both null").isFalse();
+
+        expected = new ArrayList<>();
+        result = Helper.isEqualSize("Only Actual null", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Only Actual null").isFalse();
+
+        actual = new ArrayList<>();
+        expected = null;
+        result = Helper.isEqualSize("Only Expected null", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Only Expected null").isFalse();
+
+        actual = new ArrayList<>();
+        expected = new ArrayList<>();
+        result = Helper.isEqualSize("Both Empty", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Both Empty").isTrue();
+
+        actual = new ArrayList<>();
+        actual.add("aaa");
+        expected = new ArrayList<>();
+        expected.add("bbb");
+        result = Helper.isEqualSize("Non-Empty Same Size", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Non-Empty Same Size").isTrue();
+
+        actual.add("ccc");
+        result = Helper.isEqualSize("Actual Larger", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Actual Larger").isFalse();
+
+        expected.add("ddd");
+        expected.add("eee");
+        result = Helper.isEqualSize("Expected Larger", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Expected Larger").isFalse();
+
+        actual.add("fff");
+        result = Helper.isEqualSize("Equal Again", softly, actual, expected);
+        AssertJUtil.assertThat(result).as("Equal Again").isTrue();
+    }
+
+    @SuppressWarnings("java:S3252")
+    @Features("Helper")
+    @Stories("Perform Helper.isAtLeast tests")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void performIsAtLeastTest() {
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        List<String> actual;
+        boolean result;
+
+        actual = null;
+        result = Helper.isAtLeast("null - size 0", softly, actual, -1);
+        AssertJUtil.assertThat(result).as("null - size 0").isFalse();
+
+        result = Helper.isAtLeast("null - size -1", softly, actual, 0);
+        AssertJUtil.assertThat(result).as("null - size -1").isFalse();
+
+        result = Helper.isAtLeast("null - size 1", softly, actual, 1);
+        AssertJUtil.assertThat(result).as("null - size 1").isFalse();
+
+        actual = new ArrayList<>();
+        result = Helper.isAtLeast("empty -1", softly, actual, -1);
+        AssertJUtil.assertThat(result).as("empty -1").isTrue();
+
+        result = Helper.isAtLeast("empty zero", softly, actual, 0);
+        AssertJUtil.assertThat(result).as("empty zero").isTrue();
+
+        result = Helper.isAtLeast("empty +1", softly, actual, 1);
+        AssertJUtil.assertThat(result).as("empty +1").isFalse();
+
+        actual.add("aaa");
+        result = Helper.isAtLeast("list size=1, expect=-1", softly, actual, -1);
+        AssertJUtil.assertThat(result).as("list size=1, expect=-1").isTrue();
+
+        result = Helper.isAtLeast("list size=1, expect=0", softly, actual, 0);
+        AssertJUtil.assertThat(result).as("list size=1, expect=0").isTrue();
+
+        result = Helper.isAtLeast("list size=1, expect=+1", softly, actual, 1);
+        AssertJUtil.assertThat(result).as("list size=1, expect=+1").isTrue();
+
+        actual.add("bbb");
+        result = Helper.isAtLeast("list size=2, expect=-1", softly, actual, -1);
+        AssertJUtil.assertThat(result).as("list size=2, expect=-1").isTrue();
+
+        result = Helper.isAtLeast("list size=2, expect=0", softly, actual, 0);
+        AssertJUtil.assertThat(result).as("list size=2, expect=0").isTrue();
+
+        result = Helper.isAtLeast("list size=2, expect=+1", softly, actual, 1);
+        AssertJUtil.assertThat(result).as("list size=2, expect=+1").isTrue();
+
+        result = Helper.isAtLeast("list size=2, expect=+2", softly, actual, 2);
+        AssertJUtil.assertThat(result).as("list size=2, expect=+2").isTrue();
+
+        result = Helper.isAtLeast("list size=2, expect=+3", softly, actual, 3);
+        AssertJUtil.assertThat(result).as("list size=2, expect=+3").isFalse();
     }
 
 }

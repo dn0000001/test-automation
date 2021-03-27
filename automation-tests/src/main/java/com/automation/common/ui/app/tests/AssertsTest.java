@@ -8,6 +8,7 @@ import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.automation.common.ui.app.pageObjects.RoboFormLoginPage;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertsUtil;
@@ -1357,6 +1358,7 @@ public class AssertsTest extends TestNGBase {
     @Test
     public void verifyObjectsTest() {
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         TestObj actual = new TestObj();
@@ -1386,6 +1388,7 @@ public class AssertsTest extends TestNGBase {
 
         Helper.assertThat(null, actual, expected);
         Helper.assertThat(aggregator, actual, expected);
+        Helper.assertThatObject("TestObj", softly, actual, expected);
 
         // Some fields skipped
         expected.fieldString1 = null;
@@ -1401,6 +1404,7 @@ public class AssertsTest extends TestNGBase {
 
         Helper.assertThat(null, actual, expected);
         Helper.assertThat(aggregator, actual, expected);
+        Helper.assertThatObject("TestObj", softly, actual, expected);
 
         // All fields verified, 1 failure
         expected.fieldString1 = "abc";
@@ -1416,6 +1420,7 @@ public class AssertsTest extends TestNGBase {
 
         try {
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures++;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  fieldString2");
@@ -1428,6 +1433,7 @@ public class AssertsTest extends TestNGBase {
             expected.fieldInteger1 = 10;
 
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures++;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  fieldInteger1");
@@ -1440,6 +1446,7 @@ public class AssertsTest extends TestNGBase {
             expected.fieldInt2 = 40;
 
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures++;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  fieldInt2");
@@ -1452,6 +1459,7 @@ public class AssertsTest extends TestNGBase {
             expected.fieldBoolean1 = false;
 
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures++;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  fieldBoolean1");
@@ -1464,6 +1472,7 @@ public class AssertsTest extends TestNGBase {
             expected.fieldBool2 = true;
 
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures++;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  fieldBool2");
@@ -1483,6 +1492,7 @@ public class AssertsTest extends TestNGBase {
             expected.fieldBool1 = false;
 
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures += 5;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  multiple failures");
@@ -1505,6 +1515,7 @@ public class AssertsTest extends TestNGBase {
             expected.fieldBoolean1 = null;
 
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures++;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  single failure with skip");
@@ -1536,6 +1547,7 @@ public class AssertsTest extends TestNGBase {
             expected.fieldBool1 = false;
 
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             failures += 5;
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail:  multiple failures with skip");
@@ -1556,6 +1568,7 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat(null, actual, expected);
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -1564,6 +1577,7 @@ public class AssertsTest extends TestNGBase {
     @Test
     public void verifyObjectsWithExcludedFieldsTest() {
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         TestObj actual = new TestObj();
@@ -1602,6 +1616,7 @@ public class AssertsTest extends TestNGBase {
         actual.fieldString1 = "excluded to prevent failure";
         Helper.assertThat(null, actual, expected, excludeSingleField);
         Helper.assertThat(aggregator, actual, expected, excludeSingleField);
+        Helper.assertThatObject("TestObj", softly, actual, expected, excludeSingleField);
         actual.fieldString1 = "abc";
 
         // Success when there would be a failure on a multiple fields in the excluded list
@@ -1609,6 +1624,7 @@ public class AssertsTest extends TestNGBase {
         actual.fieldBoolean2 = true;
         Helper.assertThat(null, actual, expected, excludeFields);
         Helper.assertThat(aggregator, actual, expected, excludeFields);
+        Helper.assertThatObject("TestObj", softly, actual, expected, excludeFields);
         actual.fieldString2 = "xyz";
         actual.fieldBoolean2 = false;
 
@@ -1618,6 +1634,7 @@ public class AssertsTest extends TestNGBase {
             actual.fieldString2 = "causes failure";
 
             Helper.assertThat(aggregator, actual, expected, excludeSingleField);
+            Helper.assertThatObject("TestObj", softly, actual, expected, excludeSingleField);
             failures++;
             Helper.assertThat(null, actual, expected, excludeSingleField);
             throw new RuntimeException("Assertion did not fail:  failure when excluded fields has 1 item");
@@ -1634,6 +1651,7 @@ public class AssertsTest extends TestNGBase {
             actual.fieldBoolean2 = true;
 
             Helper.assertThat(aggregator, actual, expected, excludeFields);
+            Helper.assertThatObject("TestObj", softly, actual, expected, excludeFields);
             failures += 3;
             Helper.assertThat(null, actual, expected, excludeFields);
             throw new RuntimeException("Assertion did not fail:  failure when excluded fields has multiple items");
@@ -1642,6 +1660,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -1650,6 +1669,7 @@ public class AssertsTest extends TestNGBase {
     @Test
     public void verifyObjectsWithNullTest() {
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         TestObj actual = null;
@@ -1669,6 +1689,7 @@ public class AssertsTest extends TestNGBase {
         try {
             failures += 9; // 9 expected fields are tested
             Helper.assertThat(aggregator, actual, expected);
+            Helper.assertThatObject("TestObj", softly, actual, expected);
             Helper.assertThat(null, actual, expected);
             throw new RuntimeException("Assertion did not fail with actual object is null");
         } catch (AssertionError ae) {
@@ -1676,6 +1697,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -1691,6 +1713,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -1732,6 +1758,97 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        softly.assertAll();
+    }
+
+    @Features("AssertAggregator")
+    @Stories("One List Ignore")
+    @Severity(SeverityLevel.CRITICAL)
+    @Test
+    public void verifyOneListIgnoreTest() {
+        TestObj a1 = new TestObj();
+        a1.fieldString1 = "abc";
+        a1.fieldString2 = "xyz"; // Different than expected
+        a1.fieldInteger1 = 1;
+        a1.fieldInteger2 = 2;
+        a1.fieldInt1 = 3;
+        a1.fieldInt2 = 4;
+        a1.fieldBoolean1 = true;
+        a1.fieldBoolean2 = false;
+        a1.fieldBool1 = true;
+        a1.fieldBool2 = false;
+
+        TestObj e1 = new TestObj();
+        e1.fieldString1 = "abc";
+        e1.fieldString2 = null; // Skip field
+        e1.fieldInteger1 = 1;
+        e1.fieldInteger2 = 2;
+        e1.fieldInt1 = 3;
+        e1.fieldInt2 = 4;
+        e1.fieldBoolean1 = true;
+        e1.fieldBoolean2 = false;
+        e1.fieldBool1 = true;
+        e1.fieldBool2 = false;
+
+        List<TestObj> actual = new ArrayList<>();
+        actual.add(a1);
+
+        List<TestObj> expected = new ArrayList<>();
+        expected.add(e1);
+
+        AssertAggregator aggregator = new AssertAggregator();
+        Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        softly.assertAll();
+
+        //
+        // Reverse the compare but exclude the field that would cause a failure
+        //
+        List<String> excludeFields = new ArrayList<>();
+        excludeFields.add("fieldString2");
+
+        Helper.assertThat("TestObj", null, expected, actual, Comparator.comparing(TestObj::getFieldString1), excludeFields);
+        Helper.assertThat("TestObj", aggregator, expected, actual, Comparator.comparing(TestObj::getFieldString1), excludeFields);
+        Helper.assertThat(aggregator);
+
+        Helper.assertThatList("TestObj", softly, expected, actual, Comparator.comparing(TestObj::getFieldString1), excludeFields);
+        softly.assertAll();
+
+        // Reverse the compare which is expected to fail
+        int failures = 0;
+        try {
+            Helper.assertThat("TestObj", aggregator, expected, actual, Comparator.comparing(TestObj::getFieldString1));
+            Helper.assertThatList("TestObj", softly, expected, actual, Comparator.comparing(TestObj::getFieldString1));
+            failures++;
+            Helper.assertThat("TestObj", null, expected, actual, Comparator.comparing(TestObj::getFieldString1));
+            throw new RuntimeException("Assertion did not fail with fieldString2 not equal");
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected with fieldString2 not equal", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
+
+        // Make difference that is not excluded
+        a1.fieldBool1 = !e1.fieldBool1;
+        try {
+            Helper.assertThat("TestObj", aggregator, expected, actual, Comparator.comparing(TestObj::getFieldString1), excludeFields);
+            Helper.assertThatList("TestObj", softly, expected, actual, Comparator.comparing(TestObj::getFieldString1), excludeFields);
+            failures++;
+            Helper.assertThat("TestObj", null, expected, actual, Comparator.comparing(TestObj::getFieldString1), excludeFields);
+        } catch (AssertionError ae) {
+            Helper.log("Assertion failed as expected with fieldBool1 not equal", true);
+        }
+
+        assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -1770,18 +1887,21 @@ public class AssertsTest extends TestNGBase {
         expected.add(e1);
 
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
-            throw new RuntimeException("Assertion did not fail with actual object is null");
+            throw new RuntimeException("Assertion did not fail with fieldString2 not equal");
         } catch (AssertionError ae) {
-            Helper.log("Assertion failed as expected with actual object is null)", true);
+            Helper.log("Assertion failed as expected with fieldString2 not equal", true);
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -1849,6 +1969,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -1968,6 +2092,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -1976,6 +2104,7 @@ public class AssertsTest extends TestNGBase {
     @Test
     public void verifyMultiListFailTest() {
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         TestObj a1 = new TestObj();
@@ -2088,6 +2217,7 @@ public class AssertsTest extends TestNGBase {
 
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1));
+            Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1));
             throw new RuntimeException("Assertion did not fail with multiple list items");
@@ -2096,6 +2226,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2104,6 +2235,7 @@ public class AssertsTest extends TestNGBase {
     @Test
     public void verifyMultiListFailWithSortTest() {
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         TestObj a1 = new TestObj();
@@ -2216,6 +2348,7 @@ public class AssertsTest extends TestNGBase {
 
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             failures += 2;
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             throw new RuntimeException("Assertion did not fail with multiple list items when sorting");
@@ -2224,6 +2357,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2232,6 +2366,7 @@ public class AssertsTest extends TestNGBase {
     @Test
     public void verifyDifferentListFailMoreActualTest() {
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         TestObj a1 = new TestObj();
@@ -2331,6 +2466,7 @@ public class AssertsTest extends TestNGBase {
 
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             throw new RuntimeException("Assertion did not fail when there were more actual list items");
@@ -2339,6 +2475,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2347,6 +2484,7 @@ public class AssertsTest extends TestNGBase {
     @Test
     public void verifyDifferentListFailMoreExpectedTest() {
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         int failures = 0;
 
         TestObj a1 = new TestObj();
@@ -2446,6 +2584,7 @@ public class AssertsTest extends TestNGBase {
 
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
+            Helper.assertThatList("TestObj", softly, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, Comparator.comparing(TestObj::getFieldString1).thenComparing(TestObj::getFieldString2));
             throw new RuntimeException("Assertion did not fail when there were more expected list items");
@@ -2454,6 +2593,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2469,6 +2609,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -2484,6 +2628,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -2499,6 +2647,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -2511,8 +2663,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 0;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifySingleFailTest");
@@ -2521,6 +2675,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2533,8 +2688,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 0;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifySingleNoMatchTest");
@@ -2543,6 +2700,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2559,8 +2717,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 1;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F1N0");
         } catch (AssertionError ae) {
@@ -2568,6 +2728,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2583,6 +2744,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -2599,8 +2764,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 1;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F0N1");
         } catch (AssertionError ae) {
@@ -2608,6 +2775,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2621,8 +2789,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 2;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F0N2");
         } catch (AssertionError ae) {
@@ -2630,6 +2800,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2646,8 +2817,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 2;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F1N1");
         } catch (AssertionError ae) {
@@ -2655,6 +2828,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2668,8 +2842,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 2;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F2N0");
         } catch (AssertionError ae) {
@@ -2677,6 +2853,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2694,8 +2871,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 2;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F1N1");
         } catch (AssertionError ae) {
@@ -2703,6 +2882,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2719,8 +2899,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 1;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P2F1N0");
         } catch (AssertionError ae) {
@@ -2728,6 +2910,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2744,8 +2927,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 2;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F2N0");
         } catch (AssertionError ae) {
@@ -2753,6 +2938,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2769,8 +2955,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 1;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P2F0N1");
         } catch (AssertionError ae) {
@@ -2778,6 +2966,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2794,8 +2983,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 2;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P1F0N2");
         } catch (AssertionError ae) {
@@ -2803,6 +2994,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2819,8 +3011,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 3;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F2N1");
         } catch (AssertionError ae) {
@@ -2828,6 +3022,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2844,8 +3039,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 3;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F1N2");
         } catch (AssertionError ae) {
@@ -2853,6 +3050,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2868,6 +3066,10 @@ public class AssertsTest extends TestNGBase {
         Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
         Helper.assertThat(aggregator);
+
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+        softly.assertAll();
     }
 
     @Features("AssertAggregator")
@@ -2881,8 +3083,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 3;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F3N0");
         } catch (AssertionError ae) {
@@ -2890,6 +3094,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2903,8 +3108,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 3;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyMultiExpectedSubsetTest_P0F0N3");
         } catch (AssertionError ae) {
@@ -2912,6 +3119,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2925,8 +3133,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 0;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyFailWhenEmptyActualItemsTest");
@@ -2935,6 +3145,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2947,8 +3158,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 0;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             failures += 2;
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyFailWhenNullActualItemsTest");
@@ -2957,6 +3170,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertAggregator")
@@ -2969,8 +3183,10 @@ public class AssertsTest extends TestNGBase {
         List<String> excludeFields = new ArrayList<>();
         int failures = 0;
         AssertAggregator aggregator = new AssertAggregator();
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         try {
             Helper.assertThat("TestObj", aggregator, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
+            Helper.assertThatSubset("TestObj", softly, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             failures++;
             Helper.assertThat("TestObj", null, actual, expected, excludeFields, (a, e) -> StringUtils.equals(a.fieldString1, e.fieldString1));
             throw new RuntimeException("Assertion did not fail for verifyFailWhenEmptyActualItemsTest");
@@ -2979,6 +3195,7 @@ public class AssertsTest extends TestNGBase {
         }
 
         assertThat("Aggregator Failure Count", failures, equalTo(aggregator.getFailureCount()));
+        assertThat("AssertJ Failure Count", failures, equalTo(softly.getFailureCount()));
     }
 
     @Features("AssertsUtil")
