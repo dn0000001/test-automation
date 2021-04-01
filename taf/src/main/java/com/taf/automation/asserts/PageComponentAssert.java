@@ -13,6 +13,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
@@ -252,6 +253,30 @@ public class PageComponentAssert extends AbstractAssert<PageComponentAssert, Pag
 
         if (!ready) {
             failWithMessage("Expected component to be clickable before negative timeout");
+        }
+
+        return this;
+    }
+
+    /**
+     * Verifies that the component is clickable before timeout
+     *
+     * @param wait - WebDriverWait
+     * @return PageComponentAssert
+     */
+    public PageComponentAssert isClickable(WebDriverWait wait) {
+        isNotNull();
+
+        boolean ready;
+        try {
+            wait.until(ExpectedConditionsUtil.ready(actual));
+            ready = true;
+        } catch (Exception | AssertionError ex) {
+            ready = false;
+        }
+
+        if (!ready) {
+            failWithMessage("Expected component to be clickable before timeout but was NOT");
         }
 
         return this;
