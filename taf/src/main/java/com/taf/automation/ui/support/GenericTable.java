@@ -2,6 +2,7 @@ package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.conditional.Criteria;
 import com.taf.automation.ui.support.conditional.CriteriaMaker;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.JsUtils;
@@ -18,25 +19,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Generic class for representing a page containing a table
  */
+@SuppressWarnings("java:S3252")
 public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
     private static final String NO_PAGINATION = "Pagination is not supported by this table";
 
     @XStreamOmitField
     private List<T> tableRows;
 
-    public GenericTable() {
+    protected GenericTable() {
         super();
     }
 
-    public GenericTable(TestContext context) {
+    protected GenericTable(TestContext context) {
         super(context);
     }
 
@@ -71,7 +68,9 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
 
             // Validate that the row is unique
             String rowID = getRowKey(all.get(i), getAttributeToExtractRowKey());
-            assertThat("Row Index (" + i + ") missing " + getAttributeToExtractRowKey() + " attribute", rowID, not(isEmptyOrNullString()));
+            AssertJUtil.assertThat(rowID)
+                    .as("Row Index (" + i + ") missing " + getAttributeToExtractRowKey() + " attribute")
+                    .isNotBlank();
 
             T row = getNewRowInstance();
             row.updateRowKey(rowID);
@@ -111,7 +110,9 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
             }
         }
 
-        assertThat("Could not find Row with " + columnName + " matching regular expression:  " + identifier, match, notNullValue());
+        AssertJUtil.assertThat(match)
+                .as("Could not find Row with " + columnName + " matching regular expression:  " + identifier)
+                .isNotNull();
         return match;
     }
 
@@ -137,7 +138,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
      * @return a matching row
      */
     public T findTableRow(T rowToMatch, boolean mustExist) {
-        assertThat("The row to match must be specified", rowToMatch, notNullValue());
+        AssertJUtil.assertThat(rowToMatch).as("The row to match must be specified").isNotNull();
 
         if (rowToMatch.getContext() == null) {
             rowToMatch.initPage(getContext());
@@ -152,7 +153,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
         }
 
         if (mustExist) {
-            assertThat("Could not find a matching row:  " + rowToMatch, match, notNullValue());
+            AssertJUtil.assertThat(match).as("Could not find a matching row:  " + rowToMatch).isNotNull();
         }
 
         return match;
@@ -211,7 +212,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
         }
 
         if (mustExist) {
-            assertThat("Could not find a matching row:  " + rowToMatch, match, notNullValue());
+            AssertJUtil.assertThat(match).as("Could not find a matching row:  " + rowToMatch).isNotNull();
         }
 
         return match;
@@ -221,7 +222,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
      * @return the max iterations to prevent an infinite loop
      */
     protected int getMaxIterations() {
-        assertThat(NO_PAGINATION, false);
+        AssertJUtil.fail(NO_PAGINATION);
         return 0;
     }
 
@@ -243,7 +244,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
      * @return true if there is a next page else false
      */
     protected boolean isNextPage() {
-        assertThat(NO_PAGINATION, false);
+        AssertJUtil.fail(NO_PAGINATION);
         return false;
     }
 
@@ -252,7 +253,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
      */
     @SuppressWarnings("java:S4144")
     protected boolean isPreviousPage() {
-        assertThat(NO_PAGINATION, false);
+        AssertJUtil.fail(NO_PAGINATION);
         return false;
     }
 
@@ -273,14 +274,14 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
      * Click Next Page which needs to take the actions to move to the next page and wait for the page to be loaded
      */
     protected void clickNextPage() {
-        assertThat(NO_PAGINATION, false);
+        AssertJUtil.fail(NO_PAGINATION);
     }
 
     /**
      * Click Previous Page which needs to take the actions to move to the next page and wait for the page to be loaded
      */
     protected void clickPreviousPage() {
-        assertThat(NO_PAGINATION, false);
+        AssertJUtil.fail(NO_PAGINATION);
     }
 
     /**
@@ -292,7 +293,7 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
      * @return whether they match
      */
     protected boolean isMatch(T actualRow, T rowToMatch) {
-        assertThat("Implementation does not support entire row matching", false);
+        AssertJUtil.fail("Implementation does not support entire row matching");
         return false;
     }
 

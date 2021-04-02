@@ -3,15 +3,14 @@ package com.taf.automation.api.network;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 
 /**
  * This class creates an SSH Session to the first host and from that session initializes port forwarding to the second host
  */
+@SuppressWarnings("java:S3252")
 public class MultiSshSession {
     private static final Logger LOG = LoggerFactory.getLogger(MultiSshSession.class);
     private static final String LOCALHOST = "localhost";
@@ -92,7 +91,7 @@ public class MultiSshSession {
             LOG.error("Create SSH Session failure:  ", e);
         }
 
-        assertThat("SSH Session setup failed as port was less than 1", assignedPort, greaterThan(0));
+        AssertJUtil.assertThat(assignedPort).as("SSH Session setup failed as port was less than 1").isGreaterThan(0);
         return assignedPort;
     }
 

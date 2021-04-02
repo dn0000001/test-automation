@@ -2,6 +2,7 @@ package com.taf.automation.api.clients;
 
 import com.taf.automation.api.network.MultiSshSession;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -14,10 +15,7 @@ import org.apache.http.ssl.SSLContexts;
 
 import javax.net.ssl.SSLContext;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.notNullValue;
-
+@SuppressWarnings("java:S3252")
 public class HttpRequester {
     private CloseableHttpClient client;
     private HttpHost targetHost;
@@ -29,8 +27,10 @@ public class HttpRequester {
      * @param session - Session that is connected already
      */
     public HttpRequester(MultiSshSession session) {
-        assertThat("Session", session, notNullValue());
-        assertThat("Session was not connected as assigned port was less than 1", session.getAssignedPort(), greaterThan(0));
+        AssertJUtil.assertThat(session).as("Session").isNotNull();
+        AssertJUtil.assertThat(session.getAssignedPort())
+                .as("Session was not connected as assigned port was less than 1")
+                .isGreaterThan(0);
         targetHost = HttpHost.create(session.getLocalHost() + ":" + session.getAssignedPort());
         client = buildClient();
         clientContext = buildClientContext(targetHost);

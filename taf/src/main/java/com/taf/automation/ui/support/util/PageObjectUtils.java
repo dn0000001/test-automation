@@ -13,12 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * This class provides a generic way to modify the test data using the TestNG parameters when you are using a base
  * template data file.
  */
+@SuppressWarnings("java:S3252")
 public class PageObjectUtils {
     private static final String ADD_DATA_PREFIX = "add-data-";
     private static final String REMOVE_DATA_PREFIX = "remove-data-";
@@ -154,7 +153,7 @@ public class PageObjectUtils {
         try {
             writeField(field, obj, value);
         } catch (Exception ex) {
-            assertThat(String.format(error, add ? "add" : "remove", rawParameter, ex.getMessage()), false);
+            AssertJUtil.fail(error, add ? "add" : "remove", rawParameter, ex.getMessage());
         }
     }
 

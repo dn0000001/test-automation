@@ -2,6 +2,7 @@ package com.taf.automation.ui.support;
 
 import com.taf.automation.locking.UserLockManager;
 import com.taf.automation.ui.support.csv.CsvTestData;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.DataInstillerUtils;
 import com.taf.automation.ui.support.util.Helper;
@@ -16,8 +17,7 @@ import ui.auto.core.support.DomainObjectModel;
 import java.io.File;
 import java.net.URL;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
+@SuppressWarnings("java:S3252")
 public class DomainObject extends DomainObjectModel {
     public DomainObject(TestContext context) {
         this.context = context;
@@ -42,7 +42,7 @@ public class DomainObject extends DomainObjectModel {
         try {
             return (JexlContext) FieldUtils.readField(this, "jexlContext", true);
         } catch (Exception ex) {
-            assertThat("Could not read jexlContext due to exception:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not read jexlContext due to exception:  " + ex.getMessage());
             return null;
         }
     }
@@ -119,7 +119,7 @@ public class DomainObject extends DomainObjectModel {
             return fromFile(file.getAbsolutePath(), false);
         }
 
-        assertThat("File '" + useResourceFile + "' was not found!", false);
+        AssertJUtil.fail("File '" + useResourceFile + "' was not found!");
         return null;
     }
 

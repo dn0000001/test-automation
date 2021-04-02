@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import com.taf.automation.api.ApiUtils;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import net.jodah.failsafe.Failsafe;
@@ -15,11 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Represent a generic row in a table
  */
+@SuppressWarnings("java:S3252")
 public class GenericRow extends PageObjectV2 {
     @XStreamOmitField
     private Map<String, String> substitutions;
@@ -73,7 +73,7 @@ public class GenericRow extends PageObjectV2 {
      * @return identifier
      */
     public String getRowIdentifier() {
-        assertThat("This row implementation cannot be uniquely identified using a single column", false);
+        AssertJUtil.fail("This row implementation cannot be uniquely identified using a single column");
         return null;
     }
 

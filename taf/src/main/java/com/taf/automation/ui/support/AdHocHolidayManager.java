@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.Utils;
 import de.jollyday.HolidayManager;
@@ -26,11 +27,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Holiday Manager for Ad Hoc holidays (added by user on the fly)
  */
+@SuppressWarnings("java:S3252")
 public class AdHocHolidayManager extends DefaultHolidayManager {
     private final ConfigurationDataSource customConfigurationDataSource;
     private final ManagerParameter customManagerParameter;
@@ -135,7 +135,7 @@ public class AdHocHolidayManager extends DefaultHolidayManager {
         } else if (RelativeToEasterSunday.class.isAssignableFrom(holiday.getClass())) {
             getStoredHolidays().getRelativeToEasterSunday().add((RelativeToEasterSunday) holiday);
         } else {
-            assertThat("Unsupported Holiday Implementation:  " + holiday.getClass(), false);
+            AssertJUtil.fail("Unsupported Holiday Implementation:  " + holiday.getClass());
         }
 
         return this;

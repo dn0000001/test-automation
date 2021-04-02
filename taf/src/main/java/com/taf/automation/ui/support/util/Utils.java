@@ -55,9 +55,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Utilities mainly for UI
  */
@@ -146,7 +143,7 @@ public class Utils {
                 FieldUtils.writeField(TestNGBase.context(), VARIABLE_DRIVER, driver, true);
             }
         } catch (Exception ex) {
-            assertThat("Could not set driver for context due to exception:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not set driver for context due to exception:  " + ex.getMessage());
         } finally {
             lockContext.unlock();
         }
@@ -340,7 +337,7 @@ public class Utils {
             error = ex.getMessage();
         }
 
-        assertThat("Could not get driver from element due to exception:  " + error, useDriver, notNullValue());
+        AssertJUtil.assertThat(useDriver).as("Could not get driver from element due to exception:  " + error).isNotNull();
         return useDriver;
     }
 
@@ -833,7 +830,7 @@ public class Utils {
         try {
             return (BigDecimal) format.parse(cleanedAmount);
         } catch (ParseException exception) {
-            assertThat("Unable to parse value to BigDecimal:  " + cleanedAmount, defaultValue, notNullValue());
+            AssertJUtil.assertThat(defaultValue).as("Unable to parse value to BigDecimal:  " + cleanedAmount).isNotNull();
             return defaultValue;
         }
     }
@@ -906,7 +903,7 @@ public class Utils {
      */
     public static WebElement clickWhenReady(WebElement element) {
         return Failsafe.with(getClickRetryPolicy())
-                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .get(() -> {
                     until(ExpectedConditionsUtil.ready(element));
                     element.click();
@@ -922,7 +919,7 @@ public class Utils {
      */
     public static WebElement clickWhenReady(By locator) {
         return Failsafe.with(getClickRetryPolicy())
-                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .get(() -> {
                     WebElement element = until(ExpectedConditionsUtil.ready(locator));
                     element.click();
@@ -939,7 +936,7 @@ public class Utils {
      */
     public static WebElement clickWhenReady(WebElement anchor, By relative) {
         return Failsafe.with(getClickRetryPolicy())
-                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .get(() -> {
                     WebElement element = until(ExpectedConditionsUtil.ready(anchor, relative));
                     element.click();
@@ -989,7 +986,7 @@ public class Utils {
      */
     public static void clickAndWaitForStale(WebElement element) {
         Failsafe.with(getClickRetryPolicy())
-                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .run(element::click);
         until(ExpectedConditions.stalenessOf(element));
     }
@@ -1260,7 +1257,7 @@ public class Utils {
             expectedJavaScriptAttached = false;
         }
 
-        assertThat(error, expectedJavaScriptAttached);
+        AssertJUtil.assertThat(expectedJavaScriptAttached).as(error).isTrue();
     }
 
     /**
@@ -1457,7 +1454,7 @@ public class Utils {
                     ObjectUtils.defaultIfNull(timeout, Duration.ofSeconds(getElementTimeout())).getSeconds(),
                     ObjectUtils.defaultIfNull(interval, Duration.ofMillis(100L)).toMillis()
             );
-            assertThat(timeoutMessage, false);
+            AssertJUtil.fail(timeoutMessage);
             return null;
         } catch (Exception | AssertionError ex) {
             String errorMessage = String.format(
@@ -1465,7 +1462,7 @@ public class Utils {
                     isTrue,
                     ExceptionUtils.clean(ex.getMessage())
             );
-            assertThat(errorMessage, false);
+            AssertJUtil.fail(errorMessage);
             return null;
         }
     }

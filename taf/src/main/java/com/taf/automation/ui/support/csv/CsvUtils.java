@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support.csv;
 
 import com.taf.automation.api.ApiDomainObject;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.DataInstillerUtils;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.util.FilloUtils;
@@ -44,13 +45,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-
 /**
  * CSV utilities
  */
+@SuppressWarnings("java:S3252")
 public class CsvUtils {
     private static final String ALIAS_PREFIX = "alias-";
     private static final String LIST_SUFFIX = "-list-";
@@ -93,7 +91,7 @@ public class CsvUtils {
             headers.putAll(csvFileParser.getHeaderMap());
             records.addAll(csvFileParser.getRecords());
         } catch (Exception ex) {
-            assertThat("Could not read records from CSV file due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not read records from CSV file due to error:  " + ex.getMessage());
         }
     }
 
@@ -127,7 +125,7 @@ public class CsvUtils {
             try {
                 FieldUtils.writeField(domainObject, "aliases", new DataAliases(), true);
             } catch (Exception ex) {
-                assertThat("Unable to initialize the variable aliases", false);
+                AssertJUtil.fail("Unable to initialize the variable aliases");
             }
         }
 
@@ -155,7 +153,7 @@ public class CsvUtils {
             try {
                 FieldUtils.writeField(apiDomainObject, "aliases", new DataAliases(), true);
             } catch (Exception ex) {
-                assertThat("Unable to initialize the variable aliases", false);
+                AssertJUtil.fail("Unable to initialize the variable aliases");
             }
         }
 
@@ -182,7 +180,7 @@ public class CsvUtils {
         if (value.matches("\\$\\[.+]")) {
             Pattern pattern = Pattern.compile("\\$\\[(.+)\\(\\s*'\\s*(.*)\\s*'\\s*,\\s*'\\s*(.*)\\s*'\\s*\\)");
             Matcher matcher = pattern.matcher(value);
-            assertThat(value + " - invalid data generation expression!", matcher.find());
+            AssertJUtil.assertThat(matcher.find()).as(value + " - invalid data generation expression!").isTrue();
 
             GeneratorInterface genType = DataInstillerUtils.getGenerator(null).getGenerator(matcher.group(1).trim());
             String init = matcher.group(2);
@@ -374,7 +372,7 @@ public class CsvUtils {
     public static String getCsvDataSetFromParameter(ITestContext testNGContext, String parameter) {
         String csvDataSet = testNGContext.getCurrentXmlTest().getParameter(parameter);
         String reason = "Parameter '" + parameter + "' missing for test:  " + testNGContext.getName();
-        assertThat(reason, csvDataSet, not(isEmptyOrNullString()));
+        AssertJUtil.assertThat(csvDataSet).as(reason).isNotBlank();
         return csvDataSet;
     }
 
@@ -728,7 +726,7 @@ public class CsvUtils {
 
             printer.flush();
         } catch (Exception ex) {
-            assertThat("Failed to write CSV file due to exception:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Failed to write CSV file due to exception:  " + ex.getMessage());
         }
     }
 
@@ -771,7 +769,7 @@ public class CsvUtils {
      * @param prefix - Prefix to be used before each field if non-blank value
      * @return CSV Headers row
      */
-    public static String generateCsvHeaders(Class clazz, String prefix) {
+    public static String generateCsvHeaders(Class<?> clazz, String prefix) {
         StringBuilder sb = new StringBuilder();
 
         List<String> headers = generateCsvHeadersForFurtherProcessing(clazz, prefix);
@@ -790,7 +788,7 @@ public class CsvUtils {
      * @param prefix - Prefix to be used before each field if non-blank value
      * @return CSV Headers row as a list
      */
-    public static List<String> generateCsvHeadersForFurtherProcessing(Class clazz, String prefix) {
+    public static List<String> generateCsvHeadersForFurtherProcessing(Class<?> clazz, String prefix) {
         List<String> headers = new ArrayList<>();
 
         List<Field> all = FieldUtils.getAllFieldsList(clazz);
@@ -821,7 +819,7 @@ public class CsvUtils {
      * @param clazz  - Class to generate the CSV Headers Row for
      * @param prefix - Prefix to be used before each field if non-blank value
      */
-    public static void printGenerateCsvHeaders(Class clazz, String prefix) {
+    public static void printGenerateCsvHeaders(Class<?> clazz, String prefix) {
         Helper.log("\n\n" + generateCsvHeaders(clazz, prefix) + "\n\n", true);
     }
 

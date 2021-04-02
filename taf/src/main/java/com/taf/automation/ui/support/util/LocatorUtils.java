@@ -15,11 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * This class provides utility methods to work with locators
  */
+@SuppressWarnings("java:S3252")
 public class LocatorUtils {
     private static final String DOUBLE_QUOTE = "\"";
     private static final String SINGLE_QUOTE = "'";
@@ -68,7 +67,7 @@ public class LocatorUtils {
             By[] bys = (By[]) ApiUtils.readField(field, locator);
             return processForSubstitutions(locator, bys, substitutions);
         } else {
-            assertThat("Unsupported By locator:  " + locator.toString(), false);
+            AssertJUtil.fail("Unsupported By locator:  " + locator.toString());
             return By.id(processedLocator);
         }
     }
@@ -83,7 +82,7 @@ public class LocatorUtils {
      */
     private static By processForSubstitutions(By locatorType, By[] locators, Map<String, String> substitutions) {
         if (!(locatorType instanceof ByAll) && !(locatorType instanceof ByChained)) {
-            assertThat("Unsupported locator type:  " + locatorType.toString(), false);
+            AssertJUtil.fail("Unsupported locator type:  " + locatorType.toString());
         }
 
         List<By> processed = new ArrayList<>();
@@ -135,7 +134,7 @@ public class LocatorUtils {
         try {
             FieldUtils.writeField(component, "selector", locator, true);
         } catch (Exception ex) {
-            assertThat("Could not set 'selector' for component due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not set 'selector' for component due to error:  " + ex.getMessage());
         }
     }
 

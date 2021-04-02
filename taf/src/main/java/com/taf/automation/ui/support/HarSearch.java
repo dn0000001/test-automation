@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import net.jodah.failsafe.Failsafe;
 import net.lightbody.bmp.core.har.Har;
@@ -12,15 +13,13 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * This class is to simplify searching the Har logs
  */
+@SuppressWarnings("java:S3252")
 public class HarSearch {
+    private static final String HAR_OBJECT = "Har Object";
+    private static final String HAR_LOG = "Har Log";
     private int startIndex;
     private int stopIndex;
 
@@ -34,10 +33,10 @@ public class HarSearch {
      */
     public void setStartingSearchIndex() {
         Har har = TestProperties.getInstance().getHarForThread();
-        assertThat("Har Object", har, notNullValue());
+        AssertJUtil.assertThat(har).as(HAR_OBJECT).isNotNull();
 
         HarLog log = har.getLog();
-        assertThat("Har Log", log, notNullValue());
+        AssertJUtil.assertThat(log).as(HAR_LOG).isNotNull();
 
         setStartingSearchIndex(log.getEntries().size());
     }
@@ -322,7 +321,7 @@ public class HarSearch {
 
     private int findEntryThatMustExist(String containsURL, String regex, String equalsMethod) {
         int index = findEntry(containsURL, regex, equalsMethod);
-        assertThat("Could not find any matching entry", index, greaterThanOrEqualTo(0));
+        AssertJUtil.assertThat(index).as("Could not find any matching entry").isGreaterThanOrEqualTo(0);
         return index;
     }
 
@@ -334,13 +333,13 @@ public class HarSearch {
      */
     public HarEntry getEntry(int index) {
         Har har = TestProperties.getInstance().getHarForThread();
-        assertThat("Har Object", har, notNullValue());
+        AssertJUtil.assertThat(har).as(HAR_OBJECT).isNotNull();
 
         HarLog log = har.getLog();
-        assertThat("Har Log", log, notNullValue());
-        assertThat("Har Entries", log.getEntries(), notNullValue());
-        assertThat("Index", index, greaterThanOrEqualTo(0));
-        assertThat("Index", index, lessThan(log.getEntries().size()));
+        AssertJUtil.assertThat(log).as(HAR_LOG).isNotNull();
+        AssertJUtil.assertThat(log.getEntries()).as("Har Entries").isNotNull();
+        AssertJUtil.assertThat(index).as("Index").isGreaterThanOrEqualTo(0);
+        AssertJUtil.assertThat(index).as("Index").isLessThan(log.getEntries().size());
 
         return log.getEntries().get(index);
     }
@@ -362,13 +361,13 @@ public class HarSearch {
         int maxIndex = NumberUtils.max(entries);
 
         Har har = TestProperties.getInstance().getHarForThread();
-        assertThat("Har Object", har, notNullValue());
+        AssertJUtil.assertThat(har).as(HAR_OBJECT).isNotNull();
 
         HarLog log = har.getLog();
-        assertThat("Har Log", log, notNullValue());
-        assertThat("Har Entries", log.getEntries(), notNullValue());
-        assertThat("Min Index", minIndex, greaterThanOrEqualTo(0));
-        assertThat("Max Index", maxIndex, lessThan(log.getEntries().size()));
+        AssertJUtil.assertThat(log).as(HAR_LOG).isNotNull();
+        AssertJUtil.assertThat(log.getEntries()).as("Har Entries").isNotNull();
+        AssertJUtil.assertThat(minIndex).as("Min Index").isGreaterThanOrEqualTo(0);
+        AssertJUtil.assertThat(maxIndex).as("Max Index").isLessThan(log.getEntries().size());
 
         for (int index : entries) {
             all.add(log.getEntries().get(index));

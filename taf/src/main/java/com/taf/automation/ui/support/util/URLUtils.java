@@ -6,11 +6,10 @@ import org.apache.http.client.utils.URIBuilder;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Utilities class to work with URIBuilder
  */
+@SuppressWarnings("java:S3252")
 public class URLUtils {
     private URLUtils() {
         //
@@ -33,7 +32,7 @@ public class URLUtils {
             validURL = false;
         }
 
-        assertThat("Invalid URL:  " + url, validURL);
+        AssertJUtil.assertThat(validURL).as("Invalid URL:  " + url).isTrue();
         return uri;
     }
 

@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.DataInstillerUtils;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -9,13 +10,12 @@ import datainstiller.data.DataPersistence;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * The purpose of this class is to revert the removal of xml namespaces added to DataPersistence.  This was causing
  * issues with SOAP requests that had xml namespaces.  This should not be an issue for page objects as it would be
  * unusual to use xml namespaces (i.e. the attribute "xmlns".)
  */
+@SuppressWarnings("java:S3252")
 public abstract class DataPersistenceV2 extends DataPersistence {
     @XStreamOmitField
     private boolean useXstreamForAliases;
@@ -39,7 +39,7 @@ public abstract class DataPersistenceV2 extends DataPersistence {
         try {
             return (JexlContext) FieldUtils.readField(this, "jexlContext", true);
         } catch (Exception ex) {
-            assertThat("Could not read jexlContext due to exception:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not read jexlContext due to exception:  " + ex.getMessage());
             return null;
         }
     }

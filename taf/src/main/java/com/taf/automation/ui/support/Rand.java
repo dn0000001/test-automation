@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.ArrayUtils;
@@ -8,10 +9,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-
+@SuppressWarnings("java:S3252")
 public class Rand {
     private static final Random r = new Random();
 
@@ -218,7 +216,7 @@ public class Rand {
         } catch (Exception | AssertionError e) {
             String reason = "Could NOT find random value in [" + min + "," + max + "] and not in ";
             reason += Arrays.toString(excludes) + " after " + retries + " retries";
-            assertThat(reason, false);
+            AssertJUtil.fail(reason);
             return -1;
         }
     }
@@ -234,7 +232,7 @@ public class Rand {
      */
     private static int randomRangeChecked(int min, int max, int... excludes) {
         int random = randomRange(min, max);
-        Arrays.stream(excludes).forEach(item -> assertThat("Excluded Value", random, not(equalTo(item))));
+        Arrays.stream(excludes).forEach(item -> AssertJUtil.assertThat(random).as("Excluded Value").isNotEqualTo(item));
         return random;
     }
 
