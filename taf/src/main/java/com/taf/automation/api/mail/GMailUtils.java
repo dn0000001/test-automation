@@ -1,12 +1,12 @@
 package com.taf.automation.api.mail;
 
-import com.taf.automation.ui.support.TestProperties;
 import com.sun.mail.pop3.POP3Store;
+import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.Flags;
@@ -15,7 +15,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +27,13 @@ import static java.lang.String.format;
 /**
  * This class contains methods to work with GMail
  */
+@SuppressWarnings("java:S3252")
 public class GMailUtils {
     public static final Logger LOG = LoggerFactory.getLogger(GMailUtils.class);
+
+    private GMailUtils() {
+        // Prevent initialization of class as all public methods should be static
+    }
 
     /**
      * Get Last Messages
@@ -87,7 +91,7 @@ public class GMailUtils {
         Properties properties = new Properties();
         if (proxy != null) {
             LOG.info("Using proxy to access gmail");
-            String proxyParts[] = proxy.split(":");
+            String[] proxyParts = proxy.split(":");
             properties.put("mail.pop3.host", proxyParts[0].trim());
             properties.put("mail.pop3.port", Integer.parseInt(proxyParts[1].trim()));
         } else {
@@ -188,7 +192,7 @@ public class GMailUtils {
     public static List<MailMessage> retrieveActivationEmail(String email, String uniqueEmail, String password, String emailTitle) {
         List<MailMessage> messages = null;
         long startTime = System.currentTimeMillis();
-        long t_o = startTime + 60000;
+        long timeout = startTime + 60000;
         boolean condition = false;
         do {
             try {
@@ -204,9 +208,9 @@ public class GMailUtils {
                 }
             }
         }
-        while (System.currentTimeMillis() < t_o && !condition);
+        while (System.currentTimeMillis() < timeout && !condition);
 
-        Assert.assertTrue(condition, "did not receive the email");
+        AssertJUtil.assertThat(condition).as("did not receive the email").isTrue();
         LOG.info("It took {} milliseconds to receive email", (System.currentTimeMillis() - startTime));
         List<MailMessage> msgs = new ArrayList<>();
         for (MailMessage message : messages) {

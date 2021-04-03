@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
@@ -11,6 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Basic CheckBox that prevents toggling the state when it is disabled<BR>
  * <B>Note: </B> The component ui.auto.core.components.CheckBox does not handle the disabled case.
  */
+@SuppressWarnings("java:S3252")
 public class CheckBoxBasic extends PageComponent {
     public CheckBoxBasic() {
         super();
@@ -59,7 +60,7 @@ public class CheckBoxBasic extends PageComponent {
 
     @Override
     public void validateData(DataTypes validationMethod) {
-        Assert.assertEquals(isSelected(), validationMethod.getData(this).toLowerCase().trim().equals("true"));
+        AssertJUtil.assertThat(isSelected()).isEqualTo(validationMethod.getData(this).toLowerCase().trim().equals("true"));
     }
 
 }

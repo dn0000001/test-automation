@@ -1,8 +1,8 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
@@ -12,6 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Check Box component that bypasses issues where WebDriver does not allow normal interaction with the check box as
  * it is disabled instead clicking the label node toggles the state<BR>
  */
+@SuppressWarnings("java:S3252")
 public class CheckBoxLabel extends PageComponent {
     private WebElement input;
     private WebElement label;
@@ -74,7 +75,7 @@ public class CheckBoxLabel extends PageComponent {
 
     @Override
     public void validateData(DataTypes validationMethod) {
-        Assert.assertEquals(input.isSelected(), validationMethod.getData(this).toLowerCase().trim().equals("true"));
+        AssertJUtil.assertThat(input.isSelected()).isEqualTo(validationMethod.getData(this).toLowerCase().trim().equals("true"));
     }
 
     public WebElement getInput() {
