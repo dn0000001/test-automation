@@ -1,22 +1,21 @@
 package com.taf.automation.ui.support.pageScraping;
 
-import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.util.Utils;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
+@SuppressWarnings("java:S3252")
 @XStreamAlias("row")
 public class ExtractedRowData {
     private static final String DEFAULT_PADDING = "null";
@@ -53,7 +52,7 @@ public class ExtractedRowData {
      * @param value        - value of the field linked to this page (eg MyName)
      */
     public void addField(String fieldNameKey, Object value) {
-        assertThat("Duplicate Key:  " + fieldNameKey, !cells.containsKey(fieldNameKey));
+        AssertJUtil.assertThat(cells).as("Duplicate Key:  " + fieldNameKey).doesNotContainKey(fieldNameKey);
         cells.put(fieldNameKey, value);
     }
 
@@ -61,21 +60,21 @@ public class ExtractedRowData {
      * Method used to compare this ExtractedRow objects with another ExtractedRow Object
      *
      * @param actualRow     - row to compare against this row
-     * @param aggregator    - object used to log errors in qa report
+     * @param softly        - object used to log errors in the report
      * @param pageName      - application page name where this test is taking place. Used in output report
      * @param fieldType     - type of field where testing is taking place. Used in output report
      * @param outputRecords - current list of results to be displayed at the end of the test
      */
-    public void compare(ExtractedRowData actualRow, AssertAggregator aggregator, String pageName, String fieldType, List<CsvOutputRecord> outputRecords) {
+    public void compare(ExtractedRowData actualRow, CustomSoftAssertions softly, String pageName, String fieldType, List<CsvOutputRecord> outputRecords) {
         if (actualRow == null) {
-            aggregator.assertThat("Actual Row is Null", actualRow, notNullValue());
+            softly.assertThat(actualRow).as("Actual Row is Null").isNotNull();
             return;
         }
 
-        addPadding(cells, actualRow.cells, aggregator);
+        addPadding(cells, actualRow.cells, softly);
         for (Map.Entry<String, Object> expectedField : cells.entrySet()) {
             Object actualValue = actualRow.cells.get(expectedField.getKey());
-            compareField(expectedField.getKey(), expectedField.getValue(), actualValue, aggregator, pageName, fieldType, outputRecords);
+            compareField(expectedField.getKey(), expectedField.getValue(), actualValue, softly, pageName, fieldType, outputRecords);
         }
     }
 
@@ -85,15 +84,15 @@ public class ExtractedRowData {
      * @param expectedFieldKey   - expected field key/label/name as it should be displayed in the output report
      * @param expectedFieldValue - expected field value which should be compared against the actual
      * @param actualValue        - value which to compare vs the expectedFieldValue
-     * @param aggregator         - aggregator object used for comparison
+     * @param softly             - aggregator object used for comparison
      * @param pageName           - name of the page
      * @param fieldType          - type of field as it should be displayed in outputRecord
      * @param outputRecords      - current list of output Records for the current test
      */
-    public static void compareField(String expectedFieldKey, Object expectedFieldValue, Object actualValue, AssertAggregator aggregator, String pageName, String fieldType, List<CsvOutputRecord> outputRecords) {
-        int preCompareFailureCount = aggregator.getFailureCount();
-        aggregator.assertThat("comparing field:" + expectedFieldKey, actualValue, equalTo(expectedFieldValue));
-        int postCompareFailureCount = aggregator.getFailureCount();
+    public static void compareField(String expectedFieldKey, Object expectedFieldValue, Object actualValue, CustomSoftAssertions softly, String pageName, String fieldType, List<CsvOutputRecord> outputRecords) {
+        int preCompareFailureCount = softly.getFailureCount();
+        softly.assertThat(actualValue).as("comparing field:" + expectedFieldKey).isEqualTo(expectedFieldValue);
+        int postCompareFailureCount = softly.getFailureCount();
 
         // Create result record for this test
         ExtractedDataOutputRecord record = new ExtractedDataOutputRecord();
@@ -112,11 +111,11 @@ public class ExtractedRowData {
     /**
      * Take 2 rows and add padding if one is smaller
      *
-     * @param row1       - first row to compare
-     * @param row2       - second row to compare
-     * @param aggregator - aggregator object used for comparison
+     * @param row1   - first row to compare
+     * @param row2   - second row to compare
+     * @param softly - aggregator object used for comparison
      */
-    private void addPadding(Map<String, Object> row1, Map<String, Object> row2, AssertAggregator aggregator) {
+    private void addPadding(Map<String, Object> row1, Map<String, Object> row2, CustomSoftAssertions softly) {
         if (row1.size() == row2.size()) {
             // Do nothing both maps are same sizes exit
             return;
@@ -127,7 +126,7 @@ public class ExtractedRowData {
         Map<String, Object> smallerMap = (map1Bigger) ? row2 : row1;
 
         String errReason = "Difference in Field Count between rows[Row1=" + row1.toString() + ", Row2=" + row2.toString() + "]";
-        aggregator.assertThat(errReason, row1.size(), equalTo(row2.size()));
+        softly.assertThat(row1.size()).as(errReason).isEqualTo(row2.size());
 
         for (Map.Entry<String, Object> aField : biggerMap.entrySet()) {
             if (!smallerMap.containsKey(aField.getKey())) {
@@ -150,7 +149,7 @@ public class ExtractedRowData {
 
     @Override
     public String toString() {
-        ReflectionToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
+        ToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
         return ReflectionToStringBuilder.toStringExclude(this);
     }
 

@@ -1,22 +1,21 @@
 package com.taf.automation.ui.support.pageScraping;
 
-import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.util.Utils;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
+@SuppressWarnings("java:S3252")
 @XStreamAlias("page")
 public class ExtractedPageData {
     private static final String DEFAULT_PADDING = "null";
@@ -78,7 +77,7 @@ public class ExtractedPageData {
      * @param value        - value of the field linked to this page (eg MyName)
      */
     public void addField(String fieldNameKey, Object value) {
-        assertThat("Duplicate Key:  " + fieldNameKey, !pageData.containsKey(fieldNameKey));
+        AssertJUtil.assertThat(pageData).as("Duplicate Key:  " + fieldNameKey).doesNotContainKey(fieldNameKey);
         pageData.put(fieldNameKey, value);
     }
 
@@ -88,7 +87,7 @@ public class ExtractedPageData {
      * @param table - ExtractedTableData Object to associate to this page
      */
     public void addTable(ExtractedTableData table) {
-        assertThat("Duplicate Key:  " + table.getTableNameKey(), !pageData.containsKey(table.getTableNameKey()));
+        AssertJUtil.assertThat(pageData).as("Duplicate Key:  " + table.getTableNameKey()).doesNotContainKey(table.getTableNameKey());
         pageData.put(table.getTableNameKey(), table);
     }
 
@@ -96,24 +95,24 @@ public class ExtractedPageData {
      * Method used to compare this ExtractedPage objects (fields, tables) with another ExtractedPage Object (fields, tables)
      *
      * @param actualPage    - page used to compare the current ExpectedPage against
-     * @param aggregator    - aggregator object used for field + table comparison
+     * @param softly        - aggregator object used for field + table comparison
      * @param outputRecords - list of result records to for the current page
      */
-    public void compare(ExtractedPageData actualPage, AssertAggregator aggregator, List<CsvOutputRecord> outputRecords) {
+    public void compare(ExtractedPageData actualPage, CustomSoftAssertions softly, List<CsvOutputRecord> outputRecords) {
         if (actualPage == null) {
-            aggregator.assertThat("Actual Page is Null", actualPage, notNullValue());
+            softly.assertThat(actualPage).as("Actual Page is Null").isNotNull();
             return;
         }
 
-        addPadding(this, actualPage, aggregator);
+        addPadding(this, actualPage, softly);
         for (Map.Entry<String, Object> expectedField : pageData.entrySet()) {
             if (expectedField.getValue() instanceof ExtractedTableData) {
                 ExtractedTableData actualTable = (ExtractedTableData) actualPage.pageData.get(expectedField.getKey());
                 ExtractedTableData expectedTable = (ExtractedTableData) expectedField.getValue();
-                expectedTable.compare(actualTable, aggregator, getPageNameKey(), outputRecords);
+                expectedTable.compare(actualTable, softly, getPageNameKey(), outputRecords);
             } else {
                 Object actualValue = actualPage.pageData.get(expectedField.getKey());
-                ExtractedRowData.compareField(expectedField.getKey(), expectedField.getValue(), actualValue, aggregator, getPageNameKey(), "Field", outputRecords);
+                ExtractedRowData.compareField(expectedField.getKey(), expectedField.getValue(), actualValue, softly, getPageNameKey(), "Field", outputRecords);
             }
         }
     }
@@ -121,11 +120,11 @@ public class ExtractedPageData {
     /**
      * Method to add empty table/field padding to a ExpectedPageData's pageMap to ensure the two page sizes are the same
      *
-     * @param page1      - first page object used to compare against the second page
-     * @param page2      - second page object used to compare against the first page
-     * @param aggregator - aggregator object used for field + table comparison
+     * @param page1  - first page object used to compare against the second page
+     * @param page2  - second page object used to compare against the first page
+     * @param softly - aggregator object used for field + table comparison
      */
-    private void addPadding(ExtractedPageData page1, ExtractedPageData page2, AssertAggregator aggregator) {
+    private void addPadding(ExtractedPageData page1, ExtractedPageData page2, CustomSoftAssertions softly) {
         if (page1.pageData.size() == page2.pageData.size()) {
             // Do nothing both pageMaps are same sizes exit
             return;
@@ -136,7 +135,7 @@ public class ExtractedPageData {
         ExtractedPageData smallerPage = (page1Bigger) ? page2 : page1;
 
         String errReason = "Difference in Field + Table Count between pages[Page1=" + page1.getPageNameKey() + ", Page2=" + page2.getPageNameKey() + "]";
-        aggregator.assertThat(errReason, page1.pageData.size(), equalTo(page2.pageData.size()));
+        softly.assertThat(page1.pageData.size()).as(errReason).isEqualTo(page2.pageData.size());
 
         for (Map.Entry<String, Object> aField : biggerPage.pageData.entrySet()) {
             if (!smallerPage.pageData.containsKey(aField.getKey())) {
@@ -284,7 +283,7 @@ public class ExtractedPageData {
 
     @Override
     public String toString() {
-        ReflectionToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
+        ToStringBuilder.setDefaultStyle(Utils.getDefaultStyle());
         return ReflectionToStringBuilder.toStringExclude(this);
     }
 

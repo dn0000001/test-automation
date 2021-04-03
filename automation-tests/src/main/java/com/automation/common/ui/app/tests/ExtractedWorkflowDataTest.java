@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.AssertAggregator;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;
@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.pageScraping.ExtractedRowData;
 import com.taf.automation.ui.support.pageScraping.ExtractedTableData;
 import com.taf.automation.ui.support.pageScraping.ExtractedWorkflowData;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterClass;
@@ -25,12 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class ExtractedWorkflowDataTest {
     private static final String HOME = System.getProperty("user.home");
@@ -167,7 +163,7 @@ public class ExtractedWorkflowDataTest {
         NOT_SEARCHED_PAGE1("not-searched-page1"),
         ;
 
-        private String columnName;
+        private final String columnName;
 
         WorkflowKeys(String columnName) {
             this.columnName = columnName;
@@ -230,17 +226,17 @@ public class ExtractedWorkflowDataTest {
         return workflowData;
     }
 
-    private void validateOutputRecords(AssertAggregator aggregator, List<CsvOutputRecord> outputRecords, int fieldCount) {
-        aggregator.assertThat(OUTPUT_RECORDS, outputRecords.size(), equalTo(fieldCount));
+    private void validateOutputRecords(CustomSoftAssertions softly, List<CsvOutputRecord> outputRecords, int fieldCount) {
+        softly.assertThat(outputRecords.size()).as(OUTPUT_RECORDS).isEqualTo(fieldCount);
         for (int i = 0; i < outputRecords.size(); i++) {
             CsvOutputRecord item = outputRecords.get(i);
             if (item instanceof ExtractedDataOutputRecord) {
                 ExtractedDataOutputRecord record = (ExtractedDataOutputRecord) item;
-                aggregator.assertThat("Test Status [" + i + "]", record.getTestStatus(), equalTo("PASS"));
-                aggregator.assertThat("Value [" + i + "]", record.getActualValue(), equalTo(record.getExpectedValue()));
+                softly.assertThat(record.getTestStatus()).as("Test Status [" + i + "]").isEqualTo("PASS");
+                softly.assertThat(record.getActualValue()).as("Value [" + i + "]").isEqualTo(record.getExpectedValue());
             } else {
                 String error = "Output Record[" + i + "] was not instance of ExtractedDataOutputRecord";
-                aggregator.assertThat(error, false);
+                softly.fail(error);
             }
         }
     }
@@ -250,9 +246,9 @@ public class ExtractedWorkflowDataTest {
         return item.getPageName() + item.getFieldName() + item.getFieldType();
     }
 
-    private void validateOutputRecords(AssertAggregator aggregator, List<CsvOutputRecord> outputRecords1, List<CsvOutputRecord> outputRecords2) {
-        aggregator.assertThat("Records Size", outputRecords1.size(), equalTo(outputRecords2.size()));
-        aggregator.assertThat("Number of records", outputRecords1.size(), greaterThan(0));
+    private void validateOutputRecords(CustomSoftAssertions softly, List<CsvOutputRecord> outputRecords1, List<CsvOutputRecord> outputRecords2) {
+        softly.assertThat(outputRecords1.size()).as("Records Size").isEqualTo(outputRecords2.size());
+        softly.assertThat(outputRecords1.size()).as("Number of records").isGreaterThan(0);
 
         Map<String, CsvOutputRecord> cache1 = outputRecords1
                 .stream()
@@ -262,29 +258,28 @@ public class ExtractedWorkflowDataTest {
             String key = makeKey(record2);
             CsvOutputRecord cachedRecord = cache1.get(key);
             if (cachedRecord == null) {
-                aggregator.assertThat("Could not find key in cache:  " + key, false);
+                softly.fail("Could not find key in cache:  " + key);
             } else {
                 ExtractedDataOutputRecord record1 = (ExtractedDataOutputRecord) cachedRecord;
-                aggregator.assertThat(key + "- Test Status", record1.getTestStatus(), equalTo(record2.getTestStatus()));
-                aggregator.assertThat(key + "- Test Status Value", record1.getTestStatus(), equalTo("FAIL"));
-                aggregator.assertThat(key + "- Value", record1.getExpectedValue(), equalTo(record2.getActualValue()));
+                softly.assertThat(record1.getTestStatus()).as(key + "- Test Status").isEqualTo(record2.getTestStatus());
+                softly.assertThat(record1.getTestStatus()).as(key + "- Test Status Value").isEqualTo("FAIL");
+                softly.assertThat(record1.getExpectedValue()).as(key + "- Value").isEqualTo(record2.getActualValue());
             }
         }
     }
 
     private void validateWorkflow(ExtractedWorkflowData expected, ExtractedWorkflowData actual) {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
 
         List<CsvOutputRecord> outputRecords1 = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords1);
+        expected.compare(actual, softly, outputRecords1);
 
         List<CsvOutputRecord> outputRecords2 = new ArrayList<>();
-        actual.compare(expected, aggregator, outputRecords2);
+        actual.compare(expected, softly, outputRecords2);
 
-        aggregator.reset();
-        validateOutputRecords(aggregator, outputRecords1, outputRecords2);
-        Helper.assertThat(aggregator);
+        softly = new CustomSoftAssertions();
+        validateOutputRecords(softly, outputRecords1, outputRecords2);
+        softly.assertAll();
     }
 
     private ExtractedWorkflowData getWorkflow(String flowname, String f1Value) {
@@ -678,7 +673,7 @@ public class ExtractedWorkflowDataTest {
     public void readFromFileTest() {
         ExtractedWorkflowData expected = getWorkflowData();
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(HOME + SEPARATOR + OUTPUT_FILE);
-        assertThat(MISMATCH, actual, equalTo(expected));
+        AssertJUtil.assertThat(actual).as(MISMATCH).isEqualTo(expected);
     }
 
     @AfterClass(alwaysRun = true)
@@ -695,14 +690,12 @@ public class ExtractedWorkflowDataTest {
         ExtractedWorkflowData expected = new ExtractedWorkflowData();
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(EMPTY_WORKFLOW);
 
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords);
+        expected.compare(actual, softly, outputRecords);
 
-        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
-        Helper.assertThat(aggregator);
+        AssertJUtil.assertThat(outputRecords).as(OUTPUT_RECORDS).isEmpty();
+        softly.assertAll();
     }
 
     @Features("ExtractedWorkflowData")
@@ -718,14 +711,12 @@ public class ExtractedWorkflowDataTest {
 
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(EMPTY_PAGE);
 
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords);
+        expected.compare(actual, softly, outputRecords);
 
-        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
-        Helper.assertThat(aggregator);
+        AssertJUtil.assertThat(outputRecords).as(OUTPUT_RECORDS).isEmpty();
+        softly.assertAll();
     }
 
     @Features("ExtractedWorkflowData")
@@ -744,14 +735,12 @@ public class ExtractedWorkflowDataTest {
 
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(EMPTY_TABLE);
 
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords);
+        expected.compare(actual, softly, outputRecords);
 
-        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
-        Helper.assertThat(aggregator);
+        AssertJUtil.assertThat(outputRecords).as(OUTPUT_RECORDS).isEmpty();
+        softly.assertAll();
     }
 
     @Features("ExtractedWorkflowData")
@@ -773,14 +762,12 @@ public class ExtractedWorkflowDataTest {
 
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(EMPTY_ROW);
 
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords);
+        expected.compare(actual, softly, outputRecords);
 
-        assertThat(OUTPUT_RECORDS, outputRecords.isEmpty());
-        Helper.assertThat(aggregator);
+        AssertJUtil.assertThat(outputRecords).as(OUTPUT_RECORDS).isEmpty();
+        softly.assertAll();
     }
 
     @Features("ExtractedWorkflowData")
@@ -853,16 +840,14 @@ public class ExtractedWorkflowDataTest {
         expected.addPage(p10);
 
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_SINGLE_PAGE_WORKFLOW);
-        assertThat(MISMATCH, actual, equalTo(expected));
+        AssertJUtil.assertThat(actual).as(MISMATCH).isEqualTo(expected);
 
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords);
-        validateOutputRecords(aggregator, outputRecords, fieldCount);
+        expected.compare(actual, softly, outputRecords);
+        validateOutputRecords(softly, outputRecords, fieldCount);
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     @Features("ExtractedWorkflowData")
@@ -1119,16 +1104,14 @@ public class ExtractedWorkflowDataTest {
         expected.addPage(p10);
 
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
-        assertThat(MISMATCH, actual, equalTo(expected));
+        AssertJUtil.assertThat(actual).as(MISMATCH).isEqualTo(expected);
 
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         List<CsvOutputRecord> outputRecords = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords);
-        validateOutputRecords(aggregator, outputRecords, fieldCount);
+        expected.compare(actual, softly, outputRecords);
+        validateOutputRecords(softly, outputRecords, fieldCount);
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     @Features("ExtractedWorkflowData")
@@ -1257,18 +1240,16 @@ public class ExtractedWorkflowDataTest {
                 WorkflowKeys.P10_T2_R1_C1, "cc"
         );
 
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-
+        CustomSoftAssertions softly = new CustomSoftAssertions();
         List<CsvOutputRecord> outputRecords1 = new ArrayList<>();
-        expected.compare(actual, aggregator, outputRecords1);
+        expected.compare(actual, softly, outputRecords1);
 
         List<CsvOutputRecord> outputRecords2 = new ArrayList<>();
-        actual.compare(expected, aggregator, outputRecords2);
+        actual.compare(expected, softly, outputRecords2);
 
-        aggregator.reset();
-        aggregator.assertThat("Records Size", outputRecords1.size(), equalTo(outputRecords2.size()));
-        aggregator.assertThat("Number of records", outputRecords1.size(), greaterThan(0));
+        softly = new CustomSoftAssertions();
+        softly.assertThat(outputRecords1.size()).as("Records Size").isEqualTo(outputRecords2.size());
+        softly.assertThat(outputRecords1.size()).as("Number of records").isGreaterThan(0);
 
         Map<String, CsvOutputRecord> cache1 = outputRecords1
                 .stream()
@@ -1278,15 +1259,15 @@ public class ExtractedWorkflowDataTest {
             String key = makeKey(record2);
             CsvOutputRecord cachedRecord = cache1.get(key);
             if (cachedRecord == null) {
-                aggregator.assertThat("Could not find key in cache:  " + key, false);
+                softly.fail("Could not find key in cache:  " + key);
             } else {
                 ExtractedDataOutputRecord record1 = (ExtractedDataOutputRecord) cachedRecord;
-                aggregator.assertThat(key + "- Test Status", record1.getTestStatus(), equalTo(record2.getTestStatus()));
-                aggregator.assertThat(key + "- Value", record1.getExpectedValue(), equalTo(record2.getActualValue()));
+                softly.assertThat(record1.getTestStatus()).as(key + "- Test Status").isEqualTo(record2.getTestStatus());
+                softly.assertThat(record1.getExpectedValue()).as(key + "- Value").isEqualTo(record2.getActualValue());
             }
         }
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     @Features("ExtractedWorkflowData")
@@ -1328,17 +1309,17 @@ public class ExtractedWorkflowDataTest {
         ExtractedWorkflowData actual = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
 
         ExtractedPageData actualP2 = (ExtractedPageData) actual.get(WorkflowKeys.P2);
-        assertThat("p2", actualP2, equalTo(p2));
+        AssertJUtil.assertThat(actualP2).as("p2").isEqualTo(p2);
 
         ExtractedTableData actualP2T2 = (ExtractedTableData) actual.get(WorkflowKeys.P2_T2);
-        assertThat("p2t2", actualP2T2, equalTo(p2t2));
+        AssertJUtil.assertThat(actualP2T2).as("p2t2").isEqualTo(p2t2);
 
         // Only pages are searched recursively
         String actualP2T3R1 = (String) actual.get(WorkflowKeys.P2_T3_R2_C1);
-        assertThat("p2t3r2", actualP2T3R1, nullValue());
+        AssertJUtil.assertThat(actualP2T3R1).as("p2t3r2").isNull();
 
         String actualP3F1 = (String) actual.get(WorkflowKeys.P3_F1);
-        assertThat("p3f1", actualP3F1, equalTo(p3.get(WorkflowKeys.P3_F1)));
+        AssertJUtil.assertThat(actualP3F1).as("p3f1").isEqualTo(p3.get(WorkflowKeys.P3_F1));
     }
 
     @Features("ExtractedWorkflowData")
@@ -1347,49 +1328,49 @@ public class ExtractedWorkflowDataTest {
     @Test
     public void removeDataTest() {
         ExtractedWorkflowData data = new ExtractedWorkflowData().fromResource(COMPLEX_MULTI_PAGE_WORKFLOW);
-        assertThat("Exists p1", data.get(WorkflowKeys.P1), notNullValue());
-        assertThat("Exists p2", data.get(WorkflowKeys.P2), notNullValue());
-        assertThat("Exists p3", data.get(WorkflowKeys.P3), notNullValue());
-        assertThat("Exists p4", data.get(WorkflowKeys.P4), notNullValue());
-        assertThat("Exists p5", data.get(WorkflowKeys.P5), notNullValue());
-        assertThat("Exists p6", data.get(WorkflowKeys.P6), notNullValue());
-        assertThat("Exists p7", data.get(WorkflowKeys.P7), notNullValue());
-        assertThat("Exists p8", data.get(WorkflowKeys.P8), notNullValue());
-        assertThat("Exists p9", data.get(WorkflowKeys.P9), notNullValue());
-        assertThat("Exists p10", data.get(WorkflowKeys.P10), notNullValue());
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P1)).as("Exists p1").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P2)).as("Exists p2").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P3)).as("Exists p3").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P4)).as("Exists p4").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P5)).as("Exists p5").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P6)).as("Exists p6").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P7)).as("Exists p7").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P8)).as("Exists p8").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P9)).as("Exists p9").isNotNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P10)).as("Exists p10").isNotNull();
 
-        assertThat("Remove p1", data.remove(WorkflowKeys.P1), notNullValue());
-        assertThat("Remove p2", data.remove(WorkflowKeys.P2), notNullValue());
-        assertThat("Remove p3", data.remove(WorkflowKeys.P3), notNullValue());
-        assertThat("Remove p4", data.remove(WorkflowKeys.P4), notNullValue());
-        assertThat("Remove p5", data.remove(WorkflowKeys.P5), notNullValue());
-        assertThat("Remove p6", data.remove(WorkflowKeys.P6), notNullValue());
-        assertThat("Remove p7", data.remove(WorkflowKeys.P7), notNullValue());
-        assertThat("Remove p8", data.remove(WorkflowKeys.P8), notNullValue());
-        assertThat("Remove p9", data.remove(WorkflowKeys.P9), notNullValue());
-        assertThat("Remove p10", data.remove(WorkflowKeys.P10), notNullValue());
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P1)).as("Remove p1").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P2)).as("Remove p2").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P3)).as("Remove p3").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P4)).as("Remove p4").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P5)).as("Remove p5").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P6)).as("Remove p6").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P7)).as("Remove p7").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P8)).as("Remove p8").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P9)).as("Remove p9").isNotNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P10)).as("Remove p10").isNotNull();
 
-        assertThat("Get p1", data.get(WorkflowKeys.P1), nullValue());
-        assertThat("Get p2", data.get(WorkflowKeys.P2), nullValue());
-        assertThat("Get p3", data.get(WorkflowKeys.P3), nullValue());
-        assertThat("Get p4", data.get(WorkflowKeys.P4), nullValue());
-        assertThat("Get p5", data.get(WorkflowKeys.P5), nullValue());
-        assertThat("Get p6", data.get(WorkflowKeys.P6), nullValue());
-        assertThat("Get p7", data.get(WorkflowKeys.P7), nullValue());
-        assertThat("Get p8", data.get(WorkflowKeys.P8), nullValue());
-        assertThat("Get p9", data.get(WorkflowKeys.P9), nullValue());
-        assertThat("Get p10", data.get(WorkflowKeys.P10), nullValue());
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P1)).as("Get p1").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P2)).as("Get p2").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P3)).as("Get p3").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P4)).as("Get p4").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P5)).as("Get p5").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P6)).as("Get p6").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P7)).as("Get p7").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P8)).as("Get p8").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P9)).as("Get p9").isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.P10)).as("Get p10").isNull();
 
-        assertThat("Remove Again p1", data.remove(WorkflowKeys.P1), nullValue());
-        assertThat("Remove Again p2", data.remove(WorkflowKeys.P2), nullValue());
-        assertThat("Remove Again p3", data.remove(WorkflowKeys.P3), nullValue());
-        assertThat("Remove Again p4", data.remove(WorkflowKeys.P4), nullValue());
-        assertThat("Remove Again p5", data.remove(WorkflowKeys.P5), nullValue());
-        assertThat("Remove Again p6", data.remove(WorkflowKeys.P6), nullValue());
-        assertThat("Remove Again p7", data.remove(WorkflowKeys.P7), nullValue());
-        assertThat("Remove Again p8", data.remove(WorkflowKeys.P8), nullValue());
-        assertThat("Remove Again p9", data.remove(WorkflowKeys.P9), nullValue());
-        assertThat("Remove Again p10", data.remove(WorkflowKeys.P10), nullValue());
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P1)).as("Remove Again p1").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P2)).as("Remove Again p2").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P3)).as("Remove Again p3").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P4)).as("Remove Again p4").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P5)).as("Remove Again p5").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P6)).as("Remove Again p6").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P7)).as("Remove Again p7").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P8)).as("Remove Again p8").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P9)).as("Remove Again p9").isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.P10)).as("Remove Again p10").isNull();
     }
 
     @Features("ExtractedWorkflowData")
@@ -1453,55 +1434,55 @@ public class ExtractedWorkflowDataTest {
         ExtractedWorkflowData data = new ExtractedWorkflowData();
         data.addPage(level1page1);
 
-        assertThat(WorkflowKeys.LEVEL1.getColumnName(), data.get(WorkflowKeys.LEVEL1), equalTo(level1page1));
-        assertThat(WorkflowKeys.LEVEL1_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL1_TABLE1), equalTo(level1table1));
-        assertThat(WorkflowKeys.LEVEL1_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL1_FIELD1), equalTo(level1field1));
-        assertThat(WorkflowKeys.LEVEL1_PAGE1.getColumnName(), data.get(WorkflowKeys.LEVEL1_PAGE1), equalTo(level2page1));
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL1)).as(WorkflowKeys.LEVEL1.getColumnName()).isEqualTo(level1page1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL1_TABLE1)).as(WorkflowKeys.LEVEL1_TABLE1.getColumnName()).isEqualTo(level1table1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL1_FIELD1)).as(WorkflowKeys.LEVEL1_FIELD1.getColumnName()).isEqualTo(level1field1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL1_PAGE1)).as(WorkflowKeys.LEVEL1_PAGE1.getColumnName()).isEqualTo(level2page1);
 
-        assertThat(WorkflowKeys.LEVEL2.getColumnName(), data.get(WorkflowKeys.LEVEL2), equalTo(level2page1));
-        assertThat(WorkflowKeys.LEVEL2_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL2_TABLE1), equalTo(level2table1));
-        assertThat(WorkflowKeys.LEVEL2_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL2_FIELD1), equalTo(level2field1));
-        assertThat(WorkflowKeys.LEVEL2_PAGE1.getColumnName(), data.get(WorkflowKeys.LEVEL2_PAGE1), equalTo(level3page1));
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL2)).as(WorkflowKeys.LEVEL2.getColumnName()).isEqualTo(level2page1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL2_TABLE1)).as(WorkflowKeys.LEVEL2_TABLE1.getColumnName()).isEqualTo(level2table1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL2_FIELD1)).as(WorkflowKeys.LEVEL2_FIELD1.getColumnName()).isEqualTo(level2field1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL2_PAGE1)).as(WorkflowKeys.LEVEL2_PAGE1.getColumnName()).isEqualTo(level3page1);
 
-        assertThat(WorkflowKeys.LEVEL3.getColumnName(), data.get(WorkflowKeys.LEVEL3), equalTo(level3page1));
-        assertThat(WorkflowKeys.LEVEL3_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL3_TABLE1), equalTo(level3table1));
-        assertThat(WorkflowKeys.LEVEL3_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL3_FIELD1), equalTo(level3field1));
-        assertThat(WorkflowKeys.LEVEL3_PAGE1.getColumnName(), data.get(WorkflowKeys.LEVEL3_PAGE1), equalTo(level4page1));
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL3)).as(WorkflowKeys.LEVEL3.getColumnName()).isEqualTo(level3page1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL3_TABLE1)).as(WorkflowKeys.LEVEL3_TABLE1.getColumnName()).isEqualTo(level3table1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL3_FIELD1)).as(WorkflowKeys.LEVEL3_FIELD1.getColumnName()).isEqualTo(level3field1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL3_PAGE1)).as(WorkflowKeys.LEVEL3_PAGE1.getColumnName()).isEqualTo(level4page1);
 
-        assertThat(WorkflowKeys.LEVEL4.getColumnName(), data.get(WorkflowKeys.LEVEL4), equalTo(level4page1));
-        assertThat(WorkflowKeys.LEVEL4_TABLE1.getColumnName(), data.get(WorkflowKeys.LEVEL4_TABLE1), equalTo(level4table1));
-        assertThat(WorkflowKeys.LEVEL4_FIELD1.getColumnName(), data.get(WorkflowKeys.LEVEL4_FIELD1), equalTo(level4field1));
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL4)).as(WorkflowKeys.LEVEL4.getColumnName()).isEqualTo(level4page1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL4_TABLE1)).as(WorkflowKeys.LEVEL4_TABLE1.getColumnName()).isEqualTo(level4table1);
+        AssertJUtil.assertThat(data.get(WorkflowKeys.LEVEL4_FIELD1)).as(WorkflowKeys.LEVEL4_FIELD1.getColumnName()).isEqualTo(level4field1);
 
-        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD1.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_FIELD1), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD2.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_FIELD2), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD3.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_FIELD3), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_PAGE1.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_PAGE1), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_ROW1.getColumnName(), data.get(WorkflowKeys.NOT_SEARCHED_ROW1), nullValue());
+        AssertJUtil.assertThat(data.get(WorkflowKeys.NOT_SEARCHED_FIELD1)).as(WorkflowKeys.NOT_SEARCHED_FIELD1.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.NOT_SEARCHED_FIELD2)).as(WorkflowKeys.NOT_SEARCHED_FIELD2.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.NOT_SEARCHED_FIELD3)).as(WorkflowKeys.NOT_SEARCHED_FIELD3.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.NOT_SEARCHED_PAGE1)).as(WorkflowKeys.NOT_SEARCHED_PAGE1.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.get(WorkflowKeys.NOT_SEARCHED_ROW1)).as(WorkflowKeys.NOT_SEARCHED_ROW1.getColumnName()).isNull();
 
         //
         // Removal Tests
         //
-        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD1.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_FIELD1), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD2.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_FIELD2), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_FIELD3.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_FIELD3), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_PAGE1.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_PAGE1), nullValue());
-        assertThat(WorkflowKeys.NOT_SEARCHED_ROW1.getColumnName(), data.remove(WorkflowKeys.NOT_SEARCHED_ROW1), nullValue());
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.NOT_SEARCHED_FIELD1)).as(WorkflowKeys.NOT_SEARCHED_FIELD1.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.NOT_SEARCHED_FIELD2)).as(WorkflowKeys.NOT_SEARCHED_FIELD2.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.NOT_SEARCHED_FIELD3)).as(WorkflowKeys.NOT_SEARCHED_FIELD3.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.NOT_SEARCHED_PAGE1)).as(WorkflowKeys.NOT_SEARCHED_PAGE1.getColumnName()).isNull();
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.NOT_SEARCHED_ROW1)).as(WorkflowKeys.NOT_SEARCHED_ROW1.getColumnName()).isNull();
 
-        assertThat(WorkflowKeys.LEVEL4_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL4_FIELD1), equalTo(level4field1));
-        assertThat(WorkflowKeys.LEVEL4_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL4_TABLE1), equalTo(level4table1));
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL4_FIELD1)).as(WorkflowKeys.LEVEL4_FIELD1.getColumnName()).isEqualTo(level4field1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL4_TABLE1)).as(WorkflowKeys.LEVEL4_TABLE1.getColumnName()).isEqualTo(level4table1);
 
-        assertThat(WorkflowKeys.LEVEL3_PAGE1.getColumnName(), data.remove(WorkflowKeys.LEVEL3_PAGE1), equalTo(level4page1));
-        assertThat(WorkflowKeys.LEVEL3_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL3_FIELD1), equalTo(level3field1));
-        assertThat(WorkflowKeys.LEVEL3_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL3_TABLE1), equalTo(level3table1));
-        assertThat(WorkflowKeys.LEVEL3.getColumnName(), data.remove(WorkflowKeys.LEVEL3), equalTo(level3page1));
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL3_PAGE1)).as(WorkflowKeys.LEVEL3_PAGE1.getColumnName()).isEqualTo(level4page1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL3_FIELD1)).as(WorkflowKeys.LEVEL3_FIELD1.getColumnName()).isEqualTo(level3field1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL3_TABLE1)).as(WorkflowKeys.LEVEL3_TABLE1.getColumnName()).isEqualTo(level3table1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL3)).as(WorkflowKeys.LEVEL3.getColumnName()).isEqualTo(level3page1);
 
-        assertThat(WorkflowKeys.LEVEL2_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL2_FIELD1), equalTo(level2field1));
-        assertThat(WorkflowKeys.LEVEL2_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL2_TABLE1), equalTo(level2table1));
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL2_FIELD1)).as(WorkflowKeys.LEVEL2_FIELD1.getColumnName()).isEqualTo(level2field1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL2_TABLE1)).as(WorkflowKeys.LEVEL2_TABLE1.getColumnName()).isEqualTo(level2table1);
 
-        assertThat(WorkflowKeys.LEVEL1_PAGE1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_PAGE1), equalTo(level2page1));
-        assertThat(WorkflowKeys.LEVEL1_FIELD1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_FIELD1), equalTo(level1field1));
-        assertThat(WorkflowKeys.LEVEL1_TABLE1.getColumnName(), data.remove(WorkflowKeys.LEVEL1_TABLE1), equalTo(level1table1));
-        assertThat(WorkflowKeys.LEVEL1.getColumnName(), data.remove(WorkflowKeys.LEVEL1), equalTo(level1page1));
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL1_PAGE1)).as(WorkflowKeys.LEVEL1_PAGE1.getColumnName()).isEqualTo(level2page1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL1_FIELD1)).as(WorkflowKeys.LEVEL1_FIELD1.getColumnName()).isEqualTo(level1field1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL1_TABLE1)).as(WorkflowKeys.LEVEL1_TABLE1.getColumnName()).isEqualTo(level1table1);
+        AssertJUtil.assertThat(data.remove(WorkflowKeys.LEVEL1)).as(WorkflowKeys.LEVEL1.getColumnName()).isEqualTo(level1page1);
     }
 
     @Features("Helper")
