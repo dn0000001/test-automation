@@ -68,6 +68,16 @@ public class GenericRow extends PageObjectV2 {
     }
 
     /**
+     * Initialize Page using the specified row's substitutions and context
+     *
+     * @param row - Row to get substitutions and context
+     */
+    public void initPage(GenericRow row) {
+        getSubstitutions().putAll(row.getSubstitutions());
+        initPage(row.getContext());
+    }
+
+    /**
      * Get a value from the row that uniquely identifies it
      *
      * @return identifier
