@@ -44,6 +44,15 @@ This class has custom ExpectedConditions and any new additions to the ExpectedCo
 ### Helper
 Class for general helper methods.  Mainly used for logging to the console.  Also, used in conjunction with AssertAggregator.
 
+### AssertJUtil
+This class holds the AssertJ assertions including the customized assertions.
+
+### CustomSoftAssertions
+Class to accumulate assert failures to throw a single assertion later for AssertJ.  The main use case is performing multiple assertions on an object in which you want all assertions executed always.
+
+### AssertJCondition
+Class holds custom AssertJ Conditions.
+
 ### AssertAggregator
 Class to accumulate assert failures to throw a single assertion later.  The main use case is performing multiple assertions on an object in which you want all assertions executed always.
 
