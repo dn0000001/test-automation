@@ -2,6 +2,7 @@ package com.taf.automation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taf.automation.ui.support.testng.Attachment;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -32,14 +33,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * API Utilities
  */
-@SuppressWarnings("squid:S00112")
+@SuppressWarnings({"squid:S00112", "java:S3252"})
 public class ApiUtils {
     private static final String HTTPS = "https://";
     private static final String HTTP = "http://";
@@ -187,13 +184,13 @@ public class ApiUtils {
             return;
         }
 
-        assertThat(actual, notNullValue());
-        assertThat(expected, notNullValue());
+        AssertJUtil.assertThat(actual).isNotNull();
+        AssertJUtil.assertThat(expected).isNotNull();
 
         String[] actualLines = new ApiDomainObject().getXstream().toXML(actual).split("\n");
         String[] expectedLines = new ApiDomainObject().getXstream().toXML(expected).split("\n");
         for (int i = 0; i < expectedLines.length; i++) {
-            assertThat(actualLines[i], equalTo(expectedLines[i]));
+            AssertJUtil.assertThat(actualLines[i]).isEqualTo(expectedLines[i]);
         }
     }
 
@@ -280,7 +277,7 @@ public class ApiUtils {
             error = ignore.getMessage();
         }
 
-        assertThat("Could not read field (" + field.getName() + ") due to error:  " + error, false);
+        AssertJUtil.fail("Could not read field (" + field.getName() + ") due to error:  " + error);
         return null;
     }
 

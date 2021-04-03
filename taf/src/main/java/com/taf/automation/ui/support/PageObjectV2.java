@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.ExceptionUtils;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
@@ -23,13 +24,11 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * This is an enhanced version of the PageObject that handles the JavascriptException thrown by geckodriver sometimes
  * instead of the StaleElementReferenceException.  Also, it has an initialization method to handle dynamic locators.
  */
+@SuppressWarnings("java:S3252")
 public class PageObjectV2 extends PageObjectModel {
     protected <T extends PageComponentContext> PageObjectV2(T context) {
         initPage(context);
@@ -284,7 +283,7 @@ public class PageObjectV2 extends PageObjectModel {
         boolean validated;
         do {
             Failsafe.with(Utils.getWriteValueRetryPolicy())
-                    .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                    .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                     .run(component::setValue);
             if (validationMethod != null) {
                 try {
@@ -329,7 +328,7 @@ public class PageObjectV2 extends PageObjectModel {
 
         String error = "Unable to fill (" + component.getClass().getSimpleName() + ") & validate before timeout:  ";
         Failsafe.with(Utils.getWriteValueRetryPolicy())
-                .onFailure(ex -> assertThat(error + ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .onFailure(ex -> AssertJUtil.fail(error + ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .run(() -> {
                     component.fill();
                     component.validate();
@@ -499,10 +498,10 @@ public class PageObjectV2 extends PageObjectModel {
      * controlling the click logic and sometimes this may not be the case based on the component
      */
     protected WebElement click(PageComponent component) {
-        assertThat("Click Component", component, notNullValue());
-        assertThat("Click Component's Locator", component.getLocator(), notNullValue());
+        AssertJUtil.assertThat(component).as("Click Component").isNotNull();
+        AssertJUtil.assertThat(component.getLocator()).as("Click Component's Locator").isNotNull();
         return Failsafe.with(Utils.getClickRetryPolicy())
-                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .get(() -> {
                     WebElement element = Utils.until(ExpectedConditionsUtil.ready(component));
                     component.click();
@@ -520,10 +519,10 @@ public class PageObjectV2 extends PageObjectModel {
      * is controlling the click logic and sometimes this may not be the case based on the component
      */
     protected WebElement click(PageComponent component, Map<String, String> substitutions) {
-        assertThat("Click Component", component, notNullValue());
-        assertThat("Click Component's Locator", component.getLocator(), notNullValue());
+        AssertJUtil.assertThat(component).as("Click Component").isNotNull();
+        AssertJUtil.assertThat(component.getLocator()).as("Click Component's Locator").isNotNull();
         return Failsafe.with(Utils.getClickRetryPolicy())
-                .onFailure(ex -> assertThat(ExceptionUtils.clean(ex.getFailure().getMessage()), false))
+                .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .get(() -> {
                     WebElement element = Utils.until(ExpectedConditionsUtil.ready(component, substitutions));
                     component.click();

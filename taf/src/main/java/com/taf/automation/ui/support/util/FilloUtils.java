@@ -26,15 +26,10 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Utilities for Fillo library
  */
+@SuppressWarnings("java:S3252")
 public class FilloUtils {
     private FilloUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -51,17 +46,17 @@ public class FilloUtils {
 
         try {
             FileInputStream file = openFileInputStream(resourceFilePath);
-            assertThat("Could not open stream - " + resourceFilePath, file, notNullValue());
+            AssertJUtil.assertThat(file).as("Could not open stream - " + resourceFilePath).isNotNull();
 
             Workbook workbook = getWorkbook(file, resourceFilePath);
-            assertThat("Unable to connect workbook - " + resourceFilePath, workbook, notNullValue());
+            AssertJUtil.assertThat(workbook).as("Unable to connect workbook - " + resourceFilePath).isNotNull();
 
             connection = new Connection(workbook, file, resourceFilePath, true);
         } catch (Exception ignore) {
             connection = null;
         }
 
-        assertThat("Workbook is not found - " + resourceFilePath, connection, notNullValue());
+        AssertJUtil.assertThat(connection).as("Workbook is not found - " + resourceFilePath).isNotNull();
         return connection;
     }
 
@@ -135,7 +130,7 @@ public class FilloUtils {
             data = null;
         }
 
-        assertThat("Could not load excel file due to error:  " + error, data, notNullValue());
+        AssertJUtil.assertThat(data).as("Could not load excel file due to error:  " + error).isNotNull();
         return data;
     }
 
@@ -182,7 +177,7 @@ public class FilloUtils {
                 index++;
             }
         } catch (Exception ex) {
-            assertThat("Could not read records from Excel file due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not read records from Excel file due to error:  " + ex.getMessage());
         }
     }
 
@@ -253,7 +248,7 @@ public class FilloUtils {
             OutputStream fileOut = new FileOutputStream(filename);
             wb.write(fileOut);
         } catch (Exception ex) {
-            assertThat("Could not append to Excel file due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not append to Excel file due to error:  " + ex.getMessage());
         }
     }
 
@@ -264,14 +259,14 @@ public class FilloUtils {
      * @param newSheetName - New Sheet Name
      */
     public static void appendSheetToExcel(String filename, String newSheetName) {
-        assertThat("Unable to add null sheetName to file[" + filename + "]", newSheetName, not(isEmptyOrNullString()));
+        AssertJUtil.assertThat(newSheetName).as("Unable to add null sheetName to file[" + filename + "]").isNotBlank();
         try (
                 FileInputStream in = new FileInputStream(new File(filename));
                 Workbook wb = new XSSFWorkbook(in)
         ) {
             String errorMsg = "SheetName already exists exists in File[" + filename + "]";
             for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
-                assertThat(errorMsg, wb.getSheetName(iSheet), not(equalTo(newSheetName)));
+                AssertJUtil.assertThat(wb.getSheetName(iSheet)).as(errorMsg).isNotEqualTo(newSheetName);
             }
 
             wb.createSheet(WorkbookUtil.createSafeSheetName(newSheetName));
@@ -280,7 +275,7 @@ public class FilloUtils {
             wb.write(fileOut);
 
         } catch (Exception ex) {
-            assertThat("Could not append to Excel file due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not append to Excel file due to error:  " + ex.getMessage());
         }
     }
 
@@ -334,7 +329,7 @@ public class FilloUtils {
             OutputStream fileOut = new FileOutputStream(filename);
             wb.write(fileOut);
         } catch (Exception ex) {
-            assertThat("Could not create Excel file due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not create Excel file due to error:  " + ex.getMessage());
         }
     }
 
@@ -371,7 +366,7 @@ public class FilloUtils {
             OutputStream fileOut = new FileOutputStream(filename);
             wb.write(fileOut);
         } catch (Exception ex) {
-            assertThat("Could not add Header Excel Sheet due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not add Header Excel Sheet due to error:  " + ex.getMessage());
         }
     }
 
@@ -407,7 +402,7 @@ public class FilloUtils {
             OutputStream fileOut = new FileOutputStream(filename);
             wb.write(fileOut);
         } catch (Exception ex) {
-            assertThat("Could not group rows of Excel file due to error:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not group rows of Excel file due to error:  " + ex.getMessage());
         }
     }
 

@@ -8,9 +8,6 @@ import jxl.read.biff.BiffException;
 import java.io.File;
 import java.io.IOException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Class to work with Excel files<BR>
  * <B>Notes:</B>
@@ -19,6 +16,7 @@ import static org.hamcrest.Matchers.notNullValue;
  * <LI>The newer format Excel Files from 2007 are <B>NOT</B> supported.  (File extension is <B>xlsx</B>)</LI>
  * </OL>
  */
+@SuppressWarnings("java:S3252")
 public class ExcelUtils {
     private ExcelUtils() {
         //
@@ -68,7 +66,7 @@ public class ExcelUtils {
             data = null;
         }
 
-        assertThat("Could not load excel file due to error:  " + error, data, notNullValue());
+        AssertJUtil.assertThat(data).as("Could not load excel file due to error:  " + error).isNotNull();
         return data;
     }
 

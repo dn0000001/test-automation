@@ -1,10 +1,10 @@
 package com.taf.automation.ui.support.util;
 
+import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.events.Event;
 import com.taf.automation.ui.support.events.EventType;
 import com.taf.automation.ui.support.events.MouseEvent;
 import com.taf.automation.ui.support.events.MouseEventType;
-import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.exceptions.JavaScriptException;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import net.jodah.failsafe.Failsafe;
@@ -18,12 +18,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * This class provides utility methods to work with JavaScript
  */
+@SuppressWarnings("java:S3252")
 public class JsUtils {
     public static final String ID = "id";
     private static final String SCROLL_INTO_VIEW_WITH_OFFSET = Utils.readResource("JS/ScrollIntoViewWithOffset.js");
@@ -544,7 +542,7 @@ public class JsUtils {
     private static void validateXHR() {
         WebElement element = getWebDriver().findElement(By.cssSelector("body"));
         String ajaxCounter = element.getAttribute("ajaxcounter");
-        assertThat("AJAX Counter", NumberUtils.toInt(ajaxCounter, -1), equalTo(0));
+        AssertJUtil.assertThat(NumberUtils.toInt(ajaxCounter, -1)).as("AJAX Counter").isEqualTo(0);
     }
 
 }

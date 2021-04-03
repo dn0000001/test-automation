@@ -2,6 +2,7 @@ package com.taf.automation.ui.support;
 
 import com.deque.axe.AXE;
 import com.taf.automation.ui.support.testng.Attachment;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
@@ -13,13 +14,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * This class is for testing page accessibility<BR>
  * <B>Note: </B> If running multiple tests in parallel, then this class should only be initialized once per thread.<BR>
  */
+@SuppressWarnings("java:S3252")
 public class Accessibility {
     private static final URL SCRIPT_URL = Thread.currentThread().getContextClassLoader().getResource("JS/axe.min.js");
     private WebDriver driver;
@@ -185,7 +184,7 @@ public class Accessibility {
             return;
         }
 
-        assertThat("Violations", violations.length(), equalTo(0));
+        AssertJUtil.assertThat(violations.length()).as("Violations").isEqualTo(0);
     }
 
     @Step("Violations for Page Name:  {0}")
@@ -226,7 +225,7 @@ public class Accessibility {
             }
         }
 
-        assertThat("Detected Violations.  See report for details.", noViolations);
+        AssertJUtil.assertThat(noViolations).as("Detected Violations.  See report for details.").isTrue();
     }
 
 }

@@ -1,8 +1,8 @@
 package com.taf.automation.ui.support;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import com.taf.automation.ui.support.util.AssertJUtil;
 
+@SuppressWarnings("java:S3252")
 public class StringCompare {
 
     private static int minimum(int a, int b, int c) {
@@ -53,7 +53,7 @@ public class StringCompare {
     }
 
     public static void assertEqualOmitSpacesAndNonWord(String str1, String str2) {
-        assertThat(normalize(str1), equalTo(normalize(str2)));
+        AssertJUtil.assertThat(normalize(str1)).isEqualTo(normalize(str2));
     }
 
 }

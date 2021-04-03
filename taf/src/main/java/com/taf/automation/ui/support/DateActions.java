@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import de.jollyday.Holiday;
 import de.jollyday.HolidayCalendar;
@@ -23,12 +24,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThan;
-
 /**
  * This class provides some actions on dates that may be useful
  */
+@SuppressWarnings("java:S3252")
 public class DateActions {
     private static final String NEW_YEARS_DAY = "NEW_YEAR";
     private static final String BOXING_DAY = "BOXING_DAY";
@@ -450,7 +449,7 @@ public class DateActions {
         while (isNonBusinessDay(result) || isHoliday(holidays, result)) {
             result = result.plusDays(moveDays);
             count++;
-            assertThat("Could not calculate business day tried all days in year", count, lessThan(370));
+            AssertJUtil.assertThat(count).as("Could not calculate business day tried all days in year").isLessThan(370);
         }
 
         return toDate(result, zone);
@@ -495,7 +494,7 @@ public class DateActions {
             }
 
             count++;
-            assertThat("Could not calculate business day tried all days in year", count, lessThan(370));
+            AssertJUtil.assertThat(count).as("Could not calculate business day tried all days in year").isLessThan(370);
         }
 
         return toDate(result, zone);

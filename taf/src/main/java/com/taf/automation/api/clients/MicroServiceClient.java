@@ -3,6 +3,7 @@ package com.taf.automation.api.clients;
 import com.google.gson.Gson;
 import com.taf.automation.api.JsonUtils;
 import com.taf.automation.api.rest.GenericHttpInterface;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -25,14 +26,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import java.net.URI;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Client which does not initialize the target host for sending requests instead you must you the setRequester method
  * to set this information.
  */
-@SuppressWarnings("squid:S00112")
+@SuppressWarnings({"squid:S00112", "java:S3252"})
 public class MicroServiceClient implements GenericHttpInterface {
     private HttpRequester requester;
     private String customAcceptHeader;
@@ -122,7 +120,7 @@ public class MicroServiceClient implements GenericHttpInterface {
             req.setEntity(httpEntity);
         }
 
-        assertThat("HttpRequester was not initialized (via setRequester)", requester, notNullValue());
+        AssertJUtil.assertThat(requester).as("HttpRequester was not initialized (via setRequester)").isNotNull();
         CloseableHttpClient client = requester.getClient();
         HttpHost targetHost = requester.getTargetHost();
         HttpClientContext clientContext = requester.getClientContext();

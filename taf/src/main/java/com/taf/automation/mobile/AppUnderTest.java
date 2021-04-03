@@ -1,14 +1,14 @@
 package com.taf.automation.mobile;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Enumeration to hold your App(s) Under Test
  */
+@SuppressWarnings("java:S3252")
 public enum AppUnderTest {
     CALCULATOR,
     CLOCK,
@@ -27,7 +27,7 @@ public enum AppUnderTest {
             return getCalculatorTheGameDesiredCapabilities();
         }
 
-        assertThat("Unsupported AppUnderTest:  " + this, false);
+        AssertJUtil.fail("Unsupported AppUnderTest:  " + this);
         return null;
     }
 

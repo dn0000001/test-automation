@@ -1,7 +1,8 @@
 package com.taf.automation.db;
 
-import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -12,11 +13,10 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Class to work with a SQL Server database
  */
+@SuppressWarnings("java:S3252")
 public class SqlServerInstance extends DBInstance {
     private static final ReentrantLock lockFile = new ReentrantLock();
     private static final String HOME = System.getProperty("user.home");
@@ -100,7 +100,7 @@ public class SqlServerInstance extends DBInstance {
         } catch (Exception ex) {
             String reason = "Could not setup for integrated security due to exception:  " + ex.getMessage();
             LOG.error(reason);
-            assertThat(reason, false);
+            AssertJUtil.fail(reason);
         } finally {
             lockFile.unlock();
         }
