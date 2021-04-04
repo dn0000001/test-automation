@@ -1,8 +1,9 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.AssertAggregator;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.DateActions;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import de.jollyday.HolidayCalendar;
 import de.jollyday.HolidayType;
@@ -20,10 +21,7 @@ import java.time.DayOfWeek;
 import java.util.Date;
 import java.util.HashSet;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class DateActionsTest {
     private static final String DATE_FORMAT = "MM/dd/yyyy";
@@ -74,40 +72,40 @@ public class DateActionsTest {
     public void performResultDateIsBusinessDayTest() {
         DateActions dateActions = new DateActions();
         Date actual = dateActions.nextBusinessDay(sept18anchor, 0);
-        assertThat("Next Business Day - No Days Added", actual, equalTo(sept18anchor));
+        AssertJUtil.assertThat(actual).as("Next Business Day - No Days Added").isEqualTo(sept18anchor);
 
         actual = dateActions.previousBusinessDay(sept18anchor, 0);
-        assertThat("Previous Business Day - No Days Added", actual, equalTo(sept18anchor));
+        AssertJUtil.assertThat(actual).as("Previous Business Day - No Days Added").isEqualTo(sept18anchor);
 
         actual = dateActions.nextBusinessDay(sept18anchor, 1);
-        assertThat("Next Business Day - 1 Day After", actual, equalTo(sept19));
+        AssertJUtil.assertThat(actual).as("Next Business Day - 1 Day After").isEqualTo(sept19);
 
         actual = dateActions.previousBusinessDay(sept18anchor, -1);
-        assertThat("Previous Business Day - 1 Day Before", actual, equalTo(sept17));
+        AssertJUtil.assertThat(actual).as("Previous Business Day - 1 Day Before").isEqualTo(sept17);
 
         actual = dateActions.nextBusinessDay(sept18anchor, 7);
-        assertThat("Next Business Day - 1 Week After", actual, equalTo(sept25));
+        AssertJUtil.assertThat(actual).as("Next Business Day - 1 Week After").isEqualTo(sept25);
 
         actual = dateActions.previousBusinessDay(sept18anchor, -7);
-        assertThat("Previous Business Day - 1 Week Before", actual, equalTo(sept11));
+        AssertJUtil.assertThat(actual).as("Previous Business Day - 1 Week Before").isEqualTo(sept11);
 
         actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 0);
-        assertThat("Only Business Days After - No Days Added", actual, equalTo(sept18anchor));
+        AssertJUtil.assertThat(actual).as("Only Business Days After - No Days Added").isEqualTo(sept18anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(sept18anchor, 0);
-        assertThat("Only Business Days Before - No Days Added", actual, equalTo(sept18anchor));
+        AssertJUtil.assertThat(actual).as("Only Business Days Before - No Days Added").isEqualTo(sept18anchor);
 
         actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 1);
-        assertThat("Only Business Days After - 1 Day After", actual, equalTo(sept19));
+        AssertJUtil.assertThat(actual).as("Only Business Days After - 1 Day After").isEqualTo(sept19);
 
         actual = dateActions.onlyBusinessDaysBefore(sept18anchor, -1);
-        assertThat("Only Business Days Before - 1 Day Before", actual, equalTo(sept17));
+        AssertJUtil.assertThat(actual).as("Only Business Days Before - 1 Day Before").isEqualTo(sept17);
 
         actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 5);
-        assertThat("Only Business Days After - 1 Week After", actual, equalTo(sept25));
+        AssertJUtil.assertThat(actual).as("Only Business Days After - 1 Week After").isEqualTo(sept25);
 
         actual = dateActions.onlyBusinessDaysBefore(sept18anchor, -5);
-        assertThat("Only Business Days Before - 1 Week Before", actual, equalTo(sept11));
+        AssertJUtil.assertThat(actual).as("Only Business Days Before - 1 Week Before").isEqualTo(sept11);
     }
 
     @Features("DateActions")
@@ -117,28 +115,28 @@ public class DateActionsTest {
     public void performResultDateIsNonBusinessDayTest() {
         DateActions dateActions = new DateActions();
         Date actual = dateActions.nextBusinessDay(sept15anchor, 0);
-        assertThat("Next Business Day - No Days Added", actual, equalTo(sept16));
+        AssertJUtil.assertThat(actual).as("Next Business Day - No Days Added").isEqualTo(sept16);
 
         actual = dateActions.previousBusinessDay(sept15anchor, 0);
-        assertThat("Previous Business Day - No Days Added", actual, equalTo(sept13));
+        AssertJUtil.assertThat(actual).as("Previous Business Day - No Days Added").isEqualTo(sept13);
 
         actual = dateActions.nextBusinessDay(sept18anchor, 3);
-        assertThat("Next Business Day - 3 Days After", actual, equalTo(sept23));
+        AssertJUtil.assertThat(actual).as("Next Business Day - 3 Days After").isEqualTo(sept23);
 
         actual = dateActions.previousBusinessDay(sept18anchor, -3);
-        assertThat("Previous Business Day - 3 Days Before", actual, equalTo(sept13));
+        AssertJUtil.assertThat(actual).as("Previous Business Day - 3 Days Before").isEqualTo(sept13);
 
         actual = dateActions.onlyBusinessDaysAfter(sept15anchor, 0);
-        assertThat("Only Business Days After - No Days Added", actual, equalTo(sept16));
+        AssertJUtil.assertThat(actual).as("Only Business Days After - No Days Added").isEqualTo(sept16);
 
         actual = dateActions.onlyBusinessDaysBefore(sept15anchor, 0);
-        assertThat("Only Business Days Before - No Days Added", actual, equalTo(sept13));
+        AssertJUtil.assertThat(actual).as("Only Business Days Before - No Days Added").isEqualTo(sept13);
 
         actual = dateActions.onlyBusinessDaysAfter(sept18anchor, 3);
-        assertThat("Only Business Days After - 3 Days After", actual, equalTo(sept23));
+        AssertJUtil.assertThat(actual).as("Only Business Days After - 3 Days After").isEqualTo(sept23);
 
         actual = dateActions.onlyBusinessDaysBefore(sept18anchor, -3);
-        assertThat("Only Business Days Before - 3 Days Before", actual, equalTo(sept13));
+        AssertJUtil.assertThat(actual).as("Only Business Days Before - 3 Days Before").isEqualTo(sept13);
     }
 
     @Features("DateActions")
@@ -148,28 +146,28 @@ public class DateActionsTest {
     public void performResultDateIsChristmasTest() {
         DateActions dateActions = new DateActions().withRegions(new String[]{"on"});
         Date actual = dateActions.nextBusinessDay(dec25anchor, 0);
-        assertThat("Christmas - Next Business Day - No Days Added", actual, equalTo(dec27));
+        AssertJUtil.assertThat(actual).as("Christmas - Next Business Day - No Days Added").isEqualTo(dec27);
 
         actual = dateActions.previousBusinessDay(dec25anchor, 0);
-        assertThat("Christmas - Previous Business Day - No Days Added", actual, equalTo(dec24));
+        AssertJUtil.assertThat(actual).as("Christmas - Previous Business Day - No Days Added").isEqualTo(dec24);
 
         actual = dateActions.nextBusinessDay(dec24anchor, 1);
-        assertThat("Christmas - Next Business Day - 1 Day After", actual, equalTo(dec27));
+        AssertJUtil.assertThat(actual).as("Christmas - Next Business Day - 1 Day After").isEqualTo(dec27);
 
         actual = dateActions.previousBusinessDay(dec26anchor, -1);
-        assertThat("Christmas - Previous Business Day - 1 Day Before", actual, equalTo(dec24));
+        AssertJUtil.assertThat(actual).as("Christmas - Previous Business Day - 1 Day Before").isEqualTo(dec24);
 
         actual = dateActions.onlyBusinessDaysAfter(dec25anchor, 0);
-        assertThat("Christmas - Only Business Days After - No Days Added", actual, equalTo(dec27));
+        AssertJUtil.assertThat(actual).as("Christmas - Only Business Days After - No Days Added").isEqualTo(dec27);
 
         actual = dateActions.onlyBusinessDaysBefore(dec25anchor, 0);
-        assertThat("Christmas - Only Business Days Before - No Days Added", actual, equalTo(dec24));
+        AssertJUtil.assertThat(actual).as("Christmas - Only Business Days Before - No Days Added").isEqualTo(dec24);
 
         actual = dateActions.onlyBusinessDaysAfter(dec24anchor, 1);
-        assertThat("Christmas - Only Business Days After - 1 Day After", actual, equalTo(dec27));
+        AssertJUtil.assertThat(actual).as("Christmas - Only Business Days After - 1 Day After").isEqualTo(dec27);
 
         actual = dateActions.onlyBusinessDaysBefore(dec26anchor, -1);
-        assertThat("Christmas - Only Business Days Before - 1 Day Before", actual, equalTo(dec24));
+        AssertJUtil.assertThat(actual).as("Christmas - Only Business Days Before - 1 Day Before").isEqualTo(dec24);
     }
 
     @Features("DateActions")
@@ -179,28 +177,28 @@ public class DateActionsTest {
     public void performResultDateIsGoodFridayTest() {
         DateActions dateActions = new DateActions();
         Date actual = dateActions.nextBusinessDay(april19anchor, 0);
-        assertThat("Good Friday - Next Business Day - No Days Added", actual, equalTo(april22));
+        AssertJUtil.assertThat(actual).as("Good Friday - Next Business Day - No Days Added").isEqualTo(april22);
 
         actual = dateActions.previousBusinessDay(april19anchor, 0);
-        assertThat("Good Friday - Previous Business Day - No Days Added", actual, equalTo(april18anchor));
+        AssertJUtil.assertThat(actual).as("Good Friday - Previous Business Day - No Days Added").isEqualTo(april18anchor);
 
         actual = dateActions.nextBusinessDay(april18anchor, 1);
-        assertThat("Good Friday - Next Business Day - 1 Day After", actual, equalTo(april22));
+        AssertJUtil.assertThat(actual).as("Good Friday - Next Business Day - 1 Day After").isEqualTo(april22);
 
         actual = dateActions.previousBusinessDay(april20anchor, -1);
-        assertThat("Good Friday - Previous Business Day - 1 Day Before", actual, equalTo(april18anchor));
+        AssertJUtil.assertThat(actual).as("Good Friday - Previous Business Day - 1 Day Before").isEqualTo(april18anchor);
 
         actual = dateActions.onlyBusinessDaysAfter(april19anchor, 0);
-        assertThat("Good Friday - Only Business Days After - No Days Added", actual, equalTo(april22));
+        AssertJUtil.assertThat(actual).as("Good Friday - Only Business Days After - No Days Added").isEqualTo(april22);
 
         actual = dateActions.onlyBusinessDaysBefore(april19anchor, 0);
-        assertThat("Good Friday - Only Business Days Before - No Days Added", actual, equalTo(april18anchor));
+        AssertJUtil.assertThat(actual).as("Good Friday - Only Business Days Before - No Days Added").isEqualTo(april18anchor);
 
         actual = dateActions.onlyBusinessDaysAfter(april18anchor, 1);
-        assertThat("Good Friday - Only Business Days After - 1 Day After", actual, equalTo(april22));
+        AssertJUtil.assertThat(actual).as("Good Friday - Only Business Days After - 1 Day After").isEqualTo(april22);
 
         actual = dateActions.onlyBusinessDaysBefore(april20anchor, -1);
-        assertThat("Good Friday - Only Business Days Before - 1 Day Before", actual, equalTo(april18anchor));
+        AssertJUtil.assertThat(actual).as("Good Friday - Only Business Days Before - 1 Day Before").isEqualTo(april18anchor);
     }
 
     @Features("DateActions")
@@ -210,28 +208,28 @@ public class DateActionsTest {
     public void performResultDateIsCanadaDayTest() {
         DateActions dateActions = new DateActions();
         Date actual = dateActions.nextBusinessDay(jul1anchor, 0);
-        assertThat("Canada Day - Next Business Day - No Days Added", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Next Business Day - No Days Added").isEqualTo(jul2anchor);
 
         actual = dateActions.previousBusinessDay(jul1anchor, 0);
-        assertThat("Canada Day - Previous Business Day - No Days Added", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Previous Business Day - No Days Added").isEqualTo(jun28);
 
         actual = dateActions.nextBusinessDay(jun30anchor, 1);
-        assertThat("Canada Day - Next Business Day - 1 Day After", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Next Business Day - 1 Day After").isEqualTo(jul2anchor);
 
         actual = dateActions.previousBusinessDay(jul2anchor, -1);
-        assertThat("Canada Day - Previous Business Day - 1 Day Before", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Previous Business Day - 1 Day Before").isEqualTo(jun28);
 
         actual = dateActions.onlyBusinessDaysAfter(jul1anchor, 0);
-        assertThat("Canada Day - Only Business Days After - No Days Added", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days After - No Days Added").isEqualTo(jul2anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(jul1anchor, 0);
-        assertThat("Canada Day - Only Business Days Before - No Days Added", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days Before - No Days Added").isEqualTo(jun28);
 
         actual = dateActions.onlyBusinessDaysAfter(jun30anchor, 1);
-        assertThat("Canada Day - Only Business Days After - 1 Day After", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days After - 1 Day After").isEqualTo(jul2anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(jul2anchor, -1);
-        assertThat("Canada Day - Only Business Days Before - 1 Day Before", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days Before - 1 Day Before").isEqualTo(jun28);
     }
 
     @Features("DateActions")
@@ -241,28 +239,28 @@ public class DateActionsTest {
     public void performResultDateIsThanksgivingTest() {
         DateActions dateActions = new DateActions().withRegions(new String[]{"on"});
         Date actual = dateActions.nextBusinessDay(oct14anchor, 0);
-        assertThat("Thanksgiving - Next Business Day - No Days Added", actual, equalTo(oct15anchor));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Next Business Day - No Days Added").isEqualTo(oct15anchor);
 
         actual = dateActions.previousBusinessDay(oct14anchor, 0);
-        assertThat("Thanksgiving - Previous Business Day - No Days Added", actual, equalTo(oct11));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Previous Business Day - No Days Added").isEqualTo(oct11);
 
         actual = dateActions.nextBusinessDay(oct13anchor, 1);
-        assertThat("Thanksgiving - Next Business Day - 1 Day After", actual, equalTo(oct15anchor));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Next Business Day - 1 Day After").isEqualTo(oct15anchor);
 
         actual = dateActions.previousBusinessDay(oct15anchor, -1);
-        assertThat("Thanksgiving - Previous Business Day - 1 Day Before", actual, equalTo(oct11));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Previous Business Day - 1 Day Before").isEqualTo(oct11);
 
         actual = dateActions.onlyBusinessDaysAfter(oct14anchor, 0);
-        assertThat("Thanksgiving - Only Business Days After - No Days Added", actual, equalTo(oct15anchor));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Only Business Days After - No Days Added").isEqualTo(oct15anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(oct14anchor, 0);
-        assertThat("Thanksgiving - Only Business Days Before - No Days Added", actual, equalTo(oct11));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Only Business Days Before - No Days Added").isEqualTo(oct11);
 
         actual = dateActions.onlyBusinessDaysAfter(oct13anchor, 1);
-        assertThat("Thanksgiving - Only Business Days After - 1 Day After", actual, equalTo(oct15anchor));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Only Business Days After - 1 Day After").isEqualTo(oct15anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(oct15anchor, -1);
-        assertThat("Thanksgiving - Only Business Days Before - 1 Day Before", actual, equalTo(oct11));
+        AssertJUtil.assertThat(actual).as("Thanksgiving - Only Business Days Before - 1 Day Before").isEqualTo(oct11);
     }
 
     @Features("DateActions")
@@ -279,28 +277,28 @@ public class DateActionsTest {
         Date july6 = DateActions.parseDateStrictly("07/06/2020", DATE_FORMAT);
 
         Date actual = dateActions.nextBusinessDay(july3, 0);
-        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED).isEqualTo(july6);
 
         actual = dateActions.previousBusinessDay(july3, 0);
-        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED).isEqualTo(july2);
 
         actual = dateActions.nextBusinessDay(july2, 1);
-        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER).isEqualTo(july6);
 
         actual = dateActions.previousBusinessDay(july5, -1);
-        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE).isEqualTo(july2);
 
         actual = dateActions.onlyBusinessDaysAfter(july3, 0);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED).isEqualTo(july6);
 
         actual = dateActions.onlyBusinessDaysBefore(july3, 0);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED).isEqualTo(july2);
 
         actual = dateActions.onlyBusinessDaysAfter(july2, 1);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER).isEqualTo(july6);
 
         actual = dateActions.onlyBusinessDaysBefore(july5, -1);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE).isEqualTo(july2);
     }
 
     @Features("DateActions")
@@ -316,28 +314,28 @@ public class DateActionsTest {
         Date july6 = DateActions.parseDateStrictly("07/06/2021", DATE_FORMAT);
 
         Date actual = dateActions.nextBusinessDay(july5, 0);
-        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED).isEqualTo(july6);
 
         actual = dateActions.previousBusinessDay(july5, 0);
-        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED).isEqualTo(july2);
 
         actual = dateActions.nextBusinessDay(july2, 1);
-        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER).isEqualTo(july6);
 
         actual = dateActions.previousBusinessDay(july6, -1);
-        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE).isEqualTo(july2);
 
         actual = dateActions.onlyBusinessDaysAfter(july5, 0);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED).isEqualTo(july6);
 
         actual = dateActions.onlyBusinessDaysBefore(july5, 0);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED).isEqualTo(july2);
 
         actual = dateActions.onlyBusinessDaysAfter(july2, 1);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER).isEqualTo(july6);
 
         actual = dateActions.onlyBusinessDaysBefore(july6, -1);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE).isEqualTo(july2);
     }
 
     @Features("DateActions")
@@ -353,28 +351,28 @@ public class DateActionsTest {
         Date jan4 = DateActions.parseDateStrictly("01/04/2000", DATE_FORMAT);
 
         Date actual = dateActions.nextBusinessDay(jan3, 0);
-        assertThat("New Years Day - Next Business Day - No Days Added", actual, equalTo(jan4));
+        AssertJUtil.assertThat(actual).as("New Years Day - Next Business Day - No Days Added").isEqualTo(jan4);
 
         actual = dateActions.previousBusinessDay(jan3, 0);
-        assertThat("New Years Day - Previous Business Day - No Days Added", actual, equalTo(dec31));
+        AssertJUtil.assertThat(actual).as("New Years Day - Previous Business Day - No Days Added").isEqualTo(dec31);
 
         actual = dateActions.nextBusinessDay(dec31, 1);
-        assertThat("New Years Day - Next Business Day - 1 Day After", actual, equalTo(jan4));
+        AssertJUtil.assertThat(actual).as("New Years Day - Next Business Day - 1 Day After").isEqualTo(jan4);
 
         actual = dateActions.previousBusinessDay(jan4, -1);
-        assertThat("New Years Day - Previous Business Day - 1 Day Before", actual, equalTo(dec31));
+        AssertJUtil.assertThat(actual).as("New Years Day - Previous Business Day - 1 Day Before").isEqualTo(dec31);
 
         actual = dateActions.onlyBusinessDaysAfter(jan3, 0);
-        assertThat("New Years Day - Only Business Days After - No Days Added", actual, equalTo(jan4));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days After - No Days Added").isEqualTo(jan4);
 
         actual = dateActions.onlyBusinessDaysBefore(jan3, 0);
-        assertThat("New Years Day - Only Business Days Before - No Days Added", actual, equalTo(dec31));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days Before - No Days Added").isEqualTo(dec31);
 
         actual = dateActions.onlyBusinessDaysAfter(dec31, 1);
-        assertThat("New Years Day - Only Business Days After - 1 Day After", actual, equalTo(jan4));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days After - 1 Day After").isEqualTo(jan4);
 
         actual = dateActions.onlyBusinessDaysBefore(jan4, -1);
-        assertThat("New Years Day - Only Business Days Before - 1 Day Before", actual, equalTo(dec31));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days Before - 1 Day Before").isEqualTo(dec31);
     }
 
     @Features("DateActions")
@@ -390,28 +388,28 @@ public class DateActionsTest {
         Date jan3 = DateActions.parseDateStrictly("01/03/2017", DATE_FORMAT);
 
         Date actual = dateActions.nextBusinessDay(jan2, 0);
-        assertThat("New Years Day - Next Business Day - No Days Added", actual, equalTo(jan3));
+        AssertJUtil.assertThat(actual).as("New Years Day - Next Business Day - No Days Added").isEqualTo(jan3);
 
         actual = dateActions.previousBusinessDay(jan2, 0);
-        assertThat("New Years Day - Previous Business Day - No Days Added", actual, equalTo(dec30));
+        AssertJUtil.assertThat(actual).as("New Years Day - Previous Business Day - No Days Added").isEqualTo(dec30);
 
         actual = dateActions.nextBusinessDay(dec30, 1);
-        assertThat("New Years Day - Next Business Day - 1 Day After", actual, equalTo(jan3));
+        AssertJUtil.assertThat(actual).as("New Years Day - Next Business Day - 1 Day After").isEqualTo(jan3);
 
         actual = dateActions.previousBusinessDay(jan3, -1);
-        assertThat("New Years Day - Previous Business Day - 1 Day Before", actual, equalTo(dec30));
+        AssertJUtil.assertThat(actual).as("New Years Day - Previous Business Day - 1 Day Before").isEqualTo(dec30);
 
         actual = dateActions.onlyBusinessDaysAfter(jan2, 0);
-        assertThat("New Years Day - Only Business Days After - No Days Added", actual, equalTo(jan3));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days After - No Days Added").isEqualTo(jan3);
 
         actual = dateActions.onlyBusinessDaysBefore(jan2, 0);
-        assertThat("New Years Day - Only Business Days Before - No Days Added", actual, equalTo(dec30));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days Before - No Days Added").isEqualTo(dec30);
 
         actual = dateActions.onlyBusinessDaysAfter(dec30, 1);
-        assertThat("New Years Day - Only Business Days After - 1 Day After", actual, equalTo(jan3));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days After - 1 Day After").isEqualTo(jan3);
 
         actual = dateActions.onlyBusinessDaysBefore(jan3, -1);
-        assertThat("New Years Day - Only Business Days Before - 1 Day Before", actual, equalTo(dec30));
+        AssertJUtil.assertThat(actual).as("New Years Day - Only Business Days Before - 1 Day Before").isEqualTo(dec30);
     }
 
     @Features("DateActions")
@@ -428,28 +426,28 @@ public class DateActionsTest {
         Date june15 = DateActions.parseDateStrictly("06/15/2022", DATE_FORMAT);
 
         Date actual = dateActions.nextBusinessDay(june14, 0);
-        assertThat("Flag Day - Next Business Day - No Days Added", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Next Business Day - No Days Added").isEqualTo(june14);
 
         actual = dateActions.previousBusinessDay(june14, 0);
-        assertThat("Flag Day - Previous Business Day - No Days Added", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Previous Business Day - No Days Added").isEqualTo(june14);
 
         actual = dateActions.nextBusinessDay(june13, 1);
-        assertThat("Flag Day - Next Business Day - 1 Day After", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Next Business Day - 1 Day After").isEqualTo(june14);
 
         actual = dateActions.previousBusinessDay(june15, -1);
-        assertThat("Flag Day - Previous Business Day - 1 Day Before", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Previous Business Day - 1 Day Before").isEqualTo(june14);
 
         actual = dateActions.onlyBusinessDaysAfter(june14, 0);
-        assertThat("Flag Day - Only Business Days After - No Days Added", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Only Business Days After - No Days Added").isEqualTo(june14);
 
         actual = dateActions.onlyBusinessDaysBefore(june14, 0);
-        assertThat("Flag Day - Only Business Days Before - No Days Added", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Only Business Days Before - No Days Added").isEqualTo(june14);
 
         actual = dateActions.onlyBusinessDaysAfter(june13, 1);
-        assertThat("Flag Day - Only Business Days After - 1 Day After", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Only Business Days After - 1 Day After").isEqualTo(june14);
 
         actual = dateActions.onlyBusinessDaysBefore(june15, -1);
-        assertThat("Flag Day - Only Business Days Before - 1 Day Before", actual, equalTo(june14));
+        AssertJUtil.assertThat(actual).as("Flag Day - Only Business Days Before - 1 Day Before").isEqualTo(june14);
     }
 
     @Features("DateActions")
@@ -466,28 +464,28 @@ public class DateActionsTest {
         // The default holiday manager of CA
         //
         Date actual = dateActions.nextBusinessDay(jul1anchor, 0);
-        assertThat("Canada Day - Next Business Day - No Days Added", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Next Business Day - No Days Added").isEqualTo(jul2anchor);
 
         actual = dateActions.previousBusinessDay(jul1anchor, 0);
-        assertThat("Canada Day - Previous Business Day - No Days Added", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Previous Business Day - No Days Added").isEqualTo(jun28);
 
         actual = dateActions.nextBusinessDay(jun30anchor, 1);
-        assertThat("Canada Day - Next Business Day - 1 Day After", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Next Business Day - 1 Day After").isEqualTo(jul2anchor);
 
         actual = dateActions.previousBusinessDay(jul2anchor, -1);
-        assertThat("Canada Day - Previous Business Day - 1 Day Before", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Previous Business Day - 1 Day Before").isEqualTo(jun28);
 
         actual = dateActions.onlyBusinessDaysAfter(jul1anchor, 0);
-        assertThat("Canada Day - Only Business Days After - No Days Added", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days After - No Days Added").isEqualTo(jul2anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(jul1anchor, 0);
-        assertThat("Canada Day - Only Business Days Before - No Days Added", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days Before - No Days Added").isEqualTo(jun28);
 
         actual = dateActions.onlyBusinessDaysAfter(jun30anchor, 1);
-        assertThat("Canada Day - Only Business Days After - 1 Day After", actual, equalTo(jul2anchor));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days After - 1 Day After").isEqualTo(jul2anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(jul2anchor, -1);
-        assertThat("Canada Day - Only Business Days Before - 1 Day Before", actual, equalTo(jun28));
+        AssertJUtil.assertThat(actual).as("Canada Day - Only Business Days Before - 1 Day Before").isEqualTo(jun28);
 
         //
         // The additional holiday manager of US
@@ -500,55 +498,55 @@ public class DateActionsTest {
         Date july6 = DateActions.parseDateStrictly("07/06/2020", DATE_FORMAT);
 
         actual = dateActions.nextBusinessDay(july3, 0);
-        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_NO_DAYS_ADDED).isEqualTo(july6);
 
         actual = dateActions.previousBusinessDay(july3, 0);
-        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_NO_DAYS_ADDED).isEqualTo(july2);
 
         actual = dateActions.nextBusinessDay(july2, 1);
-        assertThat(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_NEXT_BUSINESS_DAY_1_DAY_AFTER).isEqualTo(july6);
 
         actual = dateActions.previousBusinessDay(july5, -1);
-        assertThat(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_PREVIOUS_BUSINESS_DAY_1_DAY_BEFORE).isEqualTo(july2);
 
         actual = dateActions.onlyBusinessDaysAfter(july3, 0);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_NO_DAYS_ADDED).isEqualTo(july6);
 
         actual = dateActions.onlyBusinessDaysBefore(july3, 0);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_NO_DAYS_ADDED).isEqualTo(july2);
 
         actual = dateActions.onlyBusinessDaysAfter(july2, 1);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER, actual, equalTo(july6));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_AFTER_1_DAY_AFTER).isEqualTo(july6);
 
         actual = dateActions.onlyBusinessDaysBefore(july5, -1);
-        assertThat(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE, actual, equalTo(july2));
+        AssertJUtil.assertThat(actual).as(INDEPENDENCE_DAY_ONLY_BUSINESS_DAYS_BEFORE_1_DAY_BEFORE).isEqualTo(july2);
 
         //
         // The additional holiday manager of "fake" (which is not in the library but in the local resources)
         //
         actual = dateActions.nextBusinessDay(may4anchor, 0);
-        assertThat("Star Wars Day - Next Business Day - No Days Added", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Next Business Day - No Days Added").isEqualTo(may5);
 
         actual = dateActions.previousBusinessDay(may4anchor, 0);
-        assertThat("Star Wars Day - Previous Business Day - No Days Added", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Previous Business Day - No Days Added").isEqualTo(may3);
 
         actual = dateActions.nextBusinessDay(may3, 1);
-        assertThat("Star Wars Day - Next Business Day - 1 Day After", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Next Business Day - 1 Day After").isEqualTo(may5);
 
         actual = dateActions.previousBusinessDay(may5, -1);
-        assertThat("Star Wars Day - Previous Business Day - 1 Day Before", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Previous Business Day - 1 Day Before").isEqualTo(may3);
 
         actual = dateActions.onlyBusinessDaysAfter(may4anchor, 0);
-        assertThat("Star Wars Day - Only Business Days After - No Days Added", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days After - No Days Added").isEqualTo(may5);
 
         actual = dateActions.onlyBusinessDaysBefore(may4anchor, 0);
-        assertThat("Star Wars Day - Only Business Days Before - No Days Added", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days Before - No Days Added").isEqualTo(may3);
 
         actual = dateActions.onlyBusinessDaysAfter(may3, 1);
-        assertThat("Star Wars Day - Only Business Days After - 1 Day After", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days After - 1 Day After").isEqualTo(may5);
 
         actual = dateActions.onlyBusinessDaysBefore(may5, -1);
-        assertThat("Star Wars Day - Only Business Days Before - 1 Day Before", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days Before - 1 Day Before").isEqualTo(may3);
     }
 
     @Features("DateActions")
@@ -562,16 +560,16 @@ public class DateActionsTest {
                 .withExcludedHoliday("STAR_WARS_DAY");
 
         Date actual = dateActions.nextBusinessDay(may4anchor, 0);
-        assertThat("Star Wars Day - Excluded - Next Business Day", actual, equalTo(may4anchor));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Excluded - Next Business Day").isEqualTo(may4anchor);
 
         actual = dateActions.previousBusinessDay(may4anchor, 0);
-        assertThat("Star Wars Day - Excluded - Previous Business Day", actual, equalTo(may4anchor));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Excluded - Previous Business Day").isEqualTo(may4anchor);
 
         actual = dateActions.onlyBusinessDaysAfter(may4anchor, 0);
-        assertThat("Star Wars Day - Excluded - Only Business Days After", actual, equalTo(may4anchor));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Excluded - Only Business Days After").isEqualTo(may4anchor);
 
         actual = dateActions.onlyBusinessDaysBefore(may4anchor, 0);
-        assertThat("Star Wars Day - Excluded - Only Business Days Before", actual, equalTo(may4anchor));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Excluded - Only Business Days Before").isEqualTo(may4anchor);
     }
 
     @Features("DateActions")
@@ -588,28 +586,28 @@ public class DateActionsTest {
                 .withHoliday(starWarsDay);
 
         Date actual = dateActions.nextBusinessDay(may4anchor, 0);
-        assertThat("Star Wars Day - Next Business Day - No Days Added", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Next Business Day - No Days Added").isEqualTo(may5);
 
         actual = dateActions.previousBusinessDay(may4anchor, 0);
-        assertThat("Star Wars Day - Previous Business Day - No Days Added", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Previous Business Day - No Days Added").isEqualTo(may3);
 
         actual = dateActions.nextBusinessDay(may3, 1);
-        assertThat("Star Wars Day - Next Business Day - 1 Day After", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Next Business Day - 1 Day After").isEqualTo(may5);
 
         actual = dateActions.previousBusinessDay(may5, -1);
-        assertThat("Star Wars Day - Previous Business Day - 1 Day Before", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Previous Business Day - 1 Day Before").isEqualTo(may3);
 
         actual = dateActions.onlyBusinessDaysAfter(may4anchor, 0);
-        assertThat("Star Wars Day - Only Business Days After - No Days Added", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days After - No Days Added").isEqualTo(may5);
 
         actual = dateActions.onlyBusinessDaysBefore(may4anchor, 0);
-        assertThat("Star Wars Day - Only Business Days Before - No Days Added", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days Before - No Days Added").isEqualTo(may3);
 
         actual = dateActions.onlyBusinessDaysAfter(may3, 1);
-        assertThat("Star Wars Day - Only Business Days After - 1 Day After", actual, equalTo(may5));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days After - 1 Day After").isEqualTo(may5);
 
         actual = dateActions.onlyBusinessDaysBefore(may5, -1);
-        assertThat("Star Wars Day - Only Business Days Before - 1 Day Before", actual, equalTo(may3));
+        AssertJUtil.assertThat(actual).as("Star Wars Day - Only Business Days Before - 1 Day Before").isEqualTo(may3);
     }
 
     @Features("DateActions")
@@ -676,18 +674,16 @@ public class DateActionsTest {
 
     @Step("{0}")
     private void validateCopy(String log, DateActions actual, DateActions expected) {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-        Helper.assertThat(aggregator, actual, expected);
-        Helper.assertThat(aggregator);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatObject("Date Actions", softly, actual, expected);
+        softly.assertAll();
     }
 
     @Step("{0}")
     private void validateDifferent(String log, DateActions actual, DateActions expected) {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
-        Helper.assertThat(aggregator, actual, expected);
-        assertThat("There were no differences", aggregator.getFailureCount(), greaterThan(0));
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatObject("Date Actions", softly, actual, expected);
+        AssertJUtil.assertThat(softly.getFailureCount()).as("There were no differences").isGreaterThan(0);
     }
 
 }

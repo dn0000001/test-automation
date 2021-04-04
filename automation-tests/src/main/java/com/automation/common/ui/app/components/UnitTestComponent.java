@@ -1,5 +1,6 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -13,11 +14,10 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Component purely for unit testing purposes
  */
+@SuppressWarnings("java:S3252")
 public class UnitTestComponent extends PageComponent {
     private final Map<String, String> attributes;
     private boolean selected;
@@ -92,8 +92,8 @@ public class UnitTestComponent extends PageComponent {
 
     @Override
     public void setValue() {
-        assertThat("UnitTestComponent value could not be set as it is not displayed", displayed);
-        assertThat("UnitTestComponent value could not be set as it is not enabled", enabled);
+        AssertJUtil.assertThat(displayed).as("UnitTestComponent value could not be set as it is not displayed").isTrue();
+        AssertJUtil.assertThat(enabled).as("UnitTestComponent value could not be set as it is not enabled").isTrue();
     }
 
     @Override

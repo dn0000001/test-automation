@@ -1,5 +1,6 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.LocatorUtils;
 import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -20,10 +21,6 @@ import ui.auto.core.data.DataTypes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Version of SelectEnhanced that handles AJAX<BR>
@@ -48,6 +45,7 @@ import static org.hamcrest.Matchers.notNullValue;
  * <LI>Select a random option from the list of consecutive indexes {1,2,3}:  <B>RANDOM_INDEX_RANGE &gt;&gt;&gt; 1:4</B></LI>
  * </OL>
  */
+@SuppressWarnings("java:S3252")
 public class SelectEnhancedAJAX extends SelectEnhanced {
     private WebDriver driver;
     private Map<String, String> substitutions;
@@ -175,9 +173,15 @@ public class SelectEnhancedAJAX extends SelectEnhanced {
         Mutable<String> currentHtmlValue = new MutableObject<>();
         MutableInt currentIndex = new MutableInt(-1);
         updateCurrentlySelectedOption(all, currentVisibleText, currentHtmlValue, currentIndex);
-        assertThat("Could not find visible text of a selected drop down option", currentVisibleText.getValue(), notNullValue());
-        assertThat("Could not find html value of a selected drop down option", currentHtmlValue.getValue(), notNullValue());
-        assertThat("Could not find index of a selected drop down option", currentIndex.getValue(), greaterThanOrEqualTo(0));
+        AssertJUtil.assertThat(currentVisibleText.getValue())
+                .as("Could not find visible text of a selected drop down option")
+                .isNotNull();
+        AssertJUtil.assertThat(currentHtmlValue.getValue())
+                .as("Could not find html value of a selected drop down option")
+                .isNotNull();
+        AssertJUtil.assertThat(currentIndex.getValue())
+                .as("Could not find index of a selected drop down option")
+                .isGreaterThanOrEqualTo(0);
 
         boolean noChange;
         if (getSelection() == Selection.VISIBLE_TEXT) {

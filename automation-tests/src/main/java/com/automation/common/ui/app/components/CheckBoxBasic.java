@@ -5,8 +5,6 @@ import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Basic CheckBox that prevents toggling the state when it is disabled<BR>
  * <B>Note: </B> The component ui.auto.core.components.CheckBox does not handle the disabled case.
@@ -46,14 +44,14 @@ public class CheckBoxBasic extends PageComponent {
 
     public void check() {
         if (!isSelected()) {
-            assertThat("CheckBoxBasic was disabled", isEnabled());
+            AssertJUtil.assertThat(isEnabled()).as("CheckBoxBasic was disabled").isTrue();
             getCoreElement().click();
         }
     }
 
     public void uncheck() {
         if (isSelected()) {
-            assertThat("CheckBoxBasic was disabled", isEnabled());
+            AssertJUtil.assertThat(isEnabled()).as("CheckBoxBasic was disabled").isTrue();
             getCoreElement().click();
         }
     }

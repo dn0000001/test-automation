@@ -12,14 +12,13 @@ import com.taf.automation.expressions.ZipCodeNotEquals;
 import com.taf.automation.expressions.ZipCodeSizeEquals5;
 import com.taf.automation.expressions.ZipCodeSizeEquals9;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Test the parsing of OR conditions &amp; AND conditions together
  */
+@SuppressWarnings({"java:S3252", "java:S1192"})
 public class ParsingBasicConditionTest extends TestNGBase {
     private static final String STREET = "123 test street";
     private static final String CALIFORNIA = "STATE==CA";
@@ -59,7 +58,7 @@ public class ParsingBasicConditionTest extends TestNGBase {
         String conditions = "FALSE"; // This is not a valid condition
         String value = "";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("No Conditions", parser.eval(value), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(value)).as("No Conditions").isFalse();
     }
 
     @Test
@@ -67,7 +66,7 @@ public class ParsingBasicConditionTest extends TestNGBase {
         String conditions = CALIFORNIA;
         String value = "";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("Empty String", parser.eval(value), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(value)).as("Empty String").isFalse();
     }
 
     @Test
@@ -75,7 +74,7 @@ public class ParsingBasicConditionTest extends TestNGBase {
         String conditions = CALIFORNIA;
         String value = "CA";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("No OR/AND in condition match", parser.eval(value), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(value)).as("No OR/AND in condition match").isTrue();
     }
 
     @Test
@@ -83,7 +82,7 @@ public class ParsingBasicConditionTest extends TestNGBase {
         String conditions = CALIFORNIA;
         String value = "PA";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("No OR/AND in condition mismatch", parser.eval(value), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(value)).as("No OR/AND in condition mismatch").isFalse();
     }
 
     @Test
@@ -95,19 +94,19 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP5);
-        assertThat(REASON_STATE_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_ZIP_MISMATCH).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
-        assertThat(REASON_STATE_MISMATCH, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_MISMATCH).isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP5);
-        assertThat(REASON_ZIP_MISMATCH, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ZIP_MISMATCH).isTrue();
     }
 
     @Test
@@ -119,19 +118,19 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP5);
-        assertThat(REASON_STATE_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_ZIP_MISMATCH).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
-        assertThat(REASON_STATE_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_MISMATCH).isFalse();
 
         address.setState("CA");
         address.setZipCode(ZIP5);
-        assertThat(REASON_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ZIP_MISMATCH).isFalse();
     }
 
     @Test
@@ -143,27 +142,27 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP5);
-        assertThat(REASON_STATE_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_ZIP_MISMATCH).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1 + "-55");
-        assertThat(REASON_STATE_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_ZIP_MISMATCH).isFalse();
 
         address.setState("CA");
         address.setZipCode(ZIP1 + "-1");
-        assertThat("State matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("State matches").isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
-        assertThat("Zip matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Zip matches").isTrue();
 
         address.setState("NY");
         address.setZipCode("12345-4564");
-        assertThat("Zip size matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Zip size matches").isTrue();
     }
 
     @Test
@@ -175,23 +174,23 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP5);
-        assertThat(REASON_STATE_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_ZIP_MISMATCH).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1 + "-6789");
-        assertThat(REASON_STATE_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_ZIP_MISMATCH).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
-        assertThat(REASON_STATE_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_MISMATCH).isFalse();
 
         address.setState("CA");
         address.setZipCode(ZIP5);
-        assertThat(REASON_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ZIP_MISMATCH).isFalse();
     }
 
     @Test
@@ -203,29 +202,29 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA + CONDITION_AND_ZIP_EQUALS + ZIP1, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA + CONDITION_AND_ZIP_EQUALS + ZIP1).isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP4);
         address.setStreet(STREET);
-        assertThat("ZIP9", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("ZIP9").isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP4);
         address.setStreet(STREET);
-        assertThat("ZIP9 #2", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("ZIP9 #2").isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
-        assertThat(REASON_STATE_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_MISMATCH).isFalse();
 
         address.setState("CA");
         address.setZipCode(ZIP1 + "-1");
-        assertThat(REASON_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ZIP_MISMATCH).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1 + "-2");
-        assertThat("No Conditions match", parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as("No Conditions match").isFalse();
     }
 
     @Test
@@ -237,29 +236,29 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA + CONDITION_AND_ZIP_EQUALS + ZIP1, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA + CONDITION_AND_ZIP_EQUALS + ZIP1).isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP4);
         address.setStreet(STREET);
-        assertThat("ZIP9", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("ZIP9").isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP4);
         address.setStreet(STREET);
-        assertThat("ZIP9 #2", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("ZIP9 #2").isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
-        assertThat(REASON_STATE_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_STATE_MISMATCH).isFalse();
 
         address.setState("CA");
         address.setZipCode(ZIP1 + "-1");
-        assertThat(REASON_ZIP_MISMATCH, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ZIP_MISMATCH).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1 + "-2");
-        assertThat("No Conditions match", parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as("No Conditions match").isFalse();
     }
 
     @Test
@@ -271,22 +270,22 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA + CONDITION_AND_ZIP_EQUALS + ZIP1, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA + CONDITION_AND_ZIP_EQUALS + ZIP1).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NEW_YORK + "&&ZIP==12345", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(NEW_YORK + "&&ZIP==12345").isTrue();
 
         address.setState("AK");
         address.setZipCode("44444-5555");
         address.setStreet(STREET);
-        assertThat("ZIP9", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("ZIP9").isTrue();
 
         address.setState("AK");
         address.setZipCode("66666");
         address.setStreet(STREET);
-        assertThat("No matching conditions", parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as("No matching conditions").isFalse();
     }
 
     @Test
@@ -298,17 +297,17 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA + AND + BEVERLY_HILLS + CONDITION_AND_ZIP5, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA + AND + BEVERLY_HILLS + CONDITION_AND_ZIP5).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(NEW_YORK, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(NEW_YORK).isTrue();
 
         address.setState("AK");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
     }
 
     @Test
@@ -320,17 +319,17 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA + AND + BEVERLY_HILLS, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA + AND + BEVERLY_HILLS).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat("ZIP5&&" + NEW_YORK, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("ZIP5&&" + NEW_YORK).isTrue();
 
         address.setState("AK");
         address.setZipCode("12345-5678");
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
     }
 
     @Test
@@ -342,17 +341,17 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA + AND + BEVERLY_HILLS + CONDITION_AND_ZIP5, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA + AND + BEVERLY_HILLS + CONDITION_AND_ZIP5).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NEW_YORK, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(NEW_YORK).isTrue();
 
         address.setState("AK");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
     }
 
     @Test
@@ -364,27 +363,27 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("NY");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NEW_YORK, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(NEW_YORK).isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA).isTrue();
 
         address.setState("PA");
         address.setZipCode(ZIP2);
         address.setStreet(STREET);
-        assertThat(PENNSYLVANIA + CONDITION_AND_ZIP5, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(PENNSYLVANIA + CONDITION_AND_ZIP5).isTrue();
 
         address.setState("AK");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
 
         address.setState("AK");
         address.setZipCode(ZIP3);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES2).isFalse();
     }
 
     @Test
@@ -396,27 +395,27 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("NY");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NEW_YORK, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(NEW_YORK).isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA).isTrue();
 
         address.setState("PA");
         address.setZipCode(ZIP2);
         address.setStreet(STREET);
-        assertThat(PENNSYLVANIA + CONDITION_AND_ZIP5, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(PENNSYLVANIA + CONDITION_AND_ZIP5).isTrue();
 
         address.setState("AK");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
 
         address.setState("AK");
         address.setZipCode(ZIP3);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES2).isFalse();
     }
 
     @Test
@@ -428,27 +427,27 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("NY");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NEW_YORK, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(NEW_YORK).isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(CALIFORNIA, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(CALIFORNIA).isTrue();
 
         address.setState("PA");
         address.setZipCode(ZIP2);
         address.setStreet(STREET);
-        assertThat(PENNSYLVANIA + CONDITION_AND_ZIP5, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(PENNSYLVANIA + CONDITION_AND_ZIP5).isTrue();
 
         address.setState("AK");
         address.setZipCode(ZIP5);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
 
         address.setState("AK");
         address.setZipCode(ZIP3);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES2).isFalse();
     }
 
     @Test
@@ -460,12 +459,12 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
     }
 
     @Test
@@ -477,12 +476,12 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES2).isFalse();
     }
 
     @Test
@@ -494,17 +493,17 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES + " #2", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES + " #2").isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP3);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
     }
 
     @Test
@@ -516,12 +515,12 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("NY");
         address.setZipCode(ZIP2);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
     }
 
     @Test
@@ -533,17 +532,17 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("NY");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES, parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES).isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(REASON_ADDRESS_MATCHES + " #2", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as(REASON_ADDRESS_MATCHES + " #2").isTrue();
 
         address.setState("CA");
         address.setZipCode(ZIP2);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
     }
 
     @Test
@@ -555,12 +554,12 @@ public class ParsingBasicConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode(ZIP2);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES1, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES1).isFalse();
 
         address.setState("CA");
         address.setZipCode(ZIP1);
         address.setStreet(STREET);
-        assertThat(NO_MATCHES2, parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as(NO_MATCHES2).isFalse();
     }
 
 }

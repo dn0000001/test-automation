@@ -1,12 +1,13 @@
 package com.automation.common.ui.app.domainObjects;
 
 import com.taf.automation.ui.support.AliasedString;
-import com.taf.automation.ui.support.util.BigDecimalUtils;
 import com.taf.automation.ui.support.DateActions;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.BigDecimalUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.lang3.time.DateUtils;
@@ -15,10 +16,7 @@ import ui.auto.core.data.DataTypes;
 
 import java.util.Date;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
-@SuppressWarnings("squid:MaximumInheritanceDepth")
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 @XStreamAlias("jexl-expression-do")
 public class JexlExpressionDO extends DomainObject {
     private static final String TODAY = DateActions.format(new Date(), "MM/dd/yyyy");
@@ -180,14 +178,14 @@ public class JexlExpressionDO extends DomainObject {
 
     @Step("Validate Current System Date Before Load")
     public void validateCurrentSystemDateBeforeLoad() {
-        assertThat("Current System Date Before Load", currentSystemDate.getData(), equalTo(TODAY));
+        AssertJUtil.assertThat(currentSystemDate.getData()).as("Current System Date Before Load").isEqualTo(TODAY);
     }
 
     @SuppressWarnings("java:S1905")
     @Step("Validate Current System Date After Load")
     public void validateCurrentSystemDateAfterLoad() {
         String expected = (String) Lookup.getInstance().get(CURRENT_SYSTEM_DATE);
-        assertThat("Current System Date After Load", currentSystemDate.getData(), equalTo(expected));
+        AssertJUtil.assertThat(currentSystemDate.getData()).as("Current System Date After Load").isEqualTo(expected);
     }
 
     @Step("Perform Pre From Resource Actions")

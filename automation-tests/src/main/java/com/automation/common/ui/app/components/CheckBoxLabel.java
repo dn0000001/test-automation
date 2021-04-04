@@ -6,8 +6,6 @@ import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Check Box component that bypasses issues where WebDriver does not allow normal interaction with the check box as
  * it is disabled instead clicking the label node toggles the state<BR>
@@ -43,14 +41,14 @@ public class CheckBoxLabel extends PageComponent {
 
     public void check() {
         if (!isSelected()) {
-            assertThat("CheckBoxLabel was disabled", isEnabled());
+            AssertJUtil.assertThat(isEnabled()).as("CheckBoxLabel was disabled").isTrue();
             label.click();
         }
     }
 
     public void uncheck() {
         if (isSelected()) {
-            assertThat("CheckBoxLabel was disabled", isEnabled());
+            AssertJUtil.assertThat(isEnabled()).as("CheckBoxLabel was disabled").isTrue();
             label.click();
         }
     }

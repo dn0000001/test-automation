@@ -1,10 +1,11 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.CsvUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.FilloUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.mutable.Mutable;
@@ -18,12 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Example test using a data provider that reads an excel (2013) file
  */
+@SuppressWarnings("java:S3252")
 public class Excel2013WriteTest extends TestNGBase {
     private static final String WORKSHEET = "Sheet 1";
     private static final String[] HEADER_ROW = {"ROW", "First", "Last", "Phone"};
@@ -134,14 +133,14 @@ public class Excel2013WriteTest extends TestNGBase {
 
         List<CSVRecord> excelRecords = new ArrayList<>();
         Map<String, Integer> excelHeaderMap = new HashMap<>();
-        FilloUtils.read(excelFile, "Sheet 1", excelRecords, excelHeaderMap);
+        FilloUtils.read(excelFile, WORKSHEET, excelRecords, excelHeaderMap);
 
-        assertThat("Headers", csvHeaderMap, equalTo(excelHeaderMap));
-        assertThat("Size", csvRecords.size(), equalTo(excelRecords.size()));
+        AssertJUtil.assertThat(csvHeaderMap).as("Headers").isEqualTo(excelHeaderMap);
+        AssertJUtil.assertThat(csvRecords.size()).as("Size").isEqualTo(excelRecords.size());
         for (int i = 0; i < csvRecords.size(); i++) {
             CSVRecord expected = csvRecords.get(i);
             CSVRecord actual = excelRecords.get(i);
-            assertThat("Row " + (i + 1), actual.toMap(), equalTo(expected.toMap()));
+            AssertJUtil.assertThat(actual.toMap()).as("Row " + (i + 1)).isEqualTo(expected.toMap());
         }
     }
 
@@ -156,10 +155,10 @@ public class Excel2013WriteTest extends TestNGBase {
         List<CSVRecord> records = new ArrayList<>();
         Map<String, Integer> headers = new HashMap<>();
         FilloUtils.read(existingFile.getValue(), WORKSHEET, records, headers);
-        assertThat("Total Rows (minus header row)", records.size(), equalTo(15));
-        assertThat("Headers", headers.size(), equalTo(HEADER_ROW.length));
+        AssertJUtil.assertThat(records.size()).as("Total Rows (minus header row)").isEqualTo(15);
+        AssertJUtil.assertThat(headers.size()).as("Headers").isEqualTo(HEADER_ROW.length);
         for (String header : HEADER_ROW) {
-            assertThat(header, headers.containsKey(header));
+            AssertJUtil.assertThat(headers).as(header).containsKey(header);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -17,12 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 /**
  * Example of how to upload images that uses a standard system dialog
  */
+@SuppressWarnings("java:S3252")
 public class ImageUpload extends PageComponentNoDefaultAction {
     private RemoteWebElement inputUploadFile;
     private RemoteWebDriver driver;
@@ -50,7 +49,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
     public void uploadFiles(List<String> imageFiles) {
         errors = new ArrayList<>();
         for (String filePath : imageFiles) {
-            assertThat("Upload Button is not enabled!", coreElement.isEnabled(), is(true));
+            AssertJUtil.assertThat(coreElement.isEnabled()).as("Upload Button is not enabled!").isTrue();
 
             //
             // Read the file to upload from the resources in the JAR file
@@ -58,7 +57,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
             File file = new File(filePath);
             if (is == null) {
-                assertThat("Image file '" + filePath + "' was not found!", false);
+                AssertJUtil.fail("Image file '" + filePath + "' was not found!");
             }
 
             //

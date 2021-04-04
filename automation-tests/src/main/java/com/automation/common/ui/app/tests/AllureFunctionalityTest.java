@@ -6,6 +6,7 @@ import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.testng.Retry;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.lang3.BooleanUtils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -19,8 +20,7 @@ import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.annotations.TestCaseId;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
+@SuppressWarnings("java:S3252")
 public class AllureFunctionalityTest extends TestNGBase {
     private static final int MAIN_STEPS = 10;
     private static final int NESTED_METHODS = 5;
@@ -71,7 +71,7 @@ public class AllureFunctionalityTest extends TestNGBase {
 
     @Step("Perform Status Parameter Validation")
     private void performStatusValidation(String status) {
-        assertThat("Status Parameter", BooleanUtils.toBoolean(status));
+        AssertJUtil.assertThat(BooleanUtils.toBoolean(status)).as("Status Parameter").isTrue();
     }
 
     @Step("Generate Nested Steps")

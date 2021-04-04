@@ -5,6 +5,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
@@ -22,13 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Unit testing things using Guava
  */
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class GuavaTest {
     private Function<Weather, Weather> convertFunction() {
@@ -175,34 +173,34 @@ public class GuavaTest {
 
         MapDifference<String, String> diff = Maps.difference(lhsMap, rhsMap);
         Map<String, String> onlyLeft = diff.entriesOnlyOnLeft();
-        assertThat("Only Left", onlyLeft.get(lhsOnly), equalTo(lhsOnly + textExt));
+        AssertJUtil.assertThat(onlyLeft.get(lhsOnly)).as("Only Left").isEqualTo(lhsOnly + textExt);
 
         Map<String, String> onlyRight = diff.entriesOnlyOnRight();
-        assertThat("Only Right", onlyRight.get(rhsOnly), equalTo(rhsOnly + excelExt));
+        AssertJUtil.assertThat(onlyRight.get(rhsOnly)).as("Only Right").isEqualTo(rhsOnly + excelExt);
 
         Map<String, String> common = diff.entriesInCommon();
-        assertThat("Common", common.get(match), equalTo(match + textExt));
+        AssertJUtil.assertThat(common.get(match)).as("Common").isEqualTo(match + textExt);
 
         Map<String, MapDifference.ValueDifference<String>> mismatch = diff.entriesDiffering();
         MapDifference.ValueDifference<String> diffFile1 = mismatch.get(FilenameUtils.getBaseName(file1));
-        assertThat(file1, diffFile1, notNullValue());
-        assertThat(file1 + textExt, diffFile1.leftValue(), equalTo(file1 + textExt));
-        assertThat(file1 + excelExt, diffFile1.rightValue(), equalTo(file1 + excelExt));
+        AssertJUtil.assertThat(diffFile1).as(file1).isNotNull();
+        AssertJUtil.assertThat(diffFile1.leftValue()).as(file1 + textExt).isEqualTo(file1 + textExt);
+        AssertJUtil.assertThat(diffFile1.rightValue()).as(file1 + excelExt).isEqualTo(file1 + excelExt);
 
         MapDifference.ValueDifference<String> diffFile2 = mismatch.get(FilenameUtils.getBaseName(file2));
-        assertThat(file2, diffFile2, notNullValue());
-        assertThat(file2 + textExt, diffFile2.leftValue(), equalTo(file2 + textExt));
-        assertThat(file2 + excelExt, diffFile2.rightValue(), equalTo(file2 + excelExt));
+        AssertJUtil.assertThat(diffFile2).as(file2).isNotNull();
+        AssertJUtil.assertThat(diffFile2.leftValue()).as(file2 + textExt).isEqualTo(file2 + textExt);
+        AssertJUtil.assertThat(diffFile2.rightValue()).as(file2 + excelExt).isEqualTo(file2 + excelExt);
 
         MapDifference.ValueDifference<String> diffFile3 = mismatch.get(FilenameUtils.getBaseName(file3));
-        assertThat(file3, diffFile3, notNullValue());
-        assertThat(file3 + textExt, diffFile3.leftValue(), equalTo(file3 + textExt));
-        assertThat(file3 + excelExt, diffFile3.rightValue(), equalTo(file3 + excelExt));
+        AssertJUtil.assertThat(diffFile3).as(file3).isNotNull();
+        AssertJUtil.assertThat(diffFile3.leftValue()).as(file3 + textExt).isEqualTo(file3 + textExt);
+        AssertJUtil.assertThat(diffFile3.rightValue()).as(file3 + excelExt).isEqualTo(file3 + excelExt);
 
         MapDifference.ValueDifference<String> diffFile4 = mismatch.get(FilenameUtils.getBaseName(file4));
-        assertThat(file4, diffFile4, notNullValue());
-        assertThat(file4 + textExt, diffFile4.leftValue(), equalTo(file4 + textExt));
-        assertThat(file4 + excelExt, diffFile4.rightValue(), equalTo(file4 + excelExt));
+        AssertJUtil.assertThat(diffFile4).as(file4).isNotNull();
+        AssertJUtil.assertThat(diffFile4.leftValue()).as(file4 + textExt).isEqualTo(file4 + textExt);
+        AssertJUtil.assertThat(diffFile4.rightValue()).as(file4 + excelExt).isEqualTo(file4 + excelExt);
     }
 
 }

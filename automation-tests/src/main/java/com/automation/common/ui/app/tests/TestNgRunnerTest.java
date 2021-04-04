@@ -1,8 +1,9 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Helper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -14,8 +15,7 @@ import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
+@SuppressWarnings("java:S3252")
 public class TestNgRunnerTest extends TestNGBase {
     private TestScenario scenarioUnderTest;
 
@@ -69,7 +69,7 @@ public class TestNgRunnerTest extends TestNGBase {
 
         if (TestScenario.BEFORE_CLASS_FAILURE == getScenarioUnderTest(scenario)) {
             getContext().getDriver().get(TestScenario.BEFORE_CLASS_FAILURE.getUrl());
-            assertThat("Failure in before class attaches screenshot & html", false);
+            AssertJUtil.fail("Failure in before class attaches screenshot & html");
         }
 
         Helper.log("Completed BeforeClass", true);
@@ -85,7 +85,7 @@ public class TestNgRunnerTest extends TestNGBase {
 
         if (TestScenario.BEFORE_TEST_FAILURE == getScenarioUnderTest(scenario)) {
             getContext().getDriver().get(TestScenario.BEFORE_TEST_FAILURE.getUrl());
-            assertThat("Failure in before test attaches screenshot & html", false);
+            AssertJUtil.fail("Failure in before test attaches screenshot & html");
         }
 
         Helper.log("Completed BeforeTest", true);
@@ -100,7 +100,7 @@ public class TestNgRunnerTest extends TestNGBase {
         getContext().getDriver().get(TestScenario.NO_FAILURE.getUrl());
         if (TestScenario.STANDARD_FAILURE == getScenarioUnderTest(scenario)) {
             getContext().getDriver().get(TestScenario.STANDARD_FAILURE.getUrl());
-            assertThat("Regular Failure in test attaches screenshot & html", false);
+            AssertJUtil.fail("Regular Failure in test attaches screenshot & html");
         }
     }
 
@@ -114,7 +114,7 @@ public class TestNgRunnerTest extends TestNGBase {
 
         if (TestScenario.AFTER_TEST_FAILURE == getScenarioUnderTest(scenario)) {
             getContext().getDriver().get(TestScenario.AFTER_TEST_FAILURE.getUrl());
-            assertThat("Failure in after test attaches screenshot & html", false);
+            AssertJUtil.fail("Failure in after test attaches screenshot & html");
         }
 
         Helper.log("Completed AfterTest", true);
@@ -130,7 +130,7 @@ public class TestNgRunnerTest extends TestNGBase {
 
         if (TestScenario.AFTER_CLASS_FAILURE == getScenarioUnderTest(scenario)) {
             getContext().getDriver().get(TestScenario.AFTER_CLASS_FAILURE.getUrl());
-            assertThat("Failure in after class attaches screenshot & html", false);
+            AssertJUtil.fail("Failure in after class attaches screenshot & html");
         }
 
         Helper.log("Completed AfterClass", true);

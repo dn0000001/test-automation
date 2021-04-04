@@ -2,6 +2,7 @@ package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.WebDriverTypeEnum;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
@@ -15,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-
+@SuppressWarnings("java:S3252")
 public class LaunchMultipleBrowsersTest extends TestNGBase {
     private static final String GOOGLE = "google";
     private List<WebDriverTypeEnum> browsersToBeTested;
@@ -53,7 +52,7 @@ public class LaunchMultipleBrowsersTest extends TestNGBase {
     public void performTest(int i, WebDriverTypeEnum browser) {
         WebDriver driver = browser.getNewWebDriver();
         driver.get("https://www.google.ca");
-        assertThat(browser.getDriverName() + " - URL", driver.getCurrentUrl(), containsString(GOOGLE));
+        AssertJUtil.assertThat(driver.getCurrentUrl()).as(browser.getDriverName() + " - URL").contains(GOOGLE);
         driver.quit();
     }
 

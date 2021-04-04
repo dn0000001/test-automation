@@ -2,6 +2,7 @@ package com.automation.common.ui.app.domainObjects;
 
 import com.taf.automation.locking.SystemDateManager;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
-
 /**
  * Wrapper class for using/testing of the SystemDateManager class
  */
+@SuppressWarnings("java:S3252")
 public class FakeDateManager {
     private static final Logger LOG = LoggerFactory.getLogger(FakeDateManager.class);
     private static final String OPEN_RESERVATION = "Open Reservation";
@@ -62,7 +59,7 @@ public class FakeDateManager {
 
     private void performMoveClock(Long ticket, Integer days) {
         // These are my actions to simulate moving the clock.  (These would be replaced with real actions that move the clock)
-        assertThat("Ticket (" + ticket + ") - Invalid Add Days:  " + days, days, greaterThan(0));
+        AssertJUtil.assertThat(days).as("Ticket (" + ticket + ") - Invalid Add Days:  " + days).isGreaterThan(0);
         Date start = new Date();
         getStoredContext().getDriver().get("https://www.google.ca");
         systemDate = DateUtils.addDays(systemDate, days);
@@ -96,7 +93,7 @@ public class FakeDateManager {
     public Long openReservationForDays(String testId, int plusDays) {
         Date start = new Date();
         Long ticket = SystemDateManager.getInstance().openReservationForDays(plusDays);
-        assertThat(testId + " - No Open Ticket", ticket, not(equalTo(0L)));
+        AssertJUtil.assertThat(ticket).as(testId + " - No Open Ticket").isNotEqualTo(0L);
         Date end = new Date();
         addLogEntry(testId + " - " + OPEN_RESERVATION, ticket, start, end);
         return ticket;
@@ -105,7 +102,7 @@ public class FakeDateManager {
     public Long openReservationForWeeks(String testId, int weeks, Date startDate) {
         Date start = new Date();
         Long ticket = SystemDateManager.getInstance().openReservationForWeeks(weeks, startDate);
-        assertThat(testId + " - No Open Ticket (Weeks)", ticket, not(equalTo(0L)));
+        AssertJUtil.assertThat(ticket).as(testId + " - No Open Ticket (Weeks)").isNotEqualTo(0L);
         Date end = new Date();
         addLogEntry(testId + " - " + OPEN_RESERVATION, ticket, start, end);
         return ticket;
@@ -114,7 +111,7 @@ public class FakeDateManager {
     public Long openReservationForMonths(String testId, int months, Date startDate) {
         Date start = new Date();
         Long ticket = SystemDateManager.getInstance().openReservationForMonths(months, startDate);
-        assertThat(testId + " - No Open Ticket (Months)", ticket, not(equalTo(0L)));
+        AssertJUtil.assertThat(ticket).as(testId + " - No Open Ticket (Months)").isNotEqualTo(0L);
         Date end = new Date();
         addLogEntry(testId + " - " + OPEN_RESERVATION, ticket, start, end);
         return ticket;
@@ -123,7 +120,7 @@ public class FakeDateManager {
     public Long additionalReservationForDays(String testId, Long existingTicket, int plusDays) {
         Date start = new Date();
         Long ticket = SystemDateManager.getInstance().additionalReservationForDays(existingTicket, plusDays);
-        assertThat(testId + " - No Reserved Ticket", ticket, not(equalTo(0L)));
+        AssertJUtil.assertThat(ticket).as(testId + " - No Reserved Ticket").isNotEqualTo(0L);
         Date end = new Date();
         addLogEntry(testId + " - " + ADDITIONAL_RESERVATION, ticket, start, end);
         return ticket;
@@ -132,7 +129,7 @@ public class FakeDateManager {
     public Long additionalReservationForWeeks(String testId, Long existingTicket, int weeks, Date startDate) {
         Date start = new Date();
         Long ticket = SystemDateManager.getInstance().additionalReservationForWeeks(existingTicket, weeks, startDate);
-        assertThat(testId + " - No Open Ticket (Weeks)", ticket, not(equalTo(0L)));
+        AssertJUtil.assertThat(ticket).as(testId + " - No Open Ticket (Weeks)").isNotEqualTo(0L);
         Date end = new Date();
         addLogEntry(testId + " - " + ADDITIONAL_RESERVATION, ticket, start, end);
         return ticket;
@@ -141,7 +138,7 @@ public class FakeDateManager {
     public Long additionalReservationForMonths(String testId, Long existingTicket, int months, Date startDate) {
         Date start = new Date();
         Long ticket = SystemDateManager.getInstance().additionalReservationForMonths(existingTicket, months, startDate);
-        assertThat(testId + " - No Open Ticket (Months)", ticket, not(equalTo(0L)));
+        AssertJUtil.assertThat(ticket).as(testId + " - No Open Ticket (Months)").isNotEqualTo(0L);
         Date end = new Date();
         addLogEntry(testId + " - " + ADDITIONAL_RESERVATION, ticket, start, end);
         return ticket;

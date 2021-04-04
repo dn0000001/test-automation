@@ -3,19 +3,17 @@ package com.automation.common.ui.app.pageObjects;
 import com.automation.common.ui.app.domainObjects.HerokuappColumnMapping;
 import com.taf.automation.ui.support.GenericTable;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.openqa.selenium.By;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.taf.automation.ui.support.util.AssertsUtil.range;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Herokuapp Data Tables Page<BR>
  * Site:  <a href="https://the-internet.herokuapp.com/tables">https://the-internet.herokuapp.com/tables</a><BR>
  */
-@SuppressWarnings("squid:MaximumInheritanceDepth")
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 public class HerokuappDataTable1Page extends GenericTable<HerokuappRowTable1> {
     private static final By TABLE1_ROWS = By.cssSelector("#table1 tbody tr");
 
@@ -56,7 +54,7 @@ public class HerokuappDataTable1Page extends GenericTable<HerokuappRowTable1> {
 
     public HerokuappRowTable1 getRow(int index) {
         List<HerokuappRowTable1> all = getAllRows();
-        assertThat("Invalid Index", index, range(0, all.size() - 1));
+        AssertJUtil.assertThat(index).as("Invalid Index").isBetween(0, all.size() - 1);
         return all.get(index);
     }
 

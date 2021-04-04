@@ -2,19 +2,16 @@ package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.ComponentPO;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-
 /**
  * A dynamic page object that acts as a component and contains a dynamic sub-page object component
  */
-@SuppressWarnings("squid:MaximumInheritanceDepth")
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 public class CreditCardFieldsDynamic extends ComponentPO {
     @FindBy(css = "select[name$='type']")
     private SelectEnhanced creditCardType;
@@ -66,7 +63,7 @@ public class CreditCardFieldsDynamic extends ComponentPO {
 
         if (cardExpirationDate.getContext() == null) {
             String key = getSubstitutions().get(CardExpirationDateFieldsDynamic.getCommonFieldKey());
-            assertThat("Common Field Key", key, not(isEmptyOrNullString()));
+            AssertJUtil.assertThat(key).as("Common Field Key").isNotBlank();
             cardExpirationDate.updateCommonFieldKey(key);
             cardExpirationDate.initPage(getContext());
         }

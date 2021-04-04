@@ -2,6 +2,7 @@ package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import net.jodah.failsafe.Failsafe;
@@ -20,14 +21,6 @@ import ui.auto.core.pagecomponent.PageComponent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.taf.automation.ui.support.util.AssertsUtil.matchesRegex;
-import static com.taf.automation.ui.support.util.AssertsUtil.range;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Enhanced version of SelectComponent for more flexibility with drop downs<BR>
@@ -52,6 +45,7 @@ import static org.hamcrest.Matchers.notNullValue;
  * <LI>Select a random option from the list of consecutive indexes {1,2,3}:  <B>RANDOM_INDEX_RANGE &gt;&gt;&gt; 1:4</B></LI>
  * </OL>
  */
+@SuppressWarnings("java:S3252")
 public class SelectEnhanced extends PageComponent {
     private static final String SPLIT_ON = ">>>";
     private static final String SPLIT_ON_RANGE = ":";
@@ -235,7 +229,7 @@ public class SelectEnhanced extends PageComponent {
     private void setValueAttempt() {
         // Selenium allows disabled drop downs to still be set.
         // So, to prevent this we will assert that it is enabled before setting the value
-        assertThat("Select was disabled", isEnabled());
+        AssertJUtil.assertThat(isEnabled()).as("Select was disabled").isTrue();
 
         if (getSelection() == Selection.VISIBLE_TEXT) {
             setValueUsingVisibleText();
@@ -266,7 +260,7 @@ public class SelectEnhanced extends PageComponent {
             return;
         }
 
-        assertThat("Unsupported Selection:  " + getSelection(), false);
+        AssertJUtil.fail("Unsupported Selection:  " + getSelection());
     }
 
     private boolean isMatch(WebElement option, String value) {
@@ -301,7 +295,7 @@ public class SelectEnhanced extends PageComponent {
 
     private void makeOptionSelected(WebElement option, String reason) {
         if (!option.isSelected()) {
-            assertThat(reason, option.isEnabled());
+            AssertJUtil.assertThat(option.isEnabled()).as(reason).isTrue();
             option.click();
         }
     }
@@ -318,7 +312,7 @@ public class SelectEnhanced extends PageComponent {
             }
         }
 
-        assertThat(notFoundReason, index, greaterThanOrEqualTo(0));
+        AssertJUtil.assertThat(index).as(notFoundReason).isGreaterThanOrEqualTo(0);
         selectedIndex = index;
     }
 
@@ -340,19 +334,19 @@ public class SelectEnhanced extends PageComponent {
 
         if (getSelection() == Selection.INDEX) {
             index = NumberUtils.toInt(rawSelectionData, -1);
-            assertThat("Invalid Index:  " + rawSelectionData, index, greaterThanOrEqualTo(0));
+            AssertJUtil.assertThat(index).as("Invalid Index:  " + rawSelectionData).isGreaterThanOrEqualTo(0);
         } else if (getSelection() == Selection.RANDOM_INDEX || getSelection() == Selection.RANDOM_INDEX_RANGE) {
             int max = (maxRandomIndex > 0) ? maxRandomIndex : all.size();
             index = Rand.randomRange(minRandomIndex, max - 1);
         } else if (getSelection() == Selection.RANDOM_INDEX_VALUES) {
-            assertThat("No Random Index Values Specified", randomIndexValues.size(), greaterThan(0));
+            AssertJUtil.assertThat(randomIndexValues.size()).as("No Random Index Values Specified").isGreaterThan(0);
             Collections.shuffle(randomIndexValues);
             index = randomIndexValues.get(0);
         } else {
-            assertThat("Unsupported Index Selection Option:  " + getSelection(), false);
+            AssertJUtil.fail("Unsupported Index Selection Option:  " + getSelection());
         }
 
-        assertThat("Invalid Index", index, range(0, all.size() - 1));
+        AssertJUtil.assertThat(index).as("Invalid Index").isBetween(0, all.size() - 1);
         String disabledReason = "Disabled Option found index:  " + index;
         String notFoundReason = "Cannot locate option with index:  " + index;
         genericSetValueUsing(disabledReason, notFoundReason, "" + index);
@@ -386,9 +380,15 @@ public class SelectEnhanced extends PageComponent {
         Mutable<String> actualHtmlValue = new MutableObject<>();
         MutableInt actualIndex = new MutableInt(-1);
         updateCurrentlySelectedOption(all, actualVisibleText, actualHtmlValue, actualIndex);
-        assertThat("Could not find visible text of a selected drop down option", actualVisibleText.getValue(), notNullValue());
-        assertThat("Could not find html value of a selected drop down option", actualHtmlValue.getValue(), notNullValue());
-        assertThat("Could not find index of a selected drop down option", actualIndex.getValue(), greaterThanOrEqualTo(0));
+        AssertJUtil.assertThat(actualVisibleText.getValue())
+                .as("Could not find visible text of a selected drop down option")
+                .isNotNull();
+        AssertJUtil.assertThat(actualHtmlValue.getValue())
+                .as("Could not find html value of a selected drop down option")
+                .isNotNull();
+        AssertJUtil.assertThat(actualIndex.getValue())
+                .as("Could not find index of a selected drop down option")
+                .isGreaterThanOrEqualTo(0);
 
         // Assume that expected information is from DataTypes.Data
         String expectedData = rawSelectionData;
@@ -408,20 +408,30 @@ public class SelectEnhanced extends PageComponent {
         // Verify the actual selected drop down option matches the one previously selected
         //
         if (getSelection() == Selection.VISIBLE_TEXT) {
-            assertThat("Visible Text of currently selected drop down option", actualVisibleText.getValue(), equalTo(expectedData));
+            AssertJUtil.assertThat(actualVisibleText.getValue())
+                    .as("Visible Text of currently selected drop down option")
+                    .isEqualTo(expectedData);
         } else if (getSelection() == Selection.VALUE_HTML) {
-            assertThat("HTML Value of currently selected drop down option", actualHtmlValue.getValue(), equalTo(expectedData));
+            AssertJUtil.assertThat(actualHtmlValue.getValue())
+                    .as("HTML Value of currently selected drop down option")
+                    .isEqualTo(expectedData);
         } else if (getSelection() == Selection.INDEX
                 || getSelection() == Selection.RANDOM_INDEX
                 || getSelection() == Selection.RANDOM_INDEX_RANGE
                 || getSelection() == Selection.RANDOM_INDEX_VALUES) {
-            assertThat("Index of currently selected drop down option", actualIndex.getValue(), equalTo(expectedIndex));
+            AssertJUtil.assertThat(actualIndex.getValue())
+                    .as("Index of currently selected drop down option")
+                    .isEqualTo(expectedIndex);
         } else if (getSelection() == Selection.VISIBLE_TEXT_REGEX) {
-            assertThat("Visible Text of currently selected drop down option", actualVisibleText.getValue(), matchesRegex(expectedData));
+            AssertJUtil.assertThat(actualVisibleText.getValue())
+                    .as("Visible Text of currently selected drop down option")
+                    .matches(expectedData);
         } else if (getSelection() == Selection.VALUE_HTML_REGEX) {
-            assertThat("HTML Value of currently selected drop down option", actualHtmlValue.getValue(), matchesRegex(expectedData));
+            AssertJUtil.assertThat(actualHtmlValue.getValue())
+                    .as("HTML Value of currently selected drop down option")
+                    .matches(expectedData);
         } else {
-            assertThat("Unsupported Selection:  " + getSelection(), false);
+            AssertJUtil.fail("Unsupported Selection:  " + getSelection());
         }
     }
 

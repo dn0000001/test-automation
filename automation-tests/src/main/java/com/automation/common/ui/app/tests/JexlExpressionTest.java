@@ -2,6 +2,7 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.JexlExpressionDO;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -14,11 +15,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-
+@SuppressWarnings("java:S3252")
 public class JexlExpressionTest extends TestNGBase {
     private static final List<String> jexlVariables = Arrays.asList(
             "str1", "str2", "RANDOM_DATE", "RANDOM_US_ADDRESS", "rand",
@@ -69,14 +66,14 @@ public class JexlExpressionTest extends TestNGBase {
 
     @Step("Validate Field ({0}) Value has correct value")
     private void validateFieldValue(String field, String actual, String expected) {
-        assertThat(field, actual, equalTo(expected));
+        AssertJUtil.assertThat(actual).as(field).isEqualTo(expected);
     }
 
     @Step("Validate Field {0} was evaluated properly")
     private void validateField(String var, String data, String expected, String initial) {
-        assertThat(String.format(GENERIC, var, "DataTypes.Data"), data, not(containsString(var)));
-        assertThat(String.format(GENERIC, var, "DataTypes.Expected"), expected, not(containsString(var)));
-        assertThat(String.format(GENERIC, var, "DataTypes.Initial"), initial, not(containsString(var)));
+        AssertJUtil.assertThat(data).as(GENERIC, var, "DataTypes.Data").doesNotContain(var);
+        AssertJUtil.assertThat(expected).as(GENERIC, var, "DataTypes.Expected").doesNotContain(var);
+        AssertJUtil.assertThat(initial).as(GENERIC, var, "DataTypes.Initial").doesNotContain(var);
     }
 
 }

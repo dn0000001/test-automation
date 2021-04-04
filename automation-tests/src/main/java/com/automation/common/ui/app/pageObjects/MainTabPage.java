@@ -2,24 +2,22 @@ package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThan;
-
 /**
  * Generic Main Page that has multiple tabs
  */
+@SuppressWarnings("java:S3252")
 public abstract class MainTabPage extends PageObjectV2 {
-    public MainTabPage() {
+    protected MainTabPage() {
         super();
     }
 
-    public MainTabPage(TestContext context) {
+    protected MainTabPage(TestContext context) {
         super(context);
     }
 
@@ -70,10 +68,10 @@ public abstract class MainTabPage extends PageObjectV2 {
      */
     protected void clickTab(String tabName) {
         int index = findTab(tabName);
-        assertThat("Could not find tab containing name:  " + tabName, index, greaterThanOrEqualTo(0));
+        AssertJUtil.assertThat(index).as("Could not find tab containing name:  " + tabName).isGreaterThanOrEqualTo(0);
 
         List<SubTabPage> allTabs = getTabs();
-        assertThat("Invalid Tab Index", index, lessThan(allTabs.size()));
+        AssertJUtil.assertThat(index).as("Invalid Tab Index").isLessThan(allTabs.size());
 
         if (!allTabs.get(index).isCurrentlySelected()) {
             allTabs.get(index).click();

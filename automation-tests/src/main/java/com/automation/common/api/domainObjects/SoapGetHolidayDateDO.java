@@ -5,6 +5,7 @@ import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.ParametersType;
 import com.taf.automation.api.ReturnType;
 import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -12,13 +13,10 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.http.message.BasicStatusLine;
 import ru.yandex.qatools.allure.annotations.Step;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Domain Object to work with http://www.holidaywebservice.com//HolidayService_v2/HolidayService2.asmx?op=GetHolidayDate
  */
+@SuppressWarnings("java:S3252")
 @XStreamAlias("get-holiday-date-do")
 public class SoapGetHolidayDateDO extends ApiDomainObject {
     private Request request;
@@ -147,11 +145,11 @@ public class SoapGetHolidayDateDO extends ApiDomainObject {
 
         @Step("Validate Response")
         private void validateResponse() {
-            assertThat("Response", theResponse, notNullValue());
-            assertThat("Response Entity", theResponse.getEntity(), notNullValue());
-            assertThat("Response Entity - Body", theResponse.getEntity().body, notNullValue());
-            assertThat("Response Entity - Body - Add", theResponse.getEntity().body.dateResponse, notNullValue());
-            assertThat("Add Result", theResponse.getEntity().body.dateResponse.date, equalTo(expectedDate));
+            AssertJUtil.assertThat(theResponse).as("Response").isNotNull();
+            AssertJUtil.assertThat(theResponse.getEntity()).as("Response Entity").isNotNull();
+            AssertJUtil.assertThat(theResponse.getEntity().body).as("Response Entity - Body").isNotNull();
+            AssertJUtil.assertThat(theResponse.getEntity().body.dateResponse).as("Response Entity - Body - Add").isNotNull();
+            AssertJUtil.assertThat(theResponse.getEntity().body.dateResponse.date).as("Add Result").isEqualTo(expectedDate);
         }
 
     }

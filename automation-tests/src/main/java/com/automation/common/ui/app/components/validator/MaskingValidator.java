@@ -2,6 +2,7 @@ package com.automation.common.ui.app.components.validator;
 
 import com.taf.automation.ui.support.StringMod;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.jexl3.JexlBuilder;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.JxltEngine;
@@ -11,13 +12,10 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-
 /**
  * This validator asserts that the actual matches the expected after applying masking rules
  */
+@SuppressWarnings("java:S3252")
 public class MaskingValidator extends Validator {
     private static final Logger LOG = LoggerFactory.getLogger(MaskingValidator.class);
     private static final String DOUBLE_QUOTE = "\"";
@@ -249,9 +247,9 @@ public class MaskingValidator extends Validator {
     @Override
     public void validateData() {
         if (ignoreCase) {
-            assertThat(getFailureMessage(), getMaskedActual(), equalToIgnoringCase(getMaskedExpected()));
+            AssertJUtil.assertThat(getMaskedActual()).as(getFailureMessage()).isEqualToIgnoringCase(getMaskedExpected());
         } else {
-            assertThat(getFailureMessage(), getMaskedActual(), equalTo(getMaskedExpected()));
+            AssertJUtil.assertThat(getMaskedActual()).as(getFailureMessage()).isEqualTo(getMaskedExpected());
         }
     }
 

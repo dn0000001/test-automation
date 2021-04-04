@@ -2,8 +2,9 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.FakeDateManager;
 import com.taf.automation.ui.support.DateActions;
-import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -16,9 +17,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.util.Date;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+@SuppressWarnings("java:S3252")
 public class MoveClockThreeTimesTest extends TestNGBase {
     private Long ticket1;
     private Long ticket2;
@@ -79,7 +78,7 @@ public class MoveClockThreeTimesTest extends TestNGBase {
         // Close the first reservation after the validations are complete
         // This is necessary to unblock moving the clock
         boolean closed = FakeDateManager.getInstance().closeReservation(testId, ticket1);
-        assertThat("Close Reservation (" + ticket1 + ")", closed);
+        AssertJUtil.assertThat(closed).as("Close Reservation (" + ticket1 + ")").isTrue();
 
         // Wait for the reservation to be completed which moves the clock the 2nd time
         FakeDateManager.getInstance().waitForReservation(testId, ticket2);
@@ -93,7 +92,7 @@ public class MoveClockThreeTimesTest extends TestNGBase {
         // Close the second reservation after the validations are complete
         // This is necessary to unblock moving the clock
         closed = FakeDateManager.getInstance().closeReservation(testId, ticket2);
-        assertThat("Close Reservation (" + ticket2 + ")", closed);
+        AssertJUtil.assertThat(closed).as("Close Reservation (" + ticket2 + ")").isTrue();
 
         // Wait for the reservation to be completed which moves the clock the 3rd time
         FakeDateManager.getInstance().waitForReservation(testId, ticket3);
@@ -108,7 +107,7 @@ public class MoveClockThreeTimesTest extends TestNGBase {
     @Step("Validate Move Clock Days between {0} and {1} is {2}")
     private void validateMoveClockDays(Date startDate, Date endDate, String plusDays) {
         Long noOfDaysBetween = DateActions.daysBetween(startDate, endDate);
-        assertThat("Move Clock Days", noOfDaysBetween, equalTo(Long.valueOf(plusDays)));
+        AssertJUtil.assertThat(noOfDaysBetween).as("Move Clock Days").isEqualTo(Long.valueOf(plusDays));
     }
 
     @Step("Perform Before Clock Move Actions")

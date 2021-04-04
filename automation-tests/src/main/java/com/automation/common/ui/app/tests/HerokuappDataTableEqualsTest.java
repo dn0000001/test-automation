@@ -7,6 +7,7 @@ import com.automation.common.ui.app.pageObjects.HerokuappRowTable1;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.api.JsonUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
@@ -17,12 +18,10 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Testing Dynamic Locators in a page that represents a row in a table
  */
+@SuppressWarnings("java:S3252")
 public class HerokuappDataTableEqualsTest extends TestNGBase {
     @SuppressWarnings({"squid:S1068", "squid:S1206"})
     private class Table {
@@ -78,7 +77,7 @@ public class HerokuappDataTableEqualsTest extends TestNGBase {
             table1Rows.add(actual);
         }
 
-        assertThat("Table 1 == Table 2", table2Rows, equalTo(table1Rows));
+        AssertJUtil.assertThat(table2Rows).as("Table 1 == Table 2").isEqualTo(table1Rows);
     }
 
 }

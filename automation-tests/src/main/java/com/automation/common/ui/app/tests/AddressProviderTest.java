@@ -1,11 +1,11 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.AddressProviderDO;
-import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.util.Helper;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.providers.AddressProvider;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.Helper;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -14,8 +14,6 @@ import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
-
-import static org.hamcrest.Matchers.equalTo;
 
 public class AddressProviderTest extends TestNGBase {
     @Features("Framework")
@@ -38,14 +36,12 @@ public class AddressProviderTest extends TestNGBase {
 
         // Due to the address data some fields will be null which means they are treated as literal strings by JEXL
         // So, use the Helper.assertThat which skips expected fields that are null to avoid validation issues
-        AssertAggregator aggregator = new AssertAggregator();
-        Helper.assertThat(aggregator, addressProviderDO.getAddressInfo(), AddressProvider.getInstance().get(state));
-        aggregator.assertThat(
-                "State Address Count",
-                NumberUtils.toInt(addressProviderDO.getAddressCount(), -1),
-                equalTo(AddressProvider.getInstance().getAll(state).size())
-        );
-        Helper.assertThat(aggregator);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        Helper.assertThatObject("Address Info", softly, addressProviderDO.getAddressInfo(), AddressProvider.getInstance().get(state));
+        softly.assertThat(NumberUtils.toInt(addressProviderDO.getAddressCount(), -1))
+                .as("State Address Count")
+                .isEqualTo(AddressProvider.getInstance().getAll(state).size());
+        softly.assertAll();
     }
 
 }
