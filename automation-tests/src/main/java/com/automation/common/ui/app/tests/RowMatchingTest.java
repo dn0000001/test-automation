@@ -5,6 +5,7 @@ import com.automation.common.ui.app.pageObjects.HerokuappDataTablesPage;
 import com.automation.common.ui.app.pageObjects.HerokuappRow;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -15,9 +16,7 @@ import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.nullValue;
-
+@SuppressWarnings("java:S3252")
 public class RowMatchingTest extends TestNGBase {
     private RowMatchingDO rowMatchingDO;
     private HerokuappDataTablesPage tablesPage;
@@ -77,7 +76,7 @@ public class RowMatchingTest extends TestNGBase {
             matchDetails(match.getLastName(), match.getFirstName(), match.getEmail(), match.getDues(), match.getWebsite());
         }
 
-        assertThat("Found unexpected matching row", match, nullValue());
+        AssertJUtil.assertThat(match).as("Found unexpected matching row").isNull();
     }
 
 }

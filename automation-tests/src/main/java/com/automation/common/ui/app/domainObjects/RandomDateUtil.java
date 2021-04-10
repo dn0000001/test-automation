@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.domainObjects;
 
 import com.taf.automation.ui.support.DateActions;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import datainstiller.generators.DateGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -11,13 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Utility to generate a single random date which does not change during execution using aliases
  */
+@SuppressWarnings("java:S3252")
 public class RandomDateUtil {
     private static final RandomDateUtil instance = new RandomDateUtil();
     private final Random random = new Random();
@@ -140,8 +138,8 @@ public class RandomDateUtil {
      */
     public String range(String pattern, String value, Date maxDate) {
         String[] pieces = StringUtils.defaultString(value).split("\\|");
-        assertThat("Random Date value invalid format", pieces.length, equalTo(3));
-        assertThat("Max Date", maxDate, notNullValue());
+        AssertJUtil.assertThat(pieces.length).as("Random Date value invalid format").isEqualTo(3);
+        AssertJUtil.assertThat(maxDate).as("Max Date").isNotNull();
 
         String start = pieces[0];
         String end = pieces[1];
@@ -149,14 +147,14 @@ public class RandomDateUtil {
 
         // If max date is before the start date, then use the max date
         Date startDate = DateActions.parseDateStrictly(start, valueDatePattern);
-        assertThat("Start Date", startDate, notNullValue());
+        AssertJUtil.assertThat(startDate).as("Start Date").isNotNull();
         if (maxDate.compareTo(startDate) < 0) {
             return DateActions.format(maxDate, pattern);
         }
 
         // If max date is after the end date, then use the end date else use the max date
         Date endDate = DateActions.parseDateStrictly(end, valueDatePattern);
-        assertThat("End Date", endDate, notNullValue());
+        AssertJUtil.assertThat(endDate).as("End Date").isNotNull();
         if (maxDate.compareTo(endDate) > 0) {
             return new DateGenerator().generate(pattern, value);
         } else {

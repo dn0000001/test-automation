@@ -1,9 +1,10 @@
 package com.automation.common.ui.app.tests;
 
 import com.google.common.collect.Maps;
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Helper;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.testng.annotations.Listeners;
@@ -21,12 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Cache creation using Guava and Java 8 using lambda
  */
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class CacheTest {
     private static final String AAA = "aaa";
@@ -162,7 +161,7 @@ public class CacheTest {
                 .collect(Collectors.toMap(NameValuePair::getName, item -> item, (lhs, rhs) -> rhs));
 
         // Verify that the caches are the same
-        assertThat("Cache created using lambda", actualCache, equalTo(expectedCache));
+        AssertJUtil.assertThat(actualCache).as("Cache created using lambda").isEqualTo(expectedCache);
     }
 
     @Features("Helper")

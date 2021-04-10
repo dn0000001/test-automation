@@ -6,6 +6,7 @@ import com.taf.automation.api.ParametersType;
 import com.taf.automation.api.ReturnType;
 import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.api.rest.GenericHttpResponse;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.WsUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -14,15 +15,11 @@ import org.apache.http.message.BasicStatusLine;
 import ru.yandex.qatools.allure.annotations.Step;
 
 import java.util.Map;
-import java.util.regex.Pattern;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Domain Object to work with http://jsonip.com/
  */
+@SuppressWarnings("java:S3252")
 @XStreamAlias("json-ip-do")
 public class JsonIpDO extends ApiDomainObject {
     private Response response;
@@ -60,10 +57,10 @@ public class JsonIpDO extends ApiDomainObject {
             //
 
             IP_Details actualDetails = ip.getEntity();
-            assertThat("Response Entity", actualDetails, notNullValue());
-            assertThat("Invalid IP Address", Pattern.matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", actualDetails.ip), equalTo(true));
-            assertThat("GEO IP Incorrect", actualDetails.geoIP, equalTo(geoIP));
-            assertThat("API Help Incorrect", actualDetails.apiHelp, equalTo(apiHelp));
+            AssertJUtil.assertThat(actualDetails).as("Response Entity").isNotNull();
+            AssertJUtil.assertThat(actualDetails.ip).as("Invalid IP Address").matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$");
+            AssertJUtil.assertThat(actualDetails.geoIP).as("GEO IP Incorrect").isEqualTo(geoIP);
+            AssertJUtil.assertThat(actualDetails.apiHelp).as("API Help Incorrect").isEqualTo(apiHelp);
 
             //
             // Not Recommended way just to show another to get the information
@@ -76,9 +73,9 @@ public class JsonIpDO extends ApiDomainObject {
             String actualApiHelp = String.valueOf(actual.get("API Help"));
 
             Helper.log("Actual IP:  " + actualIP);
-            assertThat("Invalid IP Address", Pattern.matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$", actualIP), equalTo(true));
-            assertThat("GEO IP Incorrect", actualGeoIp, equalTo(geoIP));
-            assertThat("API Help Incorrect", actualApiHelp, equalTo(apiHelp));
+            AssertJUtil.assertThat(actualIP).as("Invalid IP Address").matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$");
+            AssertJUtil.assertThat(actualGeoIp).as("GEO IP Incorrect").isEqualTo(geoIP);
+            AssertJUtil.assertThat(actualApiHelp).as("API Help Incorrect").isEqualTo(apiHelp);
         }
     }
 

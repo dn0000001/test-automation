@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.conditional.ResultInfo;
 import com.taf.automation.ui.support.conditional.ResultType;
 import com.taf.automation.ui.support.testng.Retry;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -24,12 +25,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Unit testing Conditional class
  */
+@SuppressWarnings("java:S3252")
 public class ConditionalTest extends TestNGBase {
     private static final Logger LOG = LoggerFactory.getLogger(ConditionalTest.class);
     private static final By ELEMENT = By.id("headersearch");
@@ -51,10 +50,10 @@ public class ConditionalTest extends TestNGBase {
         ResultInfo resultInfo = conditional.getResultInfo();
         LOG.info("Stop Single:  {}", new Date());
 
-        assertThat(index, equalTo(0));
-        assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.READY));
-        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(ELEMENT));
+        AssertJUtil.assertThat(index).isEqualTo(0);
+        AssertJUtil.assertThat(resultInfo.isMatch()).isTrue();
+        AssertJUtil.assertThat(resultInfo.getCriteriaType()).isEqualTo(CriteriaType.READY);
+        AssertJUtil.assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR)).isEqualTo(ELEMENT);
     }
 
     @Features("Conditional")
@@ -75,10 +74,10 @@ public class ConditionalTest extends TestNGBase {
         ResultInfo resultInfo = conditional.getResultInfo();
         LOG.info("Stop Multi:  {}", new Date());
 
-        assertThat(index, equalTo(0));
-        assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.READY));
-        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(ELEMENT));
+        AssertJUtil.assertThat(index).isEqualTo(0);
+        AssertJUtil.assertThat(resultInfo.isMatch()).isTrue();
+        AssertJUtil.assertThat(resultInfo.getCriteriaType()).isEqualTo(CriteriaType.READY);
+        AssertJUtil.assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR)).isEqualTo(ELEMENT);
     }
 
     @Features("Conditional")
@@ -103,8 +102,8 @@ public class ConditionalTest extends TestNGBase {
         ResultInfo resultInfo = conditional.getResultInfo();
         LOG.info("Stop URLS:  {}", new Date());
 
-        assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.URL_NOT_EQUAL));
+        AssertJUtil.assertThat(resultInfo.isMatch()).isTrue();
+        AssertJUtil.assertThat(resultInfo.getCriteriaType()).isEqualTo(CriteriaType.URL_NOT_EQUAL);
     }
 
     @Features("Conditional")
@@ -130,8 +129,8 @@ public class ConditionalTest extends TestNGBase {
         ResultInfo resultInfo = conditional.getResultInfo();
         LOG.info("Stop DropDown:  {}", new Date());
 
-        assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.DROPDOWN_NOT_EQUAL));
+        AssertJUtil.assertThat(resultInfo.isMatch()).isTrue();
+        AssertJUtil.assertThat(resultInfo.getCriteriaType()).isEqualTo(CriteriaType.DROPDOWN_NOT_EQUAL);
     }
 
     @Features("Conditional")
@@ -157,8 +156,8 @@ public class ConditionalTest extends TestNGBase {
         ResultInfo resultInfo = conditional.getResultInfo();
         LOG.info("Stop Attribute:  {}", new Date());
 
-        assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.ATTRIBUTE_NOT_EQUAL));
+        AssertJUtil.assertThat(resultInfo.isMatch()).isTrue();
+        AssertJUtil.assertThat(resultInfo.getCriteriaType()).isEqualTo(CriteriaType.ATTRIBUTE_NOT_EQUAL);
     }
 
     @Features("Conditional")
@@ -184,8 +183,8 @@ public class ConditionalTest extends TestNGBase {
         ResultInfo resultInfo = conditional.getResultInfo();
         LOG.info("Stop Text:  {}", new Date());
 
-        assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.TEXT_NOT_EQUAL));
+        AssertJUtil.assertThat(resultInfo.isMatch()).isTrue();
+        AssertJUtil.assertThat(resultInfo.getCriteriaType()).isEqualTo(CriteriaType.TEXT_NOT_EQUAL);
     }
 
     @Features("Conditional")
@@ -214,9 +213,9 @@ public class ConditionalTest extends TestNGBase {
         ResultInfo resultInfo = conditional.getResultInfo();
         LOG.info("Stop Elements:  {}", new Date());
 
-        assertThat(resultInfo.isMatch(), equalTo(true));
-        assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR), equalTo(ELEMENT));
-        assertThat(resultInfo.getCriteriaType(), equalTo(CriteriaType.READY));
+        AssertJUtil.assertThat(resultInfo.isMatch()).isTrue();
+        AssertJUtil.assertThat(resultInfo.getAdditionalInfo().get(ResultType.LOCATOR)).isEqualTo(ELEMENT);
+        AssertJUtil.assertThat(resultInfo.getCriteriaType()).isEqualTo(CriteriaType.READY);
     }
 
 }

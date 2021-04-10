@@ -1,8 +1,9 @@
 package com.automation.common.ui.app.tests;
 
+import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.Utils;
-import com.taf.automation.ui.support.testng.TestNGBase;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.testng.annotations.AfterClass;
@@ -15,13 +16,10 @@ import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-
 /**
  * Test to validate the same thread is being used as the framework is assuming this
  */
+@SuppressWarnings("java:S3252")
 public class SameThreadTest extends TestNGBase {
     private static final int GREATER_THAN = 4;
     private long expectedThreadId;
@@ -38,7 +36,7 @@ public class SameThreadTest extends TestNGBase {
     @Test
     public void performTest() {
         Helper.log("Running Test", true);
-        assertThat("During Test", Thread.currentThread().getId(), equalTo(expectedThreadId));
+        AssertJUtil.assertThat(Thread.currentThread().getId()).as("During Test").isEqualTo(expectedThreadId);
 
         MutableInt count = new MutableInt(0);
         Failsafe.with(Utils.getPollingRetryPolicy()).run(() -> validationMethod(count, GREATER_THAN));
@@ -51,29 +49,29 @@ public class SameThreadTest extends TestNGBase {
 
     @Step("Validate ({0} + 1) greater than {1}")
     private void validationMethod(MutableInt count, int value) {
-        assertThat("Failsafe Run Test #" + count, Thread.currentThread().getId(), equalTo(expectedThreadId));
+        AssertJUtil.assertThat(Thread.currentThread().getId()).as("Failsafe Run Test #" + count).isEqualTo(expectedThreadId);
         count.increment();
-        assertThat("Return Value", count.intValue(), greaterThan(value));
+        AssertJUtil.assertThat(count.intValue()).as("Return Value").isGreaterThan(value);
     }
 
     private int getSomeValue(MutableInt count, int value) {
-        assertThat("Failsafe Get Test #" + count, Thread.currentThread().getId(), equalTo(expectedThreadId));
+        AssertJUtil.assertThat(Thread.currentThread().getId()).as("Failsafe Get Test #" + count).isEqualTo(expectedThreadId);
         count.increment();
-        assertThat("Get Value", count.intValue(), greaterThan(value));
+        AssertJUtil.assertThat(count.intValue()).as("Get Value").isGreaterThan(value);
         return count.intValue();
     }
 
     @AfterTest
     private void performAfterTestToEnsureTheBrowserIsClosed() {
         Helper.log("Running AfterTest", true);
-        assertThat("AfterTest", Thread.currentThread().getId(), equalTo(expectedThreadId));
+        AssertJUtil.assertThat(Thread.currentThread().getId()).as("AfterTest").isEqualTo(expectedThreadId);
         Helper.log("Completed AfterTest", true);
     }
 
     @AfterClass
     private void performAfterClass() {
         Helper.log("Running AfterClass", true);
-        assertThat("AfterClass", Thread.currentThread().getId(), equalTo(expectedThreadId));
+        AssertJUtil.assertThat(Thread.currentThread().getId()).as("AfterClass").isEqualTo(expectedThreadId);
         Helper.log("Completed AfterClass", true);
     }
 

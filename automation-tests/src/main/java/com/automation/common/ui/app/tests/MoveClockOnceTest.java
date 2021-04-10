@@ -2,8 +2,9 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.FakeDateManager;
 import com.taf.automation.ui.support.DateActions;
-import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -16,9 +17,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.util.Date;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+@SuppressWarnings("java:S3252")
 public class MoveClockOnceTest extends TestNGBase {
     private Long ticket;
     private String testId;
@@ -64,7 +63,7 @@ public class MoveClockOnceTest extends TestNGBase {
     @Step("Validate Move Clock Days between {0} and {1} is {2}")
     private void validateMoveClockDays(Date startDate, Date endDate, String plusDays) {
         Long noOfDaysBetween = DateActions.daysBetween(startDate, endDate);
-        assertThat("Move Clock Days", noOfDaysBetween, equalTo(Long.valueOf(plusDays)));
+        AssertJUtil.assertThat(noOfDaysBetween).as("Move Clock Days").isEqualTo(Long.valueOf(plusDays));
     }
 
     @Step("Perform Before Clock Move Actions")

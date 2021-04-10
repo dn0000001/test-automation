@@ -1,11 +1,11 @@
 package com.automation.common.ui.app.components.validator;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 
 /**
  * This validator asserts that the actual &amp; expected values are equal ignoring case
  */
+@SuppressWarnings("java:S3252")
 public class CaseInsensitiveValidator extends Validator {
     public CaseInsensitiveValidator() {
         withFailureMessage("Case Insensitive Validator");
@@ -13,7 +13,7 @@ public class CaseInsensitiveValidator extends Validator {
 
     @Override
     public void validateData() {
-        assertThat(getFailureMessage(), getActual(), equalToIgnoringCase(getExpected()));
+        AssertJUtil.assertThat(getActual()).as(getFailureMessage()).isEqualToIgnoringCase(getExpected());
     }
 
 }

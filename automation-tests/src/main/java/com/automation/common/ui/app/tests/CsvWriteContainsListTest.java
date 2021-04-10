@@ -4,6 +4,7 @@ import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.CsvUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.csv.CSVFormat;
 import org.testng.annotations.Test;
 
@@ -13,13 +14,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-
 /**
  * Example test that writes a csv file which contains a list
  */
+@SuppressWarnings("java:S3252")
 public class CsvWriteContainsListTest extends TestNGBase {
     private static final String[] HEADER_ROW = {"ROW", "First", "Last"};
     private static final List<String> GENERIC_CONTACT_DETAILS_HEADER = Arrays.asList("Phone", "Email");
@@ -151,18 +149,18 @@ public class CsvWriteContainsListTest extends TestNGBase {
 
         @Override
         public void padListsWithEmptyItems(int... totals) {
-            assertThat("Totals for this class", totals.length, equalTo(2));
+            AssertJUtil.assertThat(totals.length).as("Totals for this class").isEqualTo(2);
             padContactDetailsWithEmptyItems(totals[0]);
             padAddressesWithEmptyItems(totals[1]);
         }
 
         private void padContactDetailsWithEmptyItems(int totalContactDetails) {
             // In this example test, I always want at least 1 contact details
-            assertThat("Total Contact Details", totalContactDetails, greaterThanOrEqualTo(1));
+            AssertJUtil.assertThat(totalContactDetails).as("Total Contact Details").isGreaterThanOrEqualTo(1);
 
             // If the number of contract details is greater than the total, then it must be invalid
             int padItems = totalContactDetails - getContactDetails().size();
-            assertThat("Total Contact Details Invalid", padItems, greaterThanOrEqualTo(0));
+            AssertJUtil.assertThat(padItems).as("Total Contact Details Invalid").isGreaterThanOrEqualTo(0);
 
             for (int i = 0; i < padItems; i++) {
                 ContactDetails empty = new ContactDetails();
@@ -174,11 +172,11 @@ public class CsvWriteContainsListTest extends TestNGBase {
 
         private void padAddressesWithEmptyItems(int totalAddresses) {
             // In this example test, I always want at least 1 address
-            assertThat("Total Addresses", totalAddresses, greaterThanOrEqualTo(1));
+            AssertJUtil.assertThat(totalAddresses).as("Total Addresses").isGreaterThanOrEqualTo(1);
 
             // If the number of addresses is greater than the total, then it must be invalid
             int padItems = totalAddresses - getAddresses().size();
-            assertThat("Total Addresses Invalid", padItems, greaterThanOrEqualTo(0));
+            AssertJUtil.assertThat(padItems).as("Total Addresses Invalid").isGreaterThanOrEqualTo(0);
 
             for (int i = 0; i < padItems; i++) {
                 Address empty = new Address();

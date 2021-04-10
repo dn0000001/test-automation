@@ -2,6 +2,7 @@ package com.automation.common.ui.app.domainObjects;
 
 import com.taf.automation.api.html.HtmlUtils;
 import com.taf.automation.ui.support.DomainObject;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.http.HttpStatus;
@@ -10,13 +11,10 @@ import org.jsoup.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThan;
-
 /**
  * Class to hold all links to validate
  */
-@SuppressWarnings("squid:MaximumInheritanceDepth")
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 @XStreamAlias("links-do")
 public class LinksDO extends DomainObject {
     private static final String USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0";
@@ -43,7 +41,7 @@ public class LinksDO extends DomainObject {
             }
         }
 
-        assertThat(statusCode, lessThan(HttpStatus.SC_BAD_REQUEST));
+        AssertJUtil.assertThat(statusCode).isLessThan(HttpStatus.SC_BAD_REQUEST);
     }
 
 }

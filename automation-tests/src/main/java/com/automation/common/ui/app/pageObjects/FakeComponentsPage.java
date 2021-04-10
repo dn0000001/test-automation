@@ -17,16 +17,16 @@ import com.automation.common.ui.app.components.TextBoxBackspace;
 import com.taf.automation.ui.support.AliasedString;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.support.FindBy;
 import ui.auto.core.components.WebComponent;
 import ui.auto.core.data.DataTypes;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * This is a fake page used to test accessing component data without binding the component
  */
+@SuppressWarnings("java:S3252")
 public class FakeComponentsPage extends PageObjectV2 {
     @FindBy(id = "does not exist")
     private CheckBoxAJAX checkBoxAJAX;
@@ -197,7 +197,7 @@ public class FakeComponentsPage extends PageObjectV2 {
             return generalAliasedString.getData(DataTypes.Data, resolveAliases);
         }
 
-        assertThat("Unsupported Component Type:  " + component, false);
+        AssertJUtil.fail("Unsupported Component Type:  " + component);
         return null;
     }
 

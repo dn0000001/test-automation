@@ -1,16 +1,16 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.PageComponent;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Radio Option component that bypasses issues where WebDriver does not allow normal interaction with the radio button option
  * as it is disabled instead clicking the label node to make the radio button option selected<BR>
  */
+@SuppressWarnings("java:S3252")
 public class RadioOption extends PageComponent {
     private WebElement input;
     private WebElement label;
@@ -60,7 +60,7 @@ public class RadioOption extends PageComponent {
 
     @Override
     public void validateData(DataTypes validationMethod) {
-        assertThat("Radio Option not selected", input.isSelected());
+        AssertJUtil.assertThat(input.isSelected()).as("Radio Option not selected").isTrue();
     }
 
     @Override

@@ -5,8 +5,9 @@ import com.automation.common.data.Weather;
 import com.taf.automation.api.ApiDomainObject;
 import com.taf.automation.api.ApiUtils;
 import com.taf.automation.api.rest.GenericHttpResponse;
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.VTD_XML;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Helper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -15,17 +16,15 @@ import org.apache.http.NameValuePair;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.message.BasicStatusLine;
-import org.hamcrest.Matchers;
 import ru.yandex.qatools.allure.annotations.Step;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Domain Object to work with http://wsf.cdyne.com/WeatherWS/Weather.asmx?op=GetCityWeatherByZIP
  */
+@SuppressWarnings("java:S3252")
 @XStreamAlias("weather-do")
 public class WeatherDO extends ApiDomainObject {
     Request request;
@@ -64,8 +63,8 @@ public class WeatherDO extends ApiDomainObject {
                 e.printStackTrace();
             }
 
-            assertThat(temperature, Matchers.notNullValue());
-            assertThat(success, Matchers.is(true));
+            AssertJUtil.assertThat(temperature).isNotNull();
+            AssertJUtil.assertThat(success).isTrue();
         }
     }
 

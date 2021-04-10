@@ -1,5 +1,6 @@
 package com.automation.common.ui.app.components;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.LocatorUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,13 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.taf.automation.ui.support.util.AssertsUtil.matchesRegex;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.notNullValue;
-
 /**
  * Generic Component to work with radio button group options<BR>
  * <B>Notes:</B>
@@ -36,6 +30,7 @@ import static org.hamcrest.Matchers.notNullValue;
  *
  * @param <T> PageComponent
  */
+@SuppressWarnings("java:S3252")
 public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
     private Map<String, String> substitutions;
     private By staticLocator;
@@ -77,7 +72,7 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
             error += ex.getMessage();
         }
 
-        assertThat(error, component, notNullValue());
+        AssertJUtil.assertThat(component).as(error).isNotNull();
         return component;
     }
 
@@ -138,13 +133,13 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
                     return;
                 }
 
-                assertThat("Radio Option was disabled", component.isEnabled());
+                AssertJUtil.assertThat(component.isEnabled()).as("Radio Option was disabled").isTrue();
                 component.setValue();
                 return;
             }
         }
 
-        assertThat("Could not find radio option:  " + theData, false);
+        AssertJUtil.fail("Could not find radio option:  " + theData);
     }
 
     @SuppressWarnings("squid:S2259")
@@ -158,7 +153,7 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
             }
         }
 
-        assertThat("No Radio Button Group option was selected", false);
+        AssertJUtil.fail("No Radio Button Group option was selected");
         return null;
     }
 
@@ -169,13 +164,13 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
 
         String error = "Radio Button Group Validation";
         if (selection == Selection.CONTAINS) {
-            assertThat(error, actual, containsString(expected));
+            AssertJUtil.assertThat(actual).as(error).contains(expected);
         } else if (selection == Selection.REGEX) {
-            assertThat(error, actual, matchesRegex(expected));
+            AssertJUtil.assertThat(actual).as(error).matches(expected);
         } else if (selection == Selection.EQUALS_IGNORING_CASE) {
-            assertThat(error, actual, equalToIgnoringCase(expected));
+            AssertJUtil.assertThat(actual).as(error).isEqualToIgnoringCase(expected);
         } else {
-            assertThat(error, actual, equalTo(expected));
+            AssertJUtil.assertThat(actual).as(error).isEqualTo(expected);
         }
     }
 

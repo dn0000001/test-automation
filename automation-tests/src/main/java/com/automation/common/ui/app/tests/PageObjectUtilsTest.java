@@ -4,6 +4,7 @@ import com.automation.common.ui.app.domainObjects.RoboFormDO;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.PageObjectUtils;
 import com.taf.automation.ui.support.util.Utils;
@@ -18,12 +19,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
+@SuppressWarnings("java:S3252")
 public class PageObjectUtilsTest extends TestNGBase {
     private static final String PREFIX = "prefix-";
     private static final int EXPECTED_PARAMETERS_WITH_PREFIX = 2;
@@ -84,7 +80,9 @@ public class PageObjectUtilsTest extends TestNGBase {
 
         // Normally for performance reasons, you would want to only process if work needs to be done.
         // For this unit test, it is expected to be true
-        assertThat("Test must have a parameter to add/remove data", PageObjectUtils.isAnyToProcess(testParameters));
+        AssertJUtil.assertThat(PageObjectUtils.isAnyToProcess(testParameters))
+                .as("Test must have a parameter to add/remove data")
+                .isTrue();
 
         // Normally if you are processing multiple items in the same test (or are grouping them together for some
         // reason), then you want to have the prefix removed to just have the key.
@@ -92,44 +90,46 @@ public class PageObjectUtilsTest extends TestNGBase {
 
         // For this unit test, the number of prefixed parameters has a specific size.  Normally, you would not care
         // about how many parameters there are.
-        assertThat("Prefixed Parameters", prefixedParameters.size(), equalTo(EXPECTED_PARAMETERS_WITH_PREFIX));
+        AssertJUtil.assertThat(prefixedParameters.size()).as("Prefixed Parameters").isEqualTo(EXPECTED_PARAMETERS_WITH_PREFIX);
 
         // For this unit test, it is expected to have a key with a specific value
         String actualValue = prefixedParameters.remove(ParameterKey.SPECIAL.getKey());
         String expectedValue = ParameterKey.SPECIAL.getValue();
-        assertThat("Parameter " + PREFIX + ParameterKey.SPECIAL.getKey(), actualValue, equalTo(expectedValue));
+        AssertJUtil.assertThat(actualValue)
+                .as("Parameter " + PREFIX + ParameterKey.SPECIAL.getKey())
+                .isEqualTo(expectedValue);
 
         // For this unit test, extract the 2nd prefixed parameter which is expected to be a field to be added
         String getPrefix = PageObjectUtils.getAddDataPrefix();
         Map<String, String> extracted = PageObjectUtils.getSpecificParameters(getPrefix, prefixedParameters, true);
-        assertThat("Extracted Parameter", extracted.size(), equalTo(1));
+        AssertJUtil.assertThat(extracted.size()).as("Extracted Parameter").isEqualTo(1);
 
         actualValue = extracted.remove(ParameterKey.FIELD_1.getKey());
         expectedValue = ParameterKey.FIELD_1.getValue();
         String log = "Parameter " + PREFIX + getPrefix + ParameterKey.FIELD_1.getKey();
-        assertThat(log, actualValue, equalTo(expectedValue));
+        AssertJUtil.assertThat(actualValue).as(log).isEqualTo(expectedValue);
 
         // For this unit test, change the flag from true to false
-        assertThat("Initially useDynamicPage needs to be true", roboFormDO.isUseDynamicPage());
+        AssertJUtil.assertThat(roboFormDO.isUseDynamicPage()).as("Initially useDynamicPage needs to be true").isTrue();
         PageObjectUtils.process(roboFormDO, testParameters);
         Helper.log("Modified useDynamicPage in domain object after loading");
-        assertThat("Changed useDynamicPage", !roboFormDO.isUseDynamicPage());
+        AssertJUtil.assertThat(roboFormDO.isUseDynamicPage()).as("Changed useDynamicPage").isFalse();
 
         // For this unit test, add & remove test data
         String initialFirstName = roboFormDO.getRoboFormDynamicPage().getTestDataFirstName();
-        assertThat("Initial First Name", initialFirstName, not(isEmptyOrNullString()));
+        AssertJUtil.assertThat(initialFirstName).as("Initial First Name").isNotBlank();
 
         String initialLastName = roboFormDO.getRoboFormDynamicPage().getTestDataLastName();
-        assertThat("Initial Last Name", initialLastName, not(isEmptyOrNullString()));
+        AssertJUtil.assertThat(initialLastName).as("Initial Last Name").isNotBlank();
 
         PageObjectUtils.process(roboFormDO.getRoboFormDynamicPage(), testParameters);
         Helper.log("Modified roboFormDynamicPage in domain object after loading");
 
         String changedFirstName = roboFormDO.getRoboFormDynamicPage().getTestDataFirstName();
-        assertThat("First Name", changedFirstName, equalTo(ParameterKey.FIRST_NAME.getValue()));
+        AssertJUtil.assertThat(changedFirstName).as("First Name").isEqualTo(ParameterKey.FIRST_NAME.getValue());
 
         String changedLastName = roboFormDO.getRoboFormDynamicPage().getTestDataLastName();
-        assertThat("Last Name", changedLastName, nullValue());
+        AssertJUtil.assertThat(changedLastName).as("Last Name").isNull();
 
         // Use the modified domain object to perform the test
         new Navigation(getContext()).toRoboFormFill(Utils.isCleanCookiesSupported());

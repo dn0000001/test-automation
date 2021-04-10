@@ -1,17 +1,16 @@
 package com.automation.common.ui.app.tests;
 
+import com.taf.automation.ui.support.Rand;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.Helper;
-import com.taf.automation.ui.support.Rand;
 import org.apache.commons.codec.binary.Hex;
 import org.testng.annotations.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Creating and testing a new crypto key
  */
+@SuppressWarnings("java:S3252")
 public class CreateKeyTest {
     private String createRandomKey() {
         String key = Rand.letters(5) + "-" + Rand.letters(5) + "-" + Rand.letters(5) + "-" + Rand.letters(5);
@@ -33,7 +32,7 @@ public class CreateKeyTest {
     private void validateKey(String value) {
         String encrypt = new CryptoUtils().encrypt(value);
         String decrypt = new CryptoUtils().decrypt(encrypt);
-        assertThat("Decryption", decrypt, equalTo(value));
+        AssertJUtil.assertThat(decrypt).as("Decryption").isEqualTo(value);
 
         String log = "*****" + "\n" + "Test Value:  " + value + "\n" + "Encrypted Value:  " + encrypt + "\n" + "*****" + "\n";
         Helper.log(log, true);
@@ -44,7 +43,7 @@ public class CreateKeyTest {
         String randomKey = createRandomKey();
         String encodedKey = getEncodeKey(randomKey);
         String decodedKey = getDecodedKey(encodedKey);
-        assertThat("Decoded Key", decodedKey, equalTo(randomKey));
+        AssertJUtil.assertThat(decodedKey).as("Decoded Key").isEqualTo(randomKey);
         Helper.log("automation.key=" + encodedKey, true);
         Helper.log("Decoded Key=" + decodedKey, true);
     }
@@ -59,7 +58,7 @@ public class CreateKeyTest {
         String value = "Pm3yyK5EyP98QJrpTcrhgvn3K";
         String encrypted = "YRVx9vum59nUh+sUJQClOZIPe9Yt2fIFJPIB7edSsoM=";
         String decrypt = new CryptoUtils().decrypt(encrypted);
-        assertThat("Decryption with key:  554f4958552d414e4c48592d49454344452d484c494554", decrypt, equalTo(value));
+        AssertJUtil.assertThat(decrypt).as("Decryption with key:  554f4958552d414e4c48592d49454344452d484c494554").isEqualTo(value);
         Helper.log("Decrypt Value = " + decrypt, true);
     }
 

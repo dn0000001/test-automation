@@ -1,5 +1,6 @@
 package com.automation.common.ui.app.tests;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.LocatorUtils;
 import com.taf.automation.ui.support.util.RegExUtils;
@@ -17,10 +18,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.taf.automation.ui.support.util.AssertsUtil.matchesRegex;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class LocatorUtilsTest {
     private static final String DOUBLE_QUOTE = "\"";
@@ -45,8 +43,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = null;
         String value = "nullTest";
         By test = LocatorUtils.processForSubstitutions(By.id(value), substitutions);
-        assertThat("performNullTest - instanceof", test instanceof By.ById);
-        assertThat("performNullTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performNullTest - instanceof").isInstanceOf(By.ById.class);
+        AssertJUtil.assertThat(test.toString()).as("performNullTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -57,8 +55,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         String value = "EmptyTest";
         By test = LocatorUtils.processForSubstitutions(By.id(value), substitutions);
-        assertThat("performEmptyTest - instanceof", test instanceof By.ById);
-        assertThat("performEmptyTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performEmptyTest - instanceof").isInstanceOf(By.ById.class);
+        AssertJUtil.assertThat(test.toString()).as("performEmptyTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -70,8 +68,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.id(ROW_SUBSTITUTION), substitutions);
-        assertThat("performIdTest - instanceof", test instanceof By.ById);
-        assertThat("performIdTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performIdTest - instanceof").isInstanceOf(By.ById.class);
+        AssertJUtil.assertThat(test.toString()).as("performIdTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -85,8 +83,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.cssSelector(locator), substitutions);
-        assertThat("performCssTest - instanceof", test instanceof By.ByCssSelector);
-        assertThat("performCssTest - locator", test.toString(), matchesRegex(expected));
+        AssertJUtil.assertThat(test).as("performCssTest - instanceof").isInstanceOf(By.ByCssSelector.class);
+        AssertJUtil.assertThat(test.toString()).as("performCssTest - locator").matches(expected);
     }
 
     @Features("LocatorUtils")
@@ -100,8 +98,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.xpath(locator), substitutions);
-        assertThat("performXpathTest - instanceof", test instanceof By.ByXPath);
-        assertThat("performXpathTest - locator", test.toString(), matchesRegex(expected));
+        AssertJUtil.assertThat(test).as("performXpathTest - instanceof").isInstanceOf(By.ByXPath.class);
+        AssertJUtil.assertThat(test.toString()).as("performXpathTest - locator").matches(expected);
     }
 
     @Features("LocatorUtils")
@@ -113,8 +111,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.name(ROW_SUBSTITUTION), substitutions);
-        assertThat("performNameTest - instanceof", test instanceof By.ByName);
-        assertThat("performNameTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performNameTest - instanceof").isInstanceOf(By.ByName.class);
+        AssertJUtil.assertThat(test.toString()).as("performNameTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -126,8 +124,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.linkText(ROW_SUBSTITUTION), substitutions);
-        assertThat("performLinkTextTest - instanceof", test instanceof By.ByLinkText);
-        assertThat("performLinkTextTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performLinkTextTest - instanceof").isInstanceOf(By.ByLinkText.class);
+        AssertJUtil.assertThat(test.toString()).as("performLinkTextTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -139,8 +137,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.partialLinkText(ROW_SUBSTITUTION), substitutions);
-        assertThat("performPartialLinkTextTest - instanceof", test instanceof By.ByPartialLinkText);
-        assertThat("performPartialLinkTextTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performPartialLinkTextTest - instanceof").isInstanceOf(By.ByPartialLinkText.class);
+        AssertJUtil.assertThat(test.toString()).as("performPartialLinkTextTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -152,8 +150,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.tagName(ROW_SUBSTITUTION), substitutions);
-        assertThat("performTagNameTest - instanceof", test instanceof By.ByTagName);
-        assertThat("performTagNameTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performTagNameTest - instanceof").isInstanceOf(By.ByTagName.class);
+        AssertJUtil.assertThat(test.toString()).as("performTagNameTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -165,8 +163,8 @@ public class LocatorUtilsTest {
         Map<String, String> substitutions = new HashMap<>();
         substitutions.put("row", value);
         By test = LocatorUtils.processForSubstitutions(By.className(ROW_SUBSTITUTION), substitutions);
-        assertThat("performClassNameTest - instanceof", test instanceof By.ByClassName);
-        assertThat("performClassNameTest - locator", test.toString(), matchesRegex(RegExUtils.BY_PREFIX + value));
+        AssertJUtil.assertThat(test).as("performClassNameTest - instanceof").isInstanceOf(By.ByClassName.class);
+        AssertJUtil.assertThat(test.toString()).as("performClassNameTest - locator").matches(RegExUtils.BY_PREFIX + value);
     }
 
     @Features("LocatorUtils")
@@ -179,8 +177,10 @@ public class LocatorUtilsTest {
         substitutions.put("css", "auto-22");
         By bychained = new ByChained(By.cssSelector(".test [id='${css}']"), By.xpath("//*[@id='${xpath}']"));
         By test = LocatorUtils.processForSubstitutions(bychained, substitutions);
-        assertThat("performByChainedTest - instanceof", test instanceof ByChained);
-        assertThat("performByChainedTest - locator", test.toString(), equalTo("By.chained({By.cssSelector: .test [id='auto-22'],By.xpath: //*[@id='auto-11']})"));
+        AssertJUtil.assertThat(test).as("performByChainedTest - instanceof").isInstanceOf(ByChained.class);
+        AssertJUtil.assertThat(test.toString())
+                .as("performByChainedTest - locator")
+                .isEqualTo("By.chained({By.cssSelector: .test [id='auto-22'],By.xpath: //*[@id='auto-11']})");
     }
 
     @Features("LocatorUtils")
@@ -193,8 +193,8 @@ public class LocatorUtilsTest {
         substitutions.put("id", "auto-44");
         By byall = new ByAll(By.id("${id}"), By.name("${name}"));
         By test = LocatorUtils.processForSubstitutions(byall, substitutions);
-        assertThat("performByAllTest - instanceof", test instanceof ByAll);
-        assertThat("performByAllTest - locator", test.toString(), equalTo("By.all({By.id: auto-44,By.name: auto-33})"));
+        AssertJUtil.assertThat(test).as("performByAllTest - instanceof").isInstanceOf(ByAll.class);
+        AssertJUtil.assertThat(test.toString()).as("performByAllTest - locator").isEqualTo("By.all({By.id: auto-44,By.name: auto-33})");
     }
 
     @Features("LocatorUtils")
@@ -228,8 +228,8 @@ public class LocatorUtilsTest {
                 + "By.xpath: //*[@id='auto-3']"
                 + "})"
                 + "})";
-        assertThat("performByChainedRecursiveTest - instanceof", test instanceof ByChained);
-        assertThat("performByChainedRecursiveTest- locator", test.toString(), equalTo(expected));
+        AssertJUtil.assertThat(test).as("performByChainedRecursiveTest - instanceof").isInstanceOf(ByChained.class);
+        AssertJUtil.assertThat(test.toString()).as("performByChainedRecursiveTest- locator").isEqualTo(expected);
     }
 
     @Features("LocatorUtils")
@@ -263,8 +263,8 @@ public class LocatorUtilsTest {
                 + "By.xpath: //*[@id='auto-3']"
                 + "})"
                 + "})";
-        assertThat("performByAllRecursiveTest - instanceof", test instanceof ByAll);
-        assertThat("performByAllRecursiveTest- locator", test.toString(), equalTo(expected));
+        AssertJUtil.assertThat(test).as("performByAllRecursiveTest - instanceof").isInstanceOf(ByAll.class);
+        AssertJUtil.assertThat(test.toString()).as("performByAllRecursiveTest- locator").isEqualTo(expected);
     }
 
     @Features("LocatorUtils")
@@ -297,8 +297,8 @@ public class LocatorUtilsTest {
                 + "By.xpath: //*[@id='auto-3']"
                 + "})"
                 + "})";
-        assertThat("performMixedRecursive1Test - instanceof", test instanceof ByChained);
-        assertThat("performMixedRecursive1Test- locator", test.toString(), equalTo(expected));
+        AssertJUtil.assertThat(test).as("performMixedRecursive1Test - instanceof").isInstanceOf(ByChained.class);
+        AssertJUtil.assertThat(test.toString()).as("performMixedRecursive1Test- locator").isEqualTo(expected);
     }
 
     @Features("LocatorUtils")
@@ -331,8 +331,8 @@ public class LocatorUtilsTest {
                 + "By.xpath: //*[@id='auto-3']"
                 + "})"
                 + "})";
-        assertThat("performMixedRecursive2Test - instanceof", test instanceof ByAll);
-        assertThat("performMixedRecursive2Test- locator", test.toString(), equalTo(expected));
+        AssertJUtil.assertThat(test).as("performMixedRecursive2Test - instanceof").isInstanceOf(ByAll.class);
+        AssertJUtil.assertThat(test.toString()).as("performMixedRecursive2Test- locator").isEqualTo(expected);
     }
 
     /**
@@ -365,7 +365,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performNoQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performNoQuotesTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -390,7 +390,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performMatchingSingleQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performMatchingSingleQuotesTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -415,7 +415,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performMatchingDoubleQuotesTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performMatchingDoubleQuotesTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -448,7 +448,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performMatchingMixQuotesSequentialTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performMatchingMixQuotesSequentialTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -481,7 +481,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performMatchingMixQuotesAlternatingTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performMatchingMixQuotesAlternatingTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -502,7 +502,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performSingleQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performSingleQuoteTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -523,7 +523,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performDoubleQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performDoubleQuoteTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -544,7 +544,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performSingleQuoteStartTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performSingleQuoteStartTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -565,7 +565,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performDoubleQuoteStartTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performDoubleQuoteStartTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -586,7 +586,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performSingleQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performSingleQuoteEndTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -607,7 +607,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performDoubleQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performDoubleQuoteEndTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -632,7 +632,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performMixQuoteTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performMixQuoteTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -657,7 +657,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performMixQuoteSequentialTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performMixQuoteSequentialTest").isEqualTo(expectedSafeValue);
     }
 
     @Features("LocatorUtils")
@@ -682,7 +682,7 @@ public class LocatorUtilsTest {
         Helper.log(unsafeValue, true);
         outputConsoleComand(unsafeValue, actualSafeValue);
 
-        assertThat("performMixQuoteEndTest", actualSafeValue, equalTo(expectedSafeValue));
+        AssertJUtil.assertThat(actualSafeValue).as("performMixQuoteEndTest").isEqualTo(expectedSafeValue);
     }
 
 }

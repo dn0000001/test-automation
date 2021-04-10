@@ -1,14 +1,13 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.Environment;
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+@SuppressWarnings("java:S3252")
 public class EnvironmentSpecificDataTest {
     private static final String ENVIRONMENT_TARGET = "environmentTarget";
     private static final String ENVIRONMENT = "environment";
@@ -25,13 +24,13 @@ public class EnvironmentSpecificDataTest {
         Utils.writeField(useProps, ENVIRONMENT, Environment.QA);
 
         String actual = Helper.getEnvironmentBasedFile(MULTI_ENV, useProps);
-        assertThat("targetEnvironmentIsNotSetWithNonProd #1", actual, equalTo(MULTI_ENV));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentIsNotSetWithNonProd #1").isEqualTo(MULTI_ENV);
 
         actual = Helper.getEnvironmentBasedFile(NO_ENV, useProps);
-        assertThat("targetEnvironmentIsNotSetWithNonProd #2", actual, equalTo(NO_ENV));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentIsNotSetWithNonProd #2").isEqualTo(NO_ENV);
 
         actual = Helper.getEnvironmentBasedFile(DOES_NOT_EXIST, useProps);
-        assertThat("targetEnvironmentIsNotSetWithNonProd #3", actual, equalTo(DOES_NOT_EXIST));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentIsNotSetWithNonProd #3").isEqualTo(DOES_NOT_EXIST);
     }
 
     @Test
@@ -40,10 +39,10 @@ public class EnvironmentSpecificDataTest {
         Utils.writeField(useProps, ENVIRONMENT_TARGET, "");
         Utils.writeField(useProps, ENVIRONMENT, Environment.PROD);
         String actual = Helper.getEnvironmentBasedFile(NO_ENV, useProps);
-        assertThat("targetEnvironmentIsNotSetWithProdEnvironmentDataDoesNotExist #1", actual, equalTo(NO_ENV));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentIsNotSetWithProdEnvironmentDataDoesNotExist #1").isEqualTo(NO_ENV);
 
         actual = Helper.getEnvironmentBasedFile(DOES_NOT_EXIST, useProps);
-        assertThat("targetEnvironmentIsNotSetWithProdEnvironmentDataDoesNotExist #2", actual, equalTo(DOES_NOT_EXIST));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentIsNotSetWithProdEnvironmentDataDoesNotExist #2").isEqualTo(DOES_NOT_EXIST);
     }
 
     @Test
@@ -52,7 +51,7 @@ public class EnvironmentSpecificDataTest {
         Utils.writeField(useProps, ENVIRONMENT_TARGET, "");
         Utils.writeField(useProps, ENVIRONMENT, Environment.PROD);
         String actual = Helper.getEnvironmentBasedFile(MULTI_ENV, useProps);
-        assertThat("targetEnvironmentIsNotSetWithProdEnvironmentDataDoesNotExist", actual, equalTo(MULTI_ENV_PROD));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentIsNotSetWithProdEnvironmentDataDoesNotExist").isEqualTo(MULTI_ENV_PROD);
     }
 
     @Test
@@ -62,10 +61,10 @@ public class EnvironmentSpecificDataTest {
         Utils.writeField(useProps, ENVIRONMENT, Environment.QA);
 
         String actual = Helper.getEnvironmentBasedFile(NO_ENV, useProps);
-        assertThat("targetEnvironmentSetEnvironmentDataDoesNotExist #1", actual, equalTo(NO_ENV));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentSetEnvironmentDataDoesNotExist #1").isEqualTo(NO_ENV);
 
         actual = Helper.getEnvironmentBasedFile(DOES_NOT_EXIST, useProps);
-        assertThat("targetEnvironmentSetEnvironmentDataDoesNotExist #2", actual, equalTo(DOES_NOT_EXIST));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentSetEnvironmentDataDoesNotExist #2").isEqualTo(DOES_NOT_EXIST);
     }
 
     @Test
@@ -74,7 +73,7 @@ public class EnvironmentSpecificDataTest {
         Utils.writeField(useProps, ENVIRONMENT_TARGET, "QA");
         Utils.writeField(useProps, ENVIRONMENT, Environment.QA);
         String actual = Helper.getEnvironmentBasedFile(MULTI_ENV, useProps);
-        assertThat("targetEnvironmentSetEnvironmentDataExists", actual, equalTo(MULTI_ENV_QA));
+        AssertJUtil.assertThat(actual).as("targetEnvironmentSetEnvironmentDataExists").isEqualTo(MULTI_ENV_QA);
     }
 
 }

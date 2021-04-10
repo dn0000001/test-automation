@@ -2,9 +2,9 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.ComponentsDO;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
-import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.util.Helper;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -14,9 +14,7 @@ import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+@SuppressWarnings("java:S3252")
 public class ComponentDataTest extends TestNGBase {
     private ComponentsDO componentsDO;
 
@@ -48,16 +46,15 @@ public class ComponentDataTest extends TestNGBase {
      */
     @Step("Validate that aliases are not resolved when flag is false")
     private void performCheckThatAliasNotResolved() {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
 
         for (FakeComponentsPage.Type item : FakeComponentsPage.Type.values()) {
             String actual = componentsDO.getFakeComponentsPage().getTestData(item, false);
             String expected = "${" + item.toString() + "}";
-            aggregator.assertThat("Component " + expected, actual, equalTo(expected));
+            softly.assertThat(actual).as("Component " + expected).isEqualTo(expected);
         }
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     /**
@@ -67,16 +64,15 @@ public class ComponentDataTest extends TestNGBase {
      */
     @Step("Validate that aliases are resolved when flag is true")
     private void performCheckThatAliasResolved() {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
 
         for (FakeComponentsPage.Type item : FakeComponentsPage.Type.values()) {
             String actual = componentsDO.getFakeComponentsPage().getTestData(item, true);
             String expected = getExpectedTestData(item);
-            aggregator.assertThat("Component " + item, actual, equalTo(expected));
+            softly.assertThat(actual).as("Component " + item).isEqualTo(expected);
         }
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     @SuppressWarnings("java:S3776")
@@ -145,7 +141,7 @@ public class ComponentDataTest extends TestNGBase {
             return "o15";
         }
 
-        assertThat("Unsupported Component Type:  " + component, false);
+        AssertJUtil.fail("Unsupported Component Type:  " + component);
         return null;
     }
 

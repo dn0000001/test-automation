@@ -2,21 +2,16 @@ package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.ComponentPO;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThan;
-
 /**
  * A page object that acts as a component
  */
-@SuppressWarnings("squid:MaximumInheritanceDepth")
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 public class CardExpirationDateFields extends ComponentPO {
     @FindBy(css = "[name$='ccexp_mm']")
     private SelectEnhanced month;
@@ -124,23 +119,19 @@ public class CardExpirationDateFields extends ComponentPO {
         reason = "Year - Random Index";
         value = RANDOM_INDEX + "7";
         int actualYear = NumberUtils.toInt(setYear(value));
-        assertThat(reason, actualYear, greaterThanOrEqualTo(2026));
+        AssertJUtil.assertThat(actualYear).as(reason).isGreaterThanOrEqualTo(2026);
         resetYear();
 
         reason = "Year - Random Index Values";
         value = RANDOM_INDEX_VALUES + "7,8";
-        assertThat(
-                reason,
-                setYear(value),
-                anyOf(equalTo("2026"), equalTo("2027"))
-        );
+        AssertJUtil.assertThat(setYear(value)).as(reason).isIn("2026", "2027");
         resetYear();
 
         reason = "Year - Random Index Range";
         value = RANDOM_INDEX_RANGE + "7:12";
         actualYear = NumberUtils.toInt(setYear(value));
-        assertThat(reason, actualYear, greaterThanOrEqualTo(2026));
-        assertThat(reason, actualYear, lessThan(2031));
+        AssertJUtil.assertThat(actualYear).as(reason).isGreaterThanOrEqualTo(2026);
+        AssertJUtil.assertThat(actualYear).as(reason).isLessThan(2031);
         resetYear();
 
         //
@@ -179,7 +170,7 @@ public class CardExpirationDateFields extends ComponentPO {
 
     @Step("Validate SetValue:  {0}")
     private void validateSetValue(String reason, String value, String expectedValue) {
-        assertThat(reason, setYear(value), equalTo(expectedValue));
+        AssertJUtil.assertThat(setYear(value)).as(reason).isEqualTo(expectedValue);
     }
 
     @Step("Set Year:  {0}")
@@ -191,7 +182,7 @@ public class CardExpirationDateFields extends ComponentPO {
     @Step("Reset Year")
     private void resetYear() {
         String value = "2025";
-        assertThat("Year - 2025", setYear(value), equalTo(value));
+        AssertJUtil.assertThat(setYear(value)).as("Year - 2025").isEqualTo(value);
     }
 
 }

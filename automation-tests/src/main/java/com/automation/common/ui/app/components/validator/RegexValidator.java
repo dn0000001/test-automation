@@ -1,11 +1,11 @@
 package com.automation.common.ui.app.components.validator;
 
-import static com.taf.automation.ui.support.util.AssertsUtil.matchesRegex;
-import static org.hamcrest.MatcherAssert.assertThat;
+import com.taf.automation.ui.support.util.AssertJUtil;
 
 /**
  * This validator asserts that the actual matches the expected regular expression
  */
+@SuppressWarnings("java:S3252")
 public class RegexValidator extends Validator {
     public RegexValidator() {
         withFailureMessage("Regex Validator");
@@ -13,7 +13,7 @@ public class RegexValidator extends Validator {
 
     @Override
     public void validateData() {
-        assertThat(getFailureMessage(), getActual(), matchesRegex(getExpected()));
+        AssertJUtil.assertThat(getActual()).as(getFailureMessage()).matches(getExpected());
     }
 
 }

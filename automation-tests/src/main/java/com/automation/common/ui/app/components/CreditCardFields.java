@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.not;
 /**
  * A page object that acts as a component and contains a sub-page object component
  */
-@SuppressWarnings("squid:MaximumInheritanceDepth")
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 public class CreditCardFields extends ComponentPO {
     private static final String DISCOVER = "Discover";
 
@@ -180,6 +180,9 @@ public class CreditCardFields extends ComponentPO {
                 setCreditCardType(value),
                 anyOf(equalTo(CREDIT_CARD_TYPE_VISUAL_TEXT_VALUE), equalTo(CREDIT_CARD_TYPE_INDEX_4_OPTION))
         );
+        AssertJUtil.assertThat(setCreditCardType(value))
+                .as(reason)
+                .isIn(CREDIT_CARD_TYPE_VISUAL_TEXT_VALUE, CREDIT_CARD_TYPE_INDEX_4_OPTION);
         resetCreditCardType();
 
         reason = "Credit Card Type - Random Index Range";
@@ -189,6 +192,9 @@ public class CreditCardFields extends ComponentPO {
                 setCreditCardType(value),
                 anyOf(equalTo(CREDIT_CARD_TYPE_INDEX_4_OPTION), equalTo(CREDIT_CARD_TYPE_INDEX_5_OPTION))
         );
+        AssertJUtil.assertThat(setCreditCardType(value))
+                .as(reason)
+                .isIn(CREDIT_CARD_TYPE_INDEX_4_OPTION, CREDIT_CARD_TYPE_INDEX_5_OPTION);
         resetCreditCardType();
 
         //

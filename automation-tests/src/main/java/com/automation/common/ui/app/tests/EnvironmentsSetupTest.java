@@ -3,6 +3,7 @@ package com.automation.common.ui.app.tests;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.converters.EnvironmentPropertyConverter;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -14,12 +15,7 @@ import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 import ui.auto.core.support.EnvironmentsSetup;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class EnvironmentsSetupTest {
     private static final String DB_PASSWORD = "dbPassword";
@@ -46,20 +42,20 @@ public class EnvironmentsSetupTest {
     @Test
     public void testEnvironmentsSetup() {
         EnvironmentsSetup.Environment env = TestProperties.getInstance().getTestEnvironment();
-        assertThat("test.properties needs the property:  test.env=data/ui/sample-environment.xml:dev", env, notNullValue());
-        assertThat("environmentName", env.getEnvironmentName(), equalToIgnoringCase("DEV"));
-        assertThat("url", env.getUrl(), equalTo("https://www.google.ca"));
-        assertThat(CUSTOM_PROP_1, env.getCustom(CUSTOM_PROP_1), equalTo("https://jsonip.com"));
-        assertThat(DB_PASSWORD, env.getCustom(DB_PASSWORD), equalTo("Q27p7DXgP2AzDxxBDw/E0g=="));
-        assertThat(DB_PASSWORD + " decode", new CryptoUtils().decrypt(env.getCustom(DB_PASSWORD)), equalTo("password"));
+        AssertJUtil.assertThat(env).as("test.properties needs the property:  test.env=data/ui/sample-environment.xml:dev").isNotNull();
+        AssertJUtil.assertThat(env.getEnvironmentName()).as("environmentName").isEqualToIgnoringCase("DEV");
+        AssertJUtil.assertThat(env.getUrl()).as("url").isEqualTo("https://www.google.ca");
+        AssertJUtil.assertThat(env.getCustom(CUSTOM_PROP_1)).as(CUSTOM_PROP_1).isEqualTo("https://jsonip.com");
+        AssertJUtil.assertThat(env.getCustom(DB_PASSWORD)).as(DB_PASSWORD).isEqualTo("Q27p7DXgP2AzDxxBDw/E0g==");
+        AssertJUtil.assertThat(new CryptoUtils().decrypt(env.getCustom(DB_PASSWORD))).as(DB_PASSWORD + " decode").isEqualTo("password");
 
-        assertThat("Number of users", env.getUsers().size(), equalTo(NumberUtils.toInt(env.getCustom(CUSTOM_PROP_3))));
+        AssertJUtil.assertThat(env.getUsers().size()).as("Number of users").isEqualTo(NumberUtils.toInt(env.getCustom(CUSTOM_PROP_3)));
         String user = env.getUser(ROLE_SUPER).getUserName();
         String encodedPassword = env.getUser(ROLE_SUPER).getPassword();
         String decodedPassword = new CryptoUtils().decrypt(encodedPassword);
-        assertThat("User", user, equalTo("s2"));
-        assertThat("Encoded Password", encodedPassword, equalTo("feuGPPZDZlkVmHXJwOISwQ=="));
-        assertThat("Decoded Password", decodedPassword, equalTo("password1"));
+        AssertJUtil.assertThat(user).as("User").isEqualTo("s2");
+        AssertJUtil.assertThat(encodedPassword).as("Encoded Password").isEqualTo("feuGPPZDZlkVmHXJwOISwQ==");
+        AssertJUtil.assertThat(decodedPassword).as("Decoded Password").isEqualTo("password1");
     }
 
     @Features("Framework")
@@ -85,45 +81,45 @@ public class EnvironmentsSetupTest {
         //
         // Test the caching & custom methods to get the user
         //
-        assertThat(QA + ROLE_SUPER, propQA.getUser(ROLE_SUPER), nullValue());
-        assertThat(QA + ROLE_ADMIN, propQA.getUser(ROLE_ADMIN).getUserName(), equalTo("a1"));
-        assertThat(QA + ROLE_USER, propQA.getUser(ROLE_USER).getUserName(), equalTo("u1"));
-        assertThat(QA + ROLE_DUPLICATE, propQA.getUser(ROLE_DUPLICATE).getUserName(), equalTo("d1"));
+        AssertJUtil.assertThat(propQA.getUser(ROLE_SUPER)).as(QA + ROLE_SUPER).isNull();
+        AssertJUtil.assertThat(propQA.getUser(ROLE_ADMIN).getUserName()).as(QA + ROLE_ADMIN).isEqualTo("a1");
+        AssertJUtil.assertThat(propQA.getUser(ROLE_USER).getUserName()).as(QA + ROLE_USER).isEqualTo("u1");
+        AssertJUtil.assertThat(propQA.getUser(ROLE_DUPLICATE).getUserName()).as(QA + ROLE_DUPLICATE).isEqualTo("d1");
 
-        assertThat(DEV + ROLE_SUPER, propDEV.getUser(ROLE_SUPER).getUserName(), equalTo("s2"));
-        assertThat(DEV + ROLE_ADMIN, propDEV.getUser(ROLE_ADMIN).getUserName(), equalTo("a2"));
-        assertThat(DEV + ROLE_USER, propDEV.getUser(ROLE_USER).getUserName(), equalTo("u2"));
+        AssertJUtil.assertThat(propDEV.getUser(ROLE_SUPER).getUserName()).as(DEV + ROLE_SUPER).isEqualTo("s2");
+        AssertJUtil.assertThat(propDEV.getUser(ROLE_ADMIN).getUserName()).as(DEV + ROLE_ADMIN).isEqualTo("a2");
+        AssertJUtil.assertThat(propDEV.getUser(ROLE_USER).getUserName()).as(DEV + ROLE_USER).isEqualTo("u2");
 
-        assertThat(PROD + ROLE_SUPER, propPROD.getUser(ROLE_SUPER), nullValue());
-        assertThat(PROD + ROLE_ADMIN, propPROD.getUser(ROLE_ADMIN), nullValue());
-        assertThat(PROD + ROLE_USER, propPROD.getUser(ROLE_USER).getUserName(), equalTo("u3"));
+        AssertJUtil.assertThat(propPROD.getUser(ROLE_SUPER)).as(PROD + ROLE_SUPER).isNull();
+        AssertJUtil.assertThat(propPROD.getUser(ROLE_ADMIN)).as(PROD + ROLE_ADMIN).isNull();
+        AssertJUtil.assertThat(propPROD.getUser(ROLE_USER).getUserName()).as(PROD + ROLE_USER).isEqualTo("u3");
 
         //
         // Test the caching & custom methods to get the properties
         //
-        assertThat(QA + CUSTOM_PROP_4, propQA.isCustom(CUSTOM_PROP_4), equalTo(false));
-        assertThat(QA + CUSTOM_PROP_5, propQA.isCustom(CUSTOM_PROP_5), equalTo(true));
-        assertThat(QA + CUSTOM_PROP_1, propQA.getCustom(CUSTOM_PROP_1, "custom1"), equalTo("http://www.holidaywebservice.com"));
-        assertThat(QA + CUSTOM_PROP_2, propQA.getCustom(CUSTOM_PROP_2, "custom2"), equalTo("feuGPPZDZlkVmHXJwOISwQ=="));
-        assertThat(QA + CUSTOM_PROP_2, propQA.getCustom(CUSTOM_PROP_2, "custom2 decode", true), equalTo("password1"));
-        assertThat(QA + CUSTOM_PROP_3, propQA.getCustom(CUSTOM_PROP_3, "-1"), equalTo("2"));
-        assertThat(QA + CUSTOM_PROP_DUPLICATE, propQA.getCustom(CUSTOM_PROP_DUPLICATE, "default"), equalTo("fd1"));
+        AssertJUtil.assertThat(propQA.isCustom(CUSTOM_PROP_4)).as(QA + CUSTOM_PROP_4).isFalse();
+        AssertJUtil.assertThat(propQA.isCustom(CUSTOM_PROP_5)).as(QA + CUSTOM_PROP_5).isTrue();
+        AssertJUtil.assertThat(propQA.getCustom(CUSTOM_PROP_1, "custom1")).as(QA + CUSTOM_PROP_1).isEqualTo("http://www.holidaywebservice.com");
+        AssertJUtil.assertThat(propQA.getCustom(CUSTOM_PROP_2, "custom2")).as(QA + CUSTOM_PROP_2).isEqualTo("feuGPPZDZlkVmHXJwOISwQ==");
+        AssertJUtil.assertThat(propQA.getCustom(CUSTOM_PROP_2, "custom2 decode", true)).as(QA + CUSTOM_PROP_2).isEqualTo("password1");
+        AssertJUtil.assertThat(propQA.getCustom(CUSTOM_PROP_3, "-1")).as(QA + CUSTOM_PROP_3).isEqualTo("2");
+        AssertJUtil.assertThat(propQA.getCustom(CUSTOM_PROP_DUPLICATE, "default")).as(QA + CUSTOM_PROP_DUPLICATE).isEqualTo("fd1");
 
-        assertThat(DEV + CUSTOM_PROP_4, propDEV.isCustom(CUSTOM_PROP_4), equalTo(true));
-        assertThat(DEV + CUSTOM_PROP_5, propDEV.isCustom(CUSTOM_PROP_5), equalTo(false));
-        assertThat(DEV + CUSTOM_PROP_1, propDEV.getCustom(CUSTOM_PROP_1, "custom1b"), equalTo("https://jsonip.com"));
-        assertThat(DEV + CUSTOM_PROP_2, propDEV.getCustom(CUSTOM_PROP_2, "custom2b"), equalTo("Q27p7DXgP2AzDxxBDw/E0g=="));
-        assertThat(DEV + CUSTOM_PROP_2, propDEV.getCustom(CUSTOM_PROP_2, "custom2b decode", true), equalTo("password"));
-        assertThat(DEV + CUSTOM_PROP_3, propDEV.getCustom(CUSTOM_PROP_3, "-1"), equalTo("3"));
-        assertThat(DEV + CUSTOM_PROP_DUPLICATE, propDEV.getCustom(CUSTOM_PROP_DUPLICATE, "fd2"), equalTo("fd2"));
+        AssertJUtil.assertThat(propDEV.isCustom(CUSTOM_PROP_4)).as(DEV + CUSTOM_PROP_4).isTrue();
+        AssertJUtil.assertThat(propDEV.isCustom(CUSTOM_PROP_5)).as(DEV + CUSTOM_PROP_5).isFalse();
+        AssertJUtil.assertThat(propDEV.getCustom(CUSTOM_PROP_1, "custom1b")).as(DEV + CUSTOM_PROP_1).isEqualTo("https://jsonip.com");
+        AssertJUtil.assertThat(propDEV.getCustom(CUSTOM_PROP_2, "custom2b")).as(DEV + CUSTOM_PROP_2).isEqualTo("Q27p7DXgP2AzDxxBDw/E0g==");
+        AssertJUtil.assertThat(propDEV.getCustom(CUSTOM_PROP_2, "custom2b decode", true)).as(DEV + CUSTOM_PROP_2).isEqualTo("password");
+        AssertJUtil.assertThat(propDEV.getCustom(CUSTOM_PROP_3, "-1")).as(DEV + CUSTOM_PROP_3).isEqualTo("3");
+        AssertJUtil.assertThat(propDEV.getCustom(CUSTOM_PROP_DUPLICATE, "fd2")).as(DEV + CUSTOM_PROP_DUPLICATE).isEqualTo("fd2");
 
-        assertThat(PROD + CUSTOM_PROP_4, propPROD.isCustom(CUSTOM_PROP_4), equalTo(false));
-        assertThat(PROD + CUSTOM_PROP_5, propPROD.isCustom(CUSTOM_PROP_5), equalTo(false));
-        assertThat(PROD + CUSTOM_PROP_1, propPROD.getCustom(CUSTOM_PROP_1, "custom1c"), equalTo("http://wsf.cdyne.com"));
-        assertThat(PROD + CUSTOM_PROP_2, propPROD.getCustom(CUSTOM_PROP_2, "custom2c"), equalTo("xzRZ75G077/YqCsRSAHGMw=="));
-        assertThat(PROD + CUSTOM_PROP_2, propPROD.getCustom(CUSTOM_PROP_2, "custom2c decode", true), equalTo("password2"));
-        assertThat(PROD + CUSTOM_PROP_3, propPROD.getCustom(CUSTOM_PROP_3, "-1"), equalTo("1"));
-        assertThat(PROD + CUSTOM_PROP_DUPLICATE, propPROD.getCustom(CUSTOM_PROP_DUPLICATE, "fd3"), equalTo("fd3"));
+        AssertJUtil.assertThat(propPROD.isCustom(CUSTOM_PROP_4)).as(PROD + CUSTOM_PROP_4).isFalse();
+        AssertJUtil.assertThat(propPROD.isCustom(CUSTOM_PROP_5)).as(PROD + CUSTOM_PROP_5).isFalse();
+        AssertJUtil.assertThat(propPROD.getCustom(CUSTOM_PROP_1, "custom1c")).as(PROD + CUSTOM_PROP_1).isEqualTo("http://wsf.cdyne.com");
+        AssertJUtil.assertThat(propPROD.getCustom(CUSTOM_PROP_2, "custom2c")).as(PROD + CUSTOM_PROP_2).isEqualTo("xzRZ75G077/YqCsRSAHGMw==");
+        AssertJUtil.assertThat(propPROD.getCustom(CUSTOM_PROP_2, "custom2c decode", true)).as(PROD + CUSTOM_PROP_2).isEqualTo("password2");
+        AssertJUtil.assertThat(propPROD.getCustom(CUSTOM_PROP_3, "-1")).as(PROD + CUSTOM_PROP_3).isEqualTo("1");
+        AssertJUtil.assertThat(propPROD.getCustom(CUSTOM_PROP_DUPLICATE, "fd3")).as(PROD + CUSTOM_PROP_DUPLICATE).isEqualTo("fd3");
     }
 
     private EnvironmentsSetup.Environment getEnvironment(String testEnv) {

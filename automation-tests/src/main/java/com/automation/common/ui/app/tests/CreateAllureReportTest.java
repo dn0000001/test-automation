@@ -1,12 +1,12 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.TestRunner;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
+@SuppressWarnings("java:S3252")
 public class CreateAllureReportTest {
     @Parameters({"output-folder", "allure-results"})
     @Test
@@ -19,7 +19,7 @@ public class CreateAllureReportTest {
             String[] inputFolders = resultsFolders.split(",");
             runner.generateReport(outputFolder, inputFolders);
         } catch (Exception ex) {
-            assertThat("Could not create report due to exception:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not create report due to exception:  " + ex.getMessage());
         }
     }
 

@@ -1,20 +1,17 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.WebDriverTypeEnum;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.Utils;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-
+@SuppressWarnings("java:S3252")
 public class ChangeBrowserTest extends TestNGBase {
     private static final String SITE_1 = "https://www.google.ca";
     private static final String SITE_1_VALIDATION = "google";
@@ -34,21 +31,21 @@ public class ChangeBrowserTest extends TestNGBase {
     @Test
     public void performTest() {
         getContext().getDriver().get(SITE_1);
-        assertThat("Initial Context URL", getContext().getDriver().getCurrentUrl(), containsString(SITE_1_VALIDATION));
+        AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Initial Context URL").contains(SITE_1_VALIDATION);
 
         Utils.restoreBrowser();
-        assertThat("Restore Browser No Effect", getContext().getDriver().getCurrentUrl(), containsString(SITE_1_VALIDATION));
-        assertThat("Test Properties No Effect", Utils.getStoredTestProperties().getBrowserType(), equalTo(TestProperties.getInstance().getBrowserType()));
+        AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Restore Browser No Effect").contains(SITE_1_VALIDATION);
+        AssertJUtil.assertThat(Utils.getStoredTestProperties().getBrowserType()).as("Test Properties No Effect").isEqualTo(TestProperties.getInstance().getBrowserType());
 
         Utils.changeBrowser(CHANGE_BROWSER);
         getContext().getDriver().get(SITE_2);
-        assertThat("Changed Context URL", getContext().getDriver().getCurrentUrl(), containsString(SITE_2_VALIDATION));
-        assertThat("Changed Test Properties", Utils.getStoredTestProperties().getBrowserType(), equalTo(EXPECTED_BROWSER));
+        AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Changed Context URL").contains(SITE_2_VALIDATION);
+        AssertJUtil.assertThat(Utils.getStoredTestProperties().getBrowserType()).as("Changed Test Properties").isEqualTo(EXPECTED_BROWSER);
 
         Utils.restoreBrowser();
-        assertThat("Restored Context URL Diff", getContext().getDriver().getCurrentUrl(), not(containsString(SITE_2_VALIDATION)));
-        assertThat("Restored Context URL Same", getContext().getDriver().getCurrentUrl(), containsString(SITE_1_VALIDATION));
-        assertThat("Restored Test Properties", Utils.getStoredTestProperties().getBrowserType(), equalTo(TestProperties.getInstance().getBrowserType()));
+        AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Restored Context URL Diff").doesNotContain(SITE_2_VALIDATION);
+        AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Restored Context URL Same").contains(SITE_1_VALIDATION);
+        AssertJUtil.assertThat(Utils.getStoredTestProperties().getBrowserType()).as("Restored Test Properties").isEqualTo(TestProperties.getInstance().getBrowserType());
     }
 
 }

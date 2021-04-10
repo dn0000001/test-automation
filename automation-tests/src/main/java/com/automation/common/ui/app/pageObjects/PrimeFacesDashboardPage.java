@@ -2,20 +2,16 @@ package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
 
-import static com.taf.automation.ui.support.util.AssertsUtil.isComponentDisplayed;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-
 /**
  * This class will hold page objects with locators to test that they can be used just like components
  */
+@SuppressWarnings("java:S3252")
 public class PrimeFacesDashboardPage extends PageObjectV2 {
     @FindBy(css = "[id$=':sports']")
     private PrimeFacesPanel sportsPanel;
@@ -153,19 +149,19 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
     @Step("Validate Locators Not Null")
     public void validateLocatorsNotNull() {
         // Due to re-factoring the locators may be changed, this is to ensure that they are not null
-        assertThat("Sports Panel Locator", getSportsPanel().getLocator(), notNullValue());
-        assertThat("Lifestyle Panel Locator", getLifestylePanel().getLocator(), notNullValue());
-        assertThat("Politics Panel Locator", getPoliticsPanel().getLocator(), notNullValue());
-        assertThat("Finance Panel Locator", getFinancePanel().getLocator(), notNullValue());
-        assertThat("Weather Panel Locator", getWeatherPanel().getLocator(), notNullValue());
-        assertThat("Weather Panel With No Data Locator", getWeatherPanelWithNoData().getLocator(), notNullValue());
-        assertThat("Finance Panel With No Data Locator", getFinancePanelWithNoData().getLocator(), notNullValue());
+        AssertJUtil.assertThat(getSportsPanel().getLocator()).as("Sports Panel Locator").isNotNull();
+        AssertJUtil.assertThat(getLifestylePanel().getLocator()).as("Lifestyle Panel Locator").isNotNull();
+        AssertJUtil.assertThat(getPoliticsPanel().getLocator()).as("Politics Panel Locator").isNotNull();
+        AssertJUtil.assertThat(getFinancePanel().getLocator()).as("Finance Panel Locator").isNotNull();
+        AssertJUtil.assertThat(getWeatherPanel().getLocator()).as("Weather Panel Locator").isNotNull();
+        AssertJUtil.assertThat(getWeatherPanelWithNoData().getLocator()).as("Weather Panel With No Data Locator").isNotNull();
+        AssertJUtil.assertThat(getFinancePanelWithNoData().getLocator()).as("Finance Panel With No Data Locator").isNotNull();
     }
 
     @Step("Validate the Fake Panel Locator is Null")
     public void validateFakePanelLocatorIsNull() {
         // Due to re-factoring the locators may be changed, this is to ensure that when no locator it remains null
-        assertThat("Fake Panel Locator", getFakePanel().getLocator(), nullValue());
+        AssertJUtil.assertThat(getFakePanel().getLocator()).as("Fake Panel Locator").isNull();
     }
 
     @Step("Validate Sports Panel")
@@ -194,8 +190,12 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
         getFinancePanel().validateLocatorsNotNull();
         getFinancePanel().validateTitle();
         getFinancePanel().validateContent();
-        assertThat("FinancePanelWithNoData - Title", getFinancePanel().getTitle(), equalTo(getFinancePanelWithNoData().getTitle()));
-        assertThat("FinancePanelWithNoData - Content", getFinancePanel().getPanelContent(), equalTo(getFinancePanelWithNoData().getPanelContent()));
+        AssertJUtil.assertThat(getFinancePanel().getTitle())
+                .as("FinancePanelWithNoData - Title")
+                .isEqualTo(getFinancePanelWithNoData().getTitle());
+        AssertJUtil.assertThat(getFinancePanel().getPanelContent())
+                .as("FinancePanelWithNoData - Content")
+                .isEqualTo(getFinancePanelWithNoData().getPanelContent());
     }
 
     @Step("Validate Weather Panel")
@@ -203,14 +203,18 @@ public class PrimeFacesDashboardPage extends PageObjectV2 {
         getWeatherPanel().validateLocatorsNotNull();
         getWeatherPanel().validateTitle();
         getWeatherPanel().validateContent();
-        assertThat("WeatherPanelWithNoData - Title", getWeatherPanel().getTitle(), equalTo(getWeatherPanelWithNoData().getTitle()));
-        assertThat("WeatherPanelWithNoData - Content", getWeatherPanel().getPanelContent(), equalTo(getWeatherPanelWithNoData().getPanelContent()));
+        AssertJUtil.assertThat(getWeatherPanel().getTitle())
+                .as("WeatherPanelWithNoData - Title")
+                .isEqualTo(getWeatherPanelWithNoData().getTitle());
+        AssertJUtil.assertThat(getWeatherPanel().getPanelContent())
+                .as("WeatherPanelWithNoData - Content")
+                .isEqualTo(getWeatherPanelWithNoData().getPanelContent());
     }
 
     @Step("Validate Documentation Text")
     public void validateDocumentationText() {
-        assertThat("Documentation", documentation, isComponentDisplayed());
-        assertThat("Documentation", documentation.getText(), equalTo("SERVER API"));
+        AssertJUtil.assertThat(documentation).as("Documentation").isDisplayed();
+        AssertJUtil.assertThat(documentation.getText()).as("Documentation").isEqualTo("SERVER API");
     }
 
 }

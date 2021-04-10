@@ -12,14 +12,13 @@ import com.taf.automation.expressions.ZipCodeNotEquals;
 import com.taf.automation.expressions.ZipCodeSizeEquals5;
 import com.taf.automation.expressions.ZipCodeSizeEquals9;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Test the parsing of OR conditions
  */
+@SuppressWarnings({"java:S3252", "java:S1192"})
 public class ParsingOrConditionTest extends TestNGBase {
     private ExpressionParser getExpressionParser() {
         return new BasicOrOnlyParser()
@@ -38,7 +37,7 @@ public class ParsingOrConditionTest extends TestNGBase {
         String conditions = "FALSE"; // This is not a valid condition
         String value = "";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("No Conditions", parser.eval(value), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(value)).as("No Conditions").isFalse();
     }
 
     @Test
@@ -46,7 +45,7 @@ public class ParsingOrConditionTest extends TestNGBase {
         String conditions = "STATE==CA";
         String value = "";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("Empty String", parser.eval(value), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(value)).as("Empty String").isFalse();
     }
 
     @Test
@@ -54,7 +53,7 @@ public class ParsingOrConditionTest extends TestNGBase {
         String conditions = "STATE==CA";
         String value = "CA";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("No AND in condition match", parser.eval(value), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(value)).as("No AND in condition match").isTrue();
     }
 
     @Test
@@ -62,7 +61,7 @@ public class ParsingOrConditionTest extends TestNGBase {
         String conditions = "STATE==CA";
         String value = "PA";
         ExpressionParser parser = getExpressionParser().withConditions(conditions);
-        assertThat("No AND in condition mismatch", parser.eval(value), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(value)).as("No AND in condition mismatch").isFalse();
     }
 
     @Test
@@ -74,19 +73,19 @@ public class ParsingOrConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode("90210");
         address.setStreet("123 test street");
-        assertThat("Address matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Address matches").isTrue();
 
         address.setState("NY");
         address.setZipCode("12345");
-        assertThat("State & Zip mismatch", parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as("State & Zip mismatch").isFalse();
 
         address.setState("NY");
         address.setZipCode("90210");
-        assertThat("State mismatch", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("State mismatch").isTrue();
 
         address.setState("CA");
         address.setZipCode("12345");
-        assertThat("Zip mismatch", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Zip mismatch").isTrue();
     }
 
     @Test
@@ -98,27 +97,27 @@ public class ParsingOrConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode("90210");
         address.setStreet("123 test street");
-        assertThat("Address matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Address matches").isTrue();
 
         address.setState("NY");
         address.setZipCode("12345");
-        assertThat("State & Zip mismatch", parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as("State & Zip mismatch").isFalse();
 
         address.setState("NY");
         address.setZipCode("90210-55");
-        assertThat("State & Zip mismatch", parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as("State & Zip mismatch").isFalse();
 
         address.setState("CA");
         address.setZipCode("90210-1");
-        assertThat("State matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("State matches").isTrue();
 
         address.setState("NY");
         address.setZipCode("90210");
-        assertThat("Zip matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Zip matches").isTrue();
 
         address.setState("NY");
         address.setZipCode("12345-4564");
-        assertThat("Zip size matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Zip size matches").isTrue();
     }
 
     @Test
@@ -130,12 +129,12 @@ public class ParsingOrConditionTest extends TestNGBase {
         address.setState("CA");
         address.setZipCode("90210");
         address.setStreet("123 test street");
-        assertThat("Address matches", parser.eval(address), equalTo(true));
+        AssertJUtil.assertThat(parser.eval(address)).as("Address matches").isTrue();
 
         address.setState("NY");
         address.setZipCode("90210");
         address.setStreet("123 test street");
-        assertThat("No matches", parser.eval(address), equalTo(false));
+        AssertJUtil.assertThat(parser.eval(address)).as("No matches").isFalse();
     }
 
 }

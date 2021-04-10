@@ -2,20 +2,18 @@ package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.GenericRow;
 import com.taf.automation.ui.support.TestContext;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
 import ui.auto.core.data.DataTypes;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Example of using dynamic locators to work with a row in a table.<BR>
  * Site:  <a href="https://the-internet.herokuapp.com/tables">https://the-internet.herokuapp.com/tables</a><BR>
  * Table from Example 2
  */
-@SuppressWarnings("squid:MaximumInheritanceDepth")
+@SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 public class HerokuappRow extends GenericRow {
     @FindBy(css = "[id='${row}'] .last-name")
     private WebComponent lastName;
@@ -63,11 +61,11 @@ public class HerokuappRow extends GenericRow {
     @Step("Validate Locators Not Null")
     public void validateLocatorsNotNull() {
         // Due to re-factoring the locators may be changed, this is to ensure that they are not null
-        assertThat("Last Name Locator", lastName.getLocator(), notNullValue());
-        assertThat("First Name Locator", firstName.getLocator(), notNullValue());
-        assertThat("Email Locator", email.getLocator(), notNullValue());
-        assertThat("Dues Locator", dues.getLocator(), notNullValue());
-        assertThat("Website Locator", website.getLocator(), notNullValue());
+        AssertJUtil.assertThat(lastName.getLocator()).as("Last Name Locator").isNotNull();
+        AssertJUtil.assertThat(firstName.getLocator()).as("First Name Locator").isNotNull();
+        AssertJUtil.assertThat(email.getLocator()).as("Email Locator").isNotNull();
+        AssertJUtil.assertThat(dues.getLocator()).as("Dues Locator").isNotNull();
+        AssertJUtil.assertThat(website.getLocator()).as("Website Locator").isNotNull();
     }
 
     public boolean isMatch(HerokuappRow rowToMatch) {

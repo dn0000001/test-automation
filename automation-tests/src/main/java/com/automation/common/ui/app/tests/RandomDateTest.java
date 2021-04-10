@@ -1,7 +1,9 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.RandomDateUtil;
+import com.taf.automation.asserts.AssertJCondition;
 import com.taf.automation.ui.support.DateActions;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.lang3.time.DateUtils;
 import org.testng.annotations.Test;
 import ui.auto.core.context.PageComponentContext;
@@ -18,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Random Date tests.<BR>
  * <B>Note: </B> Only 1 test can be run at a time as random date is only generated once per thread<BR>
  */
+@SuppressWarnings({"java:S3252", "java:S1192"})
 public class RandomDateTest {
     private static final String RANDOM_DATE_RANGE_MIN = "random_date_range_min";
     private static final String RANDOM_DATE_RANGE_MAX = "random_date_range_max";
@@ -32,6 +35,9 @@ public class RandomDateTest {
         String actual = RandomDateUtil.getInstance().random();
         String expected = DateActions.format(new Date(), DEFAULT_PATTERN);
         assertThat("No Aliases - Expect today as result with default pattern", actual, dateEqualTo(expected, DEFAULT_PATTERN));
+        AssertJUtil.assertThat(actual)
+                .as("No Aliases - Expect today as result with default pattern")
+                .is(AssertJCondition.dateEqualTo(expected, DEFAULT_PATTERN));
     }
 
     @Test
@@ -46,6 +52,12 @@ public class RandomDateTest {
         String plus10 = DateActions.format(DateUtils.addDays(todayDate, 10), DEFAULT_PATTERN);
         assertThat("Generated >= Today", actual, dateGreaterThanOrEqualTo(today, DEFAULT_PATTERN));
         assertThat("Generated < (Today + 10)", actual, dateLessThan(plus10, DEFAULT_PATTERN));
+        AssertJUtil.assertThat(actual)
+                .as("Generated >= Today")
+                .is(AssertJCondition.dateGreaterThanOrEqualTo(today, DEFAULT_PATTERN));
+        AssertJUtil.assertThat(actual)
+                .as("Generated < (Today + 10)")
+                .is(AssertJCondition.dateLessThan(plus10, DEFAULT_PATTERN));
     }
 
     @Test
@@ -60,6 +72,12 @@ public class RandomDateTest {
         String minus10 = DateActions.format(DateUtils.addDays(todayDate, -10), DEFAULT_PATTERN);
         assertThat("Generated <= Today", actual, dateLessThanOrEqualTo(today, DEFAULT_PATTERN));
         assertThat("Generated >= (Today - 10)", actual, dateGreaterThanOrEqualTo(minus10, DEFAULT_PATTERN));
+        AssertJUtil.assertThat(actual)
+                .as("Generated <= Today")
+                .is(AssertJCondition.dateLessThanOrEqualTo(today, DEFAULT_PATTERN));
+        AssertJUtil.assertThat(actual)
+                .as("Generated >= (Today - 10)")
+                .is(AssertJCondition.dateGreaterThanOrEqualTo(minus10, DEFAULT_PATTERN));
     }
 
     @Test
@@ -72,6 +90,9 @@ public class RandomDateTest {
         String actual = RandomDateUtil.getInstance().random();
         String expected = DateActions.format(new Date(), testPattern);
         assertThat("Expect today as result with test pattern", actual, dateEqualTo(expected, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Expect today as result with test pattern")
+                .is(AssertJCondition.dateEqualTo(expected, testPattern));
     }
 
     @Test
@@ -87,6 +108,12 @@ public class RandomDateTest {
         String minus30 = DateActions.format(DateUtils.addDays(todayDate, -30), DEFAULT_PATTERN);
         assertThat("Generated <= (Today + 30)", actual, dateLessThan(plus30, DEFAULT_PATTERN));
         assertThat("Generated >= (Today - 30)", actual, dateGreaterThanOrEqualTo(minus30, DEFAULT_PATTERN));
+        AssertJUtil.assertThat(actual)
+                .as("Generated <= (Today + 30)")
+                .is(AssertJCondition.dateLessThan(plus30, DEFAULT_PATTERN));
+        AssertJUtil.assertThat(actual)
+                .as("Generated >= (Today - 30)")
+                .is(AssertJCondition.dateGreaterThanOrEqualTo(minus30, DEFAULT_PATTERN));
     }
 
     @Test
@@ -104,6 +131,12 @@ public class RandomDateTest {
         String minus90 = DateActions.format(DateUtils.addDays(todayDate, -90), testPattern);
         assertThat("Generated <= (Today + 90)", actual, dateLessThan(plus90, testPattern));
         assertThat("Generated >= (Today - 90)", actual, dateGreaterThanOrEqualTo(minus90, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Generated <= (Today + 90)")
+                .is(AssertJCondition.dateLessThan(plus90, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Generated >= (Today - 90)")
+                .is(AssertJCondition.dateGreaterThanOrEqualTo(minus90, testPattern));
     }
 
     @Test
@@ -120,6 +153,9 @@ public class RandomDateTest {
         String actual = RandomDateUtil.getInstance().range(testPattern, value, pastDate);
 
         assertThat("Generated == Past Date", actual, dateEqualTo(past, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Generated == Past Date")
+                .is(AssertJCondition.dateEqualTo(past, testPattern));
     }
 
     @Test
@@ -136,6 +172,12 @@ public class RandomDateTest {
 
         assertThat("Generated <= (Today + 90)", actual, dateLessThanOrEqualTo(plus90, testPattern));
         assertThat("Generated >= (Today - 90)", actual, dateGreaterThanOrEqualTo(minus90, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Generated <= (Today + 90)")
+                .is(AssertJCondition.dateLessThanOrEqualTo(plus90, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Generated >= (Today - 90)")
+                .is(AssertJCondition.dateGreaterThanOrEqualTo(minus90, testPattern));
     }
 
     @Test
@@ -152,6 +194,12 @@ public class RandomDateTest {
 
         assertThat("Generated <= Today", actual, dateLessThanOrEqualTo(today, testPattern));
         assertThat("Generated >= (Today - 89)", actual, dateGreaterThanOrEqualTo(minus89, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Generated <= Today")
+                .is(AssertJCondition.dateLessThanOrEqualTo(today, testPattern));
+        AssertJUtil.assertThat(actual)
+                .as("Generated >= (Today - 89)")
+                .is(AssertJCondition.dateGreaterThanOrEqualTo(minus89, testPattern));
     }
 
 }

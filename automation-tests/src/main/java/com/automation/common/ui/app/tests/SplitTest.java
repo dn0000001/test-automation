@@ -2,6 +2,7 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.components.UnitTestComponent;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.testng.annotations.Listeners;
@@ -16,15 +17,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.hamcrest.Matchers.nullValue;
-
 /**
  * This class is for unit testing the method Utils.splitData
  */
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class SplitTest {
     @Features("Utils")
@@ -36,7 +32,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData(null, ":", 2, "null");
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitNull", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitNull").isTrue();
     }
 
     @Features("Utils")
@@ -48,7 +44,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("a:b", ":");
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testMinSizeNegative", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testMinSizeNegative").isTrue();
     }
 
     @Features("Utils")
@@ -60,9 +56,9 @@ public class SplitTest {
         String[] actualData = Utils.splitData("a:null", ":", 2, null);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testNullPlaceholder", builder.isEquals());
-        assertThat("testNullPlaceholder[0]", actualData[0], is("a"));
-        assertThat("testNullPlaceholder[1]", actualData[1], is("null"));
+        AssertJUtil.assertThat(builder.isEquals()).as("testNullPlaceholder").isTrue();
+        AssertJUtil.assertThat(actualData[0]).as("testNullPlaceholder[0]").isEqualTo("a");
+        AssertJUtil.assertThat(actualData[1]).as("testNullPlaceholder[1]").isEqualTo("null");
     }
 
     @Features("Utils")
@@ -74,9 +70,9 @@ public class SplitTest {
         String[] actualData = Utils.splitData("null", ":", 2, "null");
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testMinSize", builder.isEquals());
-        assertThat("testMinSize[0]", actualData[0], nullValue());
-        assertThat("testMinSize[1]", actualData[1], isEmptyString());
+        AssertJUtil.assertThat(builder.isEquals()).as("testMinSize").isTrue();
+        AssertJUtil.assertThat(actualData[0]).as("testMinSize[0]").isNull();
+        AssertJUtil.assertThat(actualData[1]).as("testMinSize[1]").isEmpty();
     }
 
     @Features("Utils")
@@ -88,10 +84,10 @@ public class SplitTest {
         String[] actualData = Utils.splitData("null", ":", 3);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testMinSize2", builder.isEquals());
-        assertThat("testMinSize2[0]", actualData[0], nullValue());
-        assertThat("testMinSize2[1]", actualData[1], isEmptyString());
-        assertThat("testMinSize2[1]", actualData[2], isEmptyString());
+        AssertJUtil.assertThat(builder.isEquals()).as("testMinSize2").isTrue();
+        AssertJUtil.assertThat(actualData[0]).as("testMinSize2[0]").isNull();
+        AssertJUtil.assertThat(actualData[1]).as("testMinSize2[1]").isEmpty();
+        AssertJUtil.assertThat(actualData[2]).as("testMinSize2[2]").isEmpty();
     }
 
     @Features("Utils")
@@ -103,7 +99,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("", ":", 2, "null");
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("Empty String", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("Empty String").isTrue();
     }
 
     @Features("Utils")
@@ -115,7 +111,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData(":", ":", 2);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeTwo_001", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeTwo_001").isTrue();
     }
 
     @Features("Utils")
@@ -127,7 +123,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("ab:", ":", 2);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeTwo_002", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeTwo_002").isTrue();
     }
 
     @Features("Utils")
@@ -139,7 +135,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData(":cd", ":", 2);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeTwo_003", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeTwo_003").isTrue();
     }
 
     @Features("Utils")
@@ -151,9 +147,9 @@ public class SplitTest {
         String[] actualData = Utils.splitData("null:null", ":", 2);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeTwo_004", builder.isEquals());
-        assertThat("testSplitSizeTwo_004[0]", actualData[0], nullValue());
-        assertThat("testSplitSizeTwo_004[1]", actualData[1], nullValue());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeTwo_004").isTrue();
+        AssertJUtil.assertThat(actualData[0]).as("testSplitSizeTwo_004[0]").isNull();
+        AssertJUtil.assertThat(actualData[1]).as("testSplitSizeTwo_004[1]").isNull();
     }
 
     @Features("Utils")
@@ -165,8 +161,8 @@ public class SplitTest {
         String[] actualData = Utils.splitData("ef:null", ":", 2);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeTwo_005", builder.isEquals());
-        assertThat("testSplitSizeTwo_005[1]", actualData[1], nullValue());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeTwo_005").isTrue();
+        AssertJUtil.assertThat(actualData[1]).as("testSplitSizeTwo_005[1]").isNull();
     }
 
     @Features("Utils")
@@ -178,8 +174,8 @@ public class SplitTest {
         String[] actualData = Utils.splitData("null:gh", ":", 2);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeTwo_006", builder.isEquals());
-        assertThat("testSplitSizeTwo_006[0]", actualData[0], nullValue());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeTwo_006").isTrue();
+        AssertJUtil.assertThat(actualData[0]).as("testSplitSizeTwo_006[0]").isNull();
     }
 
     @Features("Utils")
@@ -191,7 +187,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("ij:kl", ":", 2);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeTwo_007", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeTwo_007").isTrue();
     }
 
     @Features("Utils")
@@ -203,7 +199,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("a:b:c", ":", 3);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeThree_001", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeThree_001").isTrue();
     }
 
     @Features("Utils")
@@ -215,7 +211,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("a:b:", ":", 3);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeThree_002", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeThree_002").isTrue();
     }
 
     @Features("Utils")
@@ -227,7 +223,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("::", ":", 3);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeThree_003", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeThree_003").isTrue();
     }
 
     @Features("Utils")
@@ -239,7 +235,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData(":", ":", 3);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeThree_004", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeThree_004").isTrue();
     }
 
     @Features("Utils")
@@ -251,7 +247,7 @@ public class SplitTest {
         String[] actualData = Utils.splitData("a:b", ":", 3);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testSplitSizeThree_005", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testSplitSizeThree_005").isTrue();
     }
 
     @Features("Utils")
@@ -264,7 +260,7 @@ public class SplitTest {
         Utils.trim(actualData);
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(expectedData, actualData);
-        assertThat("testTrim", builder.isEquals());
+        AssertJUtil.assertThat(builder.isEquals()).as("testTrim").isTrue();
     }
 
     @Features("Java8")
@@ -284,7 +280,7 @@ public class SplitTest {
 
         actual.sort(String::compareToIgnoreCase);
         expected.sort(String::compareToIgnoreCase);
-        assertThat("sort #1", actual, equalTo(expected));
+        AssertJUtil.assertThat(actual).as("sort #1").isEqualTo(expected);
 
         // Example of how to sort by multiple fields
         UnitTestComponent actualItem1 = new UnitTestComponent().withText("bbb").withValue("hh");
@@ -338,8 +334,8 @@ public class SplitTest {
         for (int i = 0; i < expectedItems.size(); i++) {
             UnitTestComponent actualElement = actualItems.get(i);
             UnitTestComponent expectedElement = expectedItems.get(i);
-            assertThat("(Text,Value) Text[" + i + "]", actualElement.getText(), equalTo(expectedElement.getText()));
-            assertThat("(Text,Value) Value[" + i + "]", actualElement.getValue(), equalTo(expectedElement.getValue()));
+            AssertJUtil.assertThat(actualElement.getText()).as("(Text,Value) Text[" + i + "]").isEqualTo(expectedElement.getText());
+            AssertJUtil.assertThat(actualElement.getValue()).as("(Text,Value) Value[" + i + "]").isEqualTo(expectedElement.getValue());
         }
 
         actualItems.sort(Comparator.comparing(UnitTestComponent::getValue).thenComparing(UnitTestComponent::getText));
@@ -347,8 +343,8 @@ public class SplitTest {
         for (int i = 0; i < expectedItems.size(); i++) {
             UnitTestComponent actualElement = actualItems.get(i);
             UnitTestComponent expectedElement = expectedItems.get(i);
-            assertThat("(Value,Text) Value[" + i + "]", actualElement.getValue(), equalTo(expectedElement.getValue()));
-            assertThat("(Value,Text) Text[" + i + "]", actualElement.getText(), equalTo(expectedElement.getText()));
+            AssertJUtil.assertThat(actualElement.getValue()).as("(Value,Text) Value[" + i + "]").isEqualTo(expectedElement.getValue());
+            AssertJUtil.assertThat(actualElement.getText()).as("(Value,Text) Text[" + i + "]").isEqualTo(expectedElement.getText());
         }
 
         // Example of how to split on each character of a string to create a list of strings
@@ -362,7 +358,7 @@ public class SplitTest {
         expectedValues.add("t");
         expectedValues.add("t");
 
-        assertThat("sort#2", actualValues, equalTo(expectedValues));
+        AssertJUtil.assertThat(actualValues).as("sort#2").isEqualTo(expectedValues);
     }
 
 }

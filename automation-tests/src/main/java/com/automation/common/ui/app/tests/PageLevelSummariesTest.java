@@ -1,10 +1,11 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.csv.CsvOutputRecord;
 import com.taf.automation.ui.support.csv.GroupRow;
 import com.taf.automation.ui.support.pageScraping.ExtractedDataOutputRecord;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.FilloUtils;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
@@ -15,10 +16,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class PageLevelSummariesTest {
     private static final String PASS = "PASS";
@@ -31,14 +29,14 @@ public class PageLevelSummariesTest {
     private void runAndValidate(List<CsvOutputRecord> records, List<GroupRow> groupRows, String... status) {
         int recordsCount = records.size();
         FilloUtils.addPageLevelSummaries(records, groupRows);
-        assertThat("Records", records.size(), equalTo(recordsCount + status.length));
-        assertThat("Group Rows", groupRows.size(), equalTo(status.length));
+        AssertJUtil.assertThat(records.size()).as("Records").isEqualTo(recordsCount + status.length);
+        AssertJUtil.assertThat(groupRows.size()).as("Group Rows").isEqualTo(status.length);
         for (int i = 0; i < groupRows.size(); i++) {
             int index = groupRows.get(i).getSummaryRow();
             ExtractedDataOutputRecord summary = (ExtractedDataOutputRecord) records.get(index);
-            assertThat("Summary Status[" + i + "]", summary.getTestStatus(), equalTo(status[i]));
+            AssertJUtil.assertThat(summary.getTestStatus()).as("Summary Status[" + i + "]").isEqualTo(status[i]);
             // Field Name is not set on the summary record
-            assertThat("Summary Field Name[" + i + "]", summary.getFieldName(), nullValue());
+            AssertJUtil.assertThat(summary.getFieldName()).as("Summary Field Name[" + i + "]").isNull();
         }
     }
 
@@ -50,8 +48,8 @@ public class PageLevelSummariesTest {
         List<CsvOutputRecord> records = new ArrayList<>();
         List<GroupRow> groupRows = new ArrayList<>();
         FilloUtils.addPageLevelSummaries(records, groupRows);
-        assertThat("Records", records.isEmpty());
-        assertThat("Group Rows", groupRows.isEmpty());
+        AssertJUtil.assertThat(records).as("Records").isEmpty();
+        AssertJUtil.assertThat(groupRows).as("Group Rows").isEmpty();
     }
 
     @Features("ExtractedDataOutputRecord")

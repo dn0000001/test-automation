@@ -2,6 +2,7 @@ package com.automation.common.api.domainObjects;
 
 import com.taf.automation.api.MicroServiceDomainObject;
 import com.taf.automation.api.clients.MicroServiceResponse;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -15,9 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-
+@SuppressWarnings({"java:S110", "java:S3252"})
 @XStreamAlias("multi-part-entity-do")
 public class MultipartEntityDO extends MicroServiceDomainObject {
     // Variable to hold the request parameters
@@ -26,6 +25,7 @@ public class MultipartEntityDO extends MicroServiceDomainObject {
     // Here you create an entity for the response
     private Response response;
 
+    @SuppressWarnings("java:S1068")
     private static class ResponseBody {
         private Integer statusCode;
         private String message;
@@ -39,7 +39,7 @@ public class MultipartEntityDO extends MicroServiceDomainObject {
             if (filePath != null) {
                 InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
                 File file = new File(filePath);
-                assertThat("Image file '" + filePath + "' was not found!", is, notNullValue());
+                AssertJUtil.assertThat(is).as("Image file '" + filePath + "' was not found!").isNotNull();
                 try {
                     FileUtils.copyInputStreamToFile(is, file);
                     is.close();
@@ -56,6 +56,7 @@ public class MultipartEntityDO extends MicroServiceDomainObject {
     }
 
     // Here you create an entity for the response
+    @SuppressWarnings("java:S1068")
     private static class Response {
         private BasicStatusLine status;
 

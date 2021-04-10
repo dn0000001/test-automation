@@ -1,12 +1,12 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.TestRunner;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
+@SuppressWarnings("java:S3252")
 public class OpenAllureReportTest {
     @Parameters("allure-report")
     @Test
@@ -16,7 +16,7 @@ public class OpenAllureReportTest {
         try {
             runner.openReport();
         } catch (Exception ex) {
-            assertThat("Could not open report due to exception:  " + ex.getMessage(), false);
+            AssertJUtil.fail("Could not open report due to exception:  " + ex.getMessage());
         }
     }
 

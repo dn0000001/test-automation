@@ -1,6 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.ExcelUtils;
 import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.util.Helper;
@@ -16,12 +17,10 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import java.net.URL;
 import java.util.Arrays;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Testing the Excel Utils class
  */
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class ExcelTest {
     private static final String EXCEL_FILE = "data/ui/testingExcel.xls";
@@ -122,13 +121,13 @@ public class ExcelTest {
         String[][] resourceData = ExcelUtils.getAllData(dataSet, worksheet);
         URL url = Thread.currentThread().getContextClassLoader().getResource(dataSet);
         String[][] fileData = ExcelUtils.getAllData(url.getFile(), worksheet);
-        assertThat("Methods did not load data the same", resourceData, equalTo(fileData));
+        AssertJUtil.assertThat(resourceData).as("Methods did not load data the same").isEqualTo(fileData);
     }
 
     private void validateUsingExcelUtils(String dataSet, String worksheet, boolean sheet2) {
         String[][] actualData = ExcelUtils.getAllData(dataSet, worksheet);
         String[][] expectedData = sheet2 ? getExpectedSheet2Data() : getExpectedSheet1Data();
-        assertThat(INCORRECT_DATA, actualData, equalTo(expectedData));
+        AssertJUtil.assertThat(actualData).as(INCORRECT_DATA).isEqualTo(expectedData);
     }
 
     @Features("ExcelUtils")
@@ -152,7 +151,7 @@ public class ExcelTest {
     private void validateUsingFilloUtils(String dataSet, String worksheet, boolean sheet2) {
         String[][] actualData = FilloUtils.getAllData(dataSet, worksheet);
         String[][] expectedData = sheet2 ? getExpectedSheet2Data() : getExpectedSheet1Data();
-        assertThat(INCORRECT_DATA, actualData, equalTo(expectedData));
+        AssertJUtil.assertThat(actualData).as(INCORRECT_DATA).isEqualTo(expectedData);
     }
 
     @Features("ExcelUtils")

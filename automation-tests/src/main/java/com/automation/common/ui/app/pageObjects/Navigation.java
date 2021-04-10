@@ -2,12 +2,10 @@ package com.automation.common.ui.app.pageObjects;
 
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import ru.yandex.qatools.allure.annotations.Step;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-
+@SuppressWarnings("java:S3252")
 public class Navigation {
     private TestContext context;
     private TestProperties props = TestProperties.getInstance();
@@ -37,7 +35,7 @@ public class Navigation {
      */
     @Step("Go to {0} Page")
     public void toURL(String page, String url, boolean cleanCookies, boolean differentSite) {
-        assertThat("URL", url, not(isEmptyOrNullString()));
+        AssertJUtil.assertThat(url).as("URL").isNotBlank();
 
         if (differentSite && cleanCookies) {
             // Go to URL first to ensure we delete cookies for that domain

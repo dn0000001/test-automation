@@ -1,11 +1,11 @@
 package com.automation.common.ui.app.tests;
 
-import com.taf.automation.ui.support.AssertAggregator;
-import com.taf.automation.ui.support.util.Helper;
+import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.providers.LicenseContact;
 import com.taf.automation.ui.support.providers.LicenseProvider;
 import com.taf.automation.ui.support.providers.State;
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
+import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
@@ -16,12 +16,7 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-
+@SuppressWarnings("java:S3252")
 @Listeners(AllureTestNGListener.class)
 public class LicenseProviderTest {
     private static final LicenseContact contactJohnSmith = getJohnSmith();
@@ -201,15 +196,14 @@ public class LicenseProviderTest {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void validateKnownLicensesTest() {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
 
         String reason = "State (%s) had invalid license (%s)";
         for (LicenseInfo item : knownLicenses) {
-            aggregator.assertThat(String.format(reason, item.state, item.license), isValidateLicense(item));
+            softly.assertThat(isValidateLicense(item)).as(reason, item.state, item.license).isTrue();
         }
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     @Features("LicenseProvider")
@@ -217,15 +211,14 @@ public class LicenseProviderTest {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void validateInvalidLicensesTest() {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
 
         String reason = "State (%s) had an unexpected valid license (%s)";
         for (LicenseInfo item : invalidLicenses) {
-            aggregator.assertThat(String.format(reason, item.state, item.license), !isValidateLicense(item));
+            softly.assertThat(isValidateLicense(item)).as(reason, item.state, item.license).isFalse();
         }
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     @Features("LicenseProvider")
@@ -234,13 +227,13 @@ public class LicenseProviderTest {
     @Test
     public void nullLicenceGeneratedBasedOnInvalidStateTest() {
         String license = LicenseProvider.getInstance().get(null, null, contactJohnSmith);
-        assertThat("Null State generates null license", license, nullValue());
+        AssertJUtil.assertThat(license).as("Null State generates null license").isNull();
 
         license = LicenseProvider.getInstance().get(null, "", contactJohnSmith);
-        assertThat("Empty State generates null license", license, nullValue());
+        AssertJUtil.assertThat(license).as("Empty State generates null license").isNull();
 
         license = LicenseProvider.getInstance().get(null, "INVALID", contactJohnSmith);
-        assertThat("Invalid State generates null license", license, nullValue());
+        AssertJUtil.assertThat(license).as("Invalid State generates null license").isNull();
     }
 
     @Features("LicenseProvider")
@@ -248,8 +241,7 @@ public class LicenseProviderTest {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void licenceGeneratedWithValidStateButProvidedLicenseInvalidTest() {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
 
         String nullReason = "Null License generated for %s with invalid provided license";
         String nullGenerated = "Null License input generated an invalid license (%s) for %s";
@@ -265,35 +257,35 @@ public class LicenseProviderTest {
 
         for (State state : State.values()) {
             license = LicenseProvider.getInstance().get(null, state.getColumnName(), contactJohnSmith);
-            aggregator.assertThat(String.format(nullReason, state), license, notNullValue());
+            softly.assertThat(license).as(nullReason, state).isNotNull();
 
             info = new LicenseInfo();
             info.license = license;
             info.state = state;
             info.contact = contactJohnSmith;
-            aggregator.assertThat(String.format(nullGenerated, license, state), isValidateLicense(info));
+            softly.assertThat(isValidateLicense(info)).as(nullGenerated, license, state).isTrue();
 
             license = LicenseProvider.getInstance().get("", state.getColumnName(), contactJohnSmith);
-            aggregator.assertThat(String.format(emptyReason, state), license, notNullValue());
+            softly.assertThat(license).as(emptyReason, state).isNotNull();
 
             info = new LicenseInfo();
             info.license = license;
             info.state = state;
             info.contact = contactJohnSmith;
-            aggregator.assertThat(String.format(emptyGenerated, license, state), isValidateLicense(info));
+            softly.assertThat(isValidateLicense(info)).as(emptyGenerated, license, state).isTrue();
 
             license = LicenseProvider.getInstance().get(invalidLicenseForAll, state.getColumnName(), contactJohnSmith);
-            aggregator.assertThat(String.format(invalidReason, state), license, notNullValue());
-            aggregator.assertThat(String.format(invalidLicenseReason, state), license, not(equalTo(invalidLicenseForAll)));
+            softly.assertThat(license).as(invalidReason, state).isNotNull();
+            softly.assertThat(license).as(invalidLicenseReason, state).isNotEqualTo(invalidLicenseForAll);
 
             info = new LicenseInfo();
             info.license = license;
             info.state = state;
             info.contact = contactJohnSmith;
-            aggregator.assertThat(String.format(invalidGenerated, license, state), isValidateLicense(info));
+            softly.assertThat(isValidateLicense(info)).as(invalidGenerated, license, state).isTrue();
         }
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
     @Features("LicenseProvider")
@@ -301,17 +293,16 @@ public class LicenseProviderTest {
     @Severity(SeverityLevel.NORMAL)
     @Test
     public void validateGeneratingLicensesProvidedLicenseValidTest() {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.setConsole(true);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
 
         String license;
         String reason = "State (%s) should have returned the valid license (%s) provided";
         for (LicenseInfo item : knownLicenses) {
             license = LicenseProvider.getInstance().get(item.license, item.state.getColumnName(), contactJohnSmith);
-            aggregator.assertThat(String.format(reason, item.state, item.license), license, equalTo(item.license));
+            softly.assertThat(license).as(reason, item.state, item.license).isEqualTo(item.license);
         }
 
-        Helper.assertThat(aggregator);
+        softly.assertAll();
     }
 
 }
