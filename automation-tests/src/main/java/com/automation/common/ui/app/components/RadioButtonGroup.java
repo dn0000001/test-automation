@@ -62,7 +62,7 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
         this.selection = selection;
     }
 
-    private T getInstanceOfT(WebElement option) {
+    protected T getInstanceOfT(WebElement option) {
         T component = null;
         String error = "Failed to invoke constructor using reflection due to error:  ";
 
@@ -84,7 +84,7 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
         return staticLocator;
     }
 
-    private Map<String, String> getSubstitutions() {
+    protected Map<String, String> getSubstitutions() {
         if (substitutions == null) {
             substitutions = new HashMap<>();
         }
@@ -100,11 +100,11 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
         this.staticLocator = null;
     }
 
-    private List<WebElement> getOptions() {
+    protected List<WebElement> getOptions() {
         return Utils.until(ExpectedConditions.numberOfElementsToBeMoreThan(getStaticLocator(), 0));
     }
 
-    private boolean isMatchedOption(String displayedText, String matchToData) {
+    protected boolean isMatchedOption(String displayedText, String matchToData) {
         if (selection == Selection.CONTAINS) {
             return StringUtils.contains(displayedText, matchToData);
         } else if (selection == Selection.REGEX) {
