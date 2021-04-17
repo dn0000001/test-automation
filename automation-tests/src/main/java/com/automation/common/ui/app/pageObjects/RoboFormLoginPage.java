@@ -1,14 +1,10 @@
 package com.automation.common.ui.app.pageObjects;
 
-import com.automation.common.ui.app.components.CheckBoxAJAX;
-import com.automation.common.ui.app.components.CheckBoxBasic;
-import com.automation.common.ui.app.components.CheckBoxLabel;
 import com.automation.common.ui.app.components.TextBox;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.JsUtils;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
@@ -18,22 +14,11 @@ import static com.taf.automation.ui.support.util.AssertsUtil.componentCannotBeSe
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RoboFormLoginPage extends PageObjectV2 {
-    private static final String VALUE_TO_BE_SET = "false";
-
     @FindBy(id = "username")
     private TextBox emailOrUserId;
 
     @FindBy(id = "password")
     private TextBox password;
-
-    @FindBy(id = "safe_device")
-    private CheckBoxAJAX rememberAJAX;
-
-    @FindBy(xpath = "//*[@id='safe_device']/..")
-    private CheckBoxLabel rememberLabel;
-
-    @FindBy(id = "safe_device")
-    private CheckBoxBasic rememberBasic;
 
     public RoboFormLoginPage() {
         super();
@@ -47,9 +32,6 @@ public class RoboFormLoginPage extends PageObjectV2 {
     public void disableFieldsAndValidateCannotSet() {
         disableFieldAndValidateEmailOrUserId();
         disableFieldAndValidatePassword();
-        disableFieldAndValidateRememberLabel();
-        disableFieldAndValidateRememberAJAX();
-        disableFieldAndValidateRememberBasic();
     }
 
     private void disableField(PageComponent component) {
@@ -58,11 +40,6 @@ public class RoboFormLoginPage extends PageObjectV2 {
 
     private void disableField(WebElement element) {
         JsUtils.addAttribute(element, "disabled", "");
-    }
-
-    private void makeCheckBoxVisible(By locator) {
-        WebElement element = getDriver().findElement(locator);
-        JsUtils.execute(getDriver(), "arguments[0].style.opacity = 1;", element);
     }
 
     @Step("Disable And Validate:  Email Or User Id")
@@ -77,35 +54,10 @@ public class RoboFormLoginPage extends PageObjectV2 {
         assertThat("Password", password, componentCannotBeSetFast("67890"));
     }
 
-    @Step("Disable And Validate:  Remember (Label)")
-    private void disableFieldAndValidateRememberLabel() {
-        disableField(rememberLabel.getInput());
-        assertThat("Remember (Label)", rememberLabel, componentCannotBeSetFast(VALUE_TO_BE_SET));
-    }
-
-    @Step("Disable And Validate:  Remember (AJAX)")
-    private void disableFieldAndValidateRememberAJAX() {
-        // On this page the element is considered hidden, it is necessary to make it displayed for the test
-        makeCheckBoxVisible(rememberAJAX.getLocator());
-        disableField(rememberAJAX);
-        assertThat("Remember (AJAX)", rememberAJAX, componentCannotBeSetFast(VALUE_TO_BE_SET));
-    }
-
-    @Step("Disable And Validate:  Remember (Basic)")
-    private void disableFieldAndValidateRememberBasic() {
-        // On this page the element is considered hidden, it is necessary to make it displayed for the test
-        makeCheckBoxVisible(rememberBasic.getLocator());
-        disableField(rememberBasic);
-        assertThat("Remember (Basic)", rememberBasic, componentCannotBeSetFast(VALUE_TO_BE_SET));
-    }
-
     @Step("Disable Fields And Validate Cannot Set using AssertJ")
     public void disableFieldsAndValidateCannotSetAssertJ() {
         disableFieldAndValidateEmailOrUserIdAssertJ();
         disableFieldAndValidatePasswordAssertJ();
-        disableFieldAndValidateRememberLabelAssertJ();
-        disableFieldAndValidateRememberAJAXAssertJ();
-        disableFieldAndValidateRememberBasicAssertJ();
     }
 
     @Step("Disable And Validate:  Email Or User Id using AssertJ")
@@ -118,28 +70,6 @@ public class RoboFormLoginPage extends PageObjectV2 {
     private void disableFieldAndValidatePasswordAssertJ() {
         disableField(password);
         AssertJUtil.assertThat(password).as("Password").cannotBeSetFast("67890");
-    }
-
-    @Step("Disable And Validate:  Remember (Label) using AssertJ")
-    private void disableFieldAndValidateRememberLabelAssertJ() {
-        disableField(rememberLabel.getInput());
-        AssertJUtil.assertThat(rememberLabel).as("Remember (Label)").cannotBeSetFast(VALUE_TO_BE_SET);
-    }
-
-    @Step("Disable And Validate:  Remember (AJAX) using AssertJ")
-    private void disableFieldAndValidateRememberAJAXAssertJ() {
-        // On this page the element is considered hidden, it is necessary to make it displayed for the test
-        makeCheckBoxVisible(rememberAJAX.getLocator());
-        disableField(rememberAJAX);
-        AssertJUtil.assertThat(rememberAJAX).as("Remember (AJAX)").cannotBeSetFast(VALUE_TO_BE_SET);
-    }
-
-    @Step("Disable And Validate:  Remember (Basic) using AssertJ")
-    private void disableFieldAndValidateRememberBasicAssertJ() {
-        // On this page the element is considered hidden, it is necessary to make it displayed for the test
-        makeCheckBoxVisible(rememberBasic.getLocator());
-        disableField(rememberBasic);
-        AssertJUtil.assertThat(rememberBasic).as("Remember (Basic)").cannotBeSetFast(VALUE_TO_BE_SET);
     }
 
 }

@@ -8,6 +8,7 @@ import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.automation.common.ui.app.pageObjects.RoboFormLoginPage;
+import com.automation.common.ui.app.pageObjects.SeleniumEasyCheckBoxDemoPage;
 import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.AssertAggregator;
 import com.taf.automation.ui.support.testng.TestNGBase;
@@ -593,6 +594,10 @@ public class AssertsTest extends TestNGBase {
         new Navigation(getContext()).toRoboFormLogin(Utils.isCleanCookiesSupported());
         RoboFormLoginPage roboFormLoginPage = new RoboFormLoginPage(getContext());
         roboFormLoginPage.disableFieldsAndValidateCannotSet();
+
+        new Navigation(getContext()).toSeleniumEasyBasicCheckbox(Utils.isCleanCookiesSupported());
+        SeleniumEasyCheckBoxDemoPage seleniumEasyCheckBoxDemoPage = new SeleniumEasyCheckBoxDemoPage(getContext());
+        seleniumEasyCheckBoxDemoPage.disableFieldsAndValidateCannotSet();
     }
 
     @Features("SelectEnhanced")
