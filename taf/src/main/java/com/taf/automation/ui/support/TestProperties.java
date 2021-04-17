@@ -489,6 +489,27 @@ public class TestProperties {
         return cachedUsers;
     }
 
+    public String getUserCustom(String role, String key, String defaultValue) {
+        return getUserCustom(role, key, defaultValue, false);
+    }
+
+    public String getUserCustom(EnvironmentsSetup.User user, String key, String defaultValue) {
+        return getUserCustom(user, key, defaultValue, false);
+    }
+
+    public String getUserCustom(String role, String key, String defaultValue, boolean decode) {
+        return getUserCustom(getUser(role), key, defaultValue, decode);
+    }
+
+    public String getUserCustom(EnvironmentsSetup.User user, String key, String defaultValue, boolean decode) {
+        try {
+            String value = user.getCustom(key);
+            return (decode) ? new CryptoUtils().decrypt(value) : value;
+        } catch (Exception ex) {
+            return defaultValue;
+        }
+    }
+
     public boolean isDebugLogging() {
         return debugLogging;
     }
