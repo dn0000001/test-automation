@@ -3,6 +3,7 @@ package com.automation.common.ui.app.tests;
 import com.automation.common.ui.app.domainObjects.ComponentsDO;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.taf.automation.asserts.CustomSoftAssertions;
+import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import org.testng.annotations.Optional;
@@ -29,6 +30,9 @@ public class ComponentDataTest extends TestNGBase {
         // If test data does not appear to be correct, then check that you modified
         // data/ui/qa-AllComponents_TestData.xml when app.environment.target=QA
         //
+        AssertJUtil.assertThat(TestProperties.getInstance().getEnvironmentTarget())
+                .as("test.properties needs the property:  app.environment.target=QA")
+                .isEqualToIgnoringCase("QA");
         componentsDO = new ComponentsDO(getContext()).fromResource(dataSet);
         performCheckForCodeGenerationException();
         performCheckThatAliasNotResolved();
