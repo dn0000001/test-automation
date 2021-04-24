@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -821,8 +822,28 @@ public class TestProperties {
         if (firefox_NTLM_Auto) {
             List<String> uris = new ArrayList<>();
 
+            //
+            // Place any 1st party application URLs that use SSO here
+            // Note: These generally are the applications under test
+            //
+
             if (StringUtils.isNotBlank(getURL())) {
                 uris.add(getURL());
+            }
+
+            //
+            // Place any 3rd party application URLs that are needed for SSO here
+            // Note:  These are generally 3rd party services that provide the SSO for the 1st party applications.
+            // For example, the 1st party application may use Office 365 for SSO authentication.
+            //
+
+            String additionalCustom = firefox_NTLM_URIS;
+            if (StringUtils.isBlank(additionalCustom)) {
+                additionalCustom = getCustom("firefox_NTLM_URIS", additionalCustom);
+            }
+
+            if (StringUtils.isNotBlank(additionalCustom)) {
+                uris.addAll(Arrays.asList(StringUtils.split(additionalCustom, ",")));
             }
 
             StringBuilder sb = new StringBuilder();
