@@ -1,6 +1,8 @@
 package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.util.LocatorUtils;
+import com.taf.automation.ui.support.util.Utils;
+import net.jodah.failsafe.Failsafe;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.data.DataTypes;
@@ -114,7 +116,7 @@ public abstract class RadioButtons<T extends PageComponent> extends PageComponen
 
     @Override
     public void setValue() {
-        getComponent().setValue();
+        Failsafe.with(Utils.getNegativePollingRetryPolicy()).run(getComponent()::setValue);
     }
 
     @Override
