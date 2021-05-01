@@ -8,8 +8,11 @@ import com.taf.automation.ui.support.util.Utils;
 import io.appium.java_client.AppiumDriver;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.DefaultElementLocatorFactory;
@@ -21,8 +24,10 @@ import ui.auto.core.pagecomponent.WidgetFieldDecorator;
 import ui.auto.core.support.PageObjectModel;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This is an enhanced version of the PageObject that handles the JavascriptException thrown by geckodriver sometimes
@@ -498,15 +503,7 @@ public class PageObjectV2 extends PageObjectModel {
      * controlling the click logic and sometimes this may not be the case based on the component
      */
     protected WebElement click(PageComponent component) {
-        AssertJUtil.assertThat(component).as("Click Component").isNotNull();
-        AssertJUtil.assertThat(component.getLocator()).as("Click Component's Locator").isNotNull();
-        return Failsafe.with(Utils.getClickRetryPolicy())
-                .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
-                .get(() -> {
-                    WebElement element = Utils.until(ExpectedConditionsUtil.ready(component));
-                    component.click();
-                    return element;
-                });
+        return click(component, new HashMap<>());
     }
 
     /**
@@ -521,13 +518,26 @@ public class PageObjectV2 extends PageObjectModel {
     protected WebElement click(PageComponent component, Map<String, String> substitutions) {
         AssertJUtil.assertThat(component).as("Click Component").isNotNull();
         AssertJUtil.assertThat(component.getLocator()).as("Click Component's Locator").isNotNull();
-        return Failsafe.with(Utils.getClickRetryPolicy())
+        MutableInt staleErrorFailureCount = new MutableInt();
+        AtomicReference<WebElement> element = new AtomicReference<>();
+        Failsafe.with(Utils.getClickRetryPolicy())
                 .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
-                .get(() -> {
-                    WebElement element = Utils.until(ExpectedConditionsUtil.ready(component, substitutions));
-                    component.click();
-                    return element;
+                .run(() -> {
+                    try {
+                        element.set(Utils.until(ExpectedConditionsUtil.ready(component, substitutions)));
+                        component.click();
+                    } catch (StaleElementReferenceException stale) {
+                        staleErrorFailureCount.increment();
+                        if (staleErrorFailureCount.getValue() > 3) {
+                            // The stale element exception has occurred enough that we should stop the retries
+                            throw stale;
+                        } else {
+                            // Allows retries to continue
+                            throw new ElementClickInterceptedException(stale.getMessage());
+                        }
+                    }
                 });
+        return element.get();
     }
 
 }
