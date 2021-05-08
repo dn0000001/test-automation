@@ -5,6 +5,7 @@ import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.ExcelUtils;
 import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.util.Helper;
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -14,7 +15,8 @@ import ru.yandex.qatools.allure.annotations.Severity;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
-import java.net.URL;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -117,10 +119,13 @@ public class ExcelTest {
     @Severity(SeverityLevel.MINOR)
     @Parameters({"data-set-xls", "worksheet-sheet1"})
     @Test
-    public void validateMethodsGetSameData(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_1) String worksheet) {
+    public void validateMethodsGetSameData(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_1) String worksheet) throws IOException {
         String[][] resourceData = ExcelUtils.getAllData(dataSet, worksheet);
-        URL url = Thread.currentThread().getContextClassLoader().getResource(dataSet);
-        String[][] fileData = ExcelUtils.getAllData(url.getFile(), worksheet);
+
+        File fileSource = File.createTempFile("excel", "");
+        FileUtils.copyInputStreamToFile(Thread.currentThread().getContextClassLoader().getResourceAsStream(dataSet), fileSource);
+        String[][] fileData = ExcelUtils.getAllData(fileSource.toURI().toURL().getFile(), worksheet);
+        fileSource.deleteOnExit();
         AssertJUtil.assertThat(resourceData).as("Methods did not load data the same").isEqualTo(fileData);
     }
 
