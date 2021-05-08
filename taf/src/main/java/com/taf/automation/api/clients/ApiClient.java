@@ -8,8 +8,8 @@ import com.taf.automation.api.ReturnType;
 import com.taf.automation.api.TrustAllStrategy;
 import com.taf.automation.api.rest.GenericHttpInterface;
 import com.taf.automation.api.rest.GenericHttpResponse;
-import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.URLUtils;
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.lang3.StringUtils;
@@ -388,6 +388,20 @@ public class ApiClient implements GenericHttpInterface {
 
     public String getBasePath() {
         return basePath;
+    }
+
+    /**
+     * Set Base Path
+     *
+     * @param url      - URL to extract the base path from
+     * @param user     - user for basic authentication, use null if not using basic authentication
+     * @param password - password for basic authentication, use null if not using basic authentication
+     */
+    public void setBasePath(String url, String user, String password) {
+        URIBuilder uri = URLUtils.getURI(url);
+        basePath = uri.getPath();
+        targetHost = getTargetHost(StringUtils.removeEnd(url, uri.getPath()));
+        clientContext = buildClientContext(targetHost, user, password);
     }
 
     @Override
