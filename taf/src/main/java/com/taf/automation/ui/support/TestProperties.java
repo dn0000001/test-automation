@@ -259,6 +259,9 @@ public class TestProperties {
     @Property("webdriver.screenshot.view.port.only")
     private boolean viewPortOnly = true;
 
+    @Property("edge.legacy.install")
+    private boolean edgeLegacyInstall;
+
     // May need edit configuration for the working directory when running from IDE.
     // Use same working directory as RunTests.
     @Property("source.js")
@@ -860,6 +863,10 @@ public class TestProperties {
 
     public boolean isViewPortOnly() {
         return viewPortOnly;
+    }
+
+    public boolean isEdgeLegacyInstall() {
+        return edgeLegacyInstall;
     }
 
     /**

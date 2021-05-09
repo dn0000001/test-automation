@@ -24,6 +24,7 @@
         <maven-assembly-plugin>3.3.0</maven-assembly-plugin>
         <guava.version>25.0-jre</guava.version>
         <selenium.version>3.141.59</selenium.version>
+        <selenium.edge.version>3.141.0</selenium.edge.version>
         <appium.version>7.3.0</appium.version>
         <ui.auto.core.version>2.5.15</ui.auto.core.version>
         <testNg.version>6.14.3</testNg.version>

@@ -146,7 +146,13 @@ public class TestNGBaseWithoutListeners {
             installDriver("chromedriver", "webdriver.chrome.driver");
             if (System.getProperty("os.name").toUpperCase().startsWith("WINDOWS")) {
                 installDriver("IEDriverServer", "webdriver.ie.driver");
-                installDriver("MicrosoftWebDriver", "webdriver.edge.driver");
+
+                // Edge (Legacy/Original) & Edge (Chromium) use the same system property for the executable
+                // as such we can only install 1 locally.  The user must decide which Edge will be used.
+                // Microsoft has removed Edge (Legacy/Original) in the normal windows 10 installations but in corporate
+                // environments it is still available for now to allow companies to decide when to remove.
+                String edgeDriverName = props.isEdgeLegacyInstall() ? "MicrosoftWebDriver" : "msedgedriver";
+                installDriver(edgeDriverName, "webdriver.edge.driver");
             }
 
             if (props.getFirefoxBin() != null) {
