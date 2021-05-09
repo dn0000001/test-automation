@@ -1051,7 +1051,11 @@ public class Utils {
     public static boolean isCleanCookiesSupported() {
         WebDriverTypeEnum browser = TestProperties.getInstance().getBrowserType();
 
-        if (browser == WebDriverTypeEnum.FIREFOX || browser == WebDriverTypeEnum.CHROME) {
+        if (browser == WebDriverTypeEnum.FIREFOX
+                || browser == WebDriverTypeEnum.CHROME
+                || browser == WebDriverTypeEnum.EDGE_LEGACY
+                || browser == WebDriverTypeEnum.EDGE
+        ) {
             return true;
         }
 

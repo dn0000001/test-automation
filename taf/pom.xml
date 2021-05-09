@@ -84,6 +84,11 @@
             <version>${selenium.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.microsoft.edge</groupId>
+            <artifactId>msedge-selenium-tools-java</artifactId>
+            <version>${selenium.edge.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
             <version>${appium.version}</version>

@@ -12,8 +12,6 @@ import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -33,7 +31,8 @@ import java.net.URL;
 
 public enum WebDriverTypeEnum {
     CHROME(BrowserType.CHROME, ChromeDriver.class),
-    EDGE(BrowserType.EDGE, EdgeDriver.class),
+    EDGE_LEGACY(BrowserType.EDGE, org.openqa.selenium.edge.EdgeDriver.class),
+    EDGE(BrowserType.EDGE, com.microsoft.edge.seleniumtools.EdgeDriver.class),
     FIREFOX(BrowserType.FIREFOX, FirefoxDriver.class),
     IE(BrowserType.IE, InternetExplorerDriver.class),
     OPERA_BLINK(BrowserType.OPERA_BLINK, OperaDriver.class),
@@ -127,8 +126,10 @@ public enum WebDriverTypeEnum {
                 return getChromeDriver(prop, capabilities);
             case SAFARI:
                 return getSafariDriver(prop, capabilities);
+            case EDGE_LEGACY:
+                return getEdgeLegacyDriver(prop, capabilities);
             case EDGE:
-                return getEdgeDriver(prop, capabilities);
+                return getEdgeChromiumDriver(prop, capabilities);
             case ANDROID:
                 return getAndroidDriver(prop, capabilities);
             case IPAD:
@@ -161,6 +162,8 @@ public enum WebDriverTypeEnum {
             capabilities.setCapability(FirefoxOptions.FIREFOX_OPTIONS, getFirefoxOptions(prop, mergeCapabilities, false));
         } else if (prop.getBrowserType() == CHROME) {
             capabilities.setCapability(ChromeOptions.CAPABILITY, getChromeOptions(prop, mergeCapabilities));
+        } else if (prop.getBrowserType() == EDGE) {
+            capabilities.setCapability(com.microsoft.edge.seleniumtools.EdgeOptions.CAPABILITY, getEdgeChromiumOptions(prop, mergeCapabilities));
         } else if (prop.getBrowserType() == SAFARI) {
             capabilities.setCapability(SafariOptions.CAPABILITY, getSafariOptions(prop, mergeCapabilities));
         } else {
@@ -251,15 +254,35 @@ public enum WebDriverTypeEnum {
         return options;
     }
 
-    private EdgeDriver getEdgeDriver(TestProperties prop, DesiredCapabilities mergeCapabilities) {
-        EdgeOptions options = getEdgeOptions(prop, mergeCapabilities);
-        return new EdgeDriver(options);
+    private org.openqa.selenium.edge.EdgeDriver getEdgeLegacyDriver(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        org.openqa.selenium.edge.EdgeOptions options = getEdgeLegacyOptions(prop, mergeCapabilities);
+        return new org.openqa.selenium.edge.EdgeDriver(options);
     }
 
     @SuppressWarnings("squid:S1172")
-    private EdgeOptions getEdgeOptions(TestProperties prop, DesiredCapabilities mergeCapabilities) {
-        EdgeOptions options = new EdgeOptions();
+    private org.openqa.selenium.edge.EdgeOptions getEdgeLegacyOptions(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        org.openqa.selenium.edge.EdgeOptions options = new org.openqa.selenium.edge.EdgeOptions();
         options.merge(mergeCapabilities);
+        return options;
+    }
+
+    private com.microsoft.edge.seleniumtools.EdgeDriver getEdgeChromiumDriver(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        com.microsoft.edge.seleniumtools.EdgeOptions options = getEdgeChromiumOptions(prop, mergeCapabilities);
+        return new com.microsoft.edge.seleniumtools.EdgeDriver(options);
+    }
+
+    private com.microsoft.edge.seleniumtools.EdgeOptions getEdgeChromiumOptions(TestProperties prop, DesiredCapabilities mergeCapabilities) {
+        com.microsoft.edge.seleniumtools.EdgeOptions options = new com.microsoft.edge.seleniumtools.EdgeOptions();
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--dns-prefetch-disable");
+
+        if (prop.getUserAgent() != null) {
+            options.addArguments("user-agent=" + prop.getUserAgent());
+        }
+
+        options.merge(mergeCapabilities);
+        options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.IGNORE);
         return options;
     }
 
