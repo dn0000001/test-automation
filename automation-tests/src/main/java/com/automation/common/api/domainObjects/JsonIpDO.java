@@ -79,9 +79,10 @@ public class JsonIpDO extends ApiDomainObject {
         }
     }
 
-    @Step("Get IP")
-    public void getIP() {
+    @Step("Send Request")
+    public void sendRequest() {
         String resourcePath = "/";
+        Helper.log("GET", resourcePath);
         ApiClient client = getClient();
         client.setParametersType(ParametersType.GENERAL);
         client.setReturnType(ReturnType.JSON);

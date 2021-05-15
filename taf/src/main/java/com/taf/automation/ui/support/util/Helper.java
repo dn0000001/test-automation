@@ -977,10 +977,13 @@ public class Helper {
      * @param expected - Expected
      */
     public static void validateStatus(StatusLine actual, StatusLine expected) {
-        AssertAggregator aggregator = new AssertAggregator();
-        aggregator.assertThat(actual.getStatusCode(), equalTo(expected.getStatusCode()));
-        aggregator.assertThat(actual.getReasonPhrase(), equalTo(expected.getReasonPhrase()));
-        assertThat(aggregator);
+        CustomSoftAssertions softly = new CustomSoftAssertions();
+        if (isNotNull("Status Line", softly, actual, expected)) {
+            softly.assertThat(actual.getStatusCode()).as("Status Code").isEqualTo(expected.getStatusCode());
+            softly.assertThat(actual.getReasonPhrase()).as("Reason Phrase").isEqualTo(expected.getReasonPhrase());
+        }
+
+        softly.assertAll();
     }
 
     /**

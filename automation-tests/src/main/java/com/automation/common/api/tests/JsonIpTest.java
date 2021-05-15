@@ -30,7 +30,7 @@ public class JsonIpTest {
     ) {
         AssertJUtil.assertThat(apiUrl).as("API URL").isEqualToIgnoringCase(TestProperties.getInstance().getApiUrl());
         JsonIpDO ip = new JsonIpDO().fromResource(dataSet);
-        ip.getIP();
+        ip.sendRequest();
         ip.validateStatus();
         ip.validateResponse();
     }
