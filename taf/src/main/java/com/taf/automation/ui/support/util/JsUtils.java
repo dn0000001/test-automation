@@ -1,5 +1,7 @@
 package com.taf.automation.ui.support.util;
 
+import com.google.gson.reflect.TypeToken;
+import com.taf.automation.api.JsonUtils;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.events.Event;
 import com.taf.automation.ui.support.events.EventType;
@@ -17,6 +19,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * This class provides utility methods to work with JavaScript
@@ -38,6 +43,7 @@ public class JsUtils {
     private static final String ADD_ELEMENT_TO_PARENT = Utils.readResource("JS/AddElementToParent.js");
     private static final String REMOVE_ELEMENT = Utils.readResource("JS/RemoveElement.js");
     private static final String WAIT_FOR_XHR = Utils.readResource("JS/WaitForXHR.js");
+    private static final String GET_ALL_ATTRIBUTES = Utils.readResource("JS/GetAllAttributes.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -543,6 +549,18 @@ public class JsUtils {
         WebElement element = getWebDriver().findElement(By.cssSelector("body"));
         String ajaxCounter = element.getAttribute("ajaxcounter");
         AssertJUtil.assertThat(NumberUtils.toInt(ajaxCounter, -1)).as("AJAX Counter").isEqualTo(0);
+    }
+
+    /**
+     * Get all attributes on the element
+     *
+     * @param element - Element to get all attributes
+     * @return all attributes (name, value) on the element
+     */
+    public static Map<String, String> getAllAttributes(WebElement element) {
+        String json = (String) execute(getWebDriver(), GET_ALL_ATTRIBUTES, element);
+        Type type = new TypeToken<Map<String, String>>() { }.getType();
+        return JsonUtils.getGson().fromJson(json, type);
     }
 
 }
