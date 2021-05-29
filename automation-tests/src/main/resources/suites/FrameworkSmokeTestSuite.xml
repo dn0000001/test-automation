@@ -406,6 +406,12 @@
         </classes>
     </test>
 
+    <test name="Basic MutationObserver Test">
+        <classes>
+            <class name="com.automation.common.ui.app.tests.BasicMutationObserverTest"/>
+        </classes>
+    </test>
+
     <test name="Page Object Utils Test">
         <parameter name="base-data-set" value="data/ui/RoboFormDynamic_TestData.xml"/>
         <parameter name="add-data-useDynamicPage" value="false"/>

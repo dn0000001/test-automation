@@ -44,6 +44,9 @@ public class JsUtils {
     private static final String REMOVE_ELEMENT = Utils.readResource("JS/RemoveElement.js");
     private static final String WAIT_FOR_XHR = Utils.readResource("JS/WaitForXHR.js");
     private static final String GET_ALL_ATTRIBUTES = Utils.readResource("JS/GetAllAttributes.js");
+    private static final String MUTATION_OBSERVER_ADD_REMOVE_ATTRIBUTES = Utils.readResource("JS/MutationObserverAddRemoveAttributes.js");
+    private static final String MUTATION_OBSERVER_DISCONNECT = Utils.readResource("JS/MutationObserverDisconnect.js");
+    private static final String MUTATION_OBSERVER_GET_DATA = Utils.readResource("JS/MutationObserverGetData.js");
 
     private JsUtils() {
         // Prevent initialization of class as all public methods should be static
@@ -561,6 +564,32 @@ public class JsUtils {
         String json = (String) execute(getWebDriver(), GET_ALL_ATTRIBUTES, element);
         Type type = new TypeToken<Map<String, String>>() { }.getType();
         return JsonUtils.getGson().fromJson(json, type);
+    }
+
+    /**
+     * Attach MutationObserver for Add/Remove Attribute
+     *
+     * @param element - Element to attach the MutationObserver for Add/Remove Attribute to
+     */
+    public static void attachMutationObserverAddRemoveAttribute(WebElement element) {
+        execute(getWebDriver(), MUTATION_OBSERVER_ADD_REMOVE_ATTRIBUTES, element);
+    }
+
+    /**
+     * Disconnect MutationObserver
+     */
+    public static void disconnectMutationObserver() {
+        execute(getWebDriver(), MUTATION_OBSERVER_DISCONNECT, (Object[]) null);
+    }
+
+    /**
+     * Get the current MutationObserverData
+     *
+     * @return current MutationObserverData
+     */
+    public static MutationObserverData getMutationObserverData() {
+        String json = (String) execute(getWebDriver(), MUTATION_OBSERVER_GET_DATA, (Object[]) null);
+        return JsonUtils.getGson().fromJson(json, MutationObserverData.class);
     }
 
 }
