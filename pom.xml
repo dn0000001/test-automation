@@ -27,7 +27,7 @@
         <selenium.edge.version>3.141.0</selenium.edge.version>
         <appium.version>7.3.0</appium.version>
         <ui.auto.core.version>2.5.15</ui.auto.core.version>
-        <testNg.version>6.14.3</testNg.version>
+        <testNg.version>7.4.0</testNg.version>
         <hamcrest.version>1.3</hamcrest.version>
         <jetty-server.version>9.4.3.v20170317</jetty-server.version>
         <java.mail.version>1.4.1</java.mail.version>

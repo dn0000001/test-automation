@@ -1,10 +1,12 @@
 package com.taf.automation.ui.support.testng;
 
+import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.util.ExceptionUtils;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
+import org.testng.internal.annotations.DisabledRetryAnalyzer;
 import ru.yandex.qatools.allure.Allure;
 import ru.yandex.qatools.allure.events.TestCaseCanceledEvent;
 import ru.yandex.qatools.allure.events.TestCaseFailureEvent;
@@ -20,9 +22,10 @@ public class AllureTestNGListener extends AllureTestListener {
         super.onStart(iTestContext);
         for (ITestNGMethod method : iTestContext.getAllTestMethods()) {
             Retry retry = method.getConstructorOrMethod().getMethod().getAnnotation(Retry.class);
-            if (isCandidateForRetry(method) && method.getRetryAnalyzer() == null && retry != null) {
+            if (isCandidateForRetry(method) && hasNoRetryAnalyzer(method) && retry != null) {
                 int times = (retry.value() == 0) ? TestProperties.getInstance().getTestDefaultRetry() : retry.value();
-                method.setRetryAnalyzer(new RetryListener(times));
+                Lookup.getInstance().put(RetryListener.getLookupKey(), times);
+                method.setRetryAnalyzerClass(RetryListener.class);
             }
         }
     }
@@ -30,7 +33,7 @@ public class AllureTestNGListener extends AllureTestListener {
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
-        if (iTestResult.getMethod().getRetryAnalyzer() != null) {
+        if (iTestResult.getMethod().getRetryAnalyzer(iTestResult) != null) {
             // Workaround issue with retries in the TestNG logic added in 6.12
             iTestResult.getTestContext().getSkippedTests().removeResult(iTestResult.getMethod());
             iTestResult.getTestContext().getFailedTests().removeResult(iTestResult.getMethod());
@@ -62,7 +65,7 @@ public class AllureTestNGListener extends AllureTestListener {
             onTestStart(iTestResult);
         }
 
-        if (iTestResult.getMethod().getRetryAnalyzer() != null) {
+        if (iTestResult.getMethod().getRetryAnalyzer(iTestResult) != null) {
             iTestResult.getTestContext().getSkippedTests().removeResult(iTestResult.getMethod());
             TestNGBaseWithoutListeners.takeScreenshot("Skipped Test Screenshot");
             TestNGBaseWithoutListeners.takeHTML("Skipped Test HTML Source");
@@ -168,6 +171,12 @@ public class AllureTestNGListener extends AllureTestListener {
         }
 
         return false;
+    }
+
+    private boolean hasNoRetryAnalyzer(ITestNGMethod method) {
+        return method.getRetryAnalyzerClass() == null
+                || DisabledRetryAnalyzer.class.isAssignableFrom(method.getRetryAnalyzerClass())
+                ;
     }
 
 }
