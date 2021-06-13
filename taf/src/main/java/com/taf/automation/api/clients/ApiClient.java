@@ -146,6 +146,10 @@ public class ApiClient implements GenericHttpInterface {
         this.returnType = returnType;
     }
 
+    public CloseableHttpClient getClient() {
+        return client;
+    }
+
     private HttpHost getTargetHost(String url) {
         return HttpHost.create(url);
     }
