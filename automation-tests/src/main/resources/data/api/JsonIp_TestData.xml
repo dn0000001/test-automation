@@ -18,5 +18,6 @@
 
         <geoIP>${geoIP}</geoIP>
         <apiHelp>${decApiHelp}</apiHelp>
+        <pi>3.14159265359</pi>
     </response>
 </json-ip-do>

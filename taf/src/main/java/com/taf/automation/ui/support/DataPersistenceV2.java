@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.converters.extended.ISO8601GregorianCalendarConv
 import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
 import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 /**
@@ -18,7 +19,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 @SuppressWarnings("java:S3252")
 public abstract class DataPersistenceV2 extends DataPersistence {
     @XStreamOmitField
-    private boolean useXstreamForAliases;
+    private Boolean useXstreamForAliases;
 
     protected DataPersistenceV2() {
         //
@@ -29,7 +30,7 @@ public abstract class DataPersistenceV2 extends DataPersistence {
     }
 
     protected void useNormalXstreamFlag() {
-        useXstreamForAliases = false;
+        useXstreamForAliases = null;
     }
 
     /**
@@ -60,7 +61,7 @@ public abstract class DataPersistenceV2 extends DataPersistence {
     @Override
     public XStream getXstream() {
         XStream xStream;
-        if (useXstreamForAliases) {
+        if (BooleanUtils.toBoolean(useXstreamForAliases)) {
             xStream = new XStream();
             xStream.registerConverter(new DataAliasesConverterV2(null));
             xStream.registerConverter(new ISO8601GregorianCalendarConverter());

@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support.util;
 
 import com.taf.automation.api.converters.BasicHeaderConverter;
+import com.taf.automation.api.converters.BigDecimalConverter;
 import com.taf.automation.api.converters.EnumConverter;
 import com.taf.automation.ui.support.DataAliasesConverterV2;
 import com.taf.automation.ui.support.Environment;
@@ -41,9 +42,9 @@ public class DataInstillerUtils {
         RANDOM_DATE_GENERATOR("RandomDateGen", "RANDOM_DATE", new RandomDateGenerator()),
         RANDOM_US_ADDRESS_GENERATOR("RealUSAddressGen", "RANDOM_US_ADDRESS", new RandomRealUSAddressGenerator());
 
-        private String jexlKey;
-        private String registerKey;
-        private GeneratorInterface generator;
+        private final String jexlKey;
+        private final String registerKey;
+        private final GeneratorInterface generator;
 
         CustomGenerators(String jexlKey, String registerKey, GeneratorInterface generator) {
             this.jexlKey = jexlKey;
@@ -209,6 +210,7 @@ public class DataInstillerUtils {
         converters.add(new PageComponentDataConverter());
         converters.add(new BasicHeaderConverter());
         converters.add(new EnumConverter(EnvironmentType.class, Environment.QA));
+        converters.add(new BigDecimalConverter());
 
         return converters;
     }
