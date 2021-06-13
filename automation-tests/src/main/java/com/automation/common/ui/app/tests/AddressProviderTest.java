@@ -41,6 +41,9 @@ public class AddressProviderTest extends TestNGBase {
         softly.assertThat(NumberUtils.toInt(addressProviderDO.getAddressCount(), -1))
                 .as("State Address Count")
                 .isEqualTo(AddressProvider.getInstance().getAll(state).size());
+        softly.assertThat(addressProviderDO.getPi())
+                .as("PI (to 11 decimal places)")
+                .isEqualByComparingTo("3.14159265359");
         softly.assertAll();
     }
 

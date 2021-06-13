@@ -7,10 +7,17 @@ import com.taf.automation.ui.support.providers.AddressProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.commons.jexl3.JexlContext;
 
+import java.math.BigDecimal;
+
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 @XStreamAlias("address-provider-do")
 public class AddressProviderDO extends DomainObject {
     private USAddress addressInfo;
+
+    /**
+     * Field used in testing the BigDecimalConverter
+     */
+    private BigDecimal pi;
 
     /**
      * The address count stored as a string.  Since we are using an alias to calculate this value,
@@ -42,6 +49,10 @@ public class AddressProviderDO extends DomainObject {
 
     public String getAddressCount() {
         return addressCount;
+    }
+
+    public BigDecimal getPi() {
+        return pi;
     }
 
 }

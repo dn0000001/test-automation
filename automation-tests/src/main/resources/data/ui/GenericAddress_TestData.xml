@@ -17,4 +17,5 @@
     </aliases>
     <addressInfo street="${street}" city="${city}" state="${state}" zipCode="${zipCode}" country="${country}" phoneNumber="${phoneNumber}"/>
     <addressCount>${addressCount}</addressCount>
+    <pi>3.14159265359</pi>
 </address-provider-do>

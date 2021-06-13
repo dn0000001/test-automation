@@ -14,6 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.http.message.BasicStatusLine;
 import ru.yandex.qatools.allure.annotations.Step;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -37,13 +38,18 @@ public class JsonIpDO extends ApiDomainObject {
     // Here you create an entity for the response
     private static class Response {
         // The Expected values to verify against
-        BasicStatusLine status;
-        String geoIP;
-        String apiHelp;
+        private BasicStatusLine status;
+        private String geoIP;
+        private String apiHelp;
+
+        /**
+         * Field used in testing the BigDecimalConverter
+         */
+        private BigDecimal pi;
 
         // Here is the actual response entity
         @XStreamOmitField
-        GenericHttpResponse<IP_Details> ip;
+        private GenericHttpResponse<IP_Details> ip;
 
         @Step("Validate Status")
         private void validateStatus() {
@@ -76,6 +82,9 @@ public class JsonIpDO extends ApiDomainObject {
             AssertJUtil.assertThat(actualIP).as("Invalid IP Address").matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$");
             AssertJUtil.assertThat(actualGeoIp).as("GEO IP Incorrect").isEqualTo(geoIP);
             AssertJUtil.assertThat(actualApiHelp).as("API Help Incorrect").isEqualTo(apiHelp);
+
+            // BigDecimalConverter test
+            AssertJUtil.assertThat(pi).as("PI (to 11 decimal places)").isEqualByComparingTo("3.14159265359");
         }
     }
 
