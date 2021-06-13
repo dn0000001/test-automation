@@ -95,7 +95,7 @@ public class TestContext extends PageComponentContext {
     }
 
     public String getAlias(String key) {
-        return getGlobalAliases().get(key);
+        return getGlobalAliases().getAsString(key);
     }
 
     public void setAlias(String key, String value) {

@@ -16,7 +16,6 @@ import org.apache.commons.jexl3.MapContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,9 +24,11 @@ import java.util.regex.Pattern;
  */
 public class DataAliasesConverterV2 implements Converter {
     private static final Logger LOG = LoggerFactory.getLogger(DataAliasesConverterV2.class);
-    private JexlContext jexlContext;
+    private final JexlContext jexlContext;
+    private final DataAliases globalAliases;
 
-    public DataAliasesConverterV2(JexlContext jexlContext) {
+    public DataAliasesConverterV2(JexlContext jexlContext, DataAliases globalAliases) {
+        this.globalAliases = globalAliases;
         if (jexlContext == null) {
             this.jexlContext = new MapContext();
         } else {
@@ -35,7 +36,6 @@ public class DataAliasesConverterV2 implements Converter {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean canConvert(Class type) {
         return (type.equals(DataAliases.class));
@@ -48,9 +48,9 @@ public class DataAliasesConverterV2 implements Converter {
         }
 
         DataAliases aliases = (DataAliases) source;
-        for (Map.Entry<String, String> item : aliases.entrySet()) {
-            writer.startNode(item.getKey());
-            writer.setValue(item.getValue());
+        for (String key : aliases.keySet()) {
+            writer.startNode(key);
+            writer.setValue(aliases.getAsString(key));
             writer.endNode();
         }
     }
@@ -58,6 +58,10 @@ public class DataAliasesConverterV2 implements Converter {
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
         DataAliases aliases = new DataAliases();
+        if (globalAliases != null) {
+            globalAliases.forEach(jexlContext::set);
+        }
+
         String nodeName;
         String value;
         Object objValue = null;

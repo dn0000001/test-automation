@@ -24,7 +24,7 @@ public class DomainObjectUtils {
     private static List<Label> getLabels(DataAliases aliases, String labelAlias, LabelName labelName) {
         List<Label> labels = new ArrayList<>();
 
-        String label = aliases.get(labelAlias);
+        String label = aliases.getAsString(labelAlias);
         if (label != null) {
             for (String value : label.split(",")) {
                 labels.add(new Label().withName(labelName.value()).withValue(value.trim()));
@@ -45,8 +45,8 @@ public class DomainObjectUtils {
             return;
         }
 
-        String name = aliases.get("test-name");
-        String description = aliases.get("test-description");
+        String name = aliases.getAsString("test-name");
+        String description = aliases.getAsString("test-description");
 
         List<Label> labels = new ArrayList<>();
         labels.addAll(getLabels(aliases, "test-features", LabelName.FEATURE));

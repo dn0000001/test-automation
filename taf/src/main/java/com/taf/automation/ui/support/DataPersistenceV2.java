@@ -10,6 +10,7 @@ import datainstiller.data.DataPersistence;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import ui.auto.core.context.PageComponentContext;
 
 /**
  * The purpose of this class is to revert the removal of xml namespaces added to DataPersistence.  This was causing
@@ -63,7 +64,7 @@ public abstract class DataPersistenceV2 extends DataPersistence {
         XStream xStream;
         if (BooleanUtils.toBoolean(useXstreamForAliases)) {
             xStream = new XStream();
-            xStream.registerConverter(new DataAliasesConverterV2(null));
+            xStream.registerConverter(new DataAliasesConverterV2(null, PageComponentContext.getGlobalAliases()));
             xStream.registerConverter(new ISO8601GregorianCalendarConverter());
         } else {
             xStream = DataInstillerUtils.getXStream(getJexlContext());

@@ -19,7 +19,7 @@ import java.util.Date;
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 @XStreamAlias("jexl-expression-do")
 public class JexlExpressionDO extends DomainObject {
-    private static final String TODAY = DateActions.format(new Date(), "MM/dd/yyyy");
+    private static final String TODAY = DateActions.format(new Date(), "yyyy-MM-dd");
     private static final String CURRENT_SYSTEM_DATE = "CURRENT_SYSTEM_DATE";
     private AliasedString someField;
     private AliasedString anotherField;

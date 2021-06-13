@@ -71,13 +71,13 @@ public class RandomDateUtil {
             return randomDate;
         }
 
-        String pattern = StringUtils.defaultString(PageComponentContext.getGlobalAliases().get(RANDOM_DATE_PATTERN));
+        String pattern = StringUtils.defaultString(PageComponentContext.getGlobalAliases().getAsString(RANDOM_DATE_PATTERN));
         pattern = (pattern.trim().equals("")) ? "yyyy-MM-dd" : pattern;
 
-        String start = StringUtils.defaultString(PageComponentContext.getGlobalAliases().get(RANDOM_DATE_RANGE_MIN));
+        String start = StringUtils.defaultString(PageComponentContext.getGlobalAliases().getAsString(RANDOM_DATE_RANGE_MIN));
         start = (start.equals("")) ? "0" : start;
 
-        String end = StringUtils.defaultString(PageComponentContext.getGlobalAliases().get(RANDOM_DATE_RANGE_MAX));
+        String end = StringUtils.defaultString(PageComponentContext.getGlobalAliases().getAsString(RANDOM_DATE_RANGE_MAX));
         end = (end.equals("")) ? "0" : end;
 
         int startInclusive = NumberUtils.toInt(start);
