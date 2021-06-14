@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.http.HttpStatus;
+import org.apache.http.message.BasicHeader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.ITestContext;
@@ -73,6 +74,11 @@ public class FileDownloaderTest extends TestNGBase {
     private void downloadFileFromUri(FileDownloader downloader) {
         WebElement element = getContext().getDriver().findElement(By.xpath("//a[@href='download/people.xlsx']"));
         downloader.withURI(element.getAttribute("href"));
+
+        // Test adding headers & then resetting back to empty
+        downloader.withRequestHeader("testA", "something").withRequestHeader(new BasicHeader("testB", "xyz"));
+        downloader.resetRequestHeaders();
+
         int status = downloader.getLinkHTTPStatus();
         AssertJUtil.assertThat(status).as(LINK_HTTP_STATUS).isEqualTo(HttpStatus.SC_OK);
 

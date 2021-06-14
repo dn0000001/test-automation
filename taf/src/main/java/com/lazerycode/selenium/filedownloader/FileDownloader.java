@@ -3,6 +3,7 @@ package com.lazerycode.selenium.filedownloader;
 import com.taf.automation.api.clients.ApiClient;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -10,6 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.BasicHttpContext;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
@@ -20,6 +22,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,6 +39,7 @@ public class FileDownloader {
     private boolean mimicWebDriverCookieState = true;
     private RequestMethod httpRequestMethod = RequestMethod.GET;
     private URI fileURI;
+    private final List<Header> headers = new ArrayList<>();
 
     public FileDownloader(WebDriver driver) {
         this.driver = driver;
@@ -161,6 +166,39 @@ public class FileDownloader {
     }
 
     /**
+     * Add Request Header to be sent
+     *
+     * @param header - Request Header
+     * @return FileDownloader
+     */
+    public FileDownloader withRequestHeader(Header header) {
+        headers.add(header);
+        return this;
+    }
+
+    /**
+     * Add Request Header to be sent
+     *
+     * @param name  - Header Name
+     * @param value - Header value
+     * @return FileDownloader
+     */
+    public FileDownloader withRequestHeader(String name, String value) {
+        Header header = new BasicHeader(name, value);
+        return withRequestHeader(header);
+    }
+
+    /**
+     * Reset the request headers back to the empty list
+     *
+     * @return FileDownloader
+     */
+    public FileDownloader resetRequestHeaders() {
+        headers.clear();
+        return this;
+    }
+
+    /**
      * Load in all the cookies WebDriver currently knows about so that we can mimic the browser cookie state
      *
      * @param seleniumCookieSet Set&lt;Cookie&gt;
@@ -195,6 +233,7 @@ public class FileDownloader {
         HttpRequestBase requestMethod = httpRequestMethod.getRequestMethod();
         requestMethod.setURI(fileURI);
         requestMethod.setConfig(RequestConfig.custom().setRedirectsEnabled(followRedirects).build());
+        headers.forEach(requestMethod::setHeader);
 
         return client.execute(requestMethod, localContext);
     }
