@@ -36,6 +36,7 @@
         <!-- URLs for tests.  We can store here instead of test.properties -->
         <prop name="herokuapp-tables-url" value="https://the-internet.herokuapp.com/tables"/>
         <prop name="herokuapp-elements-url" value="https://the-internet.herokuapp.com/add_remove_elements/"/>
+        <prop name="herokuapp-downloads-url" value="https://the-internet.herokuapp.com/download"/>
         <prop name="duckduckgo-url" value="https://duckduckgo.com/"/>
         <prop name="primefaces-dashboard-url" value="https://www.primefaces.org/showcase/ui/panel/dashboard.xhtml"/>
         <prop name="roboform-fill-url" value="https://www.roboform.com/filling-test-all-fields"/>

@@ -67,6 +67,10 @@ public class Navigation {
         toURL("Herokuapp - Elements", props.getCustom("herokuapp-elements-url", null), cleanCookies);
     }
 
+    public void toHerokuappDownloads(boolean cleanCookies) {
+        toURL("Herokuapp - Downloads", props.getCustom("herokuapp-downloads-url", null), cleanCookies);
+    }
+
     public void toDuckDuckGo(boolean cleanCookies) {
         toURL("Duck Duck Go", props.getCustom("duckduckgo-url", null), cleanCookies);
     }
