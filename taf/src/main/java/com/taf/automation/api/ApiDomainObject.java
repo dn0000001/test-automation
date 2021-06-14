@@ -8,17 +8,17 @@ import com.taf.automation.api.clients.ApiLoginSession;
 import com.taf.automation.api.clients.UserLogin;
 import com.taf.automation.api.rest.GenericHttpResponse;
 import com.taf.automation.locking.UserLockManager;
-import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.DataPersistenceV2;
-import com.taf.automation.ui.support.util.DomainObjectUtils;
-import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.Lookup;
 import com.taf.automation.ui.support.TestProperties;
-import com.taf.automation.ui.support.util.Utils;
 import com.taf.automation.ui.support.converters.Credentials;
 import com.taf.automation.ui.support.converters.CreditCard;
 import com.taf.automation.ui.support.converters.DynamicCredentials;
 import com.taf.automation.ui.support.csv.CsvTestData;
+import com.taf.automation.ui.support.util.CryptoUtils;
+import com.taf.automation.ui.support.util.DomainObjectUtils;
+import com.taf.automation.ui.support.util.Helper;
+import com.taf.automation.ui.support.util.Utils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.Data;
 import datainstiller.data.DataAliases;
@@ -34,7 +34,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -80,9 +79,9 @@ public class ApiDomainObject extends DataPersistenceV2 {
         createGlobalAliasses();
         String xml = super.toXML().replace(" xmlns=\"xmlns\" xmlns:xsi=\"xsi\" xsi:schemaLocation=\"schemaLocation\"", "");
 
-        for (Map.Entry<String, String> entry : dataAliases.entrySet()) {
-            String alias = "${" + entry.getKey() + "}";
-            String value = entry.getValue();
+        for (String key : dataAliases.keySet()) {
+            String alias = "${" + key + "}";
+            String value = dataAliases.getAsString(key);
             xml = xml.replace(alias, value);
         }
 

@@ -24,6 +24,7 @@ import datainstiller.generators.WordGenerator;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.MapContext;
 import org.apache.http.message.BasicHeader;
+import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.data.PageComponentDataConverter;
 
 import java.time.LocalDateTime;
@@ -121,7 +122,7 @@ public class DataInstillerUtils {
         addCustomGenerators(jexlContext);
         XStream xstream = new XStream();
 
-        xstream.registerConverter(new DataAliasesConverterV2(jexlContext));
+        xstream.registerConverter(new DataAliasesConverterV2(jexlContext, PageComponentContext.getGlobalAliases()));
         xstream.registerConverter(new ISO8601GregorianCalendarConverter());
 
         return xstream;

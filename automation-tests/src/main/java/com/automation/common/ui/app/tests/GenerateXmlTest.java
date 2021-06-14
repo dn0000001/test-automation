@@ -15,6 +15,8 @@ import com.automation.common.ui.app.pageObjects.HerokuappDataTablesPage;
 import com.automation.common.ui.app.pageObjects.HerokuappRow;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import datainstiller.data.DataPersistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
@@ -30,6 +32,8 @@ import ru.yandex.qatools.allure.model.SeverityLevel;
  * should be tested when/if it occurs.
  */
 public class GenerateXmlTest extends TestNGBase {
+    private static final Logger LOG = LoggerFactory.getLogger(GenerateXmlTest.class);
+
     @Features("Framework")
     @Stories("Validate that XML generation works properly")
     @Severity(SeverityLevel.CRITICAL)
@@ -54,7 +58,8 @@ public class GenerateXmlTest extends TestNGBase {
 
     @Step("Generate XML for {0}")
     private void generateXml(String log, DataPersistence object) {
-        object.generate();
+        String xml = object.generateXML();
+        LOG.info("{}", xml);
     }
 
 }
