@@ -1,9 +1,11 @@
 package com.lazerycode.selenium.filedownloader;
 
-import com.taf.automation.api.clients.ApiClient;
+import com.taf.automation.api.clients.FileDownloaderClient;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -38,8 +40,9 @@ public class FileDownloader {
     private boolean followRedirects = true;
     private boolean mimicWebDriverCookieState = true;
     private RequestMethod httpRequestMethod = RequestMethod.GET;
-    private URI fileURI;
     private final List<Header> headers = new ArrayList<>();
+    private URI fileURI;
+    private HttpEntity httpEntity;
 
     public FileDownloader(WebDriver driver) {
         this.driver = driver;
@@ -77,6 +80,28 @@ public class FileDownloader {
      */
     public FileDownloader withHTTPRequestMethod(RequestMethod requestType) {
         httpRequestMethod = requestType;
+        return this;
+    }
+
+    /**
+     * Set the HttpEntity<BR>
+     * <B>Notes: </B>
+     * <OL>
+     * <LI>
+     * This is only applicable to certain request types such as post.
+     * There is no logic to prevent use with invalid request types.
+     * </LI>
+     * <LI>
+     * A common HttpEntity that might be used is UrlEncodedFormEntity for forms.
+     * There exists the method <B>getFormHttpEntity</B> in the class <B>ApiUtils</B> that may be of use
+     * </LI>
+     * </OL>
+     *
+     * @param httpEntity - Http Entity (Use null to clear a previously set Http Entity.)
+     * @return FileDownloader
+     */
+    public FileDownloader withHttpEntity(HttpEntity httpEntity) {
+        this.httpEntity = httpEntity;
         return this;
     }
 
@@ -221,7 +246,7 @@ public class FileDownloader {
     private HttpResponse getHTTPResponse() throws IOException {
         AssertJUtil.assertThat(fileURI).as("No file URI specified").isNotNull();
 
-        HttpClient client = new ApiClient().getClient();
+        HttpClient client = new FileDownloaderClient().getClient();
         BasicHttpContext localContext = new BasicHttpContext();
 
         // Clear down the local cookie store every time to make sure we don't have any left over cookies influencing the test
@@ -234,6 +259,9 @@ public class FileDownloader {
         requestMethod.setURI(fileURI);
         requestMethod.setConfig(RequestConfig.custom().setRedirectsEnabled(followRedirects).build());
         headers.forEach(requestMethod::setHeader);
+        if (requestMethod instanceof HttpEntityEnclosingRequest && httpEntity != null) {
+            ((HttpEntityEnclosingRequest) requestMethod).setEntity(httpEntity);
+        }
 
         return client.execute(requestMethod, localContext);
     }

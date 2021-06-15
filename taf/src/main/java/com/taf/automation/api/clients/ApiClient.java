@@ -146,7 +146,7 @@ public class ApiClient implements GenericHttpInterface {
         this.returnType = returnType;
     }
 
-    public CloseableHttpClient getClient() {
+    CloseableHttpClient getClient() {
         return client;
     }
 
