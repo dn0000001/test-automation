@@ -1,11 +1,12 @@
 package com.automation.common.ui.app.tests;
 
+import com.automation.common.ui.app.pageObjects.FileExamplesOtherFilesPage;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.lazerycode.selenium.filedownloader.FileDownloader;
+import com.taf.automation.ui.support.csv.CsvUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.DomainObjectUtils;
-import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.http.HttpStatus;
@@ -30,8 +31,6 @@ import java.util.Map;
  */
 @SuppressWarnings("java:S3252")
 public class FileDownloaderTest extends TestNGBase {
-    private static final String LINK_HTTP_STATUS = "Link HTTP Status";
-
     @Features("Framework")
     @Stories("FileDownloader")
     @Severity(SeverityLevel.CRITICAL)
@@ -39,50 +38,42 @@ public class FileDownloaderTest extends TestNGBase {
     public void performTest(ITestContext injectedContext) {
         DomainObjectUtils.overwriteTestName(injectedContext);
         new Navigation(getContext()).toHerokuappDownloads(Utils.isCleanCookiesSupported());
-        FileDownloader downloader = new FileDownloader(getContext().getDriver());
-        downloadImageFromElement(downloader);
-        downloadImageFromHref(downloader);
-        downloadFileFromUri(downloader);
+        downloadImageFromElement();
+
+        new Navigation(getContext()).toFileExamplesOtherFiles(Utils.isCleanCookiesSupported());
+        downloadImageFromHref();
+        downloadFileFromUri();
     }
 
     @Step("Perform Download Image from Element")
-    private void downloadImageFromElement(FileDownloader downloader) {
+    private void downloadImageFromElement() {
+        FileDownloader downloader = new FileDownloader(getContext().getDriver());
         WebElement element = getContext().getDriver().findElement(By.cssSelector("[alt='Fork me on GitHub']"));
         downloader.withURISpecifiedInImageElement(element);
         int status = downloader.getLinkHTTPStatus();
-        AssertJUtil.assertThat(status).as(LINK_HTTP_STATUS).isEqualTo(HttpStatus.SC_OK);
+        AssertJUtil.assertThat(status).as("Link HTTP Status").isEqualTo(HttpStatus.SC_OK);
 
         File img = downloader.downloadFile();
         img.deleteOnExit();
         AssertJUtil.assertThat(img).exists().isFile();
     }
 
-    @Step("Perform Download Image from HREF")
-    private void downloadImageFromHref(FileDownloader downloader) {
-        WebElement element = getContext().getDriver().findElement(By.xpath("//a[@href='download/chow.jpg']"));
-        downloader.withURISpecifiedInAnchorElement(element);
-        int status = downloader.getLinkHTTPStatus();
-        AssertJUtil.assertThat(status).as(LINK_HTTP_STATUS).isEqualTo(HttpStatus.SC_OK);
-
-        File img = downloader.downloadFile(".jpg");
+    @Step("Perform Download CSV from HREF")
+    private void downloadImageFromHref() {
+        File img = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingElement();
         img.deleteOnExit();
         AssertJUtil.assertThat(img).exists().isFile();
     }
 
     @Step("Perform Download File from URI")
-    private void downloadFileFromUri(FileDownloader downloader) {
-        WebElement element = getContext().getDriver().findElement(By.xpath("//a[@href='download/people.xlsx']"));
-        downloader.withURI(element.getAttribute("href"));
-        int status = downloader.getLinkHTTPStatus();
-        AssertJUtil.assertThat(status).as(LINK_HTTP_STATUS).isEqualTo(HttpStatus.SC_OK);
-
-        File excel = downloader.downloadFile("auto-", ".xlsx");
+    private void downloadFileFromUri() {
+        File excel = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingUri();
         excel.deleteOnExit();
         AssertJUtil.assertThat(excel).exists().isFile();
 
         List<CSVRecord> records = new ArrayList<>();
         Map<String, Integer> headers = new HashMap<>();
-        FilloUtils.read(excel.getAbsolutePath(), "records", records, headers);
+        CsvUtils.read(excel.getAbsolutePath(), records, headers);
         AssertJUtil.assertThat(records).as("Records").isNotEmpty();
         AssertJUtil.assertThat(headers).as("Headers").isNotEmpty();
     }

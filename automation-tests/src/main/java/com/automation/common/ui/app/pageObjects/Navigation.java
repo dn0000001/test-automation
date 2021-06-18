@@ -103,4 +103,8 @@ public class Navigation {
         toURL("Selenium Easy - Basic Checkbox", props.getCustom("seleniumeasy-basic-checkbox-url", null), cleanCookies);
     }
 
+    public void toFileExamplesOtherFiles(boolean cleanCookies) {
+        toURL("File Examples - Other Files", props.getCustom("file-examples-other-files-url", null), cleanCookies);
+    }
+
 }
