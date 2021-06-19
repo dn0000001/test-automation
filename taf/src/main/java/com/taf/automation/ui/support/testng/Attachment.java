@@ -1,7 +1,11 @@
 package com.taf.automation.ui.support.testng;
 
+import com.taf.automation.ui.support.util.AssertJUtil;
+import org.apache.commons.io.FileUtils;
 import ru.yandex.qatools.allure.Allure;
 import ru.yandex.qatools.allure.events.MakeAttachmentEvent;
+
+import java.io.File;
 
 /**
  * This class holds information to add an attachment to the Allure report
@@ -62,6 +66,23 @@ public class Attachment {
      */
     public Attachment withFile(byte[] file) {
         this.file = file;
+        return this;
+    }
+
+    /**
+     * Set file attachment
+     *
+     * @param file - Read the contents of the file into a byte array
+     * @return Attachment
+     */
+    @SuppressWarnings("java:S3252")
+    public Attachment withFile(File file) {
+        try {
+            this.file = FileUtils.readFileToByteArray(file);
+        } catch (Exception ex) {
+            AssertJUtil.fail("Could not read the contents of the file due to exception:  %s", ex.getMessage());
+        }
+
         return this;
     }
 
