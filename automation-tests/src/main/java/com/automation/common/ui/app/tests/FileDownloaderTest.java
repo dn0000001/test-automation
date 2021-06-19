@@ -3,6 +3,7 @@ package com.automation.common.ui.app.tests;
 import com.automation.common.ui.app.pageObjects.FileExamplesOtherFilesPage;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.lazerycode.selenium.filedownloader.FileDownloader;
+import com.taf.automation.api.ApiUtils;
 import com.taf.automation.ui.support.csv.CsvUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertJUtil;
@@ -56,26 +57,29 @@ public class FileDownloaderTest extends TestNGBase {
         File img = downloader.downloadFile();
         img.deleteOnExit();
         AssertJUtil.assertThat(img).exists().isFile();
+        ApiUtils.attachDataFile(img, "image/png", "Fork Me On GitHub Image");
     }
 
     @Step("Perform Download CSV from HREF")
     private void downloadImageFromHref() {
-        File img = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingElement();
-        img.deleteOnExit();
-        AssertJUtil.assertThat(img).exists().isFile();
+        File csv = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingElement();
+        csv.deleteOnExit();
+        AssertJUtil.assertThat(csv).exists().isFile();
+        ApiUtils.attachDataFile(csv, "text/csv", "CSV from HREF");
     }
 
     @Step("Perform Download File from URI")
     private void downloadFileFromUri() {
-        File excel = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingUri();
-        excel.deleteOnExit();
-        AssertJUtil.assertThat(excel).exists().isFile();
+        File csv = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingUri();
+        csv.deleteOnExit();
+        AssertJUtil.assertThat(csv).exists().isFile();
 
         List<CSVRecord> records = new ArrayList<>();
         Map<String, Integer> headers = new HashMap<>();
-        CsvUtils.read(excel.getAbsolutePath(), records, headers);
+        CsvUtils.read(csv.getAbsolutePath(), records, headers);
         AssertJUtil.assertThat(records).as("Records").isNotEmpty();
         AssertJUtil.assertThat(headers).as("Headers").isNotEmpty();
+        ApiUtils.attachDataFile(csv, "text/csv", "CSV from URI");
     }
 
 }

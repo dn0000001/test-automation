@@ -26,6 +26,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,6 +99,81 @@ public class ApiUtils {
      */
     public static void attachDataText(String text, String name) {
         new Attachment().withTitle(name).withType("text/plain").withFile(text.getBytes()).build();
+    }
+
+    /**
+     * Attach Data to report<BR>
+     * The following are common MIME types automation may encounter and want to attach:
+     * <table style="width:100%" border="1">
+     *  <thead>
+     *      <tr>
+     *          <th>Extension</th>
+     *          <th>Kind of document</th>
+     *          <th>MIME Type</th>
+     *      </tr>
+     *  </thead>
+     *  <tbody>
+     *      <tr>
+     *          <td>.csv</td>
+     *          <td>Comma-separated values (CSV)</td>
+     *          <td>text/csv</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.doc</td>
+     *          <td>Microsoft Word</td>
+     *          <td>application/msword</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.docx</td>
+     *          <td>Microsoft Word (OpenXML)</td>
+     *          <td>application/vnd.openxmlformats-officedocument.wordprocessingml.document</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.gif</td>
+     *          <td>Graphics Interchange Format (GIF)</td>
+     *          <td>image/gif</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.jpg</td>
+     *          <td>JPEG images </td>
+     *          <td>image/jpeg</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.png</td>
+     *          <td>Portable Network Graphics</td>
+     *          <td>image/png</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.pdf</td>
+     *          <td>Adobe Portable Document Format (PDF)</td>
+     *          <td>application/pdf</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.xls</td>
+     *          <td>Microsoft Excel</td>
+     *          <td>application/vnd.ms-excel</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.xlsx</td>
+     *          <td>Microsoft Excel (OpenXML)</td>
+     *          <td>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</td>
+     *      </tr>
+     *      <tr>
+     *          <td>.zip</td>
+     *          <td>ZIP archive</td>
+     *          <td>application/zip</td>
+     *      </tr>
+     *  </tbody>
+     * </table>
+     * There are more at
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">Common MIME types</a>
+     *
+     * @param file     - File to be attached
+     * @param mimeType - Mime Type of the file
+     * @param name     - Shown in report as name of attachment
+     */
+    public static void attachDataFile(File file, String mimeType, String name) {
+        new Attachment().withTitle(name).withType(mimeType).withFile(file).build();
     }
 
     /**
