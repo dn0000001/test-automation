@@ -7,6 +7,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -345,6 +346,12 @@ public class FileDownloader {
         }
 
         try {
+            AssertJUtil.assertThat(fileToDownload.getStatusLine())
+                    .as("Download File - Status Line")
+                    .isNotNull();
+            AssertJUtil.assertThat(fileToDownload.getStatusLine().getStatusCode())
+                    .as("Download File - Status Code")
+                    .isLessThan(HttpStatus.SC_BAD_REQUEST);
             FileUtils.copyInputStreamToFile(fileToDownload.getEntity().getContent(), downloadedFile);
         } catch (IOException io) {
             AssertJUtil.fail("Failed to copy the stream to the temp file to due exception:  %s", io.getMessage());
