@@ -2,6 +2,7 @@ package com.automation.common.ui.app.components;
 
 import com.automation.common.ui.app.components.validator.BasicEqualsValidator;
 import com.automation.common.ui.app.components.validator.Validator;
+import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.components.WebComponent;
@@ -11,6 +12,7 @@ public class TextBox extends WebComponent {
     private boolean sendKeysDelay;
     private int delayInMilliseconds;
     boolean clearUsingBackspace;
+    boolean fireOnChangeEvent;
     Validator validator;
 
     public TextBox() {
@@ -18,6 +20,7 @@ public class TextBox extends WebComponent {
         sendKeysDelay = false;
         delayInMilliseconds = 100;
         clearUsingBackspace = false;
+        fireOnChangeEvent = false;
     }
 
     public TextBox(WebElement element) {
@@ -25,6 +28,7 @@ public class TextBox extends WebComponent {
         sendKeysDelay = false;
         delayInMilliseconds = 100;
         clearUsingBackspace = false;
+        fireOnChangeEvent = false;
     }
 
     @Override
@@ -43,6 +47,10 @@ public class TextBox extends WebComponent {
             Utils.sendKeysWithDelay(getCoreElement(), delayInMilliseconds, value);
         } else {
             getCoreElement().sendKeys(value);
+        }
+
+        if (fireOnChangeEvent) {
+            JsUtils.change(getCoreElement());
         }
     }
 
@@ -75,6 +83,10 @@ public class TextBox extends WebComponent {
 
     public void setClearUsingBackspace(boolean clearUsingBackspace) {
         this.clearUsingBackspace = clearUsingBackspace;
+    }
+
+    public void setFireOnChangeEvent(boolean fireOnChangeEvent) {
+        this.fireOnChangeEvent = fireOnChangeEvent;
     }
 
     protected Validator getValidator() {
