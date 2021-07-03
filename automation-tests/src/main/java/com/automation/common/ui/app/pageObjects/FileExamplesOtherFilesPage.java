@@ -1,9 +1,12 @@
 package com.automation.common.ui.app.pageObjects;
 
+import com.lazerycode.selenium.filedownloader.DownloadData;
 import com.lazerycode.selenium.filedownloader.FileDownloader;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.DownloadUtils;
+import com.taf.automation.ui.support.util.JsUtils;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.http.HttpStatus;
 import org.openqa.selenium.support.FindBy;
@@ -62,6 +65,25 @@ public class FileExamplesOtherFilesPage extends PageObjectV2 {
 
         // For testing purposes, we are setting the both the prefix & suffix
         return downloader.downloadFile("auto-", ".csv");
+    }
+
+    /**
+     * Perform download of the CSV file using JavaScript
+     *
+     * @return the CSV file that was saved to a temporary file which needs to be deleted after
+     */
+    public File performDownloadOfCsvFileUsingJavaScript() {
+        String url = downloadSampleCsvFile.getAttribute("href");
+        DownloadData downloadData = JsUtils.executeGetRequestDownload(url);
+
+        // This is unnecessary and only for testing purposes
+        int status = downloadData.getStatus();
+        AssertJUtil.assertThat(status).as(LINK_HTTP_STATUS).isEqualTo(HttpStatus.SC_OK);
+
+        File csv = DownloadUtils.createTempFile("auto-", ".csv");
+        DownloadUtils.writeFile(csv, downloadData.getFile());
+
+        return csv;
     }
 
 }
