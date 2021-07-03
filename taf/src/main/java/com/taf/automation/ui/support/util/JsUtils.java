@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support.util;
 
 import com.google.gson.reflect.TypeToken;
+import com.lazerycode.selenium.filedownloader.DownloadData;
 import com.taf.automation.api.JsonUtils;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.events.Event;
@@ -11,8 +12,10 @@ import com.taf.automation.ui.support.exceptions.JavaScriptException;
 import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import net.jodah.failsafe.Failsafe;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -21,6 +24,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +38,8 @@ public class JsUtils {
     private static final String FOCUS = Utils.readResource("JS/Focus.js");
     private static final String GET_TEXT_ONLY_TOP_LEVEL = Utils.readResource("JS/GetTextOnlyTopLevel.js");
     private static final String EXECUTE_GET_REQUEST = Utils.readResource("JS/ExecuteGetRequest.js");
+    private static final String EXECUTE_GET_REQUEST_DOWNLOAD = Utils.readResource("JS/ExecuteGetRequestDownload.js");
+    private static final String EXECUTE_POST_REQUEST_DOWNLOAD = Utils.readResource("JS/ExecutePostRequestDownload.js");
     private static final String OVERLAPPING = Utils.readResource("JS/Overlapping.js");
     private static final String EXECUTE_STANDARD_EVENT = Utils.readResource("JS/ExecuteStandardEvent.js");
     private static final String EXECUTE_MOUSE_EVENT = Utils.readResource("JS/ExecuteMouseEvent.js");
@@ -283,6 +290,86 @@ public class JsUtils {
      */
     public static String executeGetRequest(String url) {
         return String.valueOf(execute(getWebDriver(), EXECUTE_GET_REQUEST, url));
+    }
+
+    /**
+     * Execute GET request to download file using specified URL
+     *
+     * @param url - URL to send GET request to
+     * @return DownloadData
+     */
+    public static DownloadData executeGetRequestDownload(String url) {
+        return executeGetRequestDownload(url, null);
+    }
+
+    /**
+     * Execute GET request to download file using specified URL
+     *
+     * @param url     - URL to send GET request to
+     * @param headers - The headers for the request  (Empty list or null is supported)
+     * @return DownloadData
+     */
+    public static DownloadData executeGetRequestDownload(String url, List<BasicNameValuePair> headers) {
+        String headersAsJson = JsonUtils.getGson().toJson(ObjectUtils.defaultIfNull(headers, new ArrayList<>()));
+        String result = (String) execute(getWebDriver(), EXECUTE_GET_REQUEST_DOWNLOAD, url, headersAsJson);
+        return JsonUtils.getGson().fromJson(result, DownloadData.class);
+    }
+
+    /**
+     * Execute POST request to download file using specified URL
+     *
+     * @param url      - URL to send POST request to
+     * @param headers  - The headers for the request  (Empty list or null is supported)
+     * @param formData - The name value pairs for the form data
+     * @return DownloadData
+     */
+    public static DownloadData executePostRequestDownload(
+            String url,
+            List<BasicNameValuePair> headers,
+            List<BasicNameValuePair> formData
+    ) {
+        return executePostRequestDownload(url, headers, formData, null);
+    }
+
+    /**
+     * Execute POST request to download file using specified URL
+     *
+     * @param url     - URL to send POST request to
+     * @param headers - The headers for the request  (Empty list or null is supported)
+     * @param body    - The request body to be used
+     * @return DownloadData
+     */
+    public static DownloadData executePostRequestDownload(String url, List<BasicNameValuePair> headers, String body) {
+        return executePostRequestDownload(url, headers, null, body);
+    }
+
+    /**
+     * Execute POST request to download file
+     *
+     * @param url      - URL to send POST request to
+     * @param headers  - The headers for the request.  (Empty list or null is supported)
+     * @param formData - The name value pairs for the form data to be used.  If not specified, then body needs to specified.
+     * @param body     - The request body to be used.  If not specified, then form data needs to be specified.
+     * @return DownloadData
+     */
+    public static DownloadData executePostRequestDownload(
+            String url,
+            List<BasicNameValuePair> headers,
+            List<BasicNameValuePair> formData,
+            String body
+    ) {
+        String headersAsJson = JsonUtils.getGson().toJson(ObjectUtils.defaultIfNull(headers, new ArrayList<>()));
+        boolean useBody = formData == null || formData.isEmpty();
+        String formDataAsJson = JsonUtils.getGson().toJson(ObjectUtils.defaultIfNull(formData, new ArrayList<>()));
+        String result = (String) execute(getWebDriver(),
+                EXECUTE_POST_REQUEST_DOWNLOAD,
+                url,
+                headersAsJson,
+                useBody,
+                formDataAsJson,
+                body
+        );
+        return JsonUtils.getGson().fromJson(result, DownloadData.class);
     }
 
     /**
