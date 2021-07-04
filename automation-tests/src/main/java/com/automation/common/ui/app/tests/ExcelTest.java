@@ -2,10 +2,10 @@ package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import com.taf.automation.ui.support.util.ExcelUtils;
 import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.util.Helper;
-import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -122,8 +122,8 @@ public class ExcelTest {
     public void validateMethodsGetSameData(@Optional(EXCEL_FILE) String dataSet, @Optional(SHEET_1) String worksheet) throws IOException {
         String[][] resourceData = ExcelUtils.getAllData(dataSet, worksheet);
 
-        File fileSource = File.createTempFile("excel", "");
-        FileUtils.copyInputStreamToFile(Thread.currentThread().getContextClassLoader().getResourceAsStream(dataSet), fileSource);
+        File fileSource = DownloadUtils.createTempFile("excel", "");
+        DownloadUtils.writeFile(Thread.currentThread().getContextClassLoader().getResourceAsStream(dataSet), fileSource);
         String[][] fileData = ExcelUtils.getAllData(fileSource.toURI().toURL().getFile(), worksheet);
         fileSource.deleteOnExit();
         AssertJUtil.assertThat(resourceData).as("Methods did not load data the same").isEqualTo(fileData);

@@ -8,9 +8,9 @@ import com.taf.automation.ui.support.csv.CsvUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.DomainObjectUtils;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpStatus;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -76,7 +76,7 @@ public class FileDownloaderTest extends TestNGBase {
         File csv = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingUri();
         csv.deleteOnExit();
         AssertJUtil.assertThat(csv).exists().isFile();
-        genericCsvValidations(csv);
+        genericCsvValidations(csv, "CSV from URI");
         return csv;
     }
 
@@ -85,31 +85,23 @@ public class FileDownloaderTest extends TestNGBase {
         File csv = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingJavaScript();
         csv.deleteOnExit();
         AssertJUtil.assertThat(csv).exists().isFile();
-        genericCsvValidations(csv);
+        genericCsvValidations(csv, "CSV using JavaScript");
         return csv;
     }
 
-    private void genericCsvValidations(File csv) {
+    private void genericCsvValidations(File csv, String attachmentName) {
         List<CSVRecord> records = new ArrayList<>();
         Map<String, Integer> headers = new HashMap<>();
         CsvUtils.read(csv.getAbsolutePath(), records, headers);
         AssertJUtil.assertThat(records).as("Records").isNotEmpty();
         AssertJUtil.assertThat(headers).as("Headers").isNotEmpty();
-        ApiUtils.attachDataFile(csv, "text/csv", "CSV using JavaScript");
+        ApiUtils.attachDataFile(csv, "text/csv", attachmentName);
     }
 
     @Step("Validate CSV Files Are Equal")
     private void validateCsvFilesAreEqual(File csvUri, File csvJs) {
-        Boolean result;
-        try {
-            result = FileUtils.contentEquals(csvUri, csvUri);
-        } catch (Exception ex) {
-            result = null;
-        }
-
-        AssertJUtil.assertThat(result)
-                .as("Error occurred reading the files").isNotNull()
-                .as("CSV URI vs. CSV JS").isTrue();
+        boolean result = DownloadUtils.contentEquals(csvUri, csvJs);
+        AssertJUtil.assertThat(result).as("CSV URI vs. CSV JS").isTrue();
     }
 
 }

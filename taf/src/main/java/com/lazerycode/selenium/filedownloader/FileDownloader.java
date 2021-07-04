@@ -2,7 +2,7 @@ package com.lazerycode.selenium.filedownloader;
 
 import com.taf.automation.api.clients.FileDownloaderClient;
 import com.taf.automation.ui.support.util.AssertJUtil;
-import org.apache.commons.io.FileUtils;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -22,6 +22,7 @@ import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -40,6 +41,7 @@ public class FileDownloader {
     private final WebDriver driver;
     private boolean followRedirects = true;
     private boolean mimicWebDriverCookieState = true;
+    private int successfulStatusCodes = HttpStatus.SC_BAD_REQUEST;
     private RequestMethod httpRequestMethod = RequestMethod.GET;
     private final List<Header> headers = new ArrayList<>();
     private URI fileURI;
@@ -95,6 +97,18 @@ public class FileDownloader {
      * <LI>
      * A common HttpEntity that might be used is UrlEncodedFormEntity for forms.
      * There exists the method <B>getFormHttpEntity</B> in the class <B>ApiUtils</B> that may be of use
+     * </LI>
+     * <LI>
+     * For JSON use StringEntity. Example usage:<BR>
+     * <CODE>
+     * HttpEntity httpEntity = new StringEntity(JsonUtils.getGson().toJson(entity));
+     * </CODE>
+     * </LI>
+     * <LI>
+     * For XML use StringEntity. Example usage:<BR>
+     * <CODE>
+     * HttpEntity httpEntity = new StringEntity(new XStream().toXML(entity));
+     * </CODE>
      * </LI>
      * </OL>
      *
@@ -225,6 +239,18 @@ public class FileDownloader {
     }
 
     /**
+     * Set the status codes that are considered successful<BR>
+     * <B>Note: </B> The default status code for success is 400 (HttpStatus.SC_BAD_REQUEST)
+     *
+     * @param successfulStatusCodes - All status codes that are less than the value are considered successful
+     * @return FileDownloader
+     */
+    public FileDownloader withSuccessfulStatusCodes(int successfulStatusCodes) {
+        this.successfulStatusCodes = successfulStatusCodes;
+        return this;
+    }
+
+    /**
      * Load in all the cookies WebDriver currently knows about so that we can mimic the browser cookie state
      *
      * @param seleniumCookieSet Set&lt;Cookie&gt;
@@ -330,12 +356,7 @@ public class FileDownloader {
      */
     @SuppressWarnings("java:S2259")
     public File downloadFile(String prefix, String suffix) {
-        File downloadedFile = null;
-        try {
-            downloadedFile = File.createTempFile(prefix == null ? "download" : prefix, suffix);
-        } catch (IOException io) {
-            AssertJUtil.fail("Failed to create temp file to due exception:  %s", io.getMessage());
-        }
+        File downloadedFile = DownloadUtils.createTempFile(prefix == null ? "download" : prefix, suffix);
 
         HttpResponse fileToDownload = null;
         try {
@@ -345,23 +366,26 @@ public class FileDownloader {
             AssertJUtil.fail("Failed to download file to due exception:  %s", io.getMessage());
         }
 
+        AssertJUtil.assertThat(fileToDownload.getStatusLine())
+                .as("Download File - Status Line")
+                .isNotNull();
+        AssertJUtil.assertThat(fileToDownload.getStatusLine().getStatusCode())
+                .as("Download File - Status Code")
+                .isLessThan(successfulStatusCodes);
+
+        InputStream source;
+        String error = "";
         try {
-            AssertJUtil.assertThat(fileToDownload.getStatusLine())
-                    .as("Download File - Status Line")
-                    .isNotNull();
-            AssertJUtil.assertThat(fileToDownload.getStatusLine().getStatusCode())
-                    .as("Download File - Status Code")
-                    .isLessThan(HttpStatus.SC_BAD_REQUEST);
-            FileUtils.copyInputStreamToFile(fileToDownload.getEntity().getContent(), downloadedFile);
+            source = fileToDownload.getEntity().getContent();
         } catch (IOException io) {
-            AssertJUtil.fail("Failed to copy the stream to the temp file to due exception:  %s", io.getMessage());
-        } finally {
-            try {
-                fileToDownload.getEntity().getContent().close();
-            } catch (IOException ignore) {
-                // Ignore
-            }
+            source = null;
+            error = io.getMessage();
         }
+
+        AssertJUtil.assertThat(source)
+                .as("Could not get Content of Download File due to:  %s", error)
+                .isNotNull();
+        DownloadUtils.writeFile(source, downloadedFile);
 
         return downloadedFile;
     }

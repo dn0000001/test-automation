@@ -4,11 +4,11 @@ import com.taf.automation.api.html.HtmlUtils;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Utils;
 import datainstiller.data.DataPersistence;
 import io.appium.java_client.AppiumDriver;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
@@ -21,7 +21,6 @@ import org.testng.annotations.BeforeTest;
 import ui.auto.core.pagecomponent.PageObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
@@ -121,16 +120,12 @@ public class TestNGBaseWithoutListeners {
         }
 
         String driverPath = System.getProperty("user.home") + subFolder + driverName + extension;
-        try {
-            File fileTarget = new File(driverPath);
-            File fileSource = File.createTempFile("driverName", "");
-            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream(resourceSubFolder + driverName + extension), fileSource);
-            if (!FileUtils.contentEquals(fileSource, fileTarget)) {
-                FileUtils.copyFile(fileSource, fileTarget);
-                fileTarget.setExecutable(true, true);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        File fileTarget = new File(driverPath);
+        File fileSource = DownloadUtils.createTempFile("driverName", "");
+        DownloadUtils.writeFile(getClass().getResourceAsStream(resourceSubFolder + driverName + extension), fileSource);
+        if (!DownloadUtils.contentEquals(fileSource, fileTarget)) {
+            DownloadUtils.copyFile(fileSource, fileTarget);
+            fileTarget.setExecutable(true, true);
         }
 
         System.setProperty(driverPropertyName, driverPath);

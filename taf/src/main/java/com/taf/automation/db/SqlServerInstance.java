@@ -3,7 +3,7 @@ package com.taf.automation.db;
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.CryptoUtils;
-import org.apache.commons.io.FileUtils;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -77,12 +77,12 @@ public class SqlServerInstance extends DBInstance {
             LOG.info("Setting up for Integrated Security");
 
             URL source = Thread.currentThread().getContextClassLoader().getResource(getResource());
-            File fileSource = File.createTempFile("sqlDriver", "");
-            FileUtils.copyURLToFile(source, fileSource);
+            File fileSource = DownloadUtils.createTempFile("sqlDriver", "");
+            DownloadUtils.copyURLToFile(source, fileSource);
 
             File destination = new File(INSTALL_DLL + SEPARATOR + DLL);
-            if (!FileUtils.contentEquals(fileSource, destination)) {
-                FileUtils.copyFile(fileSource, destination);
+            if (!DownloadUtils.contentEquals(fileSource, destination)) {
+                DownloadUtils.copyFile(fileSource, destination);
                 destination.setExecutable(true, true);
                 LOG.info("Copied DLL to location:  {}{}{}", INSTALL_DLL, SEPARATOR, DLL);
             }
