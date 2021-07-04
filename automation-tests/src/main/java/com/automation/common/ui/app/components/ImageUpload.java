@@ -2,8 +2,8 @@ package com.automation.common.ui.app.components;
 
 import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import com.taf.automation.ui.support.util.Utils;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.LocalFileDetector;
@@ -12,7 +12,6 @@ import org.openqa.selenium.remote.RemoteWebElement;
 import ui.auto.core.pagecomponent.PageComponentNoDefaultAction;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,12 +62,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
             //
             // Need to copy the resource from the JAR to the local file system such that it can be uploaded
             //
-            try {
-                FileUtils.copyInputStreamToFile(is, file);
-                is.close();
-            } catch (IOException ignored) {
-                //
-            }
+            DownloadUtils.writeFile(is, file);
 
             //
             // Only necessary if using Grid
@@ -82,7 +76,7 @@ public class ImageUpload extends PageComponentNoDefaultAction {
             //
             inputUploadFile.sendKeys(file.getAbsolutePath());
             List<WebElement> images = driver.findElements(By.cssSelector(".spinner"));
-            if (images.size() > 0) {
+            if (!images.isEmpty()) {
                 Utils.waitForElementToHide(images.get(0));
             }
 

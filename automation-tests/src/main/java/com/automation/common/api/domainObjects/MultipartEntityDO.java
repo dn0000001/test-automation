@@ -3,17 +3,16 @@ package com.automation.common.api.domainObjects;
 import com.taf.automation.api.MicroServiceDomainObject;
 import com.taf.automation.api.clients.MicroServiceResponse;
 import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import com.taf.automation.ui.support.util.Helper;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.message.BasicStatusLine;
 import ru.yandex.qatools.allure.annotations.Step;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 @SuppressWarnings({"java:S110", "java:S3252"})
@@ -40,13 +39,7 @@ public class MultipartEntityDO extends MicroServiceDomainObject {
                 InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
                 File file = new File(filePath);
                 AssertJUtil.assertThat(is).as("Image file '" + filePath + "' was not found!").isNotNull();
-                try {
-                    FileUtils.copyInputStreamToFile(is, file);
-                    is.close();
-                } catch (IOException ignored) {
-                    //
-                }
-
+                DownloadUtils.writeFile(is, file);
                 builder.addBinaryBody("file", file);
             }
 

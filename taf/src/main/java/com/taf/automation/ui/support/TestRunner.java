@@ -1,6 +1,7 @@
 package com.taf.automation.ui.support;
 
 import com.taf.automation.ui.support.testng.TestParameterValidator;
+import com.taf.automation.ui.support.util.DownloadUtils;
 import com.thoughtworks.xstream.XStream;
 import io.qameta.allure.Commands;
 import io.qameta.allure.option.ConfigOptions;
@@ -13,7 +14,6 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.openqa.selenium.net.PortProber;
-import org.testng.ITestNGListener;
 import org.testng.TestNG;
 import org.testng.reporters.Files;
 import ru.yandex.qatools.commons.model.Environment;
@@ -50,14 +50,14 @@ public class TestRunner {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(suite);
             File file = new File(suite);
             if (is != null) {
-                FileUtils.copyInputStreamToFile(is, file);
+                DownloadUtils.writeFile(is, file);
             } else if (!file.exists()) {
                 throw new IOException("Suite file '" + suite + "' does not exists on the file system!");
             }
         }
 
         TestNG testNg = new TestNG();
-        testNg.addListener((ITestNGListener) new TestParameterValidator());
+        testNg.addListener(new TestParameterValidator());
         testNg.setTestSuites(suites);
         testNg.setSuiteThreadPoolSize(1);
         testNg.run();
@@ -65,11 +65,11 @@ public class TestRunner {
         return testNg.getStatus();
     }
 
-    public void generateReport() throws ZipException, IOException {
+    public void generateReport() throws ZipException {
         generateReport(reportFolder, resultsFolder);
     }
 
-    public void generateReport(String outputFolder, String... inputFolders) throws ZipException, IOException {
+    public void generateReport(String outputFolder, String... inputFolders) throws ZipException {
         Path reportDirectory = new File(outputFolder).toPath();
 
         List<Path> resultsDirectories = new ArrayList<>();
@@ -98,10 +98,10 @@ public class TestRunner {
      * </LI>
      * </OL>
      */
-    private void extractFilesForAllure2ReportGeneration() throws ZipException, IOException {
+    private void extractFilesForAllure2ReportGeneration() throws ZipException {
         URL source = Thread.currentThread().getContextClassLoader().getResource(ALLURE2_CLI);
         File destination = new File(REPORT_CLI + SEPARATOR + ALLURE2_CLI);
-        FileUtils.copyURLToFile(source, destination);
+        DownloadUtils.copyURLToFile(source, destination);
         ZipFile zipFile = new ZipFile(destination);
         zipFile.extractAll(REPORT_CLI.getAbsolutePath());
     }
