@@ -1,16 +1,16 @@
 package com.taf.automation.ui.support.csv;
 
 import com.taf.automation.api.ApiDomainObject;
+import com.taf.automation.ui.support.DomainObject;
+import com.taf.automation.ui.support.testng.Attachment;
+import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.DataInstillerUtils;
-import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.util.FilloUtils;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.RegExUtils;
 import com.taf.automation.ui.support.util.Utils;
-import com.taf.automation.ui.support.testng.Attachment;
-import com.taf.automation.ui.support.testng.TestNGBase;
-import com.taf.automation.ui.support.testng.TestNGBaseWithoutListeners;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
@@ -83,13 +83,15 @@ public class CsvUtils {
      * @param headers          - Updated with the CSV header record
      */
     public static void read(String resourceFilePath, List<CSVRecord> records, Map<String, Integer> headers) {
-        try {
-            InputStream in = openInputStream(resourceFilePath);
-            InputStreamReader reader = new InputStreamReader(in);
+        try (
+                InputStream in = openInputStream(resourceFilePath);
+                InputStreamReader reader = new InputStreamReader(in)
+        ) {
             CSVFormat csvFileFormat = CSVFormat.EXCEL.withHeader();
             CSVParser csvFileParser = new CSVParser(reader, csvFileFormat);
             headers.putAll(csvFileParser.getHeaderMap());
             records.addAll(csvFileParser.getRecords());
+            csvFileParser.close();
         } catch (Exception ex) {
             AssertJUtil.fail("Could not read records from CSV file due to error:  " + ex.getMessage());
         }
@@ -409,8 +411,8 @@ public class CsvUtils {
         read(csvDataSet, records, headers);
         Map<String, Integer> aliases = getAliasHeaders(headers);
 
-        for (CSVRecord record : records) {
-            tests.add(new Object[]{new CsvTestData(record, aliases)});
+        for (CSVRecord theRecord : records) {
+            tests.add(new Object[]{new CsvTestData(theRecord, aliases)});
         }
 
         if (StringUtils.isNotBlank(runColumnName)) {
@@ -442,8 +444,8 @@ public class CsvUtils {
         FilloUtils.read(excelDataSet, workSheet, records, headers);
         Map<String, Integer> aliases = getAliasHeaders(headers);
 
-        for (CSVRecord record : records) {
-            tests.add(new Object[]{new CsvTestData(record, aliases)});
+        for (CSVRecord theRecord : records) {
+            tests.add(new Object[]{new CsvTestData(theRecord, aliases)});
         }
 
         if (StringUtils.isNotBlank(runColumnName)) {

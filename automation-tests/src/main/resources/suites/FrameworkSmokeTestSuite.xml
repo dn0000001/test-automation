@@ -406,6 +406,14 @@
         </classes>
     </test>
 
+    <test name="Excel 2013 Test">
+        <parameter name="excel" value="data/ui/excel-test-cases.xlsx"/>
+        <parameter name="worksheet" value="Sheet1"/>
+        <classes>
+            <class name="com.automation.common.ui.app.tests.Excel2013Test"/>
+        </classes>
+    </test>
+
     <test name="Basic MutationObserver Test">
         <classes>
             <class name="com.automation.common.ui.app.tests.BasicMutationObserverTest"/>
@@ -476,16 +484,6 @@
     <test name="Change Apps Test">
         <classes>
             <class name="com.automation.common.mobile.tests.ChangeAppsTest"/>
-        </classes>
-    </test>
-    -->
-
-    <!--
-    <test name="Excel 2013 Test">
-        <parameter name="excel" value="data/ui/excel-test-cases.xlsx"/>
-        <parameter name="worksheet" value="Sheet1"/>
-        <classes>
-            <class name="com.automation.common.ui.app.tests.Excel2013Test"/>
         </classes>
     </test>
     -->

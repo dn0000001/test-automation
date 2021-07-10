@@ -3,11 +3,11 @@ package com.automation.common.ui.app.pageObjects;
 import com.automation.common.ui.app.components.Search;
 import com.automation.common.ui.app.domainObjects.CsvColumnMapping;
 import com.taf.automation.ui.support.AliasedString;
-import com.taf.automation.ui.support.util.JsUtils;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.csv.CsvTestData;
 import com.taf.automation.ui.support.csv.CsvUtils;
+import com.taf.automation.ui.support.util.JsUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.commons.csv.CSVRecord;
@@ -15,6 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.WebComponent;
+import ui.auto.core.data.DataTypes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,6 +105,10 @@ public class TNHC_LandingPage extends PageObjectV2 {
         return player;
     }
 
+    public String getDataPlayerWithAliases() {
+        return player.getData(DataTypes.Data, false);
+    }
+
     @Step("Set Player")
     public void setPlayer() {
         setElementValueV2(player);
@@ -113,6 +118,10 @@ public class TNHC_LandingPage extends PageObjectV2 {
         String sJS = "document.getElementById('player').value = '" + player.getData() + "';";
         JsUtils.execute(getDriver(), sJS);
         player.validateData();
+    }
+
+    public String getDataTeamWithAliases() {
+        return team.getData(DataTypes.Data, false);
     }
 
     public void setTeam() {

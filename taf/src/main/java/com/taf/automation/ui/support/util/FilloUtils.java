@@ -111,8 +111,9 @@ public class FilloUtils {
         String[][] data;
         String error = "";
 
+        Connection connection = null;
         try {
-            Connection connection = getConnection(resourceFilePath);
+            connection = getConnection(resourceFilePath);
             Recordset records = connection.executeQuery("select * from \"" + workSheet + "\"");
             int size = records.getCount();
             List<String> headers = records.getFieldNames();
@@ -128,6 +129,10 @@ public class FilloUtils {
         } catch (Exception ex) {
             error = ex.getMessage();
             data = null;
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
         }
 
         AssertJUtil.assertThat(data).as("Could not load excel file due to error:  " + error).isNotNull();
@@ -143,15 +148,16 @@ public class FilloUtils {
      * @param records          - Updated with the Excel records
      * @param headers          - Updated with the Excel header record
      */
-    @SuppressWarnings("squid:S2259")
+    @SuppressWarnings({"squid:S2259", "java:S3011"})
     public static void read(
             String resourceFilePath,
             String workSheet,
             List<CSVRecord> records,
             Map<String, Integer> headers
     ) {
+        Connection connection = null;
         try {
-            Connection connection = getConnection(resourceFilePath);
+            connection = getConnection(resourceFilePath);
             Recordset excelRecords = connection.executeQuery("select * from \"" + workSheet + "\"");
 
             List<String> excelHeaders = excelRecords.getFieldNames();
@@ -172,12 +178,16 @@ public class FilloUtils {
                     values[i] = excelRecords.getField(excelHeaders.get(i));
                 }
 
-                CSVRecord record = constructor.newInstance(values, headers, comment, recordNumber, characterPosition);
-                records.add(record);
+                CSVRecord theRecord = constructor.newInstance(values, headers, comment, recordNumber, characterPosition);
+                records.add(theRecord);
                 index++;
             }
         } catch (Exception ex) {
             AssertJUtil.fail("Could not read records from Excel file due to error:  " + ex.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
@@ -218,6 +228,7 @@ public class FilloUtils {
      * @param outputRecords - Records to be appended
      * @param totals        - For each list in the object, the total number of items there needs to be
      */
+    @SuppressWarnings("java:S4087")
     private static void appendToExcel(
             String filename,
             String workSheet,
@@ -258,6 +269,7 @@ public class FilloUtils {
      * @param filename     - Excel file where new sheet should be added
      * @param newSheetName - New Sheet Name
      */
+    @SuppressWarnings("java:S4087")
     public static void appendSheetToExcel(String filename, String newSheetName) {
         AssertJUtil.assertThat(newSheetName).as("Unable to add null sheetName to file[" + filename + "]").isNotBlank();
         try (
@@ -378,6 +390,7 @@ public class FilloUtils {
      * @param groupRows - List of rows to group
      * @param headerRow - true if there is a header row in the Excel file
      */
+    @SuppressWarnings("java:S4087")
     public static void groupRows(
             String filename,
             String workSheet,
