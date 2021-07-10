@@ -1,11 +1,14 @@
 package com.taf.automation.ui.support.util;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 
 @SuppressWarnings("java:S3252")
 public class DownloadUtils {
@@ -104,6 +107,28 @@ public class DownloadUtils {
             AssertJUtil.fail("Failed to read the files to due exception:  %s", io.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Extract Zip file contents to temporary folder with prefix
+     *
+     * @param zip    - Zip file to extract contents
+     * @param prefix - the prefix string to be used in generating the temporary directory's name; may be null
+     * @return temporary folder that needs to be deleted when complete (Use FileUtils.deleteQuietly)
+     */
+    public static File extractZipToTemp(File zip, String prefix) {
+        File tempDir = null;
+
+        try {
+            tempDir = Files.createTempDirectory(prefix).toFile();
+            ZipFile zipFile = new ZipFile(zip);
+            zipFile.extractAll(tempDir.getAbsolutePath());
+        } catch (ZipException | IOException ex) {
+            FileUtils.deleteQuietly(tempDir);
+            AssertJUtil.fail("Failed to extract zip contents due to exception:  %s", ex.getMessage());
+        }
+
+        return tempDir;
     }
 
 }

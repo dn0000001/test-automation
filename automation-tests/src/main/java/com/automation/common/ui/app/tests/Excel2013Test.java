@@ -2,10 +2,12 @@ package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.domainObjects.CsvColumnMapping;
 import com.automation.common.ui.app.domainObjects.TNHC_DO;
-import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.csv.ColumnMapper;
 import com.taf.automation.ui.support.csv.CsvTestData;
 import com.taf.automation.ui.support.csv.CsvUtils;
 import com.taf.automation.ui.support.testng.TestNGBase;
+import com.taf.automation.ui.support.util.AssertJUtil;
+import org.apache.commons.csv.CSVRecord;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
@@ -13,6 +15,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Severity;
+import ru.yandex.qatools.allure.annotations.Step;
 import ru.yandex.qatools.allure.annotations.Stories;
 import ru.yandex.qatools.allure.model.SeverityLevel;
 
@@ -46,10 +49,15 @@ public class Excel2013Test extends TestNGBase {
     private void runWrapper(CsvTestData csvTestData) {
         TNHC_DO tnhc = new TNHC_DO(getContext());
         CsvUtils.initializeDataAndAttach(tnhc, csvTestData);
+        validateRecord("Player", csvTestData.getRecord(), CsvColumnMapping.PLAYER, tnhc.getLanding().getDataPlayerWithAliases());
+        validateRecord("Team", csvTestData.getRecord(), CsvColumnMapping.TEAM, tnhc.getLanding().getDataTeamWithAliases());
+    }
 
-        getContext().getDriver().get(TestProperties.getInstance().getURL());
-        tnhc.getLanding().setPlayer();
-        tnhc.getLanding().setTeam();
+    @SuppressWarnings("java:S3252")
+    @Step("Validate Excel data for {0} loaded properly into Page Object")
+    private void validateRecord(String description, CSVRecord csv, ColumnMapper column, String pageObjectDataWithAliases) {
+        String expectedWithAliases = CsvUtils.isNotBlank(csv, column) ? csv.get(column.getColumnName()) : null;
+        AssertJUtil.assertThat(pageObjectDataWithAliases).as(description).isEqualTo(expectedWithAliases);
     }
 
 }
