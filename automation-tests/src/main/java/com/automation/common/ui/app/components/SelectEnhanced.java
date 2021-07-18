@@ -227,10 +227,6 @@ public class SelectEnhanced extends PageComponent {
     }
 
     private void setValueAttempt() {
-        // Selenium allows disabled drop downs to still be set.
-        // So, to prevent this we will assert that it is enabled before setting the value
-        AssertJUtil.assertThat(isEnabled()).as("Select was disabled").isTrue();
-
         if (getSelection() == Selection.VISIBLE_TEXT) {
             setValueUsingVisibleText();
             return;
@@ -295,7 +291,12 @@ public class SelectEnhanced extends PageComponent {
 
     private void makeOptionSelected(WebElement option, String reason) {
         if (!option.isSelected()) {
-            AssertJUtil.assertThat(option.isEnabled()).as(reason).isTrue();
+            // Selenium allows disabled drop downs to still be set.
+            // So, to prevent this we will assert that the core element is enabled before setting the value
+            AssertJUtil.assertThat(isEnabled()).as("Select was disabled").isTrue();
+
+            // It is possible the core element was enabled but the option was disabled
+            AssertJUtil.assertThat(option).as(reason).isEnabled();
             option.click();
         }
     }
