@@ -186,4 +186,14 @@ public class RadioButtonGroup<T extends PageComponent> extends PageComponent {
         return all;
     }
 
+    public boolean hasOption(String option) {
+        for (T labelOption : getAllOptions()) {
+            if (isMatchedOption(labelOption.getText(), option)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
