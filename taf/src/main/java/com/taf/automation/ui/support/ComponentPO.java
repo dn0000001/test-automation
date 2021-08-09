@@ -12,11 +12,11 @@ public abstract class ComponentPO extends PageObjectV2 {
     @XStreamOmitField
     private Map<String, String> substitutions;
 
-    public ComponentPO() {
+    protected ComponentPO() {
         super();
     }
 
-    public ComponentPO(TestContext context) {
+    protected ComponentPO(TestContext context) {
         // Note: When using this constructor there will be no substitutions (the variable is null at this point)
         // as such it will always be a normal page object.  So, no special logic is necessary.
         super(context);
