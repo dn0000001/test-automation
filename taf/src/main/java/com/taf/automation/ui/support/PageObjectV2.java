@@ -7,6 +7,7 @@ import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Utils;
 import io.appium.java_client.AppiumDriver;
 import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.RetryPolicy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -252,20 +253,25 @@ public class PageObjectV2 extends PageObjectModel {
         setElementValueV2(component);
     }
 
+    protected void setElementValueV2(PageComponent component) {
+        setElementValueV2(component, Utils.getWriteValueRetryPolicy());
+    }
+
     /**
      * Set value and validate using component's validation method<BR>
      * <B>Notes:</B><BR>
      * 1) Similar to the PageObject.setElementValue except validation occurs using component's validation method<BR>
      *
-     * @param component - Component to set value and validate
+     * @param component   - Component to set value and validate
+     * @param retryPolicy - Retry Policy to use
      */
-    protected void setElementValueV2(PageComponent component) {
+    protected void setElementValueV2(PageComponent component, RetryPolicy<Object> retryPolicy) {
         if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
             return;
         }
 
         DataTypes validationMethod = (component.getData(DataTypes.Expected, true) != null) ? DataTypes.Expected : DataTypes.Data;
-        setElementValueV2(component, validationMethod, 3);
+        setElementValueV2(component, validationMethod, 3, retryPolicy);
     }
 
     /**
@@ -277,8 +283,22 @@ public class PageObjectV2 extends PageObjectModel {
      * @param validationMethod - Validation Method (if null then no validation is performed)
      * @param tries            - Number of attempts to set value &amp; validate
      */
-    @SuppressWarnings("squid:S00112")
     protected void setElementValueV2(PageComponent component, DataTypes validationMethod, int tries) {
+        setElementValueV2(component, validationMethod, tries, Utils.getWriteValueRetryPolicy());
+    }
+
+    /**
+     * Set value and validate using component's validation method<BR>
+     * <B>Notes:</B><BR>
+     * 1) Similar to the PageObject.setElementValue except validation occurs using component's validation method<BR>
+     *
+     * @param component        - Component to set value and validate
+     * @param validationMethod - Validation Method (if null then no validation is performed)
+     * @param tries            - Number of attempts to set value &amp; validate
+     * @param retryPolicy      - Retry Policy to use
+     */
+    @SuppressWarnings("squid:S00112")
+    protected void setElementValueV2(PageComponent component, DataTypes validationMethod, int tries, RetryPolicy<Object> retryPolicy) {
         if (component == null || component.getData(DataTypes.Data, true) == null || component.getData(DataTypes.Data, true).isEmpty()) {
             return;
         }
@@ -287,7 +307,7 @@ public class PageObjectV2 extends PageObjectModel {
         int attempt = 0;
         boolean validated;
         do {
-            Failsafe.with(Utils.getWriteValueRetryPolicy())
+            Failsafe.with(retryPolicy)
                     .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                     .run(component::setValue);
             if (validationMethod != null) {
