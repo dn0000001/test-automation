@@ -56,6 +56,9 @@ public class AddRemoveElementsPage extends PageObjectV2 {
         List<Criteria> criteria = new ArrayList<>();
         criteria.add(CriteriaMaker.forLambdaExpression(this::isAddElementForLambdaExpression));
         Helper.assertThat(getContext().getDriver(), criteria);
+
+        // Use custom expected condition that takes a lambda expression
+        Utils.until(ExpectedConditionsUtil.isTrue(this::isAddElementForLambdaExpression));
     }
 
     private boolean isAddElementForLambdaExpression() {

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 /**
@@ -910,6 +911,30 @@ public class ExpectedConditionsUtil {
             @Override
             public String toString() {
                 return "component to be displayed using locator:  " + component.getLocator();
+            }
+        };
+    }
+
+    /**
+     * An expectation for checking a condition is met
+     *
+     * @param condition - Callable/Lambda Expression to execute
+     * @return true when the condition is met, otherwise an exception when timeout is reached
+     */
+    public static ExpectedCondition<Boolean> isTrue(final Callable<Boolean> condition) {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                try {
+                    return condition.call();
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "condition to be true";
             }
         };
     }
