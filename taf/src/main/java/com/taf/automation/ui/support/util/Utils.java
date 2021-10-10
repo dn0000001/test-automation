@@ -918,10 +918,23 @@ public class Utils {
      * @return WebElement that was clicked
      */
     public static WebElement clickWhenReady(By locator) {
-        return Failsafe.with(getClickRetryPolicy())
+        return clickWhenReady(locator, false);
+    }
+
+    /**
+     * Click the element when it is ready
+     *
+     * @param locator  - Locator to find element
+     * @param negative - true to use the negative WebDriverWait, else use the default WebDriverWait
+     * @return WebElement that was clicked
+     */
+    public static WebElement clickWhenReady(By locator, boolean negative) {
+        RetryPolicy<Object> retryPolicy = negative ? getNegativePollingRetryPolicy() : getClickRetryPolicy();
+        WebDriverWait wait = negative ? getNegativeWebDriverWait() : getWebDriverWait();
+        return Failsafe.with(retryPolicy)
                 .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .get(() -> {
-                    WebElement element = until(ExpectedConditionsUtil.ready(locator));
+                    WebElement element = wait.until(ExpectedConditionsUtil.ready(locator));
                     element.click();
                     return element;
                 });
