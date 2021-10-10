@@ -523,7 +523,21 @@ public class PageObjectV2 extends PageObjectModel {
      * controlling the click logic and sometimes this may not be the case based on the component
      */
     protected WebElement click(PageComponent component) {
-        return click(component, new HashMap<>());
+        return click(component, false);
+    }
+
+    /**
+     * Click component when it is ready.  Method uses a retry policy to handle
+     * click specific exceptions (ElementClickInterceptedException and ElementNotInteractableException) if they occur
+     *
+     * @param component - Component to click when ready
+     * @param negative  - true to use the negative WebDriverWait, else use the default WebDriverWait
+     * @return the (core) element using component locator which in most cases will have been clicked but the component
+     * is controlling the click logic and sometimes this may not be the case based on the component
+     */
+    protected WebElement click(PageComponent component, boolean negative) {
+        RetryPolicy<Object> retryPolicy = negative ? Utils.getNegativePollingRetryPolicy() : Utils.getClickRetryPolicy();
+        return click(component, new HashMap<>(), retryPolicy);
     }
 
     /**
@@ -536,11 +550,40 @@ public class PageObjectV2 extends PageObjectModel {
      * is controlling the click logic and sometimes this may not be the case based on the component
      */
     protected WebElement click(PageComponent component, Map<String, String> substitutions) {
+        return click(component, substitutions, false);
+    }
+
+    /**
+     * Click component when it is ready.  Method uses a retry policy to handle
+     * click specific exceptions (ElementClickInterceptedException and ElementNotInteractableException) if they occur
+     *
+     * @param component     - Component to click when ready
+     * @param substitutions - Substitutions map of keys/values
+     * @param negative      - true to use the negative WebDriverWait, else use the default WebDriverWait
+     * @return the (core) element using component locator which in most cases will have been clicked but the component
+     * is controlling the click logic and sometimes this may not be the case based on the component
+     */
+    protected WebElement click(PageComponent component, Map<String, String> substitutions, boolean negative) {
+        RetryPolicy<Object> retryPolicy = negative ? Utils.getNegativePollingRetryPolicy() : Utils.getClickRetryPolicy();
+        return click(component, substitutions, retryPolicy);
+    }
+
+    /**
+     * Click component when it is ready.  Method uses a retry policy to handle
+     * click specific exceptions (ElementClickInterceptedException and ElementNotInteractableException) if they occur
+     *
+     * @param component     - Component to click when ready
+     * @param substitutions - Substitutions map of keys/values
+     * @param retryPolicy   - Retry Policy to use
+     * @return the (core) element using component locator which in most cases will have been clicked but the component
+     * is controlling the click logic and sometimes this may not be the case based on the component
+     */
+    protected WebElement click(PageComponent component, Map<String, String> substitutions, RetryPolicy<Object> retryPolicy) {
         AssertJUtil.assertThat(component).as("Click Component").isNotNull();
         AssertJUtil.assertThat(component.getLocator()).as("Click Component's Locator").isNotNull();
         MutableInt staleErrorFailureCount = new MutableInt();
         AtomicReference<WebElement> element = new AtomicReference<>();
-        Failsafe.with(Utils.getClickRetryPolicy())
+        Failsafe.with(retryPolicy)
                 .onFailure(ex -> AssertJUtil.fail(ExceptionUtils.clean(ex.getFailure().getMessage())))
                 .run(() -> {
                     try {
