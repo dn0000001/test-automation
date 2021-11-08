@@ -79,6 +79,14 @@ public class Navigation {
         toURL("Primefaces Dashboard", props.getCustom("primefaces-dashboard-url", null), cleanCookies);
     }
 
+    public void toPrimefacesBasicCheckbox(boolean cleanCookies) {
+        toURL("Primefaces - Basic Checkbox", props.getCustom("primefaces-basic-checkbox-url", null), cleanCookies);
+    }
+
+    public void toPrimefacesSelectOneRadio(boolean cleanCookies) {
+        toURL("Primefaces - SelectOneRadio", props.getCustom("primefaces-select-one-radio-url", null), cleanCookies);
+    }
+
     public void toRoboFormFill(boolean cleanCookies) {
         toURL("RoboForm - Fill", props.getCustom("roboform-fill-url", null), cleanCookies);
     }

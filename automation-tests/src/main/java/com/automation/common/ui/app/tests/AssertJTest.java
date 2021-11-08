@@ -5,8 +5,8 @@ import com.automation.common.ui.app.components.UnitTestComponent;
 import com.automation.common.ui.app.components.UnitTestWebElement;
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
 import com.automation.common.ui.app.pageObjects.Navigation;
+import com.automation.common.ui.app.pageObjects.PrimeFacesSelectManyCheckboxPage;
 import com.automation.common.ui.app.pageObjects.RoboFormLoginPage;
-import com.automation.common.ui.app.pageObjects.SeleniumEasyCheckBoxDemoPage;
 import com.taf.automation.asserts.AssertJCondition;
 import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.Rand;
@@ -250,9 +250,9 @@ public class AssertJTest extends TestNGBase {
         RoboFormLoginPage roboFormLoginPage = new RoboFormLoginPage(getContext());
         roboFormLoginPage.disableFieldsAndValidateCannotSetAssertJ();
 
-        new Navigation(getContext()).toSeleniumEasyBasicCheckbox(Utils.isCleanCookiesSupported());
-        SeleniumEasyCheckBoxDemoPage seleniumEasyCheckBoxDemoPage = new SeleniumEasyCheckBoxDemoPage(getContext());
-        seleniumEasyCheckBoxDemoPage.disableFieldsAndValidateCannotSetAssertJ();
+        new Navigation(getContext()).toPrimefacesBasicCheckbox(Utils.isCleanCookiesSupported());
+        PrimeFacesSelectManyCheckboxPage checkboxPage = new PrimeFacesSelectManyCheckboxPage(getContext());
+        checkboxPage.disableFieldsAndValidateCannotSetAssertJ();
     }
 
     @Features("AssertJUtil")
@@ -1015,7 +1015,9 @@ public class AssertJTest extends TestNGBase {
         AssertJUtil.assertThat(result).as(log).isTrue();
 
         log = "Exception is thrown";
-        result = softly.assertExpectedFailure(log, () -> { throw new RuntimeException("Testing"); });
+        result = softly.assertExpectedFailure(log, () -> {
+            throw new RuntimeException("Testing");
+        });
         AssertJUtil.assertThat(result).as(log).isTrue();
 
         // No errors at this point

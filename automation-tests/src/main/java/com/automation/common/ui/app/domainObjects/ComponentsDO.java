@@ -1,6 +1,8 @@
 package com.automation.common.ui.app.domainObjects;
 
 import com.automation.common.ui.app.pageObjects.FakeComponentsPage;
+import com.automation.common.ui.app.pageObjects.PrimeFacesSelectManyCheckboxPage;
+import com.automation.common.ui.app.pageObjects.PrimeFacesSelectOneRadioPage;
 import com.automation.common.ui.app.pageObjects.RubyWatirMultipleCheckBoxesPage;
 import com.automation.common.ui.app.pageObjects.SeleniumEasyCheckBoxDemoPage;
 import com.automation.common.ui.app.pageObjects.SeleniumEasyInputFormDemoPage;
@@ -18,6 +20,8 @@ public class ComponentsDO extends DomainObject {
     private RubyWatirMultipleCheckBoxesPage rubyWatirMultipleCheckBoxesPage;
     private SeleniumEasyCheckBoxDemoPage seleniumEasyCheckBoxDemoPage;
     private SeleniumEasyInputFormDemoPage seleniumEasyInputFormDemoPage;
+    private PrimeFacesSelectManyCheckboxPage primeFacesSelectManyCheckboxPage;
+    private PrimeFacesSelectOneRadioPage primeFacesSelectOneRadioPage;
 
     public ComponentsDO() {
         super();
@@ -73,6 +77,30 @@ public class ComponentsDO extends DomainObject {
         }
 
         return seleniumEasyInputFormDemoPage;
+    }
+
+    public PrimeFacesSelectManyCheckboxPage getPrimeFacesSelectManyCheckboxPage() {
+        if (primeFacesSelectManyCheckboxPage == null) {
+            primeFacesSelectManyCheckboxPage = new PrimeFacesSelectManyCheckboxPage();
+        }
+
+        if (primeFacesSelectManyCheckboxPage.getContext() == null) {
+            primeFacesSelectManyCheckboxPage.initPage(getContext());
+        }
+
+        return primeFacesSelectManyCheckboxPage;
+    }
+
+    public PrimeFacesSelectOneRadioPage getPrimeFacesSelectOneRadioPage() {
+        if (primeFacesSelectOneRadioPage == null) {
+            primeFacesSelectOneRadioPage = new PrimeFacesSelectOneRadioPage();
+        }
+
+        if (primeFacesSelectOneRadioPage.getContext() == null) {
+            primeFacesSelectOneRadioPage.initPage(getContext());
+        }
+
+        return primeFacesSelectOneRadioPage;
     }
 
 }

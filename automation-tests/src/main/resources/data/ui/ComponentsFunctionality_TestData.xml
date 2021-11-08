@@ -16,4 +16,10 @@
     <seleniumEasyInputFormDemoPage>
         <doYouHaveHosting>Yes</doYouHaveHosting>
     </seleniumEasyInputFormDemoPage>
+    <primeFacesSelectManyCheckboxPage>
+        <option1>true</option1>
+    </primeFacesSelectManyCheckboxPage>
+    <primeFacesSelectOneRadioPage>
+        <basic>Option2</basic>
+    </primeFacesSelectOneRadioPage>
 </components-do>

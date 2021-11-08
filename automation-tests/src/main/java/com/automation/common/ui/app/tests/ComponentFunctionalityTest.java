@@ -34,14 +34,14 @@ public class ComponentFunctionalityTest extends TestNGBase {
 
     @Step("Validate Component:  CheckBoxLabel")
     private void validateComponentCheckBoxLabel(ComponentsDO componentsDO) {
-        new Navigation(getContext()).toSeleniumEasyBasicCheckbox(Utils.isCleanCookiesSupported());
-        componentsDO.getSeleniumEasyCheckBoxDemoPage().fill();
+        new Navigation(getContext()).toPrimefacesBasicCheckbox(Utils.isCleanCookiesSupported());
+        componentsDO.getPrimeFacesSelectManyCheckboxPage().fill();
     }
 
     @Step("Validate Component:  PrimeFacesRadioButtonGroup")
     private void validateComponentPrimeFacesRadioButtonGroup(ComponentsDO componentsDO) {
-        new Navigation(getContext()).toSeleniumEasyRadioButton(Utils.isCleanCookiesSupported());
-        componentsDO.getSeleniumEasyInputFormDemoPage().fill();
+        new Navigation(getContext()).toPrimefacesSelectOneRadio(Utils.isCleanCookiesSupported());
+        componentsDO.getPrimeFacesSelectOneRadioPage().fill();
     }
 
 }

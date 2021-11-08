@@ -39,6 +39,8 @@
         <prop name="herokuapp-downloads-url" value="https://the-internet.herokuapp.com/download"/>
         <prop name="duckduckgo-url" value="https://duckduckgo.com/"/>
         <prop name="primefaces-dashboard-url" value="https://www.primefaces.org/showcase/ui/panel/dashboard.xhtml"/>
+        <prop name="primefaces-basic-checkbox-url" value="https://www.primefaces.org/showcase/ui/input/manyCheckbox.xhtml"/>
+        <prop name="primefaces-select-one-radio-url" value="https://www.primefaces.org/showcase/ui/input/oneRadio.xhtml"/>
         <prop name="roboform-fill-url" value="https://www.roboform.com/filling-test-all-fields"/>
         <prop name="roboform-login-url" value="https://online.roboform.com/login"/>
         <prop name="true-north-hockey-url" value="http://www.truenorthhockey.com/"/>
