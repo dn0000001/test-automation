@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.tests;
 
 import com.automation.common.ui.app.pageObjects.Navigation;
-import com.automation.common.ui.app.pageObjects.SeleniumEasyCheckBoxDemoPage;
+import com.automation.common.ui.app.pageObjects.PrimeFacesSelectManyCheckboxPage;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.DomainObjectUtils;
 import com.taf.automation.ui.support.util.Utils;
@@ -19,10 +19,10 @@ public class BasicMutationObserverTest extends TestNGBase {
     @Test
     public void testMutationObserver(ITestContext injectedContext) {
         DomainObjectUtils.overwriteTestName(injectedContext);
-        new Navigation(getContext()).toSeleniumEasyBasicCheckbox(Utils.isCleanCookiesSupported());
-        SeleniumEasyCheckBoxDemoPage seleniumEasyCheckBoxDemoPage = new SeleniumEasyCheckBoxDemoPage(getContext());
-        seleniumEasyCheckBoxDemoPage.attachMutationObserverToOption1();
-        seleniumEasyCheckBoxDemoPage.waitForDisableEnableOption1();
+        new Navigation(getContext()).toPrimefacesBasicCheckbox(Utils.isCleanCookiesSupported());
+        PrimeFacesSelectManyCheckboxPage checkboxPage = new PrimeFacesSelectManyCheckboxPage(getContext());
+        checkboxPage.attachMutationObserverToOption1();
+        checkboxPage.waitForDisableEnableOption1();
     }
 
 }
