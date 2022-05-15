@@ -47,7 +47,7 @@
         <prop name="rubywatir-checkboxes-url" value="http://test.rubywatir.com/checkboxes.php"/>
         <prop name="seleniumeasy-radio-button-url" value="https://www.seleniumeasy.com/test/input-form-demo.html"/>
         <prop name="seleniumeasy-basic-checkbox-url" value="https://www.seleniumeasy.com/test/basic-checkbox-demo.html"/>
-        <prop name="file-examples-other-files-url" value="https://file-examples.com/index.php/text-files-and-archives-download/"/>
+        <prop name="csv-file-download-url" value="https://www.stats.govt.nz/large-datasets/csv-files-for-download/"/>
 
         <!-- There is bug in UserProvider class of ui_auto_core 2.5.15 that requires at least 1 user with a role -->
         <user role="user" userName="u2" password="xzRZ75G077/YqCsRSAHGMw=="/>

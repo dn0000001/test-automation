@@ -1,6 +1,6 @@
 package com.automation.common.ui.app.tests;
 
-import com.automation.common.ui.app.pageObjects.FileExamplesOtherFilesPage;
+import com.automation.common.ui.app.pageObjects.CsvFileDownloadPage;
 import com.automation.common.ui.app.pageObjects.Navigation;
 import com.lazerycode.selenium.filedownloader.FileDownloader;
 import com.taf.automation.api.ApiUtils;
@@ -42,7 +42,7 @@ public class FileDownloaderTest extends TestNGBase {
         new Navigation(getContext()).toHerokuappDownloads(Utils.isCleanCookiesSupported());
         downloadImageFromElement();
 
-        new Navigation(getContext()).toFileExamplesOtherFiles(Utils.isCleanCookiesSupported());
+        new Navigation(getContext()).toCsvFileDownloadUrl(Utils.isCleanCookiesSupported());
         downloadImageFromHref();
         File csvUri = downloadFileFromUri();
         File csvJs = downloadFileUsingJavaScript();
@@ -65,7 +65,7 @@ public class FileDownloaderTest extends TestNGBase {
 
     @Step("Perform Download CSV from HREF")
     private void downloadImageFromHref() {
-        File csv = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingElement();
+        File csv = new CsvFileDownloadPage(getContext()).performDownloadOfCsvFileUsingElement();
         csv.deleteOnExit();
         AssertJUtil.assertThat(csv).exists().isFile();
         ApiUtils.attachDataFile(csv, "text/csv", "CSV from HREF");
@@ -73,7 +73,7 @@ public class FileDownloaderTest extends TestNGBase {
 
     @Step("Perform Download File from URI")
     private File downloadFileFromUri() {
-        File csv = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingUri();
+        File csv = new CsvFileDownloadPage(getContext()).performDownloadOfCsvFileUsingUri();
         csv.deleteOnExit();
         AssertJUtil.assertThat(csv).exists().isFile();
         genericCsvValidations(csv, "CSV from URI");
@@ -82,7 +82,7 @@ public class FileDownloaderTest extends TestNGBase {
 
     @Step("Perform Download File Using JavaScript")
     private File downloadFileUsingJavaScript() {
-        File csv = new FileExamplesOtherFilesPage(getContext()).performDownloadOfCsvFileUsingJavaScript();
+        File csv = new CsvFileDownloadPage(getContext()).performDownloadOfCsvFileUsingJavaScript();
         csv.deleteOnExit();
         AssertJUtil.assertThat(csv).exists().isFile();
         genericCsvValidations(csv, "CSV using JavaScript");

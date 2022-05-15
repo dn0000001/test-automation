@@ -15,21 +15,21 @@ import ui.auto.core.components.WebComponent;
 import java.io.File;
 
 /**
- * This the Other Files page on the site <a href="https://file-examples.com/">File Examples</a>
+ * CSV Files For Download page on the site <a href="https://www.stats.govt.nz/large-datasets/csv-files-for-download/">Stats NZ</a>
  */
 @SuppressWarnings("java:S3252")
-public class FileExamplesOtherFilesPage extends PageObjectV2 {
+public class CsvFileDownloadPage extends PageObjectV2 {
     private static final String LINK_HTTP_STATUS = "Link HTTP Status";
 
     @XStreamOmitField
-    @FindBy(css = "[download$='.csv']")
-    private WebComponent downloadSampleCsvFile;
+    @FindBy(css = "h3 [href$='Research-and-development-survey-2021-CSV-notes.csv']")
+    private WebComponent downloadLink;
 
-    public FileExamplesOtherFilesPage() {
+    public CsvFileDownloadPage() {
         super();
     }
 
-    public FileExamplesOtherFilesPage(TestContext context) {
+    public CsvFileDownloadPage(TestContext context) {
         super(context);
     }
 
@@ -40,7 +40,7 @@ public class FileExamplesOtherFilesPage extends PageObjectV2 {
      */
     public File performDownloadOfCsvFileUsingElement() {
         FileDownloader downloader = new FileDownloader(getDriver());
-        downloader.withURISpecifiedInAnchorElement(downloadSampleCsvFile.getCoreElement());
+        downloader.withURISpecifiedInAnchorElement(downloadLink.getCoreElement());
 
         // This is unnecessary and only for testing purposes
         int status = downloader.getLinkHTTPStatus();
@@ -57,7 +57,7 @@ public class FileExamplesOtherFilesPage extends PageObjectV2 {
      */
     public File performDownloadOfCsvFileUsingUri() {
         FileDownloader downloader = new FileDownloader(getDriver());
-        downloader.withURI(downloadSampleCsvFile.getAttribute("href"));
+        downloader.withURI(downloadLink.getAttribute("href"));
 
         // This is unnecessary and only for testing purposes
         int status = downloader.getLinkHTTPStatus();
@@ -73,7 +73,7 @@ public class FileExamplesOtherFilesPage extends PageObjectV2 {
      * @return the CSV file that was saved to a temporary file which needs to be deleted after
      */
     public File performDownloadOfCsvFileUsingJavaScript() {
-        String url = downloadSampleCsvFile.getAttribute("href");
+        String url = downloadLink.getAttribute("href");
         DownloadData downloadData = JsUtils.executeGetRequestDownload(url);
 
         // This is unnecessary and only for testing purposes
