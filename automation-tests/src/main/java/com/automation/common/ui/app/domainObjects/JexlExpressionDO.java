@@ -195,6 +195,9 @@ public class JexlExpressionDO extends DomainObject {
         Lookup.getInstance().put("int100", 100);
         Lookup.getInstance().put("int200", 200);
         Lookup.getInstance().put(CURRENT_SYSTEM_DATE, RandomDateUtil.getInstance().random());
+        AssertJUtil.assertThat(Lookup.getInstance().contains(CURRENT_SYSTEM_DATE))
+                .as("Current System Date was not in the Lookup")
+                .isTrue();
     }
 
 }

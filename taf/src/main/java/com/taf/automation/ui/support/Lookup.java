@@ -60,4 +60,13 @@ public class Lookup {
         return this;
     }
 
+    /**
+     * @param key - Key to check
+     * @return true if contains the key &amp; the value corresponding to the key is not null<BR>
+     * <B>Note: </B> The value is for use with JEXL as it will not return null instead the literal expression is returned
+     */
+    public boolean contains(String key) {
+        return getStoredVariables().containsKey(key) && get(key) != null;
+    }
+
 }
