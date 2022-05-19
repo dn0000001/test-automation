@@ -455,8 +455,8 @@ public class ExpectedConditionsUtil {
 
                     Attachment jpeg = new Attachment()
                             .withTitle(title + append)
-                            .withType("image/jpeg")
-                            .withFile(ScreenshotUtil.convertPngToJpg(attachment));
+                            .withType(appium ? "image/png" : "image/jpeg")
+                            .withFile(appium ? attachment : ScreenshotUtil.convertPngToJpg(attachment));
                     screenshots.add(jpeg);
                     return screenshots;
                 } catch (Exception ex) {
