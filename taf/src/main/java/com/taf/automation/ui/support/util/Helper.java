@@ -1492,9 +1492,9 @@ public class Helper {
                     continue;
                 }
 
-                softly.assertThat(actualItem)
+                softly.assertThat(ApiUtils.readField(field, actualItem))
                         .as("%s[%s] - %s", type, i, name)
-                        .isEqualToComparingOnlyGivenFields(expectedItem, name);
+                        .isEqualTo(ApiUtils.readField(field, expectedItem));
             }
         }
     }
