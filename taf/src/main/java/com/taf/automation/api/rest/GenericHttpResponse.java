@@ -1,6 +1,7 @@
 package com.taf.automation.api.rest;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 
@@ -11,7 +12,9 @@ import org.apache.http.StatusLine;
  */
 public interface GenericHttpResponse<T> {
     default XStream getXstream() {
-        return new XStream();
+        XStream xstream = new XStream();
+        xstream.addPermission(AnyTypePermission.ANY);
+        return xstream;
     }
 
     /**

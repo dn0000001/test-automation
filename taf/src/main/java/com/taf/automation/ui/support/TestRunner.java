@@ -3,6 +3,7 @@ package com.taf.automation.ui.support;
 import com.taf.automation.ui.support.testng.TestParameterValidator;
 import com.taf.automation.ui.support.util.DownloadUtils;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import io.qameta.allure.Commands;
 import io.qameta.allure.option.ConfigOptions;
 import net.lingala.zip4j.core.ZipFile;
@@ -157,6 +158,7 @@ public class TestRunner {
         Environment environment = new Environment().withName("Environment");
         environment.withParameter(prop.getAsParameters());
         XStream xstream = new XStream();
+        xstream.addPermission(AnyTypePermission.ANY);
         xstream.addImplicitArray(Environment.class, "parameter", "parameter");
         String xml = xstream.toXML(environment);
         xml = xml.replace("<ru.yandex.qatools.commons.model.Environment>", "<qa:environment xmlns:qa=\"urn:model.commons.qatools.yandex.ru\">");

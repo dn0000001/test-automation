@@ -7,6 +7,7 @@ import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.DataInstillerUtils;
 import com.taf.automation.ui.support.util.Helper;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import datainstiller.data.DataAliases;
 import datainstiller.data.DataPersistence;
 import org.apache.commons.jexl3.JexlContext;
@@ -50,6 +51,7 @@ public class DomainObject extends DomainObjectModel {
     @Override
     public XStream getXstream() {
         XStream xStream = DataInstillerUtils.getXStream(getJexlContext());
+        xStream.addPermission(AnyTypePermission.ANY);
         xStream.processAnnotations(this.getClass());
         return xStream;
     }

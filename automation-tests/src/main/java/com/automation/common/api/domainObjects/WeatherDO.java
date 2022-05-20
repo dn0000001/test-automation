@@ -11,6 +11,7 @@ import com.taf.automation.ui.support.util.Helper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.StringEntity;
@@ -126,6 +127,7 @@ public class WeatherDO extends ApiDomainObject {
 
     public Weather getResponseWeather() {
         XStream xstream = getXstream();
+        xstream.addPermission(AnyTypePermission.ANY);
         xstream.alias("WeatherReturn", Weather.class);
         xstream.alias("soap:Envelope", Weather.class);
         xstream.registerConverter(new WeatherConverter());

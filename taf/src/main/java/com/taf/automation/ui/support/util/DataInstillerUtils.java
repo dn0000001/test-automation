@@ -10,6 +10,7 @@ import com.taf.automation.ui.support.generators.RandomDateGenerator;
 import com.taf.automation.ui.support.generators.RandomRealUSAddressGenerator;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.extended.ISO8601GregorianCalendarConverter;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import datainstiller.data.DataGenerator;
 import datainstiller.data.DataValueConverter;
 import datainstiller.generators.AddressGenerator;
@@ -122,6 +123,7 @@ public class DataInstillerUtils {
         addCustomGenerators(jexlContext);
         XStream xstream = new XStream();
 
+        xstream.addPermission(AnyTypePermission.ANY);
         xstream.registerConverter(new DataAliasesConverterV2(jexlContext, PageComponentContext.getGlobalAliases()));
         xstream.registerConverter(new ISO8601GregorianCalendarConverter());
 

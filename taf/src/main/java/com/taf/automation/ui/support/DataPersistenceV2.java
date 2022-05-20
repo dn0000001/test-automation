@@ -5,6 +5,7 @@ import com.taf.automation.ui.support.util.DataInstillerUtils;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import com.thoughtworks.xstream.converters.extended.ISO8601GregorianCalendarConverter;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import datainstiller.data.DataGenerator;
 import datainstiller.data.DataPersistence;
 import org.apache.commons.jexl3.JexlContext;
@@ -70,6 +71,7 @@ public abstract class DataPersistenceV2 extends DataPersistence {
             xStream = DataInstillerUtils.getXStream(getJexlContext());
         }
 
+        xStream.addPermission(AnyTypePermission.ANY);
         xStream.processAnnotations(this.getClass());
         return xStream;
     }

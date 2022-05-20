@@ -3,6 +3,7 @@ package com.taf.automation.asserts;
 import com.taf.automation.ui.support.StringMod;
 import org.assertj.core.api.SoftAssertionError;
 import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.error.AssertionErrorCreator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import ui.auto.core.pagecomponent.PageComponent;
@@ -70,7 +71,7 @@ public class CustomSoftAssertions extends SoftAssertions {
     public void assertAll() {
         List<Throwable> errors = errorsCollected();
         if (!errors.isEmpty()) {
-            tryThrowingMultipleFailuresError(errors);
+            new AssertionErrorCreator().tryThrowingMultipleFailuresError(errors);
             List<String> describeErrors = describeErrors(errors).stream()
                     .map(this::stripText)
                     .collect(Collectors.toList());
@@ -78,7 +79,7 @@ public class CustomSoftAssertions extends SoftAssertions {
         }
     }
 
-    private String stripText(String value){
+    private String stripText(String value) {
         return new StringMod(value)
                 .removeAll("at Helper.assertThatSubset\\(.*\\)\\r\\n")
                 .removeAll("at Helper.assertThatList\\(.*\\)\\r\\n")

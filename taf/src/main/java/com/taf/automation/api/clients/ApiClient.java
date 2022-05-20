@@ -12,6 +12,7 @@ import com.taf.automation.ui.support.TestProperties;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.URLUtils;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -369,6 +370,7 @@ public class ApiClient implements GenericHttpInterface {
     public XStream getRequestXStream() {
         if (requestXStream == null) {
             requestXStream = new XStream();
+            requestXStream.addPermission(AnyTypePermission.ANY);
         }
 
         return requestXStream;
@@ -381,6 +383,7 @@ public class ApiClient implements GenericHttpInterface {
     public XStream getResponseXStream() {
         if (responseXStream == null) {
             responseXStream = new XStream();
+            responseXStream.addPermission(AnyTypePermission.ANY);
         }
 
         return responseXStream;
