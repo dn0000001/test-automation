@@ -6,6 +6,7 @@ import com.taf.automation.ui.support.util.AssertJUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.HttpEntity;
@@ -408,6 +409,7 @@ public class ApiUtils {
         qmap.setDefaultPrefix("");
         StaxDriver staxDriver = new StaxDriver(qmap);
         XStream xstream = new XStream(staxDriver);
+        xstream.addPermission(AnyTypePermission.ANY);
         xstream.processAnnotations(apiDomainObject.getClass());
         return xstream;
     }

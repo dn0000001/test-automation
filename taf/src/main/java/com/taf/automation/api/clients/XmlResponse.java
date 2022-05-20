@@ -6,6 +6,7 @@ import com.taf.automation.api.rest.XmlBaseError;
 import com.taf.automation.api.rest.XmlError;
 import com.taf.automation.ui.support.TestProperties;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -82,6 +83,7 @@ public class XmlResponse<T> implements GenericHttpResponse<T> {
     public XStream getXstream() {
         if (xstream == null) {
             xstream = new XStream();
+            xstream.addPermission(AnyTypePermission.ANY);
         }
 
         return xstream;

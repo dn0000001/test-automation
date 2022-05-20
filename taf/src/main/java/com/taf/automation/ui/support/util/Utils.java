@@ -9,6 +9,7 @@ import com.taf.automation.ui.support.WebDriverTypeEnum;
 import com.taf.automation.ui.support.testng.Attachment;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import datainstiller.data.DataPersistence;
 import net.jodah.failsafe.ExecutionContext;
 import net.jodah.failsafe.Failsafe;
@@ -663,6 +664,7 @@ public class Utils {
     @SuppressWarnings("unchecked")
     public static <T> T deepCopy(T obj) {
         XStream xstream = new XStream();
+        xstream.addPermission(AnyTypePermission.ANY);
         String xml = xstream.toXML(obj);
         return (T) xstream.fromXML(xml);
     }

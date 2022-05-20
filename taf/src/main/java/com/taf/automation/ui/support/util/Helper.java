@@ -1590,9 +1590,9 @@ public class Helper {
                 continue;
             }
 
-            softly.assertThat(actual)
+            softly.assertThat(actual == null ? null : ApiUtils.readField(field, actual))
                     .as("%s - %s", type, name)
-                    .isEqualToComparingOnlyGivenFields(expected, name);
+                    .isEqualTo(ApiUtils.readField(field, expected));
         }
     }
 
