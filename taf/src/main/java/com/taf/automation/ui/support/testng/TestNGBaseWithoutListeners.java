@@ -4,12 +4,16 @@ import com.taf.automation.api.html.HtmlUtils;
 import com.taf.automation.ui.support.DomainObject;
 import com.taf.automation.ui.support.TestContext;
 import com.taf.automation.ui.support.TestProperties;
+import com.taf.automation.ui.support.WebDriverTypeEnum;
+import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.DownloadUtils;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Utils;
 import datainstiller.data.DataPersistence;
 import io.appium.java_client.AppiumDriver;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,11 +135,79 @@ public class TestNGBaseWithoutListeners {
         System.setProperty(driverPropertyName, driverPath);
     }
 
+    private void configureWebDriverManager(TestProperties props, WebDriverManager wdm) {
+        // Set the time to live for the browser versions to be the same as the driver version (1 day)
+        wdm.ttlBrowsers(86400);
+
+        if (StringUtils.isNotBlank(props.getWebDriverManagerCachePath())) {
+            wdm.cachePath(props.getWebDriverManagerCachePath());
+        }
+
+        if (StringUtils.isNotBlank(props.getWebDriverManagerResolutionCachePath())) {
+            wdm.resolutionCachePath(props.getWebDriverManagerResolutionCachePath());
+        }
+
+        if (props.isWebDriverManagerForceDownload()) {
+            wdm.forceDownload();
+        }
+
+        if (props.getWebDriverManagerTimeout() > 0) {
+            wdm.timeout(props.getWebDriverManagerTimeout());
+        }
+
+        if (StringUtils.isNotBlank(props.getWebDriverManagerProxy())) {
+            wdm.proxy(props.getWebDriverManagerProxy());
+        }
+
+        if (StringUtils.isNotBlank(props.getWebDriverManagerProxyUser())) {
+            wdm.proxyUser(props.getWebDriverManagerProxyUser());
+        }
+
+        if (StringUtils.isNotBlank(props.getWebDriverManagerProxyPass())) {
+            String decryptedPass = new CryptoUtils().decrypt(props.getWebDriverManagerProxyPass());
+            wdm.proxyPass(decryptedPass);
+        }
+
+        if (StringUtils.isNotBlank(props.getWebDriverManagerGitHubToken())) {
+            String decryptedToken = new CryptoUtils().decrypt(props.getWebDriverManagerGitHubToken());
+            wdm.gitHubToken(decryptedToken);
+        }
+    }
+
+    private void performGenericSetupUsingWebDriverManager(TestProperties props, Class<? extends WebDriver> driverClass) {
+        WebDriverManager wdm = WebDriverManager.getInstance(driverClass);
+        configureWebDriverManager(props, wdm);
+        wdm.setup();
+    }
+
+    private void performSetupUsingWebDriverManager(TestProperties props) {
+        if (props.isWebDriverManagerInstallAll()) {
+            for (WebDriverTypeEnum browser : WebDriverTypeEnum.values()) {
+                performGenericSetupUsingWebDriverManager(props, browser.getDriverClass());
+            }
+        } else {
+            performGenericSetupUsingWebDriverManager(props, props.getBrowserType().getDriverClass());
+        }
+    }
+
     /**
      * Setup the drivers for local use only
      */
     private void setUpDrivers() {
         TestProperties props = TestProperties.getInstance();
+
+        //
+        // Allow the WebDriverManager library to install the drivers
+        // Note:  This may could lead to supply chain attacks (via the driver as they are not under your control.)
+        //
+        if (props.isWebDriverManagerEnabled()) {
+            performSetupUsingWebDriverManager(props);
+            return;
+        }
+
+        //
+        // Only use vetted drivers stored in the resources to install the supported drivers
+        //
         if (props.isAlwaysInstallDrivers() || System.getenv("JENKINS_HOME") == null) {
             installDriver("geckodriver", "webdriver.gecko.driver");
             installDriver("chromedriver", "webdriver.chrome.driver");

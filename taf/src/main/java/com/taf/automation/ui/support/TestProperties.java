@@ -55,6 +55,36 @@ public class TestProperties {
     @Property("debug.logging")
     private boolean debugLogging = false;
 
+    @Property("wdm.enabled")
+    private boolean webDriverManagerEnabled = false;
+
+    @Property("wdm.install.all")
+    private boolean webDriverManagerInstallAll = false;
+
+    @Property("wdm.cachePath")
+    private String webDriverManagerCachePath;
+
+    @Property("wdm.resolutionCachePath")
+    private String webDriverManagerResolutionCachePath;
+
+    @Property("wdm.forceDownload")
+    private boolean webDriverManagerForceDownload = false;
+
+    @Property("wdm.proxy")
+    private String webDriverManagerProxy;
+
+    @Property("wdm.proxyUser")
+    private String webDriverManagerProxyUser;
+
+    @Property("wdm.proxyPass")
+    private String webDriverManagerProxyPass;
+
+    @Property("wdm.timeout")
+    private int webDriverManagerTimeout = 0;
+
+    @Property("wdm.gitHubToken")
+    private String webDriverManagerGitHubToken;
+
     @Property("always.install.drivers")
     private boolean alwaysInstallDrivers = false;
 
@@ -516,6 +546,46 @@ public class TestProperties {
 
     public boolean isDebugLogging() {
         return debugLogging;
+    }
+
+    public boolean isWebDriverManagerEnabled() {
+        return webDriverManagerEnabled;
+    }
+
+    public boolean isWebDriverManagerInstallAll() {
+        return webDriverManagerInstallAll;
+    }
+
+    public String getWebDriverManagerCachePath() {
+        return webDriverManagerCachePath;
+    }
+
+    public String getWebDriverManagerResolutionCachePath() {
+        return webDriverManagerResolutionCachePath;
+    }
+
+    public boolean isWebDriverManagerForceDownload() {
+        return webDriverManagerForceDownload;
+    }
+
+    public String getWebDriverManagerProxy() {
+        return webDriverManagerProxy;
+    }
+
+    public String getWebDriverManagerProxyUser() {
+        return webDriverManagerProxyUser;
+    }
+
+    public String getWebDriverManagerProxyPass() {
+        return webDriverManagerProxyPass;
+    }
+
+    public int getWebDriverManagerTimeout() {
+        return webDriverManagerTimeout;
+    }
+
+    public String getWebDriverManagerGitHubToken() {
+        return webDriverManagerGitHubToken;
     }
 
     public boolean isAlwaysInstallDrivers() {
