@@ -50,6 +50,10 @@ public enum WebDriverTypeEnum {
         this.driverName = driverName;
     }
 
+    public Class<? extends WebDriver> getDriverClass() {
+        return driverClass;
+    }
+
     public String getDriverName() {
         return driverName;
     }
