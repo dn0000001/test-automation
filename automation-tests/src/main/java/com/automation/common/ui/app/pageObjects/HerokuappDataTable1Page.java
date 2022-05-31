@@ -16,6 +16,7 @@ import java.util.Map;
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "java:S3252"})
 public class HerokuappDataTable1Page extends GenericTable<HerokuappRowTable1> {
     private static final By TABLE1_ROWS = By.cssSelector("#table1 tbody tr");
+    private Map<String, String> substitutions;
 
     public HerokuappDataTable1Page() {
         super();
@@ -42,9 +43,13 @@ public class HerokuappDataTable1Page extends GenericTable<HerokuappRowTable1> {
 
     @Override
     protected Map<String, String> getSubstitutions() {
-        HerokuappColumnPositionsExtractor extractor = new HerokuappColumnPositionsExtractor();
-        Map<String, String> columnPositions = extractor.getMap();
-        return extractor.getSubstitutions(HerokuappColumnMapping.LAST_NAME, columnPositions);
+        if (substitutions == null) {
+            HerokuappColumnPositionsExtractor extractor = new HerokuappColumnPositionsExtractor();
+            Map<String, String> columnPositions = extractor.getMap();
+            substitutions = extractor.getSubstitutions(HerokuappColumnMapping.LAST_NAME, columnPositions);
+        }
+
+        return substitutions;
     }
 
     @Override
