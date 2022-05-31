@@ -364,6 +364,13 @@ public abstract class GenericTable<T extends GenericRow> extends PageObjectV2 {
     }
 
     /**
+     * @return true if the substitutions are empty else false
+     */
+    public boolean isEmptySubstitutions() {
+        return getSubstitutions().isEmpty();
+    }
+
+    /**
      * Get a locator that should find all rows in the table <BR>
      * If NULL is returned, criteria looking for this will skip it without waiting for timeout
      *
