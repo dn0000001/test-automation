@@ -256,7 +256,12 @@ public class TestNGBaseWithoutListeners {
         if (context() != null && context().getDriver() != null) {
             Utils.restoreBrowser(); // If browser was changed, ensure it is closed
             logInfo("-CLOSING CONTEXT: " + context().getDriver().toString());
-            context().getDriver().quit();
+            // TODO:  Remove try/catch when fixed in Selenium
+            try {
+                context().getDriver().quit();
+            } catch (Exception ex) {
+                // Selenium will output a warning to the console in this case
+            }
         }
 
         context.remove();

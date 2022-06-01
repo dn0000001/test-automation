@@ -3,7 +3,6 @@ package com.automation.common.mobile.pageObjects;
 import com.taf.automation.ui.support.PageObjectV2;
 import com.taf.automation.ui.support.TestContext;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 import ui.auto.core.components.MobileComponent;
@@ -13,11 +12,11 @@ import ui.auto.core.components.MobileComponent;
  */
 public class CalculatorApp extends PageObjectV2 {
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_1")
+    @FindBy(id = "com.android.calculator2:id/digit_1")
     private MobileComponent one;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_2")
+    @FindBy(id = "com.android.calculator2:id/digit_2")
     private MobileComponent two;
 
     @XStreamOmitField
@@ -25,39 +24,39 @@ public class CalculatorApp extends PageObjectV2 {
     private MobileComponent three;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_4")
+    @FindBy(id = "com.android.calculator2:id/digit_4")
     private MobileComponent four;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_5")
+    @FindBy(id = "com.android.calculator2:id/digit_5")
     private MobileComponent five;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_6")
+    @FindBy(id = "com.android.calculator2:id/digit_6")
     private MobileComponent six;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_7")
+    @FindBy(id = "com.android.calculator2:id/digit_7")
     private MobileComponent seven;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_8")
+    @FindBy(id = "com.android.calculator2:id/digit_8")
     private MobileComponent eight;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_9")
+    @FindBy(id = "com.android.calculator2:id/digit_9")
     private MobileComponent nine;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/digit_0")
+    @FindBy(id = "com.android.calculator2:id/digit_0")
     private MobileComponent zero;
 
     @XStreamOmitField
-    @AndroidFindBy(accessibility = "point")
+    @FindBy(css = "[content-desc='point']")
     private MobileComponent period;
 
     @XStreamOmitField
-    @AndroidFindBy(xpath = "//android.widget.Button[@content-desc='plus']")
+    @FindBy(xpath = "//android.widget.Button[@content-desc='plus']")
     private MobileComponent plus;
 
     @XStreamOmitField
@@ -65,31 +64,31 @@ public class CalculatorApp extends PageObjectV2 {
     private MobileComponent minus;
 
     @XStreamOmitField
-    @AndroidFindBy(accessibility = "multiply")
+    @FindBy(css = "[content-desc='multiply']")
     private MobileComponent multiply;
 
     @XStreamOmitField
-    @AndroidFindBy(accessibility = "divide")
+    @FindBy(css = "[content-desc='divide']")
     private MobileComponent divide;
 
     @XStreamOmitField
-    @AndroidFindBy(accessibility = "delete")
+    @FindBy(css = "[content-desc='delete']")
     private MobileComponent delete;
 
     @XStreamOmitField
-    @AndroidFindBy(accessibility = "equals")
+    @FindBy(css = "[content-desc='equals']")
     private MobileComponent equals;
 
     @XStreamOmitField
-    @AndroidFindBy(accessibility = "clear")
+    @FindBy(css = "[content-desc='clear']")
     private MobileComponent clear;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/formula")
+    @FindBy(id = "com.android.calculator2:id/formula")
     private MobileComponent formula;
 
     @XStreamOmitField
-    @AndroidFindBy(id = "com.android.calculator2:id/result")
+    @FindBy(id = "com.android.calculator2:id/result")
     private MobileComponent result;
 
     public CalculatorApp() {
