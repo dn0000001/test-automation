@@ -18,6 +18,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -30,20 +31,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public enum WebDriverTypeEnum {
-    CHROME(BrowserType.CHROME, ChromeDriver.class),
-    EDGE_LEGACY(BrowserType.EDGE, org.openqa.selenium.edge.EdgeDriver.class),
-    EDGE(BrowserType.EDGE, com.microsoft.edge.seleniumtools.EdgeDriver.class),
-    FIREFOX(BrowserType.FIREFOX, FirefoxDriver.class),
-    IE(BrowserType.IE, InternetExplorerDriver.class),
-    OPERA_BLINK(BrowserType.OPERA_BLINK, OperaDriver.class),
-    SAFARI(BrowserType.SAFARI, SafariDriver.class),
+    CHROME(Browser.CHROME.browserName(), ChromeDriver.class),
+    EDGE_LEGACY(Browser.EDGE.browserName(), org.openqa.selenium.edge.EdgeDriver.class),
+    EDGE(Browser.EDGE.browserName(), com.microsoft.edge.seleniumtools.EdgeDriver.class),
+    FIREFOX(Browser.FIREFOX.browserName(), FirefoxDriver.class),
+    IE(Browser.IE.browserName(), InternetExplorerDriver.class),
+    OPERA_BLINK("operablink", OperaDriver.class),
+    SAFARI(Browser.SAFARI.browserName(), SafariDriver.class),
     ANDROID(BrowserType.ANDROID, AndroidDriver.class),
     IPHONE(BrowserType.IPHONE, IOSDriver.class),
     IPAD(BrowserType.IPAD, IOSDriver.class),
     ;
 
-    String driverName;
-    Class<? extends WebDriver> driverClass;
+    final String driverName;
+    final Class<? extends WebDriver> driverClass;
 
     WebDriverTypeEnum(String driverName, Class<? extends WebDriver> driverClass) {
         this.driverClass = driverClass;
@@ -110,7 +111,7 @@ public enum WebDriverTypeEnum {
             capabilities.setCapability(CapabilityType.PROXY, proxy);
         }
 
-        capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+        capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 
         if (prop.getRemoteURL() != null && !prop.getBrowserType().isAppiumDriver()) {
             try {
@@ -157,9 +158,9 @@ public enum WebDriverTypeEnum {
         }
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setBrowserName(prop.getBrowserType().getDriverName());
-        capabilities.setVersion(prop.getBrowserVersion());
-        capabilities.setPlatform(platform);
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, prop.getBrowserType().getDriverName());
+        capabilities.setCapability(CapabilityType.BROWSER_VERSION, prop.getBrowserVersion());
+        capabilities.setCapability(CapabilityType.PLATFORM_NAME, platform.name());
         capabilities.merge(prop.getExtraCapabilities());
 
         if (prop.getBrowserType() == FIREFOX) {
@@ -169,7 +170,7 @@ public enum WebDriverTypeEnum {
         } else if (prop.getBrowserType() == EDGE) {
             capabilities.setCapability(com.microsoft.edge.seleniumtools.EdgeOptions.CAPABILITY, getEdgeChromiumOptions(prop, mergeCapabilities));
         } else if (prop.getBrowserType() == SAFARI) {
-            capabilities.setCapability(SafariOptions.CAPABILITY, getSafariOptions(prop, mergeCapabilities));
+            capabilities.setCapability("safari.options", getSafariOptions(prop, mergeCapabilities));
         } else {
             capabilities.merge(mergeCapabilities);
         }
@@ -291,17 +292,15 @@ public enum WebDriverTypeEnum {
     }
 
     private AndroidDriver getAndroidDriver(TestProperties prop, DesiredCapabilities capabilities) {
-        capabilities.setBrowserName(null);
-        capabilities.setPlatform(null);
-        capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.ANDROID);
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, (String) null);
+        capabilities.setCapability(CapabilityType.PLATFORM_NAME, (String) null);
         capabilities.merge(prop.getExtraCapabilities());
         return new AndroidDriver(getRemoteURL(prop), capabilities);
     }
 
     private IOSDriver getIOSDriver(TestProperties prop, DesiredCapabilities capabilities) {
-        capabilities.setBrowserName(null);
-        capabilities.setPlatform(null);
-        capabilities.setCapability(CapabilityType.PLATFORM_NAME, Platform.IOS);
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, (String) null);
+        capabilities.setCapability(CapabilityType.PLATFORM_NAME, (String) null);
         capabilities.merge(prop.getExtraCapabilities());
         return new IOSDriver(getRemoteURL(prop), capabilities);
     }

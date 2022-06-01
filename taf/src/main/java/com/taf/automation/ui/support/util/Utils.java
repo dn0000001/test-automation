@@ -417,7 +417,7 @@ public class Utils {
      * @param toDisplay - true to wait for element to be displayed, false to wait for element to be hidden
      */
     private static void waitForElementVisibility(final WebElement element, final boolean toDisplay) {
-        new WebDriverWait(getWebDriver(), getElementTimeout()).until(
+        new WebDriverWait(getWebDriver(), Duration.ofSeconds(getElementTimeout())).until(
                 driver -> {
                     boolean isDisplayed;
                     try {
@@ -482,7 +482,7 @@ public class Utils {
      * @return WebDriverWait
      */
     public static WebDriverWait getWebDriverWait(WebDriver driver) {
-        return new WebDriverWait(driver, getElementTimeout(), 100L);
+        return new WebDriverWait(driver, Duration.ofSeconds(getElementTimeout()));
     }
 
     /**

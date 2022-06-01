@@ -24,6 +24,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.lang.reflect.Type;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class JsUtils {
      * @return WebDriverWait
      */
     private static WebDriverWait getWebDriverWait() {
-        return new WebDriverWait(getWebDriver(), TestProperties.getInstance().getElementTimeout(), 100L);
+        return new WebDriverWait(getWebDriver(), Duration.ofSeconds(TestProperties.getInstance().getElementTimeout()));
     }
 
     /**

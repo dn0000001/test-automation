@@ -1,5 +1,6 @@
 package com.taf.automation.ui.support;
 
+import com.taf.automation.mobile.AppiumClientV8FieldDecorator;
 import com.taf.automation.ui.support.util.AssertJUtil;
 import com.taf.automation.ui.support.util.CryptoUtils;
 import com.taf.automation.ui.support.util.ExceptionUtils;
@@ -21,7 +22,6 @@ import ui.auto.core.context.PageComponentContext;
 import ui.auto.core.data.DataTypes;
 import ui.auto.core.pagecomponent.AjaxVisibleElementLocatorFactory;
 import ui.auto.core.pagecomponent.PageComponent;
-import ui.auto.core.pagecomponent.WidgetFieldDecorator;
 import ui.auto.core.support.PageObjectModel;
 
 import java.lang.reflect.Field;
@@ -81,7 +81,7 @@ public class PageObjectV2 extends PageObjectModel {
             FieldUtils.writeField(this, "context", context, true);
             FieldUtils.writeField(this, "ajaxIsUsed", true, true);
             if (AppiumDriver.class.isAssignableFrom(context.getDriver().getClass())) {
-                PageFactory.initElements(new WidgetFieldDecorator(context, this), this);
+                PageFactory.initElements(new AppiumClientV8FieldDecorator(context, this), this);
                 return;
             }
 
