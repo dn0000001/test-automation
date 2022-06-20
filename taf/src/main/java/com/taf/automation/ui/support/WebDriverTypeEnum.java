@@ -17,6 +17,7 @@ import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.net.PortProber;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.Browser;
 import org.openqa.selenium.remote.BrowserType;
@@ -237,6 +238,7 @@ public enum WebDriverTypeEnum {
         chromeOptions.addArguments("--ignore-certificate-errors");
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--dns-prefetch-disable");
+        chromeOptions.addArguments("--remote-debugging-port=" + PortProber.findFreePort());
 
         if (prop.getUserAgent() != null) {
             chromeOptions.addArguments("user-agent=" + prop.getUserAgent());
