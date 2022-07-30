@@ -17,17 +17,12 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
-import org.xml.sax.InputSource;
+import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,16 +52,14 @@ public class ApiUtils {
     @SuppressWarnings({"java:S2755", "java:S3252"})
     public static String prettifyXML(String inXML) {
         try {
-            Transformer trans = SAXTransformerFactory.newInstance().newTransformer();
-            trans.setOutputProperty(OutputKeys.INDENT, "yes");
-            trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            Source xmlSource = new SAXSource(new InputSource(new ByteArrayInputStream(inXML.getBytes())));
-            StreamResult sRes = new StreamResult(new ByteArrayOutputStream());
-            trans.transform(xmlSource, sRes);
-            String xmlOut = new String(((ByteArrayOutputStream) sRes.getOutputStream()).toByteArray());
-            xmlOut = xmlOut.replace("\"UTF-8\"?><", "\"UTF-8\"?>\n<");
-            xmlOut = xmlOut.replace(" xmlns:", "\n xmlns:");
-            return xmlOut;
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            format.setSuppressDeclaration(false);
+
+            org.dom4j.Document document = DocumentHelper.parseText(inXML);
+            StringWriter sw = new StringWriter();
+            XMLWriter writer = new XMLWriter(sw, format);
+            writer.write(document);
+            return sw.toString();
         } catch (Exception e) {
             return inXML;
         }

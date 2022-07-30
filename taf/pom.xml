@@ -16,7 +16,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.nickwongdev</groupId>
+                <groupId>dev.aspectj</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <version>${aspectj.maven.plugin.version}</version>
                 <configuration>
@@ -270,9 +270,20 @@
             <version>${jaxb.impl.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${glassfish.jaxb.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>de.jollyday</groupId>
             <artifactId>jollyday</artifactId>
             <version>${jollyday.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>${dom4j.version}</version>
         </dependency>
         <!-- START:  BDD specific dependencies -->
         <dependency>
