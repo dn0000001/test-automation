@@ -1,7 +1,7 @@
 package com.automation.common.ui.app.components.validator;
 
 import com.taf.automation.ui.support.util.AssertJUtil;
-import com.taf.automation.ui.support.util.Utils;
+import com.taf.automation.ui.support.util.BigDecimalUtils;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -33,11 +33,11 @@ public class BasicCurrencyValidator extends Validator {
     }
 
     private BigDecimal getActualBigDecimal() {
-        return Utils.parse(getActual(), getLocale());
+        return BigDecimalUtils.parse(getActual(), getLocale());
     }
 
     private BigDecimal getExpectedBigDecimal() {
-        return Utils.parse(getExpected(), getLocale());
+        return BigDecimalUtils.parse(getExpected(), getLocale());
     }
 
     @Override

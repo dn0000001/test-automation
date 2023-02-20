@@ -42,14 +42,9 @@ import ui.auto.core.pagecomponent.PageComponent;
 import ui.auto.core.utils.AjaxTriggeredAction;
 
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -794,94 +789,6 @@ public class Utils {
         }
 
         return data;
-    }
-
-    /**
-     * Convert currency amount from a String to BigDecimal<BR>
-     * <B>Notes:</B><BR>
-     * 1) The locale determines what is the decimal separator and the group separator<BR>
-     * 2) Only successfully parsed amounts greater than or equal to 0 will be returned<BR>
-     *
-     * @param amount - Currency amount as a String
-     * @param locale - Locale.CANADA for English or Locale.CANADA_FRENCH for French currency format
-     * @return BigDecimal version of the currency amount
-     */
-    public static BigDecimal parse(final String amount, final Locale locale) {
-        return parse(amount, locale, null);
-    }
-
-    /**
-     * Convert currency amount from a String to BigDecimal<BR>
-     * <B>Notes:</B><BR>
-     * 1) The locale determines what is the decimal separator and the group separator<BR>
-     * 2) Only successfully parsed amounts greater than or equal to 0 will be returned<BR>
-     *
-     * @param amount       - Currency amount as a String
-     * @param locale       - Locale.CANADA for English or Locale.CANADA_FRENCH for French currency format
-     * @param defaultValue - If unable to parse the amount, then return this value unless it is <B>null</B>
-     * @return BigDecimal version of the currency amount
-     */
-    public static BigDecimal parse(final String amount, final Locale locale, final BigDecimal defaultValue) {
-        final NumberFormat format = NumberFormat.getNumberInstance(locale);
-        if (format instanceof DecimalFormat) {
-            ((DecimalFormat) format).setParseBigDecimal(true);
-        }
-
-        // Clean the amount of all non-digits/periods/commas
-        String cleanedAmount = amount.replaceAll("[^\\d.,]", "");
-        try {
-            return (BigDecimal) format.parse(cleanedAmount);
-        } catch (ParseException exception) {
-            AssertJUtil.assertThat(defaultValue).as("Unable to parse value to BigDecimal:  " + cleanedAmount).isNotNull();
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Convert currency amount from a String to BigDecimal<BR>
-     * <B>Notes:</B>
-     * 1) The locale determines what is the decimal separator and the group separator<BR>
-     * 2) Only successfully parsed amounts greater than or equal to 0 will be returned<BR>
-     *
-     * @param amount         - Currency amount as a String
-     * @param locale         - Locale.CANADA for English or Locale.CANADA_FRENCH for French currency format
-     * @param defineInfinite - true to define infinite as null
-     * @return null if defineInfinite is true and amount is null or empty string, else BigDecimal version of the currency amount
-     */
-    public static BigDecimal parse(final String amount, final Locale locale, final boolean defineInfinite) {
-        if (defineInfinite && StringUtils.defaultString(amount).equals("")) {
-            return null;
-        }
-
-        return parse(amount, locale);
-    }
-
-    /**
-     * Compare values handling null values<BR>
-     * <B>Notes:</B><BR>
-     * 1) null is considered to be infinite<BR>
-     *
-     * @param lhs - Left Hand Side value
-     * @param rhs - Right Hand Side value
-     * @return 0 if lhs equals rhs, 1 if lhs greater than rhs, -1 if lhs less than rhs
-     */
-    public static int compareTo(BigDecimal lhs, BigDecimal rhs) {
-        // If both values infinite, then we consider them equal
-        if (lhs == null && rhs == null) {
-            return 0;
-        }
-
-        // If only the lhs is infinite, then it is greater than the rhs
-        if (lhs == null) {
-            return 1;
-        }
-
-        // If only the rhs is infinite, then lhs is less than the rhs
-        if (rhs == null) {
-            return -1;
-        }
-
-        return lhs.compareTo(rhs);
     }
 
     /**

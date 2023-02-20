@@ -1,6 +1,7 @@
 package com.taf.automation.asserts;
 
 import com.taf.automation.ui.support.DateActions;
+import com.taf.automation.ui.support.util.BigDecimalUtils;
 import com.taf.automation.ui.support.util.Utils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -59,8 +60,8 @@ public class AssertJCondition {
         return new Condition<BigDecimal>(description) {
             @Override
             public boolean matches(BigDecimal value) {
-                boolean lowerBound = Utils.compareTo(value, min) >= 0;
-                boolean upperBound = Utils.compareTo(value, max) <= 0;
+                boolean lowerBound = BigDecimalUtils.compareTo(value, min) >= 0;
+                boolean upperBound = BigDecimalUtils.compareTo(value, max) <= 0;
                 return lowerBound && upperBound;
             }
         };

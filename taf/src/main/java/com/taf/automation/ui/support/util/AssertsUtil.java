@@ -812,8 +812,8 @@ public class AssertsUtil {
             @Override
             public boolean matches(Object item) {
                 BigDecimal value = (BigDecimal) item;
-                boolean lowerBound = Utils.compareTo(value, min) >= 0;
-                boolean upperBound = Utils.compareTo(value, max) <= 0;
+                boolean lowerBound = BigDecimalUtils.compareTo(value, min) >= 0;
+                boolean upperBound = BigDecimalUtils.compareTo(value, max) <= 0;
                 return lowerBound && upperBound;
             }
 

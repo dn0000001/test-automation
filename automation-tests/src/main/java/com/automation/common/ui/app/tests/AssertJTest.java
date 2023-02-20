@@ -12,6 +12,7 @@ import com.taf.automation.asserts.CustomSoftAssertions;
 import com.taf.automation.ui.support.Rand;
 import com.taf.automation.ui.support.testng.TestNGBase;
 import com.taf.automation.ui.support.util.AssertJUtil;
+import com.taf.automation.ui.support.util.BigDecimalUtils;
 import com.taf.automation.ui.support.util.ExpectedConditionsUtil;
 import com.taf.automation.ui.support.util.Helper;
 import com.taf.automation.ui.support.util.Utils;
@@ -399,10 +400,10 @@ public class AssertJTest extends TestNGBase {
     @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testRangeBigDecimal() {
-        final BigDecimal TWO = Utils.parse("2", Locale.CANADA);
-        final BigDecimal THREE = Utils.parse("3", Locale.CANADA);
-        final BigDecimal FIVE = Utils.parse("5", Locale.CANADA);
-        final BigDecimal TEN_THOUSAND = Utils.parse("10000", Locale.CANADA);
+        final BigDecimal TWO = BigDecimalUtils.parse("2", Locale.CANADA);
+        final BigDecimal THREE = BigDecimalUtils.parse("3", Locale.CANADA);
+        final BigDecimal FIVE = BigDecimalUtils.parse("5", Locale.CANADA);
+        final BigDecimal TEN_THOUSAND = BigDecimalUtils.parse("10000", Locale.CANADA);
         final BigDecimal INFINITE = null;
 
         AssertJUtil.assertThat(BigDecimal.ZERO).as("Start").is(AssertJCondition.range(BigDecimal.ZERO, BigDecimal.TEN));

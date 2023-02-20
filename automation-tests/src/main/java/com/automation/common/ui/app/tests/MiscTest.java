@@ -2,7 +2,7 @@ package com.automation.common.ui.app.tests;
 
 import com.taf.automation.ui.support.testng.AllureTestNGListener;
 import com.taf.automation.ui.support.util.AssertJUtil;
-import com.taf.automation.ui.support.util.Utils;
+import com.taf.automation.ui.support.util.BigDecimalUtils;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -51,11 +52,11 @@ public class MiscTest {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void testVariousEN() {
-        BigDecimal actualEN1 = Utils.parse("$7,999.58", Locale.CANADA);
+        BigDecimal actualEN1 = BigDecimalUtils.parse("$7,999.58", Locale.CANADA);
         BigDecimal expectedEN1 = new BigDecimal("7999.58");
         AssertJUtil.assertThat(actualEN1).as("EN1").isEqualByComparingTo(expectedEN1);
 
-        BigDecimal actualEN2 = Utils.parse("$7,999", Locale.CANADA);
+        BigDecimal actualEN2 = BigDecimalUtils.parse("$7,999", Locale.CANADA);
         BigDecimal expectedEN2 = new BigDecimal("7999");
         AssertJUtil.assertThat(actualEN2).as("EN2").isEqualByComparingTo(expectedEN2);
     }
@@ -65,11 +66,11 @@ public class MiscTest {
     @Severity(SeverityLevel.MINOR)
     @Test
     public void testVariousFR() {
-        BigDecimal actualFR1 = Utils.parse("7 999,58 $", Locale.CANADA_FRENCH);
+        BigDecimal actualFR1 = BigDecimalUtils.parse("7 999,58 $", Locale.CANADA_FRENCH);
         BigDecimal expectedFR1 = new BigDecimal("7999.58");
         AssertJUtil.assertThat(actualFR1).as("FR1").isEqualByComparingTo(expectedFR1);
 
-        BigDecimal actualFR2 = Utils.parse("7 999$", Locale.CANADA_FRENCH);
+        BigDecimal actualFR2 = BigDecimalUtils.parse("7 999$", Locale.CANADA_FRENCH);
         BigDecimal expectedFR2 = new BigDecimal("7999");
         AssertJUtil.assertThat(actualFR2).as("FR2").isEqualByComparingTo(expectedFR2);
     }
@@ -146,6 +147,108 @@ public class MiscTest {
         for (int i = 0; i < arrayOfObjects.length; i++) {
             AssertJUtil.assertThat(listOfObjects.get(i)).as("Element[" + i + "]").isEqualTo(arrayOfObjects[i]);
         }
+    }
+
+    @Features("BigDecimalUtils")
+    @Stories("Verify min function")
+    @Severity(SeverityLevel.MINOR)
+    @Test
+    @SuppressWarnings("java:S5669")
+    public void testBigDecimalMin() {
+        BigDecimal one = BigDecimal.ONE;
+        BigDecimal onePointZeroOne = new BigDecimal("1.01");
+        BigDecimal zeroPointZeroOne = new BigDecimal("0.01");
+        BigDecimal zeroPointZeroTwo = new BigDecimal("0.02");
+        BigDecimal negativeOne = new BigDecimal("-1");
+        BigDecimal negativeTwo = new BigDecimal("-2");
+
+        BigDecimal result = BigDecimalUtils.min(one);
+        AssertJUtil.assertThat(one).as("Min of single item").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(negativeOne);
+        AssertJUtil.assertThat(negativeOne).as("Min of negative single item").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(one, null);
+        AssertJUtil.assertThat(one).as("Min - other items are null").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(one, onePointZeroOne);
+        AssertJUtil.assertThat(one).as("Min - single other item is larger").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(one, zeroPointZeroOne);
+        AssertJUtil.assertThat(zeroPointZeroOne).as("Min - single other item is smaller").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(negativeTwo, negativeOne);
+        AssertJUtil.assertThat(negativeTwo).as("Min - negative - single other item is larger").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(negativeOne, negativeTwo);
+        AssertJUtil.assertThat(negativeTwo).as("Min - negative - single other item is smaller").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(one, zeroPointZeroTwo, zeroPointZeroOne);
+        AssertJUtil.assertThat(zeroPointZeroOne).as("Min - multiple other items - last min").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(zeroPointZeroOne, one, zeroPointZeroTwo);
+        AssertJUtil.assertThat(zeroPointZeroOne).as("Min - multiple other items - first min").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.min(zeroPointZeroTwo, zeroPointZeroOne, one);
+        AssertJUtil.assertThat(zeroPointZeroOne).as("Min - multiple other items - middle min").isEqualByComparingTo(result);
+
+        List<BigDecimal> all = new ArrayList<>();
+        all.add(zeroPointZeroOne);
+        all.add(negativeOne);
+        all.add(one);
+        result = BigDecimalUtils.min(zeroPointZeroTwo, all.toArray(new BigDecimal[0]));
+        AssertJUtil.assertThat(negativeOne).as("Min - negative value").isEqualByComparingTo(result);
+    }
+
+    @Features("BigDecimalUtils")
+    @Stories("Verify max function")
+    @Severity(SeverityLevel.MINOR)
+    @Test
+    @SuppressWarnings("java:S5669")
+    public void testBigDecimalMax() {
+        BigDecimal one = BigDecimal.ONE;
+        BigDecimal onePointZeroOne = new BigDecimal("1.01");
+        BigDecimal zeroPointZeroOne = new BigDecimal("0.01");
+        BigDecimal zeroPointZeroTwo = new BigDecimal("0.02");
+        BigDecimal negativeOne = new BigDecimal("-1");
+        BigDecimal negativeTwo = new BigDecimal("-2");
+
+        BigDecimal result = BigDecimalUtils.max(one);
+        AssertJUtil.assertThat(one).as("Max of single item").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(negativeOne);
+        AssertJUtil.assertThat(negativeOne).as("Max of negative single item").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(one, null);
+        AssertJUtil.assertThat(one).as("Max - other items are null").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(one, onePointZeroOne);
+        AssertJUtil.assertThat(onePointZeroOne).as("Max - single other item is larger").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(one, zeroPointZeroOne);
+        AssertJUtil.assertThat(one).as("Max - single other item is smaller").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(negativeTwo, negativeOne);
+        AssertJUtil.assertThat(negativeOne).as("Max - negative - single other item is larger").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(negativeOne, negativeTwo);
+        AssertJUtil.assertThat(negativeOne).as("Max - negative - single other item is smaller").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(zeroPointZeroTwo, zeroPointZeroOne, one);
+        AssertJUtil.assertThat(one).as("Max - multiple other items - last max").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(one, zeroPointZeroTwo, zeroPointZeroOne);
+        AssertJUtil.assertThat(one).as("Max - multiple other items - first max").isEqualByComparingTo(result);
+
+        result = BigDecimalUtils.max(zeroPointZeroTwo, one, zeroPointZeroOne);
+        AssertJUtil.assertThat(one).as("Max - multiple other items - middle max").isEqualByComparingTo(result);
+
+        List<BigDecimal> all = new ArrayList<>();
+        all.add(zeroPointZeroOne);
+        all.add(negativeOne);
+        all.add(one);
+        result = BigDecimalUtils.max(zeroPointZeroTwo, all.toArray(new BigDecimal[0]));
+        AssertJUtil.assertThat(one).as("Max - negative value").isEqualByComparingTo(result);
     }
 
 }
