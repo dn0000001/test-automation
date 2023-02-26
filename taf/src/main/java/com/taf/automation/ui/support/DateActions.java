@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -587,7 +588,23 @@ public class DateActions {
      * @return the date formatted as a string in the specified pattern
      */
     public static String format(Date date, String pattern) {
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return format(date, pattern, null);
+    }
+
+    /**
+     * @param date    - The time value to be formatted into a time string
+     * @param pattern - The pattern describing the date and time format.  (See SimpleDateFormat JavaDocs for more details)
+     * @param locale  - Locale to be used, null uses default
+     * @return the date formatted as a string in the specified pattern for the locale
+     */
+    public static String format(Date date, String pattern, Locale locale) {
+        SimpleDateFormat sdf;
+        if (locale == null) {
+            sdf = new SimpleDateFormat(pattern);
+        } else {
+            sdf = new SimpleDateFormat(pattern, locale);
+        }
+
         return sdf.format(date);
     }
 
