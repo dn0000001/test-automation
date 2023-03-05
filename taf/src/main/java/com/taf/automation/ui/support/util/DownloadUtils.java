@@ -3,12 +3,16 @@ package com.taf.automation.ui.support.util;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
 
 @SuppressWarnings("java:S3252")
 public class DownloadUtils {
@@ -129,6 +133,34 @@ public class DownloadUtils {
         }
 
         return tempDir;
+    }
+
+    /**
+     * Get file object with exact filename in a sub-folder in the temp folder
+     *
+     * @param readFolder - Read folder from resources or absolute location
+     * @return File (if resource a temp file is created that will be deleted on exit.)
+     */
+    public static File getFileWithExactFilename(String readFolder) {
+        File temp = null;
+        try {
+            String first = FileUtils.getTempDirectory().getAbsolutePath();
+            Path pathUUID = FileSystems.getDefault().getPath(first, UUID.randomUUID().toString());
+            File tempDir = pathUUID.toFile();
+            FileUtils.forceMkdir(tempDir);
+            tempDir.deleteOnExit();
+
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(readFolder);
+            String name = FilenameUtils.getName(readFolder);
+            Path pathTemp = FileSystems.getDefault().getPath(tempDir.getAbsolutePath(), name);
+            temp = Files.createFile(pathTemp).toFile();
+            temp.deleteOnExit();
+            FileUtils.copyInputStreamToFile(is, temp);
+            return temp;
+        } catch (Exception ex) {
+            FileUtils.deleteQuietly(temp);
+            return new File(readFolder);
+        }
     }
 
 }
