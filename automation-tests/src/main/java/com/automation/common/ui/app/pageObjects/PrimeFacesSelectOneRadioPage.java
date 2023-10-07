@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import ru.yandex.qatools.allure.annotations.Step;
 
 public class PrimeFacesSelectOneRadioPage extends PageObjectV2 {
-    @FindBy(css = ".ui-selectoneradio[id$=':console'] td")
+    @FindBy(css = ".ui-selectoneradio[id$=':line'] [role='radio']")
     private PrimeFacesRadioButtonGroup basic;
 
     public PrimeFacesSelectOneRadioPage() {

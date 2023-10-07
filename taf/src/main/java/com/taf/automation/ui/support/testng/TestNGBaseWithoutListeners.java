@@ -50,7 +50,7 @@ public class TestNGBaseWithoutListeners {
         if (context() != null && context().getDriver() != null) {
             try {
                 Utils.until(ExpectedConditionsUtil.takeScreenshot(title)).forEach(Attachment::build);
-            } catch (Exception ex) {
+            } catch (Exception | AssertionError ex) {
                 String shortMessage = "Could not take screenshot for " + title;
                 StringWriter sw = new StringWriter();
                 ex.printStackTrace(new PrintWriter(sw));
@@ -73,7 +73,7 @@ public class TestNGBaseWithoutListeners {
                 if (AppiumDriver.class.isAssignableFrom(context().getDriver().getClass())) {
                     type = "text/xml";
                 }
-            } catch (Exception ex) {
+            } catch (Exception | AssertionError ex) {
                 String shortMessage = "Could not take HTML for " + title;
                 StringWriter sw = new StringWriter();
                 ex.printStackTrace(new PrintWriter(sw));
