@@ -22,7 +22,7 @@ public class CsvFileDownloadPage extends PageObjectV2 {
     private static final String LINK_HTTP_STATUS = "Link HTTP Status";
 
     @XStreamOmitField
-    @FindBy(css = "h3 [href$='Research-and-development-survey-2021-CSV-notes.csv']")
+    @FindBy(css = "h3 [href$='research-and-development-survey-2022-csv-notes.csv']")
     private WebComponent downloadLink;
 
     public CsvFileDownloadPage() {

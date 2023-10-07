@@ -42,6 +42,10 @@ public class ChangeBrowserTest extends TestNGBase {
         AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Changed Context URL").contains(SITE_2_VALIDATION);
         AssertJUtil.assertThat(Utils.getStoredTestProperties().getBrowserType()).as("Changed Test Properties").isEqualTo(EXPECTED_BROWSER);
 
+        // Random actions to prevent 'Failed to shutdown Driver Command Executor' that seems to occur
+        // if you shutdown the browser too fast after launching.
+        new HerokuappDataTableEqualsTest().verifyTable1EqualsTable2Test();
+
         Utils.restoreBrowser();
         AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Restored Context URL Diff").doesNotContain(SITE_2_VALIDATION);
         AssertJUtil.assertThat(getContext().getDriver().getCurrentUrl()).as("Restored Context URL Same").contains(SITE_1_VALIDATION);

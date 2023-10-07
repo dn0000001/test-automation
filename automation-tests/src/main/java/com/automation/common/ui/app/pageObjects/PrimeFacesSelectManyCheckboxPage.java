@@ -25,7 +25,7 @@ public class PrimeFacesSelectManyCheckboxPage extends PageObjectV2 {
     private static final String VALUE_TO_BE_SET = "true";
     private static final BasicClock clock = new BasicClock();
 
-    @FindBy(xpath = "//table[contains(@id, 'basic')]//label[text()='Option 1']/..")
+    @FindBy(xpath = "//*[contains(@id, 'basic')]//label[text()='Option 1']/..")
     private CheckBoxLabel option1;
 
     public PrimeFacesSelectManyCheckboxPage() {
